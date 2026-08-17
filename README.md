@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="assets/readme/audiomuse-readme-hero.png" alt="AudioMuse — A Resonant Atlas of Sound, Music & Signal" width="100%">
+</p>
 # AudioMuse
 
 **A Resonant Atlas of Sound, Music & Signal**
