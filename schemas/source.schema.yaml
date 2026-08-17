@@ -1,0 +1,26 @@
+schema: audiomuse-source
+version: 1
+description: Canonical contract for entries in the AudioMuse source registry.
+required: [id, type, title, locator, relationship]
+properties:
+  id:
+    type: string
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+  type:
+    type: string
+    enum: [session, book, paper, article, manual, standard, website, recording, measurement, dataset, video, interview, other]
+  title:
+    type: string
+  author:
+    type: [string, "null"]
+  year:
+    type: [integer, "null"]
+  locator:
+    type: string
+    description: Repository-relative path or external locator.
+  relationship:
+    type: string
+    enum: [origin, supporting, historical, experimental, reference, contrasting]
+  notes:
+    type: [string, "null"]
+additional_properties: false

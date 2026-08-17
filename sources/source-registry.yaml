@@ -1,0 +1,29 @@
+schema: audiomuse-source-registry
+version: 1
+sources:
+  - id: session-01-what-is-sound
+    type: session
+    title: "Session 1: What Is Sound?"
+    locator: sessions/session-01-what-is-sound/session-01-what-is-sound.txt
+    relationship: origin
+  - id: session-02-what-is-music
+    type: session
+    title: "AudioMuse — Session 2: What Is Music?"
+    locator: sessions/session-02-what-is-music/session-02-what-is-music.txt
+    relationship: origin
+  - id: session-03-history-of-electronic-music
+    type: session
+    title: "AudioMuse — History of Electronic Music Timeline"
+    locator: sessions/session-03-history-of-electronic-music/session-03-history-of-electronic-music.txt
+    relationship: historical
+  - id: session-01-vocabulary-atlas
+    type: other
+    title: "Audio Musings Vocabulary Atlas — Session 1: What Is Sound?"
+    locator: vocabulary/session-01-vocabulary-atlas/audiomuse-vocabulary-atlas-session-01.docx
+    relationship: reference
+    notes: Historical source title retained; repository branding is now AudioMuse.
+  - id: audiomuse-brand-identity-guidelines-v1
+    type: manual
+    title: AudioMuse Brand Identity Guidelines
+    locator: assets/brand/guidelines/audiomuse-brand-identity-guidelines-v1.docx
+    relationship: reference

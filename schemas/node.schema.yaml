@@ -1,0 +1,76 @@
+schema: audiomuse-node
+version: 1
+description: Canonical front-matter contract for durable AudioMuse knowledge nodes.
+required:
+  - id
+  - title
+  - domain
+  - status
+  - session_origin
+  - definition
+  - core_concepts
+  - related_nodes
+  - sources
+  - experiments
+  - practical_applications
+  - project_connections
+  - future_questions
+properties:
+  id:
+    type: string
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    description: Stable lowercase kebab-case identifier.
+  title:
+    type: string
+  domain:
+    type: string
+    enum:
+      - acoustics
+      - psychoacoustics
+      - music-theory
+      - rhythm-time
+      - recording
+      - mixing-mastering
+      - digital-audio
+      - dsp
+      - synthesis
+      - sound-design
+      - dj-turntablism
+      - spatial-audio
+      - audio-hardware
+      - machine-audio
+      - history-culture
+  status:
+    type: string
+    enum: [seed, foundation, developed, deep-dive, practical, project-applied]
+  session_origin:
+    type: array
+    items: { type: string }
+  definition:
+    type: string
+  core_concepts:
+    type: array
+    items: { type: string }
+  related_nodes:
+    type: array
+    items:
+      type: string
+      pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+  sources:
+    type: array
+    items:
+      type: string
+      pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+  experiments:
+    type: array
+    items: { type: string }
+  practical_applications:
+    type: array
+    items: { type: string }
+  project_connections:
+    type: array
+    items: { type: string }
+  future_questions:
+    type: array
+    items: { type: string }
+additional_properties: false

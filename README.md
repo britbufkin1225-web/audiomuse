@@ -11,6 +11,8 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 
 - `sessions/` — chronological exploration records
 - `nodes/` — durable knowledge-graph concepts organized by domain
+- `schemas/` — canonical node and source metadata contracts
+- `sources/` — provenance registry referenced by stable source IDs
 - `vocabulary/` — expandable terminology atlases
 - `research/` — sources and research notes
 - `experiments/` — listening, measurement, DSP, studio, and hardware experiments
