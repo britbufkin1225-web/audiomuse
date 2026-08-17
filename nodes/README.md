@@ -4,6 +4,8 @@ Nodes are durable AudioMuse concepts: they answer, "What does AudioMuse currentl
 
 Every node is a readable Markdown file with YAML front matter conforming to `schemas/node.schema.yaml`. Its stable lowercase kebab-case `id` is the relationship target; filenames and titles may change without breaking links. Phase 2 assigns one primary `domain` and one knowledge-maturity `status` to each node.
 
+A node file lives at `nodes/<domain>/<id>.md`, where `<domain>` is the node's primary domain from the schema enum. Domain subdirectories are created as nodes need them; empty placeholders are not required for every domain.
+
 ## Relationship and expansion rules
 
 - Use stable node IDs in `related_nodes`, never filenames or paths.
