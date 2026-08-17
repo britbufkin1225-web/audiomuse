@@ -1,0 +1,598 @@
+# Session 1: What Is Sound?
+
+Sound is mechanical energy traveling through matter as an organized disturbance. Something vibrates, that vibration disturbs nearby particles, and the disturbance moves outward through a medium such as air, water, wood, metal, or bone.
+
+Sound itself is not a substance moving from its source to your ear. The particles mostly oscillate around their original positions while transferring energy to neighboring particles—rather like a stadium wave, except less likely to spill beer.
+
+## 1. The complete sound process
+
+Every sound involves four basic stages:
+
+```mermaid
+flowchart LR
+    A["Source vibrates"] --> B["Medium is disturbed"]
+    B --> C["Pressure wave travels"]
+    C --> D["Receiver detects it"]
+    D --> E["Brain interprets sound"]
+```
+
+For example, when a speaker plays a bass note:
+
+1. An electrical signal moves the speaker cone.
+2. The cone pushes and pulls the surrounding air.
+3. Alternating regions of higher and lower air pressure travel across the room.
+4. Those pressure changes move your eardrum.
+5. Your auditory system converts the movement into neural signals.
+6. Your brain interprets pitch, loudness, location, timbre, rhythm, and meaning.
+
+This creates an important distinction:
+
+- **Physical sound** is vibration and pressure variation.
+- **Auditory perception** is the experience produced when a nervous system interprets that vibration.
+
+A microphone can detect sound without hearing it. A person can also experience tinnitus without an external pressure wave. Therefore, the physical event and the perception are related but not identical.
+
+---
+
+## 2. Sound begins with vibration
+
+A vibration is repeated movement around an equilibrium position. Common sound-producing objects include:
+
+- Vocal cords
+- Guitar strings
+- Drumheads
+- Speaker cones
+- Turntable needles and records
+- Reeds
+- Columns of air inside pipes
+- Machinery, fans, motors, and buildings
+- Electrical components producing mechanical vibration
+
+A vibrating object does not automatically produce a strong audible sound. It must transfer enough energy into the surrounding medium. A tuning fork is fairly quiet in open air, but placing its stem against a resonant wooden surface makes it much louder because the surface moves more air.
+
+That principle appears everywhere in audio engineering:
+
+- A guitar’s body amplifies energy from its strings.
+- A speaker cabinet controls energy from its driver.
+- A wall can transmit vibration into another room.
+- A desk can amplify monitor or subwoofer vibrations.
+- A turntable can receive unwanted vibration through its furniture.
+
+---
+
+## 3. Sound waves in air
+
+In air, sound generally travels as a **longitudinal pressure wave**. Air particles move back and forth in approximately the same direction that the wave travels.
+
+The wave contains alternating regions:
+
+- **Compression:** air pressure is temporarily above normal.
+- **Rarefaction:** air pressure is temporarily below normal.
+
+A microphone diaphragm responds to these extremely small pressure variations and converts them into an electrical signal.
+
+At ordinary atmospheric pressure, the absolute pressure around us is enormous compared with the tiny fluctuations representing sound. The microphone’s job is essentially to detect the meaningful wiggle riding on top of the atmosphere.
+
+## 4. A sound wave’s essential properties
+
+### Frequency
+
+Frequency measures how many vibration cycles occur each second:
+
+\[
+f=\frac{1}{T}
+\]
+
+Where:
+
+- \(f\) is frequency in hertz
+- \(T\) is the duration of one cycle in seconds
+
+One hertz means one cycle per second.
+
+Frequency strongly influences perceived **pitch**:
+
+- 50 Hz: low hum or bass
+- 100 Hz: bass
+- 440 Hz: concert A
+- 1,000 Hz: midrange reference tone
+- 5,000 Hz: bright upper-midrange
+- 15,000 Hz: very high frequency
+
+Human hearing is commonly described as approximately **20 Hz to 20 kHz**, but the actual range varies with age, hearing health, exposure history, playback level, and the individual.
+
+Frequency and pitch are not perfectly interchangeable. Frequency is physical; pitch is perceptual. The brain can sometimes infer a missing fundamental frequency from its harmonics even when that fundamental is not physically present.
+
+### Period
+
+Period is the amount of time required for one cycle:
+
+\[
+T=\frac{1}{f}
+\]
+
+A 100 Hz wave has a period of:
+
+\[
+T=\frac{1}{100}=0.01\text{ seconds}=10\text{ ms}
+\]
+
+This connection becomes important in digital audio, delay effects, synthesis, phase alignment, and sample editing.
+
+### Amplitude
+
+Amplitude describes the size of the pressure variation. Greater amplitude usually produces greater perceived loudness, but human loudness perception also depends on frequency, duration, context, room acoustics, and hearing sensitivity.
+
+Doubling physical amplitude does not simply mean something sounds “twice as loud.” Hearing is nonlinear, which is why audio levels are commonly expressed using logarithmic decibels.
+
+### Wavelength
+
+Wavelength is the physical distance occupied by one complete cycle:
+
+\[
+\lambda=\frac{c}{f}
+\]
+
+Where:
+
+- \(\lambda\) is wavelength
+- \(c\) is the speed of sound
+- \(f\) is frequency
+
+At roughly \(20^\circ\text{C}\), sound travels through air at approximately \(343\text{ m/s}\).
+
+| Frequency | Approximate wavelength |
+|---:|---:|
+| 20 Hz | 17.15 m |
+| 50 Hz | 6.86 m |
+| 100 Hz | 3.43 m |
+| 1 kHz | 34.3 cm |
+| 10 kHz | 3.43 cm |
+| 20 kHz | 1.72 cm |
+
+This explains why bass behaves differently from treble:
+
+- Bass wavelengths may be larger than the room.
+- Low frequencies bend around obstacles more readily.
+- High frequencies are more easily absorbed, blocked, and directionally controlled.
+- Small acoustic treatments may affect treble but barely inconvenience deep bass.
+
+That last point matters when building a microphone shield: thin foam can reduce some high-frequency reflections, but it cannot meaningfully trap deep bass. Bass sees a little foam panel and keeps walking.
+
+### Phase
+
+Phase describes a wave’s position within its cycle, usually expressed from \(0^\circ\) to \(360^\circ\).
+
+When similar waves combine:
+
+- Matching phases reinforce each other.
+- Opposing phases can partially or completely cancel.
+- Intermediate relationships create frequency-dependent reinforcement and cancellation.
+
+Phase affects:
+
+- Multi-microphone recordings
+- Speaker placement
+- Subwoofer alignment
+- Stereo imaging
+- Sampling and layering
+- DJ transitions
+- Flanging and phasing effects
+- Room modes
+- Noise cancellation
+
+### Waveform
+
+A waveform is a representation of how amplitude changes over time. Basic waveforms include sine, square, triangle, and sawtooth waves.
+
+A pure sine wave contains one frequency. Most natural sounds are complex combinations of many frequencies.
+
+---
+
+## 5. Simple tones, harmonics, and timbre
+
+A musical note is rarely one isolated frequency. It commonly contains:
+
+- A **fundamental frequency**, which strongly determines the perceived pitch
+- **Harmonics**, occurring at whole-number multiples of the fundamental
+- Other overtones or inharmonic components
+- Noise components
+- A changing amplitude and spectrum over time
+
+For a 100 Hz fundamental, the harmonic series begins:
+
+\[
+100,\ 200,\ 300,\ 400,\ 500\text{ Hz}
+\]
+
+Different instruments can play the same note but sound unmistakably different because they distribute energy differently across the spectrum and evolve differently over time.
+
+That identity is called **timbre**.
+
+Timbre is influenced by:
+
+- Harmonic balance
+- Inharmonic content
+- Attack and decay
+- Resonance
+- Noise and transient content
+- Modulation
+- Playing technique
+- Room reflections
+- Microphone and signal-chain coloration
+
+This is why a piano and a violin do not become the same instrument merely because both play A4 at 440 Hz.
+
+## 6. The sound envelope
+
+A sound’s amplitude usually changes over time. A common model is ADSR:
+
+- **Attack:** how quickly the sound rises
+- **Decay:** how it falls after the initial peak
+- **Sustain:** its maintained level
+- **Release:** how it ends after excitation stops
+
+A snare drum has a rapid attack and short decay. A bowed string can sustain as long as energy continues to be supplied. A reversed sample may have a slow swell followed by an abrupt ending.
+
+The envelope is critical to:
+
+- Synthesizer programming
+- Sampling
+- Beat design
+- Compression settings
+- Transient shaping
+- Sound recognition
+- Creating perceived punch, softness, distance, or aggression
+
+The brain often identifies a sound from its first few milliseconds, making the transient disproportionately important.
+
+---
+
+## 7. How sound travels through different media
+
+Sound requires a material medium because it is mechanical energy.
+
+It can travel through:
+
+- Gases
+- Liquids
+- Solids
+- Biological tissue
+
+It cannot travel as an ordinary acoustic wave through a perfect vacuum. Space films add explosions because scientifically accurate silence apparently tests poorly with audiences.
+
+The speed of sound depends on the medium’s stiffness, density, and temperature.
+
+Approximate examples:
+
+| Medium | Speed |
+|---|---:|
+| Air at 20°C | 343 m/s |
+| Water | 1,480 m/s |
+| Steel | about 5,900 m/s |
+
+Sound often travels faster through stiff solids, although exact behavior depends on the material and type of wave.
+
+This matters for soundproofing because sound can travel through:
+
+- Air directly
+- Walls and doors
+- Floors and ceilings
+- Plumbing
+- Structural framing
+- Desks and microphone stands
+
+These are known broadly as **airborne** and **structure-borne** transmission paths.
+
+---
+
+## 8. Reflection, absorption, transmission, and diffraction
+
+When sound encounters a surface, its energy can be divided among several behaviors.
+
+### Reflection
+
+Sound bounces away from a boundary. Reflections create:
+
+- Echo
+- Reverberation
+- Comb filtering
+- Room coloration
+- Spatial impression
+
+Hard, smooth surfaces generally reflect more high-frequency energy.
+
+### Absorption
+
+Some acoustic energy is converted into small amounts of heat within a material. Porous absorbers work by creating friction as air moves through their fibers or cells.
+
+Absorption is used to control sound **inside** a room.
+
+### Transmission
+
+Some energy passes through the material into another space. Preventing this requires sound isolation techniques involving:
+
+- Mass
+- Airtight construction
+- Mechanical decoupling
+- Damping
+- Control of flanking paths
+
+Sound absorption and soundproofing are not the same task. Foam can improve a recording area’s reflections without preventing your neighbors from hearing the kick drum.
+
+### Diffraction
+
+Sound bends around obstacles and spreads through openings. Low-frequency sound diffracts especially well because of its long wavelength.
+
+### Refraction
+
+Sound changes direction when its speed varies through a medium—for example, because of temperature gradients in outdoor air.
+
+---
+
+## 9. Resonance
+
+Every physical system has frequencies at which it responds especially strongly. This is resonance.
+
+Examples include:
+
+- A guitar body
+- A room
+- A speaker cabinet
+- A microphone enclosure
+- A glass
+- A vehicle interior
+- A desk or shelving unit
+- The air column in a vocal tract
+
+Resonance can be useful, expressive, or destructive.
+
+In music, resonance gives instruments character. In room acoustics, excessive resonance can make particular bass notes boom while others disappear. In hardware, resonance can cause rattling, feedback, or unwanted coloration.
+
+Room dimensions produce standing-wave resonances called **room modes**. These become a central concern when placing speakers, subwoofers, microphones, and listening positions.
+
+---
+
+## 10. Decibels and sound level
+
+The decibel is a logarithmic unit used to express ratios. For sound pressure level:
+
+\[
+L_p = 20\log_{10}\left(\frac{p}{p_0}\right)
+\]
+
+Where:
+
+- \(p\) is measured RMS sound pressure
+- \(p_0\) is the reference pressure, commonly \(20\ \mu\text{Pa}\) in air
+
+Some useful relationships:
+
+- \(+6\text{ dB}\) is approximately twice the pressure amplitude.
+- \(+3\text{ dB}\) is twice the power.
+- Roughly \(+10\text{ dB}\) is often perceived as approximately twice as loud under certain conditions, though perception varies.
+
+Different decibel references must not be confused:
+
+- **dB SPL:** acoustic sound pressure
+- **dBFS:** digital level relative to maximum representable level
+- **dBu/dBV:** electrical signal voltage
+- **LUFS:** program loudness measurement
+
+“0 dB” therefore does not always mean silence. In digital audio, 0 dBFS is the ceiling. In acoustic measurement, 0 dB SPL is a reference level near the threshold of hearing.
+
+---
+
+## 11. Sound becomes audio
+
+**Sound** is the physical phenomenon. **Audio** is a representation, transmission, manipulation, or reproduction of sound.
+
+A typical audio chain is:
+
+```mermaid
+flowchart TD
+    A["Acoustic sound"] --> B["Microphone"]
+    B --> C["Electrical signal"]
+    C --> D["Preamplifier"]
+    D --> E["Analog-to-digital converter"]
+    E --> F["Digital samples"]
+    F --> G["Processing and storage"]
+    G --> H["Digital-to-analog converter"]
+    H --> I["Amplifier and speaker"]
+    I --> J["Acoustic sound"]
+```
+
+Digital audio does not store a tiny continuous wave inside the computer. It stores numerical measurements of signal amplitude taken at regular intervals.
+
+Two foundational properties are:
+
+- **Sample rate:** measurements taken per second
+- **Bit depth:** numerical resolution and available dynamic range
+
+For example, 48 kHz/24-bit audio records 48,000 amplitude samples per second using 24-bit values.
+
+---
+
+## 12. Sound as a combination of frequencies
+
+Fourier analysis tells us that a complex waveform can be represented as a combination of sinusoidal components.
+
+This gives us two complementary views:
+
+- **Time domain:** how amplitude changes over time
+- **Frequency domain:** how energy is distributed across frequency
+
+A waveform display emphasizes timing, attacks, edits, and clipping. A spectrum analyzer emphasizes bass, mids, treble, harmonics, resonances, and noise.
+
+Modern audio work constantly moves between these views:
+
+- EQ changes the spectral balance.
+- Compression changes level behavior over time.
+- Reverb creates a time-varying field of reflections.
+- Distortion creates additional frequency components.
+- Filtering removes or attenuates selected frequency ranges.
+- Scratching manipulates time, direction, pitch, and transients simultaneously.
+
+---
+
+## 13. Noise, tone, consonance, and dissonance
+
+A **tone** has identifiable periodic structure. **Noise** is less periodic and usually contains energy spread across many frequencies.
+
+Noise is not inherently bad. It can provide:
+
+- Percussion texture
+- Breath and realism
+- Synthesis material
+- Masking
+- Dither
+- Atmosphere
+- Transitional effects
+- Measurement signals
+
+Consonance and dissonance emerge from relationships among frequencies, harmonics, beating, cultural expectations, tuning systems, and auditory perception.
+
+Two nearby frequencies produce **beating**. If 440 Hz and 442 Hz play together, their interaction creates amplitude fluctuation at approximately:
+
+\[
+442-440=2\text{ Hz}
+\]
+
+That beating can sound like movement, tension, roughness, or mistuning. The same physics appears in chorus effects, instrument tuning, binaural phenomena, and deliberately dissonant sound design.
+
+---
+
+## 14. Sound is physical, but hearing is interpretive
+
+Your auditory system does more than measure waves. It organizes them into meaningful events.
+
+It estimates:
+
+- What produced the sound
+- Where it originated
+- How far away it is
+- Whether it is approaching
+- Whether it is threatening
+- Which frequencies belong to the same source
+- Which sounds should receive attention
+- What speech, rhythm, or musical structure is present
+
+The brain uses timing and level differences between the ears, spectral changes caused by the outer ear, reflections, prior knowledge, and visual information.
+
+This explains why:
+
+- Expectations alter perception.
+- A mix sounds different at different volumes.
+- Visual cues affect perceived sound quality.
+- Masking can hide one sound beneath another.
+- You can follow one voice in a crowded room.
+- Identical measurements do not always create identical experiences.
+
+The science connecting acoustics with perception is called **psychoacoustics**.
+
+---
+
+## 15. Connections to our future AudioMuse projects
+
+This session establishes the foundation for nearly everything that follows.
+
+### Home recording area
+
+Understanding wavelengths, reflections, and transmission will help us design a microphone area that controls reflections without pretending a small foam shield is a bunker.
+
+We will eventually evaluate:
+
+- Reflection-filter placement
+- Broadband absorbers
+- Portable gobos
+- Ceiling treatment
+- Desk reflections
+- Microphone polar patterns
+- Isolation from computer fans and structure-borne vibration
+
+### Beat production and sampling
+
+Frequency, phase, envelope, and harmonics explain:
+
+- Why layered kicks sometimes lose bass
+- How to tune a sample
+- Why transients create punch
+- Why distortion makes small speakers reproduce bass more convincingly
+- Why time-stretching changes texture
+- How filters reshape samples
+
+### Vinyl scratching
+
+Scratching directly manipulates the relationship between physical motion and recorded sound:
+
+- Moving vinyl faster raises pitch and compresses time.
+- Moving it backward reverses the waveform.
+- Hand acceleration shapes the envelope.
+- Crossfader movement gates amplitude.
+- Stylus, groove, tonearm, platter, and vibration isolation form a mechanical system.
+
+### DJ monitoring
+
+Wavelength and phase will help explain speaker placement, subwoofer crossover alignment, room modes, cue monitoring, beat matching, and why bass can vanish three feet away from where it was booming.
+
+### Backend and cybersecurity projects
+
+Sound can become structured data. Future dev projects could include:
+
+- A room-noise monitoring API
+- Raspberry Pi sound-level telemetry
+- A sample-library metadata service
+- An acoustic measurement dashboard
+- Audio-file integrity and provenance tracking
+- Spectrogram-based event detection
+- Privacy-conscious noise classification
+- A local music-information retrieval service
+
+A strong project should distinguish between raw audio collection, derived features, and semantic classifications. That separation matters technically, ethically, and from a privacy perspective.
+
+---
+
+## A simple first experiment
+
+Use a phone tone generator or DAW and play sine waves at low volume:
+
+1. Start around 1 kHz.
+2. Move gradually down toward 100 Hz.
+3. Notice how pitch and speaker strength change.
+4. Walk around the room while playing 60–120 Hz.
+5. Listen for locations where the bass becomes louder or quieter.
+6. Try covering one ear and locating the source again.
+7. Compare a sine wave, square wave, and sawtooth at the same fundamental frequency.
+
+What you are observing:
+
+- Frequency-dependent hearing sensitivity
+- Speaker limitations
+- Room modes
+- Interference and phase
+- Harmonic differences
+- Localization cues
+
+Keep the volume conservative, especially with sine waves and headphones.
+
+## Session 1 takeaway
+
+Sound is a traveling mechanical disturbance created by vibration, shaped by the medium and surrounding environment, captured or reproduced by transducers, and transformed into perception by the auditory system.
+
+The central vocabulary is:
+
+- Vibration
+- Frequency
+- Amplitude
+- Wavelength
+- Phase
+- Harmonics
+- Timbre
+- Envelope
+- Resonance
+- Reflection
+- Absorption
+- Transmission
+- Perception
+
+Every recording, beat, scratch, echo, noise complaint, microphone choice, speaker-placement decision, and audio algorithm is some elaboration of these principles.

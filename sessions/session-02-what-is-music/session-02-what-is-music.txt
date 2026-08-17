@@ -1,0 +1,1294 @@
+# AudioMuse — Session 2: What Is Music?
+
+Music is one of those things that becomes harder to define the more closely you inspect it.
+
+At the simplest level:
+
+> **Music is intentionally organized sound and silence experienced across time.**
+
+That definition is useful, but incomplete. Music can also contain noise, randomness, distortion, environmental recordings, machine sounds, speech, silence, feedback, dissonance, and sounds whose creators never intended them to be "musical."
+
+A better working definition for **AudioMuse** is:
+
+> **Music is the perception and organization of sonic events through time, shaped by rhythm, frequency, amplitude, timbre, space, expectation, culture, and human interpretation.**
+
+That gives us considerably more to work with.
+
+---
+
+## 1. Sound and Music Are Not the Same Thing
+
+Every piece of music involves sound—or intentionally uses the absence of sound—but **not every sound is music**.
+
+A dropped wrench produces:
+
+- frequencies
+- amplitude
+- harmonics
+- transients
+- resonance
+- reverberation
+- a duration
+
+Acoustically, it has many of the same properties as a snare drum.
+
+What changes when somebody samples that wrench, places it on beats 2 and 4, compresses it, pitches it down, layers it with a kick, and runs it through reverb?
+
+The sound has acquired **musical relationships**.
+
+That distinction is important:
+
+**Sound is a physical phenomenon.
+Music is a system of relationships built from sound.**
+
+And sometimes from silence.
+
+---
+
+# 2. Music Exists in Time
+
+You cannot experience an entire song instantaneously.
+
+Music unfolds.
+
+That makes **time** arguably its most fundamental dimension.
+
+Consider a kick drum.
+
+One isolated kick:
+
+> BOOM
+
+doesn't establish much musically.
+
+Four kicks:
+
+> BOOM — BOOM — BOOM — BOOM
+
+begin creating **pulse**.
+
+Change their timing:
+
+> BOOM — — BOOM — BOOM — — —
+
+and now we perceive a **rhythmic pattern**.
+
+Add repetition and variation and the brain begins constructing expectations.
+
+This introduces several foundational concepts:
+
+| Concept | Meaning |
+|---|---|
+| Pulse | Repeating underlying beat |
+| Beat | Perceived unit of musical time |
+| Tempo | Speed of the beat |
+| Meter | Organization of beats into repeating groups |
+| Rhythm | Pattern of sonic events through time |
+| Groove | Perceived rhythmic feel created by timing relationships |
+| Syncopation | Emphasis where the listener does not expect it |
+| Polyrhythm | Multiple rhythmic structures occurring simultaneously |
+
+### Digital connection
+
+In a DAW, time becomes measurable data:
+
+- BPM
+- bars
+- beats
+- subdivisions
+- ticks
+- samples
+- milliseconds
+- MIDI timestamps
+
+A DJ beatgrid is essentially a **digital coordinate system for musical time**.
+
+That is why incorrect beatgrids can wreck synchronization even when the audio itself is perfectly fine.
+
+---
+
+# 3. Music Is Frequency Organized Perceptually
+
+From Session 1:
+
+Sound is pressure variation traveling through a medium.
+
+Those variations contain frequencies.
+
+Musically, frequency becomes **pitch** when the auditory system interprets a sufficiently periodic sound as having a tonal height.
+
+For example:
+
+**A4 ≈ 440 Hz**
+
+But music is not simply frequency.
+
+A piano playing A4 and a synthesizer playing A4 can both share a fundamental near 440 Hz while sounding completely different.
+
+Why?
+
+Because of their **spectra**.
+
+---
+
+# 4. Fundamental Frequency and Harmonics
+
+A musical tone commonly contains:
+
+### Fundamental
+
+The primary frequency associated with perceived pitch.
+
+### Harmonics
+
+Frequencies occurring approximately at integer multiples of the fundamental.
+
+If:
+
+\[
+f_0 = 100 Hz
+\]
+
+then harmonics may appear at:
+
+\[
+200,\ 300,\ 400,\ 500,\ 600\ Hz
+\]
+
+and beyond.
+
+Their relative strengths dramatically affect the sound.
+
+This becomes central to:
+
+- synthesis
+- EQ
+- distortion
+- instrument design
+- sampling
+- vocal processing
+- speaker design
+- acoustic treatment
+
+---
+
+# 5. Timbre — Why Sounds Have Identity
+
+**Timbre** is the quality that allows us to distinguish sounds having similar pitch and loudness.
+
+A violin and trumpet can play the same note.
+
+You still immediately know which is which.
+
+Timbre comes from relationships involving:
+
+- harmonic structure
+- inharmonic partials
+- spectral envelope
+- attack
+- decay
+- sustain
+- release
+- noise components
+- resonance
+- modulation
+- transient characteristics
+
+This makes timbre one of the most important subjects for electronic music.
+
+A synthesizer is essentially a **timbre-generation machine**.
+
+A sampler is a **timbre-capture and transformation machine**.
+
+---
+
+# 6. Pitch Becomes Melody
+
+Pitch alone is merely pitch.
+
+When pitches are arranged sequentially:
+
+> C → E → G → F → D
+
+we begin perceiving a **melody**.
+
+Melody involves relationships between pitches rather than individual frequencies.
+
+Important concepts include:
+
+- interval
+- scale
+- key
+- tonic
+- contour
+- motif
+- phrase
+- register
+- octave
+
+---
+
+# 7. The Octave Is an Acoustic Relationship
+
+One particularly interesting bridge between physics and music is the octave.
+
+If one pitch has frequency:
+
+\[
+220 Hz
+\]
+
+the pitch an octave above is approximately:
+
+\[
+440 Hz
+\]
+
+and another octave:
+
+\[
+880 Hz
+\]
+
+So an octave represents roughly a:
+
+\[
+2:1
+\]
+
+frequency relationship.
+
+That numerical relationship is one reason octaves sound strongly related.
+
+This is our first major connection between:
+
+**acoustics → mathematics → psychoacoustics → music theory.**
+
+---
+
+# 8. Harmony
+
+When multiple pitched sounds occur together, we perceive **harmony**.
+
+Harmony involves frequency relationships happening simultaneously.
+
+Examples include:
+
+- intervals
+- chords
+- chord progressions
+- drones
+- clusters
+- pedal tones
+
+Harmony gives us an excellent bridge to another AudioMuse subject:
+
+## Consonance and Dissonance
+
+### Consonance
+
+A perceptual impression of relative stability or agreement.
+
+### Dissonance
+
+A perceptual impression involving tension, roughness, instability, or expectation of movement.
+
+Neither is simply "good" or "bad."
+
+Dissonance is enormously important.
+
+Without tension, resolution loses much of its meaning.
+
+Electronic music exploits this constantly through:
+
+- filter movement
+- detuning
+- distortion
+- altered chords
+- risers
+- noise
+- frequency beating
+- unresolved intervals
+
+---
+
+# 9. Beats Are Also an Acoustic Phenomenon
+
+Here the word **beat** gets wonderfully confusing because audio likes reusing vocabulary just to keep engineers humble.
+
+If two nearby frequencies play simultaneously:
+
+\[
+440 Hz
+\]
+
+and
+
+\[
+442 Hz
+\]
+
+their interference produces an amplitude fluctuation around:
+
+\[
+2 Hz
+\]
+
+This is called **beating**.
+
+It isn't the same thing as the rhythmic beat of a song.
+
+But it matters tremendously for:
+
+- instrument tuning
+- oscillator detuning
+- chorus
+- phasing
+- synthesis
+- psychoacoustics
+
+Slight detuning can create thickness and movement.
+
+That classic enormous synthesizer sound often involves multiple oscillators that are **almost—but deliberately not exactly—the same pitch.**
+
+---
+
+# 10. Music Is Also Amplitude
+
+Frequency gives us pitch relationships.
+
+Amplitude contributes to perceived loudness and musical dynamics.
+
+Music uses changes in level to create:
+
+- emphasis
+- movement
+- contrast
+- intimacy
+- aggression
+- distance
+- impact
+
+Important terms include:
+
+- amplitude
+- dynamics
+- crescendo
+- decrescendo
+- accent
+- transient
+- headroom
+- dynamic range
+
+This directly connects musical expression with audio engineering.
+
+---
+
+# 11. The Envelope of a Sound
+
+Many sounds can roughly be described using an envelope:
+
+**ADSR**
+
+### Attack
+How quickly the sound reaches its peak.
+
+### Decay
+How quickly it falls after the attack.
+
+### Sustain
+Level maintained while the sound continues.
+
+### Release
+How long it takes to disappear after excitation stops.
+
+A percussion hit might have:
+
+> very fast attack + short decay
+
+A synth pad:
+
+> slow attack + long release
+
+This means musical articulation can literally be created by modifying amplitude over time.
+
+---
+
+# 12. Rhythm Is More Than Perfect Timing
+
+Computer sequencing revealed something interesting.
+
+Perfectly quantized rhythm often doesn't feel particularly human.
+
+Actual performers introduce tiny variations in:
+
+- timing
+- velocity
+- articulation
+- duration
+- accent
+
+These variations help produce **groove**.
+
+This is particularly important for:
+
+- hip-hop
+- funk
+- jazz
+- house
+- techno
+- breakbeats
+- scratching
+
+A snare 15 milliseconds late can feel completely different from one placed exactly on the grid.
+
+The difference may be tiny physically but huge perceptually.
+
+---
+
+# 13. Swing
+
+Swing intentionally changes subdivision timing.
+
+Instead of perfectly equal:
+
+> 1 & 2 & 3 & 4 &
+
+the subdivisions become unequal.
+
+Conceptually:
+
+> LONG-short LONG-short LONG-short
+
+Drum machines and DAWs commonly expose this as:
+
+**Swing %**
+
+or
+
+**Shuffle**
+
+This is essentially controlled **temporal displacement**.
+
+---
+
+# 14. Silence Is Musical Material
+
+Silence is not simply the absence of music.
+
+Silence can define:
+
+- rhythm
+- phrasing
+- suspense
+- separation
+- dynamics
+- structure
+
+A producer removing a kick for half a bar before a drop may generate more impact than adding five extra sounds.
+
+The principle is important:
+
+> **Musical information includes both events and the spaces between events.**
+
+This connects nicely with the Japanese concept of **ma**—meaningful negative space or interval.
+
+---
+
+# 15. Music Is Spatial
+
+Music doesn't simply exist in frequency and time.
+
+It also exists in **space**.
+
+We perceive sound through:
+
+- left/right position
+- distance
+- reflections
+- reverberation
+- phase
+- interaural timing differences
+- interaural level differences
+
+This gives us:
+
+- stereo imaging
+- panning
+- depth
+- ambience
+- localization
+- spatial audio
+
+In production, spatial placement becomes part of composition.
+
+A reverb isn't merely an effect.
+
+It creates an **imaginary acoustic environment**.
+
+---
+
+# 16. Music Has Layers
+
+One useful production model is to think of music as interacting layers.
+
+For example:
+
+### Rhythmic layer
+Kick, snare, percussion.
+
+### Bass layer
+Low-frequency rhythmic/harmonic foundation.
+
+### Harmonic layer
+Chords, pads, accompaniment.
+
+### Melodic layer
+Lead, vocal, instrument.
+
+### Texture layer
+Noise, ambience, field recordings.
+
+### Transitional layer
+Risers, sweeps, impacts.
+
+### Spatial layer
+Reverb, delay, stereo placement.
+
+### Dynamic layer
+Automation, compression, intensity.
+
+Good production often involves controlling the relationships between these layers rather than simply adding more sounds.
+
+---
+
+# 17. Texture
+
+Musical **texture** describes how different sonic layers interact.
+
+Common categories include:
+
+### Monophonic
+Single melodic line.
+
+### Homophonic
+Primary melody with supporting harmony.
+
+### Polyphonic
+Multiple independent melodic lines.
+
+### Heterophonic
+Multiple variations of the same melodic idea simultaneously.
+
+Electronic music introduces additional useful texture concepts:
+
+- sparse
+- dense
+- granular
+- atmospheric
+- rhythmic
+- noisy
+- spectral
+- drone-based
+
+---
+
+# 18. Structure
+
+Music also exists at larger timescales.
+
+A track might contain:
+
+```text
+Intro
+↓
+Verse
+↓
+Build
+↓
+Drop
+↓
+Breakdown
+↓
+Build
+↓
+Drop
+↓
+Outro
+```
+
+A DJ can interpret these sections as navigational landmarks.
+
+Instead of simply mixing **tracks**, you're often mixing **structures**.
+
+That is why phrase matching matters.
+
+---
+
+# 19. Musical Form
+
+Common forms include:
+
+- binary
+- ternary
+- rondo
+- verse/chorus
+- twelve-bar blues
+- theme and variation
+- through-composed
+- loop-based form
+
+Modern electronic music often uses **layer-based structural development** rather than traditional harmonic development.
+
+A techno track might maintain essentially the same harmony for several minutes while changing:
+
+- percussion
+- filters
+- reverb
+- modulation
+- density
+- texture
+- dynamics
+
+The music evolves through **sound design**.
+
+---
+
+# 20. Repetition Is Fundamental
+
+The human auditory system is extremely good at recognizing repetition.
+
+Once a pattern repeats, the listener forms an expectation.
+
+The producer can then:
+
+1. fulfill the expectation,
+2. delay it,
+3. modify it,
+4. interrupt it,
+5. completely violate it.
+
+This simple mechanism underlies enormous amounts of musical tension.
+
+You could almost describe composition as:
+
+> **Expectation management through sound.**
+
+---
+
+# 21. Music and Psychoacoustics
+
+Music ultimately exists partly inside the listener.
+
+The ear receives acoustic energy.
+
+The brain constructs:
+
+- pitch
+- rhythm
+- localization
+- timbre
+- loudness
+- tonal relationships
+- pattern
+- expectation
+
+This produces an important distinction:
+
+### Acoustics
+
+What the physical sound wave does.
+
+### Psychoacoustics
+
+How humans perceive that sound.
+
+Music lives in the interaction between the two.
+
+---
+
+# 22. Missing Fundamental
+
+One of my favorite examples:
+
+Suppose a sound contains:
+
+- 200 Hz
+- 300 Hz
+- 400 Hz
+- 500 Hz
+
+but **100 Hz is missing**.
+
+The brain may nevertheless perceive a pitch corresponding to approximately **100 Hz** because the harmonic pattern implies that fundamental.
+
+This is the:
+
+**Missing Fundamental Effect**
+
+It has practical implications for:
+
+- bass design
+- small speakers
+- psychoacoustic bass enhancement
+- phone speakers
+- mixing
+- mastering
+
+You can sometimes make bass *feel* deeper without actually reproducing enormous amounts of sub-bass.
+
+---
+
+# 23. Digital Music Is Numbers
+
+Once audio enters a digital system, the waveform becomes a sequence of numerical measurements.
+
+Conceptually:
+
+```text
+Analog pressure waveform
+        ↓
+Microphone
+        ↓
+Electrical signal
+        ↓
+ADC
+        ↓
+Samples
+        ↓
+Digital audio
+```
+
+The computer does not fundamentally understand "music."
+
+It sees something more like:
+
+```text
+0.012
+0.034
+0.071
+0.105
+0.084
+0.041
+-0.020
+...
+```
+
+Software provides the abstractions that let humans interpret those numbers musically.
+
+---
+
+# 24. MIDI Is Not Audio
+
+This distinction becomes essential once you start producing.
+
+**Audio:**
+
+> recorded or synthesized waveform information
+
+**MIDI:**
+
+> musical control instructions
+
+A MIDI message might effectively say:
+
+```text
+Play note C4
+Velocity = 96
+Channel = 1
+```
+
+The synthesizer decides what that note actually sounds like.
+
+Think of MIDI more like a **performance protocol** than a sound recording.
+
+For a backend developer, it's particularly interesting because MIDI is essentially **structured event messaging for musical systems**.
+
+---
+
+# 25. Sampling
+
+Sampling turns recorded sound into musical material.
+
+Anything can become an instrument:
+
+- vinyl
+- speech
+- drums
+- machinery
+- footsteps
+- birds
+- doors
+- appliances
+- environmental noise
+- your earlier hypothetical wrench
+
+Then manipulate it using:
+
+- slicing
+- looping
+- pitching
+- reversing
+- stretching
+- filtering
+- granular processing
+- resampling
+
+Sampling collapses the distinction between **sound** and **instrument**.
+
+---
+
+# 26. Scratching Is Real-Time Sample Manipulation
+
+This is especially relevant to your interest in old-school vinyl scratching.
+
+A record contains recorded audio.
+
+Moving it manually changes playback.
+
+You control:
+
+- playback position
+- velocity
+- direction
+- acceleration
+- rhythm
+
+The crossfader controls whether the sound is audible.
+
+So scratching combines:
+
+**sample playback + manual time manipulation + rhythmic articulation + amplitude gating.**
+
+That's an extraordinarily sophisticated interface when you think about it.
+
+Your hand literally becomes a **real-time transport controller for recorded audio**.
+
+---
+
+# 27. What Compression Does Musically
+
+Compression isn't only technical level control.
+
+It changes the **temporal shape of sound**.
+
+A compressor changes relationships involving:
+
+- transient
+- body
+- sustain
+- perceived loudness
+- groove
+
+Fast attack:
+
+> can suppress transients.
+
+Slower attack:
+
+> may allow the initial hit through while compressing the body.
+
+Release timing can interact rhythmically with the track.
+
+That's why compressors can **groove**.
+
+---
+
+# 28. What EQ Does Musically
+
+EQ changes the amplitude relationships among frequency regions.
+
+Technically:
+
+> frequency-dependent gain adjustment.
+
+Musically:
+
+> tonal sculpting.
+
+Examples:
+
+Kick too muddy:
+
+→ reduce an offending low-mid region.
+
+Vocal lacks intelligibility:
+
+→ inspect presence frequencies.
+
+Sample sounds dull:
+
+→ modify its upper spectrum.
+
+EQ is effectively controlled modification of **timbre**.
+
+---
+
+# 29. Distortion Creates New Frequency Content
+
+Distortion is particularly interesting because it doesn't merely amplify existing frequencies.
+
+Nonlinear processing can create new harmonic content.
+
+That's why distortion can make:
+
+- bass audible on small speakers
+- synths brighter
+- drums more aggressive
+- vocals more textured
+
+Types include:
+
+- saturation
+- clipping
+- overdrive
+- waveshaping
+- bit crushing
+
+Your future AudioMuse session on distortion could get gloriously nerdy very quickly.
+
+---
+
+# 30. Music as Information
+
+There is another useful perspective for your developer side.
+
+Music can be considered a structured information system.
+
+A track might contain:
+
+```text
+Track
+├── Tempo
+├── Meter
+├── Key
+├── Sections
+├── Notes
+├── Chords
+├── Rhythm
+├── Instruments
+├── Samples
+├── Automation
+├── Mix relationships
+└── Metadata
+```
+
+This means musical systems lend themselves naturally to:
+
+- databases
+- tagging
+- feature extraction
+- recommendation systems
+- DSP analysis
+- ML
+- MLLMs
+- generative systems
+- audio search engines
+
+---
+
+# 31. Machine Learning and Music
+
+Modern systems can analyze audio for features such as:
+
+- tempo
+- beat position
+- key
+- chord progression
+- instrument class
+- speaker identity
+- genre
+- timbre
+- mood
+- spectral characteristics
+
+Models can also perform:
+
+- stem separation
+- transcription
+- source separation
+- denoising
+- music generation
+- voice conversion
+- sound classification
+- automatic mastering
+
+This becomes a major bridge between your **backend/dev interests and audio interests**.
+
+---
+
+# 32. Potential AudioMuse Development Projects
+
+The material from Sessions 1 and 2 already gives us several interesting projects.
+
+### 1. Audio Feature Inspector
+
+Upload WAV file → backend calculates:
+
+- sample rate
+- bit depth
+- duration
+- peak amplitude
+- RMS
+- frequency spectrum
+- spectral centroid
+- estimated BPM
+
+---
+
+### 2. Sample Library Backend
+
+Build a searchable sample database containing:
+
+```text
+sample_id
+filename
+duration
+BPM
+key
+instrument
+texture
+source
+tags
+LUFS
+peak
+spectral centroid
+date recorded
+```
+
+Eventually use ML to automatically populate some metadata.
+
+---
+
+### 3. DJ Track Analyzer
+
+Backend service that stores:
+
+- BPM
+- key
+- phrase markers
+- waveform
+- cue points
+- energy level
+- genre
+- transition notes
+
+Essentially a DIY research version of what DJ-library software does.
+
+---
+
+### 4. Acoustic Treatment Analyzer
+
+Record an impulse or sweep and analyze:
+
+- reverberation
+- frequency response
+- decay
+- resonant frequencies
+- room modes
+
+This would directly support your future home sound setup.
+
+---
+
+### 5. Vinyl Scratch Analyzer
+
+Record scratching and visualize:
+
+- waveform
+- velocity
+- direction
+- transient timing
+- spectral change
+- crossfader gating
+
+That would be a bizarrely good intersection of old-school DJ technique and signal analysis.
+
+---
+
+# AudioMuse Vocabulary — Session 2 Additions
+
+These should eventually merge with the Session 1 vocabulary rather than becoming isolated lists.
+
+### Music Theory
+
+- Music
+- Pitch
+- Melody
+- Harmony
+- Interval
+- Scale
+- Key
+- Tonic
+- Chord
+- Chord progression
+- Octave
+- Consonance
+- Dissonance
+- Motif
+- Phrase
+- Register
+- Form
+- Texture
+
+### Rhythm & Time
+
+- Pulse
+- Beat
+- Tempo
+- BPM
+- Meter
+- Rhythm
+- Groove
+- Syncopation
+- Swing
+- Polyrhythm
+- Quantization
+- Subdivision
+
+### Acoustics / Psychoacoustics
+
+- Fundamental frequency
+- Harmonic
+- Partial
+- Overtone
+- Inharmonicity
+- Beating
+- Timbre
+- Spectral envelope
+- Missing fundamental
+- Loudness
+- Localization
+- Masking
+
+### Sound Design
+
+- ADSR
+- Attack
+- Decay
+- Sustain
+- Release
+- Oscillator
+- Filter
+- Modulation
+- Detuning
+- Resonance
+- Saturation
+- Distortion
+- Texture
+
+### Digital Audio
+
+- Sampling
+- Sample
+- Sample rate
+- PCM
+- ADC
+- DAC
+- MIDI
+- Quantization
+- Sequencer
+- DAW
+- Automation
+- Loop
+- Beatgrid
+- Time stretching
+- Pitch shifting
+- Resampling
+
+### Mixing / Engineering
+
+- EQ
+- Compression
+- Dynamic range
+- Headroom
+- Transient
+- Panning
+- Stereo imaging
+- Reverb
+- Delay
+- Gain
+- Clipping
+
+### DJ / Turntablism
+
+- Cue
+- Beatmatching
+- Phrase matching
+- Crossfader
+- Scratching
+- Backspin
+- Beat juggling
+- Slipmat
+- Pitch control
+- Vinyl
+- DVS
+- Cue point
+
+---
+
+# The Larger AudioMuse Model
+
+Sessions 1 and 2 now give us the beginnings of a hierarchy:
+
+```text
+SOUND
+│
+├── Physics
+│   ├── Pressure
+│   ├── Waves
+│   ├── Frequency
+│   ├── Amplitude
+│   ├── Phase
+│   └── Wavelength
+│
+├── Acoustic Interaction
+│   ├── Reflection
+│   ├── Absorption
+│   ├── Transmission
+│   ├── Diffraction
+│   ├── Refraction
+│   └── Resonance
+│
+├── Human Perception
+│   ├── Pitch
+│   ├── Loudness
+│   ├── Timbre
+│   ├── Localization
+│   └── Psychoacoustics
+│
+└── MUSIC
+    │
+    ├── Time
+    │   ├── Rhythm
+    │   ├── Tempo
+    │   ├── Groove
+    │   └── Meter
+    │
+    ├── Frequency
+    │   ├── Pitch
+    │   ├── Melody
+    │   ├── Harmony
+    │   └── Timbre
+    │
+    ├── Dynamics
+    │   ├── Amplitude
+    │   ├── Envelope
+    │   └── Articulation
+    │
+    ├── Space
+    │   ├── Stereo
+    │   ├── Reverb
+    │   └── Localization
+    │
+    └── Technology
+        ├── Recording
+        ├── Sampling
+        ├── Synthesis
+        ├── Mixing
+        ├── DJing
+        ├── DSP
+        └── Machine Learning
+```
+
+That hierarchy is worth preserving. **AudioMuse is starting to look less like a sequence of lessons and more like an actual knowledge graph for sound.** Future sessions can attach new concepts to this structure instead of treating acoustics, production, DJing, electronics, software, and psychoacoustics as unrelated disciplines.
