@@ -1,0 +1,114 @@
+schema: audiomuse-relationship-types
+version: 1
+description: Bounded canonical vocabulary for directed AudioMuse node relationships.
+relationship_types:
+  - id: produces
+    name: Produces
+    directionality: directed
+    meaning: The source can generate or bring about the target as an output.
+    use_when: Repository content supports a direct generative relationship.
+    do_not_use_when: The source merely affects, contains, studies, or is used with the target.
+    inverse: produced_by
+    examples:
+      - "vibration --produces--> sound"
+      - "synthesis --produces--> sound"
+  - id: characterized_by
+    name: Characterized by
+    directionality: directed
+    meaning: The target is a defining measurable or perceptual characteristic of the source.
+    use_when: The target describes an enduring property used to characterize the source.
+    do_not_use_when: The target only changes the source in a particular workflow.
+    inverse: characterizes
+    examples:
+      - "sound --characterized_by--> frequency"
+      - "sound --characterized_by--> timbre"
+  - id: influences
+    name: Influences
+    directionality: directed
+    meaning: Variation in the source can materially affect the target without asserting sole causation.
+    use_when: Content supports a directional physical, perceptual, or technical effect.
+    do_not_use_when: Only a loose thematic association is known.
+    inverse: influenced_by
+    examples:
+      - "frequency --influences--> pitch"
+      - "phase --influences--> recording"
+  - id: contributes_to
+    name: Contributes to
+    directionality: directed
+    meaning: The source is one of multiple factors that help form the target.
+    use_when: The source participates in the target but is neither sufficient nor uniquely causal.
+    do_not_use_when: A direct output or control relationship is supported.
+    inverse: has_contributor
+    examples:
+      - "resonance --contributes_to--> timbre"
+      - "rhythm --contributes_to--> sampling"
+  - id: studies
+    name: Studies
+    directionality: directed
+    meaning: The source is a field of inquiry whose subject includes the target.
+    use_when: A discipline explicitly examines the target concept.
+    do_not_use_when: A tool analyzes or processes a signal.
+    inverse: studied_by
+    examples:
+      - "psychoacoustics --studies--> sound"
+      - "psychoacoustics --studies--> pitch"
+  - id: captures
+    name: Captures
+    directionality: directed
+    meaning: The source preserves a signal derived from the target for later use.
+    use_when: The source is a recording or acquisition process applied to the target.
+    do_not_use_when: The source creates the target from controlled processes.
+    inverse: captured_by
+    examples:
+      - "recording --captures--> sound"
+      - "recording --captures--> vibration"
+  - id: represents
+    name: Represents
+    directionality: directed
+    meaning: The source encodes or stands for aspects of the target in another form.
+    use_when: The source stores measurements, events, or control data describing the target.
+    do_not_use_when: The source preserves the target as a recording or directly processes it.
+    inverse: represented_by
+    examples:
+      - "sampling --represents--> sound"
+      - "midi --represents--> pitch"
+  - id: processes
+    name: Processes
+    directionality: directed
+    meaning: The source computationally analyzes, generates, or transforms the target representation.
+    use_when: A processing discipline or operation acts on the target.
+    do_not_use_when: The source only controls a separate instrument or workflow.
+    inverse: processed_by
+    examples:
+      - "digital-signal-processing --processes--> sampling"
+      - "digital-signal-processing --processes--> recording"
+  - id: controls
+    name: Controls
+    directionality: directed
+    meaning: The source supplies events or parameters that direct the target's behavior.
+    use_when: Control data or an ordering system explicitly drives the target.
+    do_not_use_when: The source creates or processes the target's audio output.
+    inverse: controlled_by
+    examples:
+      - "midi --controls--> synthesis"
+      - "sequencing --controls--> sampling"
+  - id: enables
+    name: Enables
+    directionality: directed
+    meaning: The source makes the target practice or capability possible without performing it directly.
+    use_when: Repository content establishes a clear prerequisite capability.
+    do_not_use_when: The relationship is merely common usage or historical proximity.
+    inverse: enabled_by
+    examples:
+      - "recording --enables--> sampling"
+      - "sampling --enables--> digital-signal-processing"
+  - id: used_in
+    name: Used in
+    directionality: directed
+    meaning: The source is a technique or component intentionally employed within the target practice.
+    use_when: Content explicitly places the source inside the target workflow.
+    do_not_use_when: A more precise produces, controls, represents, or processes edge applies.
+    inverse: uses
+    examples:
+      - "digital-signal-processing --used_in--> synthesis"
+      - "midi --used_in--> sequencing"

@@ -12,10 +12,13 @@ core_concepts:
   - energy transfer
   - source
   - medium
-related_nodes:
-  - sound
-  - frequency
-  - resonance
+relationships:
+  - target: sound
+    type: produces
+  - target: frequency
+    type: characterized_by
+  - target: resonance
+    type: influences
 sources:
   - session-01-what-is-sound
   - session-01-vocabulary-atlas

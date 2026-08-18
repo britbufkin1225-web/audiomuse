@@ -8,13 +8,14 @@ A node file lives at `nodes/<domain>/<id>.md`, where `<domain>` is the node's pr
 
 ## Relationship and expansion rules
 
-- Use stable node IDs in `related_nodes`, never filenames or paths.
+- Use stable node IDs as relationship `target` values, never filenames or paths.
 - Use registry IDs from `sources/source-registry.yaml` in `sources`.
 - Add a session ID to `session_origin` only when that session introduced or materially developed the node.
 - Promote a vocabulary term to a node when it supports durable relationships, experiments, applications, or project work.
 - Keep prose concise and durable; preserve chronological detail in sessions.
-- Keep relationships curated and conceptually meaningful; reciprocal links may be added where they improve traversal.
-- Treat `related_nodes` as an untyped adjacency list. An entry records that two concepts are explicitly related; it does not assert an edge type or direction, and Phase 2 defines no edge-type vocabulary.
+- Keep relationships curated, typed, and conceptually meaningful. Read each entry as `current node --type--> target`.
+- Use only IDs from `schemas/relationship-types.yaml`. Do not store inverse or reciprocal edges only to improve traversal.
+- Keep relationships in deterministic author-curated order and run `pwsh -NoProfile -File tools/validate-graph.ps1` after edits.
 
 ## Domains and statuses
 

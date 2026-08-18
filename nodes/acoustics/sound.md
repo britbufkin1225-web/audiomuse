@@ -13,17 +13,13 @@ core_concepts:
   - pressure wave
   - receiver
   - auditory perception
-related_nodes:
-  - vibration
-  - frequency
-  - phase
-  - resonance
-  - timbre
-  - psychoacoustics
-  - recording
-  - sampling
-  - synthesis
-  - digital-signal-processing
+relationships:
+  - target: frequency
+    type: characterized_by
+  - target: phase
+    type: characterized_by
+  - target: timbre
+    type: characterized_by
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

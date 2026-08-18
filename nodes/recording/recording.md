@@ -13,12 +13,15 @@ core_concepts:
   - storage medium
   - playback
   - editing
-related_nodes:
-  - sound
-  - vibration
-  - phase
-  - sampling
-  - digital-signal-processing
+relationships:
+  - target: sound
+    type: captures
+  - target: vibration
+    type: captures
+  - target: sampling
+    type: enables
+  - target: digital-signal-processing
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-03-history-of-electronic-music

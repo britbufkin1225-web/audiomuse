@@ -13,16 +13,21 @@ core_concepts:
   - period
   - wavelength
   - pitch
-related_nodes:
-  - sound
-  - vibration
-  - phase
-  - resonance
-  - timbre
-  - pitch
-  - synthesis
-  - sampling
-  - digital-signal-processing
+relationships:
+  - target: phase
+    type: influences
+  - target: resonance
+    type: influences
+  - target: timbre
+    type: influences
+  - target: pitch
+    type: influences
+  - target: synthesis
+    type: used_in
+  - target: sampling
+    type: influences
+  - target: digital-signal-processing
+    type: used_in
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

@@ -13,12 +13,17 @@ core_concepts:
   - controller
   - channel
   - synchronization
-related_nodes:
-  - pitch
-  - rhythm
-  - sequencing
-  - synthesis
-  - sampling
+relationships:
+  - target: pitch
+    type: represents
+  - target: rhythm
+    type: represents
+  - target: sequencing
+    type: used_in
+  - target: synthesis
+    type: controls
+  - target: sampling
+    type: controls
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music
