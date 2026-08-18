@@ -34,6 +34,7 @@ The layers remain distinct:
 - Vocabulary = terminology and practical reference
 - Sources = provenance and evidence
 - Indexes = deterministic read-only projections
+- Experiments = reproducible listening, observation, visualization, and measurement exercises
 
 The intended path is `Session -> Vocabulary -> Node -> Sources / Graph Relationships`; no step collapses one layer into another.
 
@@ -75,3 +76,11 @@ The files in `indexes/` are deterministic views built from canonical nodes, sess
 Run `pwsh -NoProfile -File tools/build-knowledge-index.ps1` to rebuild them and `pwsh -NoProfile -File tools/validate-knowledge-index.ps1` to verify canonical integrity, edge reconciliation, and generated-file currency. Inbound displays are derived navigation views only; the generator never synthesizes reverse canonical edges.
 
 The generated `vocabulary/index.md` is a separate restrained projection of canonical vocabulary entries. It offers A-Z, domain, session, and node lookup without importing vocabulary associations into graph semantics. Build it with `tools/build-vocabulary-index.ps1` and validate it with `tools/validate-vocabulary.ps1`.
+
+## Experiments
+
+Experiments keep AudioMuse from becoming an encyclopedia that only accumulates descriptions. They connect supported concepts to something a reader can hear, observe, manipulate, record, or—when the method warrants it—measure. Canonical experiment records are separate from nodes because a procedure can span several concepts, sessions, and vocabulary terms and has its own safety and repeatability concerns. Embedding it in one node would imply false ownership and make reuse difficult.
+
+Experiment references are cross-layer pointers, not canonical graph edges. The graph continues to own conceptual meaning; experiments provide practical routes through that meaning. Their generated index is disposable for the same reason as the knowledge and vocabulary indexes: navigation can be rebuilt, while authored records remain authoritative.
+
+Observation means a qualitative report. Measurement means a numeric result with enough method and equipment context to interpret it. Keeping them separate prevents subjective impressions from acquiring false precision and avoids forcing measurement hardware into critical-listening exercises.

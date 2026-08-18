@@ -1,0 +1,23 @@
+id: "near-frequency-beating"
+title: "Near-Frequency Beating"
+status: "proof"
+type: "hybrid"
+difficulty: "introductory"
+purpose: "Hear and observe the amplitude fluctuation produced when two nearby frequencies are combined."
+node_refs: ["frequency", "phase", "pitch", "psychoacoustics", "synthesis"]
+vocabulary_refs: ["frequency", "phase", "waveform", "consonance", "dissonance", "psychoacoustics"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+source_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+required_equipment: ["two-oscillator tone generator or synthesizer", "speaker or headphones", "observation notes"]
+optional_equipment: ["waveform or level display", "frequency counter or spectrum analyzer"]
+safety: ["Set both oscillators to a conservative level before combining them because summing can raise the output.", "Avoid prolonged or high-level pure-tone exposure and stop at any discomfort.", "Keep feedback, clipping, and intentional overload out of the signal path."]
+setup: ["Set two sine oscillators to 440 Hz and 442 Hz at comparable low levels.", "Route both to the same mono output without effects or modulation.", "If using a display, choose a time window long enough to show slow amplitude change."]
+procedure: ["Listen to the first oscillator alone, the second alone, and then both together.", "Count or describe the slow pulses heard over several seconds.", "Change the second oscillator to 444 Hz, keep other settings fixed, and compare the pulse rate.", "Observe the combined waveform or level trace if available."]
+observations: ["Record the perceived fluctuation rate and character for each frequency pair.", "Distinguish the acoustic frequency beating from rhythmic beats in music."]
+measurements: ["Record the two oscillator frequencies and, if timed, the counted fluctuations per second with the timing method.", "The frequency settings are physical signal parameters; descriptions such as roughness or tension remain perceptual observations."]
+expected_behavior: ["The 440 Hz plus 442 Hz pair should fluctuate more slowly than the 440 Hz plus 444 Hz pair.", "The combined amplitude pattern follows the difference between nearby frequencies under this simple controlled condition."]
+interpretation: ["The changing relative phase of the two tones alternates reinforcement and cancellation.", "Perceived roughness or musical tension depends on listener, playback, level, and context in addition to the frequency difference."]
+limitations: ["Oscillator accuracy, channel routing, playback nonlinearities, room interaction, and counting error can affect the result.", "This exercise does not isolate every contributor to consonance or dissonance."]
+repeatability: ["Record both frequencies, levels, oscillator type, routing, playback device, listening position, and timing method."]
+related_experiments: ["frequency-room-position", "waveform-timbre-comparison"]
+project_connections: ["instrument tuning", "chorus and detuning sound design"]
