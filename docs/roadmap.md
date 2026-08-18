@@ -20,6 +20,10 @@ Promote a curated set of foundational Sessions 1–3 concepts, connect them thro
 
 Replace untyped adjacency with a bounded directed relationship vocabulary, migrate the initial graph to explicit semantic edges, and add deterministic integrity validation.
 
+## Phase 5 — Read-Only Derived Graph Views + Knowledge Index Foundation
+
+Generate deterministic, rebuildable indexes for domains, typed relationships, inbound/outbound connections, session coverage, and source coverage while keeping canonical repository content authoritative.
+
 ## Near-term follow-up
 
 - Deepen high-value nodes through focused research and experiments
