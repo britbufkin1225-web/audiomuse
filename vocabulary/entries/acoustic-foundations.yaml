@@ -1,0 +1,132 @@
+---
+id: "sound"
+term: "Sound"
+domain: "acoustics"
+definition: "Mechanical energy traveling through matter as a pressure or structural disturbance."
+digital_relationship: "Captured as an electrical signal and represented digitally as ordered amplitude samples."
+best_use: "Recording, synthesis, playback, measurement, and analysis."
+technologies: ["microphones", "audio interfaces", "DAWs", "speakers", "oscilloscopes"]
+node_refs: ["sound"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["vibration", "medium", "pressure-wave", "audio-signal"]
+tags: ["acoustics", "foundation"]
+---
+id: "vibration"
+term: "Vibration"
+domain: "acoustics"
+definition: "Repeated movement around an equilibrium position that can transfer energy into a medium."
+digital_relationship: "Represented by changing sample values; modeled with oscillators and modulation signals."
+best_use: "Generating tones, analyzing machinery, synthesis, and speaker design."
+technologies: ["oscillators", "accelerometers", "contact microphones", "waveform generators"]
+node_refs: ["vibration"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["sound", "medium", "amplitude", "frequency"]
+tags: ["acoustics", "motion"]
+---
+id: "medium"
+term: "Medium"
+domain: "acoustics"
+definition: "Matter through which a mechanical wave travels, such as air, water, wood, or steel."
+digital_relationship: "Usually simulated through acoustic models rather than stored directly in an audio file."
+best_use: "Predicting propagation, isolation, underwater audio, and structural noise."
+technologies: ["acoustic simulation", "finite-element modeling", "hydrophones", "vibration sensors"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["sound", "vibration", "pressure-wave", "wavelength"]
+tags: ["acoustics", "propagation"]
+---
+id: "pressure-wave"
+term: "Pressure Wave"
+domain: "acoustics"
+definition: "Alternating changes in pressure that propagate through a medium."
+digital_relationship: "A microphone converts pressure variation into voltage, then an ADC converts voltage into samples."
+best_use: "Recording, SPL measurement, loudspeaker testing, and acoustic sensing."
+technologies: ["measurement microphones", "ADCs", "SPL meters", "pressure transducers"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["compression-acoustic", "rarefaction", "medium", "waveform"]
+tags: ["acoustics", "propagation"]
+---
+id: "compression-acoustic"
+term: "Compression (Acoustic)"
+domain: "acoustics"
+definition: "A region where particles are temporarily crowded and pressure rises above equilibrium."
+digital_relationship: "Appears as one polarity of a recorded waveform; not the same as dynamic-range compression."
+best_use: "Understanding speaker motion, microphone polarity, and wave propagation."
+technologies: ["microphones", "oscilloscopes", "polarity tests", "acoustic simulators"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["rarefaction", "pressure-wave", "phase"]
+tags: ["acoustics", "wave-cycle"]
+---
+id: "rarefaction"
+term: "Rarefaction"
+domain: "acoustics"
+definition: "A region where particles spread apart and pressure falls below equilibrium."
+digital_relationship: "Appears as the opposite waveform polarity from compression."
+best_use: "Understanding wave cycles, phase, polarity, and transducer behavior."
+technologies: ["waveform displays", "oscilloscopes", "microphones", "speaker test systems"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["compression-acoustic", "pressure-wave", "phase"]
+tags: ["acoustics", "wave-cycle"]
+---
+id: "frequency"
+term: "Frequency"
+domain: "acoustics"
+definition: "The number of wave cycles per second, measured in hertz (Hz)."
+digital_relationship: "Mapped to spectral bins by Fourier analysis and controlled by oscillators, filters, and pitch tools."
+best_use: "Pitch control, EQ, tuning, crossover design, and fault detection."
+technologies: ["spectrum analyzers", "FFTs", "tuners", "EQs", "synthesizers"]
+node_refs: ["frequency"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+related_terms: ["wavelength", "phase", "fundamental-frequency", "spectrum"]
+tags: ["acoustics", "measurement"]
+---
+id: "amplitude"
+term: "Amplitude"
+domain: "acoustics"
+definition: "The magnitude of a vibration or pressure variation."
+digital_relationship: "Stored as sample magnitude and adjusted by gain, faders, envelopes, and dynamics processors."
+best_use: "Controlling level, shaping transients, modulation, and preventing clipping."
+technologies: ["faders", "gain stages", "compressors", "limiters", "waveform editors"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["vibration", "waveform", "sample"]
+tags: ["acoustics", "measurement"]
+---
+id: "wavelength"
+term: "Wavelength"
+domain: "acoustics"
+definition: "The physical length of one cycle; speed of sound divided by frequency."
+digital_relationship: "Used in acoustic calculators and spatial models rather than encoded as an audio-file field."
+best_use: "Room treatment, speaker placement, microphone arrays, and bass management."
+technologies: ["acoustic calculators", "simulation tools", "measurement systems"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["frequency", "phase", "room-mode", "diffraction"]
+tags: ["acoustics", "measurement"]
+---
+id: "phase"
+term: "Phase"
+domain: "acoustics"
+definition: "A wave's position within its cycle relative to another reference."
+digital_relationship: "Represented by timing and angular relationships; altered by delays, filters, and phase rotation."
+best_use: "Aligning microphones and subs, layering samples, widening, and cancellation control."
+technologies: ["phase meters", "correlation meters", "delay tools", "all-pass filters"]
+node_refs: ["phase"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["frequency", "wavelength", "waveform", "standing-wave"]
+tags: ["acoustics", "measurement"]
+---
+id: "waveform"
+term: "Waveform"
+domain: "acoustics"
+definition: "A representation of how a signal's amplitude changes over time."
+digital_relationship: "Displayed from stored samples and edited directly in sample editors and DAWs."
+best_use: "Editing, transient inspection, looping, clipping detection, and sound design."
+technologies: ["DAWs", "sample editors", "oscilloscopes", "waveform viewers"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["amplitude", "phase", "sample", "audio-signal"]
+tags: ["acoustics", "representation"]

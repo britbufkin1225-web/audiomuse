@@ -21,6 +21,22 @@ Canonical knowledge-maturity statuses:
 
 Sources provide provenance and evidence. They answer: "Where did this knowledge come from?" Nodes reference stable source-registry IDs; the registry records human-readable titles and repository-relative locators. Provenance is curated explicitly, not reconstructed automatically.
 
+## Vocabulary
+
+Vocabulary is the terminology, definition, and practical-context layer. It answers what a term means, how it appears in digital audio, why it matters in practice, and which technologies commonly use it. Entries may explicitly reference canonical nodes and sessions, but vocabulary does not duplicate or outrank either layer.
+
+`node_refs` are cross-layer pointers, not graph edges. `session_refs` identify substantial discussion, not definition ownership. `related_terms` are glossary navigation associations only: they are untyped, do not imply equivalence, do not affect node degree, and never alter the Phase 5 graph or indexes.
+
+The layers remain distinct:
+
+- Sessions = exploration chronology
+- Nodes = durable concepts and typed graph relationships
+- Vocabulary = terminology and practical reference
+- Sources = provenance and evidence
+- Indexes = deterministic read-only projections
+
+The intended path is `Session -> Vocabulary -> Node -> Sources / Graph Relationships`; no step collapses one layer into another.
+
 ## Typed relationship pattern
 
 `session -> concepts -> nodes --typed relationship--> nodes -> experiments / research / builds`
@@ -57,3 +73,5 @@ The many-to-many contribution view for the first three sessions lives in `docs/s
 The files in `indexes/` are deterministic views built from canonical nodes, sessions, schemas, and source/provenance records. They support navigation, audit, analysis, and future tooling without becoming authoritative or mutating graph semantics. They are not a database or duplicate knowledge store, and they must not be edited manually.
 
 Run `pwsh -NoProfile -File tools/build-knowledge-index.ps1` to rebuild them and `pwsh -NoProfile -File tools/validate-knowledge-index.ps1` to verify canonical integrity, edge reconciliation, and generated-file currency. Inbound displays are derived navigation views only; the generator never synthesizes reverse canonical edges.
+
+The generated `vocabulary/index.md` is a separate restrained projection of canonical vocabulary entries. It offers A-Z, domain, session, and node lookup without importing vocabulary associations into graph semantics. Build it with `tools/build-vocabulary-index.ps1` and validate it with `tools/validate-vocabulary.ps1`.

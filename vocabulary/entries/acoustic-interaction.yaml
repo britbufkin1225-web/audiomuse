@@ -1,0 +1,96 @@
+---
+id: "reflection"
+term: "Reflection"
+domain: "acoustics"
+definition: "Sound energy that returns from a boundary instead of being fully absorbed or transmitted."
+digital_relationship: "Modeled by delay taps, convolution, early-reflection engines, and ray tracing."
+best_use: "Creating spatial realism, measuring rooms, positioning treatment, and designing reverbs."
+technologies: ["convolution reverbs", "room simulators", "impulse-response tools", "acoustic panels"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["absorption", "transmission", "reverberation", "diffraction"]
+tags: ["acoustics", "rooms"]
+---
+id: "absorption"
+term: "Absorption"
+domain: "acoustics"
+definition: "Conversion of acoustic energy into small amounts of heat within a material."
+digital_relationship: "Represented by frequency-dependent absorption coefficients in acoustic models."
+best_use: "Reducing reflections, flutter echo, and room decay without necessarily soundproofing."
+technologies: ["porous panels", "mineral wool", "acoustic modeling", "reverberation measurement"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["reflection", "transmission", "reverberation"]
+tags: ["acoustics", "rooms"]
+---
+id: "transmission"
+term: "Transmission"
+domain: "acoustics"
+definition: "Sound energy passing through a material or structure into another space."
+digital_relationship: "Measured and modeled with transmission loss and frequency-dependent isolation data."
+best_use: "Soundproofing, enclosure design, privacy, and controlling equipment noise."
+technologies: ["STC/TL testing", "acoustic simulation", "isolation construction", "measurement microphones"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["reflection", "absorption", "medium"]
+tags: ["acoustics", "isolation"]
+---
+id: "diffraction"
+term: "Diffraction"
+domain: "acoustics"
+definition: "Bending and spreading of waves around obstacles and through openings."
+digital_relationship: "Simulated in spatial-audio engines and boundary or finite-element models."
+best_use: "Speaker cabinet design, array behavior, architectural acoustics, and microphone placement."
+technologies: ["acoustic simulators", "wave-field models", "loudspeaker design software"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["wavelength", "reflection", "transmission"]
+tags: ["acoustics", "propagation"]
+---
+id: "resonance"
+term: "Resonance"
+domain: "acoustics"
+definition: "A strong response when a system is excited near one of its natural frequencies."
+digital_relationship: "Appears as peaks and prolonged decay in spectra, waterfall plots, and impulse responses."
+best_use: "Tuning instruments, diagnosing rooms, designing enclosures, and creative filtering."
+technologies: ["spectrum analyzers", "resonators", "parametric EQ", "room-measurement software"]
+node_refs: ["resonance"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["standing-wave", "room-mode", "reverberation", "filter"]
+tags: ["acoustics", "rooms"]
+---
+id: "standing-wave"
+term: "Standing Wave"
+domain: "acoustics"
+definition: "A stable interference pattern created by waves traveling in opposing directions."
+digital_relationship: "Seen as location-dependent peaks and nulls and modeled from geometry and boundary conditions."
+best_use: "Understanding bass inconsistencies and positioning speakers, subs, and listeners."
+technologies: ["room calculators", "measurement microphones", "bass-management software"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["phase", "resonance", "room-mode", "wavelength"]
+tags: ["acoustics", "rooms"]
+---
+id: "room-mode"
+term: "Room Mode"
+domain: "acoustics"
+definition: "A standing-wave resonance determined by a room's dimensions and boundaries."
+digital_relationship: "Calculated by software and confirmed with frequency sweeps and decay plots."
+best_use: "Bass treatment, subwoofer placement, room correction, and mix-position selection."
+technologies: ["room-measurement software", "calibrated microphones", "DSP room correction"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["standing-wave", "resonance", "wavelength", "reverberation"]
+tags: ["acoustics", "rooms"]
+---
+id: "reverberation"
+term: "Reverberation"
+domain: "acoustics"
+definition: "The dense persistence of reflected sound after the source stops."
+digital_relationship: "Created by algorithmic reverb or convolution and measured using decay time."
+best_use: "Establishing space, depth, cohesion, realism, or dramatic scale."
+technologies: ["reverb plug-ins", "convolution engines", "impulse-response libraries"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["reflection", "absorption", "resonance", "room-mode"]
+tags: ["acoustics", "rooms"]

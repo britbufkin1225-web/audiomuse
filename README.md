@@ -5,15 +5,15 @@
 
 **A Resonant Atlas of Sound, Music & Signal**
 
-AudioMuse is an expandable, repository-first knowledge atlas for acoustics, music, recording, production, DJing, digital audio, DSP, and machine audio. Sessions preserve chronological exploration; nodes preserve durable conceptual knowledge and connections.
+AudioMuse is an expandable, repository-first knowledge atlas for acoustics, music, recording, production, DJing, digital audio, DSP, and machine audio. Sessions preserve chronological exploration; nodes preserve durable conceptual knowledge and connections; vocabulary provides terminology, digital context, and curated cross-references.
 
 ## Structure
 
 - `sessions/` — chronological exploration records
 - `nodes/` — durable knowledge-graph concepts organized by domain
-- `schemas/` — canonical node and source metadata contracts
+- `schemas/` — canonical node, vocabulary, and source metadata contracts
 - `sources/` — provenance registry referenced by stable source IDs
-- `vocabulary/` — expandable terminology atlases
+- `vocabulary/` — canonical terminology entries, source atlases, and a read-only cross-reference index
 - `research/` — sources and research notes
 - `experiments/` — listening, measurement, DSP, studio, and hardware experiments
 - `assets/brand/` — canonical AudioMuse identity assets and guidelines
@@ -31,8 +31,9 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - A many-to-many session-to-node map and human-readable graph overview
 - A dependency-free graph integrity validator
 - Deterministic, rebuildable knowledge indexes for graph, session, and provenance inspection
+- A validated 38-entry vocabulary foundation with deterministic A-Z, domain, session, and node views
 
-See `indexes/README.md` for generated views and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
+See `indexes/README.md` for graph-derived views, `vocabulary/README.md` for vocabulary semantics, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
 
 ## Project posture
 

@@ -1,0 +1,120 @@
+---
+id: "audio-signal"
+term: "Audio Signal"
+domain: "digital-audio"
+definition: "A changing electrical or numerical representation corresponding to sound."
+digital_relationship: "In digital systems it is a sequence of sample values organized into channels."
+best_use: "Recording, routing, processing, transmission, and playback."
+technologies: ["audio interfaces", "DAWs", "mixers", "DSP systems"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["sound", "transducer", "sample", "waveform"]
+tags: ["digital-audio", "signal"]
+---
+id: "transducer"
+term: "Transducer"
+domain: "digital-audio"
+definition: "A device that converts energy from one form to another."
+digital_relationship: "Connects acoustic and electrical or digital domains through microphones and speakers."
+best_use: "Capturing and reproducing sound or vibration."
+technologies: ["microphones", "speakers", "pickups", "headphones", "accelerometers"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["audio-signal", "analog-to-digital-converter", "digital-to-analog-converter"]
+tags: ["digital-audio", "hardware"]
+---
+id: "analog-to-digital-converter"
+term: "Analog-to-Digital Converter (ADC)"
+domain: "digital-audio"
+definition: "A circuit that converts an analog voltage into numerical samples."
+digital_relationship: "Defines sample rate, bit depth, noise, distortion, and input-level constraints."
+best_use: "Recording microphones, instruments, vinyl, and measurement signals."
+technologies: ["audio interfaces", "field recorders", "measurement hardware"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["digital-to-analog-converter", "sample", "sample-rate", "bit-depth"]
+tags: ["digital-audio", "conversion"]
+---
+id: "digital-to-analog-converter"
+term: "Digital-to-Analog Converter (DAC)"
+domain: "digital-audio"
+definition: "A circuit that converts numerical samples into a continuous electrical signal."
+digital_relationship: "Feeds amplifiers, headphones, monitors, or other analog equipment."
+best_use: "Monitoring, playback, mastering, and equipment testing."
+technologies: ["audio interfaces", "headphone DACs", "controllers", "digital mixers"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["analog-to-digital-converter", "sample", "audio-signal"]
+tags: ["digital-audio", "conversion"]
+---
+id: "sample"
+term: "Sample"
+domain: "digital-audio"
+definition: "One numerical measurement of signal amplitude at a particular moment."
+digital_relationship: "The fundamental time-domain unit of pulse-code-modulated digital audio."
+best_use: "Editing, DSP, synthesis, storage, and analysis."
+technologies: ["DAWs", "audio files", "DSP libraries", "samplers"]
+node_refs: ["sampling"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["sample-rate", "bit-depth", "waveform", "audio-signal"]
+tags: ["digital-audio", "sampling"]
+---
+id: "sample-rate"
+term: "Sample Rate"
+domain: "digital-audio"
+definition: "The number of samples captured or reproduced per second."
+digital_relationship: "Determines the highest representable frequency under sampling theory and affects processing bandwidth."
+best_use: "Choosing recording formats, designing DSP, resampling, and video synchronization."
+technologies: ["audio interfaces", "DAWs", "sample-rate converters"]
+node_refs: ["sampling"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+related_terms: ["sample", "bit-depth", "frequency", "analog-to-digital-converter"]
+tags: ["digital-audio", "sampling"]
+---
+id: "bit-depth"
+term: "Bit Depth"
+domain: "digital-audio"
+definition: "The number of bits used to represent each sample's amplitude."
+digital_relationship: "Influences quantization resolution and available digital dynamic range."
+best_use: "Recording with headroom, selecting file formats, and controlling noise in processing."
+technologies: ["ADCs", "DAWs", "WAV files", "dither processors"]
+node_refs: ["sampling"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+related_terms: ["sample", "sample-rate", "analog-to-digital-converter"]
+tags: ["digital-audio", "sampling"]
+---
+id: "digital-signal-processing"
+term: "Digital Signal Processing (DSP)"
+domain: "dsp"
+definition: "Mathematical manipulation of sampled signals."
+digital_relationship: "Implements filters, dynamics, effects, analysis, coding, synthesis, and restoration."
+best_use: "Nearly every modern audio workflow, from EQ to machine listening."
+technologies: ["CPUs", "DSP chips", "plug-ins", "audio software libraries"]
+node_refs: ["digital-signal-processing"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["audio-signal", "sample", "filter", "latency"]
+tags: ["dsp", "processing"]
+---
+id: "filter"
+term: "Filter"
+domain: "dsp"
+definition: "A system that changes selected frequency components of a signal."
+digital_relationship: "Implemented with digital algorithms such as FIR or IIR structures."
+best_use: "EQ, crossover design, noise removal, synthesis, and anti-aliasing."
+technologies: ["EQ plug-ins", "synthesizers", "DSP libraries", "crossovers"]
+node_refs: ["digital-signal-processing"]
+session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+related_terms: ["frequency", "spectrum", "resonance", "digital-signal-processing"]
+tags: ["dsp", "filtering"]
+---
+id: "latency"
+term: "Latency"
+domain: "digital-audio"
+definition: "Delay between an input event and the corresponding output."
+digital_relationship: "Created by buffering, conversion, processing, operating systems, and transmission."
+best_use: "Live monitoring, DJ performance, recording, networked audio, and interactive instruments."
+technologies: ["audio drivers", "low-latency interfaces", "buffer controls", "network-audio protocols"]
+node_refs: []
+session_refs: ["session-01-vocabulary-atlas"]
+related_terms: ["audio-signal", "digital-signal-processing", "analog-to-digital-converter", "digital-to-analog-converter"]
+tags: ["digital-audio", "timing"]
