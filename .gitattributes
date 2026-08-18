@@ -1,0 +1,14 @@
+# AudioMuse line-ending policy.
+#
+# tools/build-knowledge-index.ps1 always writes UTF-8 (no BOM) with LF, and
+# tools/validate-knowledge-index.ps1 byte-compares the committed files under
+# indexes/ against freshly generated output. Without this policy a clone made
+# with Git's Windows default (core.autocrlf=true) checks those files out with
+# CRLF, and index validation reports a false "stale index" on a pristine clone.
+#
+# Normalize every tracked text file to LF in the repository and in the working
+# tree on all platforms; keep known binary assets untouched.
+* text=auto eol=lf
+
+*.png binary
+*.docx binary
