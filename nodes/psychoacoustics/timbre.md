@@ -17,7 +17,10 @@ related_nodes:
   - sound
   - frequency
   - resonance
+  - pitch
+  - psychoacoustics
   - sampling
+  - synthesis
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

@@ -15,6 +15,7 @@ core_concepts:
   - spectral decay
 related_nodes:
   - sound
+  - vibration
   - frequency
   - timbre
 sources:

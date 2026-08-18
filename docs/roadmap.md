@@ -8,10 +8,18 @@ Normalize the starter scaffold to the canonical **AudioMuse** identity and remov
 
 Create the canonical GitHub repository foundation and import the existing AudioMuse session, vocabulary, brand, and research source material.
 
+## Phase 2 — Node Schema + Source Provenance Foundation
+
+Establish canonical node and source contracts, provenance conventions, and a small proof-node set.
+
+## Phase 3 — Initial Node Expansion + Session Mapping
+
+Promote a curated set of foundational Sessions 1–3 concepts, connect them through canonical node relationships, and expose the many-to-many session-to-node map.
+
 ## Near-term follow-up
 
-- Knowledge model + initial node promotion
-- Research source + citation conventions
+- Deepen high-value nodes through focused research and experiments
+- Extend source and citation coverage as new evidence is introduced
 - Listening / measurement / visualization experiments
 
 Keep later phases intentionally flexible so the research can determine what deserves implementation.

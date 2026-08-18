@@ -18,6 +18,11 @@ related_nodes:
   - sound
   - frequency
   - timbre
+  - rhythm
+  - recording
+  - sequencing
+  - midi
+  - digital-signal-processing
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
