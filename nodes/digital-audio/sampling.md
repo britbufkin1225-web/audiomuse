@@ -19,8 +19,6 @@ relationships:
     type: represents
   - target: timbre
     type: represents
-  - target: rhythm
-    type: used_in
   - target: digital-signal-processing
     type: enables
 sources:

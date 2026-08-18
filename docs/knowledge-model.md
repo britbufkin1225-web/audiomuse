@@ -43,7 +43,8 @@ Source relationships use stable registry IDs. The schemas in `schemas/` define t
 - Trivial definitional edges may rely on the node's existing provenance. Factual, historical, causal, or non-obvious edges need appropriate source support.
 - Cross-domain edges follow the same evidence rules; domain boundaries neither require nor prohibit a relationship.
 - Propose future types by documenting a distinct recurring meaning, usage boundary, inverse, and repository examples. Do not add a synonym for an existing type.
-- Run `pwsh -NoProfile -File tools/validate-graph.ps1` after changing nodes or relationship types.
+- A node with no defensible outbound claim records `relationships: []`. Inbound edges from other nodes still connect it, so never invent an edge merely to avoid an empty list.
+- Run `pwsh -NoProfile -File tools/validate-graph.ps1` after changing nodes or relationship types. It reports every integrity violation it finds, prints the graph counts, and exits non-zero while any violation remains.
 
 Phase 4 cleanly replaces `related_nodes`; the repository does not maintain parallel typed and untyped systems. During migration, reciprocal adjacency pairs and weak associations were reviewed and normalized into single supported claims. Links that conveyed only redundant traversal or lacked a defensible typed meaning were removed rather than relabeled generically.
 

@@ -13,9 +13,7 @@ core_concepts:
   - envelope
   - transient
   - modulation
-relationships:
-  - target: synthesis
-    type: influences
+relationships: []
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

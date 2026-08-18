@@ -22,12 +22,10 @@ relationships:
     type: influences
   - target: pitch
     type: influences
-  - target: synthesis
-    type: used_in
   - target: sampling
     type: influences
   - target: digital-signal-processing
-    type: used_in
+    type: influences
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

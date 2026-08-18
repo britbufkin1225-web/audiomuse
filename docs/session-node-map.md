@@ -58,7 +58,7 @@ graph TD
 
     FREQUENCY -- influences --> PITCH[Pitch]
     FREQUENCY -- influences --> TIMBRE
-    FREQUENCY -- used_in --> SYNTHESIS[Synthesis]
+    SYNTHESIS[Synthesis] -- controls --> FREQUENCY
     PHASE -- influences --> RECORDING[Recording]
     PHASE -- influences --> DSP[Digital Signal Processing]
 
@@ -68,7 +68,7 @@ graph TD
 
     RECORDING -- enables --> SAMPLING[Sampling]
     RECORDING -- enables --> DSP
-    RHYTHM -- contributes_to --> SAMPLING
+    RHYTHM -- influences --> SAMPLING
     RHYTHM -- influences --> SEQUENCING[Sequencing]
     SEQUENCING -- controls --> SAMPLING
     SEQUENCING -- controls --> SYNTHESIS

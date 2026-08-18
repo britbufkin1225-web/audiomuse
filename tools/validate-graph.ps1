@@ -43,15 +43,22 @@ foreach ($file in $nodeFiles) {
     if ($nodes.ContainsKey($id)) { throw "Duplicate node id: $id" }
     $nodes[$id] = $file.FullName
 
-    $relationshipBlock = [regex]::Match($yaml, '(?m)^relationships:\r?\n(?<body>(?:  [^\r\n]*\r?\n?)*)')
-    if (-not $relationshipBlock.Success) { throw "Missing relationships array: $id" }
-    $edges = [regex]::Matches($relationshipBlock.Groups['body'].Value,
-        '(?m)^  - target: (?<target>[a-z0-9]+(?:-[a-z0-9]+)*)\r?\n    type: (?<type>[a-z0-9_]+)\r?$')
-    $edgeLines = [regex]::Matches($relationshipBlock.Groups['body'].Value, '(?m)^  - target:').Count
-    if ($edges.Count -ne $edgeLines) { throw "Malformed relationship entry in node: $id" }
+    if ($yaml -match '(?m)^relationships: \[\]\r?$') {
+        $edges = @()
+    } else {
+        $relationshipBlock = [regex]::Match($yaml, '(?m)^relationships:\r?\n(?<body>(?:  [^\r\n]*\r?\n?)*)')
+        if (-not $relationshipBlock.Success) { throw "Missing relationships array: $id" }
+        $body = $relationshipBlock.Groups['body'].Value
+        $edges = [regex]::Matches($body,
+            '(?m)^  - target: (?<target>[a-z0-9]+(?:-[a-z0-9]+)*)\r?\n    type: (?<type>[a-z0-9_]+)\r?$')
+        $edgeLines = [regex]::Matches($body, '(?m)^  - target:').Count
+        if ($edgeLines -eq 0) { throw "Empty relationship list must be written as 'relationships: []': $id" }
+        if ($edges.Count -ne $edgeLines) { throw "Malformed relationship entry in node: $id" }
+    }
     $parsed += [pscustomobject]@{ Id = $id; Edges = $edges; File = $file.FullName }
 }
 
+$violations = @()
 $unresolved = 0
 $invalidTypes = 0
 $selfLinks = 0
@@ -64,16 +71,18 @@ foreach ($node in $parsed) {
         $edgeCount++
         $target = $edge.Groups['target'].Value
         $type = $edge.Groups['type'].Value
-        if (-not $nodes.ContainsKey($target)) { $unresolved++; Write-Error "$($node.Id): unresolved target $target" }
-        if ($type -notin $validTypes) { $invalidTypes++; Write-Error "$($node.Id): invalid type $type" }
-        if ($target -eq $node.Id) { $selfLinks++; Write-Error "$($node.Id): self-link" }
+        if (-not $nodes.ContainsKey($target)) { $unresolved++; $violations += "$($node.Id): unresolved target $target" }
+        if ($type -notin $validTypes) { $invalidTypes++; $violations += "$($node.Id): invalid type $type" }
+        if ($target -eq $node.Id) { $selfLinks++; $violations += "$($node.Id): self-link" }
         $key = "$type|$target"
-        if ($seen.ContainsKey($key)) { $duplicates++; Write-Error "$($node.Id): duplicate edge $key" }
+        if ($seen.ContainsKey($key)) { $duplicates++; $violations += "$($node.Id): duplicate edge $key" }
         $seen[$key] = $true
         if (-not $counts.ContainsKey($type)) { $counts[$type] = 0 }
         $counts[$type]++
     }
 }
+
+foreach ($violation in $violations) { Write-Output "violation: $violation" }
 
 Write-Output "nodes: $($nodes.Count)"
 Write-Output "typed_relationships: $edgeCount"

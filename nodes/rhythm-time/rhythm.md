@@ -15,7 +15,7 @@ core_concepts:
   - syncopation
 relationships:
   - target: sampling
-    type: contributes_to
+    type: influences
   - target: sequencing
     type: influences
 sources:
