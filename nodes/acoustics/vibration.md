@@ -5,7 +5,6 @@ domain: acoustics
 status: foundation
 session_origin:
   - session-01-what-is-sound
-  - session-03-history-of-electronic-music
 definition: Oscillatory motion around an equilibrium that can transfer energy into a medium and produce sound.
 core_concepts:
   - oscillation
@@ -19,7 +18,6 @@ related_nodes:
   - resonance
 sources:
   - session-01-what-is-sound
-  - session-03-history-of-electronic-music
   - session-01-vocabulary-atlas
 experiments: []
 practical_applications:

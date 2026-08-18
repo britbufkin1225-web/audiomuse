@@ -34,7 +34,6 @@ This map shows how chronological Sessions 1–3 contribute to durable AudioMuse 
 
 ## Session 3 — History of Electronic Music
 
-- `vibration`
 - `rhythm`
 - `recording`
 - `sampling`
@@ -46,6 +45,8 @@ This map shows how chronological Sessions 1–3 contribute to durable AudioMuse 
 ## Emerging graph
 
 This diagram is an explanatory view of selected explicit `related_nodes` links. The node files remain canonical.
+
+Arrow direction records only which node file lists the other. `related_nodes` is untyped, so no arrow asserts causation, production, containment, or subtype. Read every arrow as "these two concepts are explicitly related."
 
 ```mermaid
 graph TD

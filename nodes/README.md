@@ -14,6 +14,7 @@ A node file lives at `nodes/<domain>/<id>.md`, where `<domain>` is the node's pr
 - Promote a vocabulary term to a node when it supports durable relationships, experiments, applications, or project work.
 - Keep prose concise and durable; preserve chronological detail in sessions.
 - Keep relationships curated and conceptually meaningful; reciprocal links may be added where they improve traversal.
+- Treat `related_nodes` as an untyped adjacency list. An entry records that two concepts are explicitly related; it does not assert an edge type or direction, and Phase 2 defines no edge-type vocabulary.
 
 ## Domains and statuses
 
