@@ -51,3 +51,9 @@ Phase 4 cleanly replaces `related_nodes`; the repository does not maintain paral
 A vocabulary term does not automatically need its own node. Promote concepts when they become important enough to support meaningful relationships, experiments, or future work.
 
 The many-to-many contribution view for the first three sessions lives in `docs/session-node-map.md`. It complements rather than replaces node-level provenance.
+
+## Derived read-only views
+
+The files in `indexes/` are deterministic views built from canonical nodes, sessions, schemas, and source/provenance records. They support navigation, audit, analysis, and future tooling without becoming authoritative or mutating graph semantics. They are not a database or duplicate knowledge store, and they must not be edited manually.
+
+Run `pwsh -NoProfile -File tools/build-knowledge-index.ps1` to rebuild them and `pwsh -NoProfile -File tools/validate-knowledge-index.ps1` to verify canonical integrity, edge reconciliation, and generated-file currency. Inbound displays are derived navigation views only; the generator never synthesizes reverse canonical edges.
