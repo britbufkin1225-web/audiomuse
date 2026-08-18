@@ -4,7 +4,26 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 if (-not $ExperimentDirectory) { $ExperimentDirectory = Join-Path $repoRoot 'experiments/records' }
 if (-not $OutputPath) { $OutputPath = Join-Path $repoRoot 'experiments/index.md' }
-$records = foreach ($file in Get-ChildItem -LiteralPath $ExperimentDirectory -Filter '*.yaml' -File) {
+
+# Ordinal comparison keeps the committed projection byte-identical on every machine. Sort-Object
+# uses culture-sensitive collation, which reorders hyphenated ids under some locales, so a clean
+# checkout could otherwise be reported as a stale index purely because of the author's culture.
+function Sort-Ordinal([object[]]$Values) {
+    $items = [string[]]@($Values | ForEach-Object { [string]$_ })
+    [Array]::Sort($items, [StringComparer]::Ordinal)
+    return $items
+}
+
+function Sort-RecordsByTitle([object[]]$Records) {
+    $items = [object[]]@($Records)
+    if ($items.Count -le 1) { return $items }
+    $selector = [Func[object, string]]{ param($item) [string]$item.title }
+    return [Linq.Enumerable]::ToArray([Linq.Enumerable]::OrderBy($items, $selector, [StringComparer]::Ordinal))
+}
+
+$files = @(Get-ChildItem -LiteralPath $ExperimentDirectory -Filter '*.yaml' -File)
+$records = foreach ($name in (Sort-Ordinal @($files | ForEach-Object { $_.Name }))) {
+    $file = $files | Where-Object Name -eq $name | Select-Object -First 1
     $data = [ordered]@{}
     foreach ($line in [IO.File]::ReadAllLines($file.FullName)) {
         if ($line -notmatch '^(?<key>[a-z_]+): (?<value>.+)$') { throw "Malformed experiment line in $($file.Name): $line" }
@@ -12,7 +31,7 @@ $records = foreach ($file in Get-ChildItem -LiteralPath $ExperimentDirectory -Fi
     }
     [pscustomobject]$data
 }
-$records = @($records | Sort-Object -Property @{Expression='title'; Ascending=$true})
+$records = @(Sort-RecordsByTitle @($records))
 if (-not $records.Count) { throw 'No canonical experiment records found.' }
 $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('# AudioMuse Experiment Index'); $lines.Add('')
@@ -22,9 +41,9 @@ $lines.Add(''); $lines.Add('## A-Z')
 foreach ($record in $records) { $lines.Add(''); $lines.Add(('- **{0}** (`{1}`) — {2}' -f $record.title, $record.id, $record.purpose)) }
 foreach ($view in @(@{Heading='By Type';Field='type'}, @{Heading='By Canonical Node';Field='node_refs'}, @{Heading='By Vocabulary Term';Field='vocabulary_refs'}, @{Heading='By Session';Field='session_refs'})) {
     $lines.Add(''); $lines.Add("## $($view.Heading)")
-    $keys = @($records.($view.Field) | ForEach-Object { $_ } | Sort-Object -Unique)
+    $keys = @(Sort-Ordinal @($records.($view.Field) | ForEach-Object { $_ } | Select-Object -Unique))
     foreach ($key in $keys) {
-        $members = @($records | Where-Object { $key -in @($_.($view.Field)) } | Sort-Object title)
+        $members = @(Sort-RecordsByTitle @($records | Where-Object { $key -in @($_.($view.Field)) }))
         $noun = if ($members.Count -eq 1) { 'experiment' } else { 'experiments' }
         $lines.Add(''); $lines.Add("### ``$key`` — $($members.Count) $noun"); $lines.Add('')
         foreach ($member in $members) { $lines.Add("- ``$($member.id)`` — $($member.title)") }

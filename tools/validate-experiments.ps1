@@ -38,10 +38,25 @@ foreach($record in $records){
     foreach($ref in $record.related_experiments){if($ref -eq $record.id){throw "Self-related experiment: $($record.id)"};if(-not $ids.ContainsKey($ref)){throw "Unresolved related experiment for $($record.id): $ref"};$relatedRefs++}
 }
 if(-not (Test-Path -LiteralPath $IndexPath)){throw 'Missing generated experiment index.'}
-# Independent reconciliation reads committed Markdown without calling the builder.
+# Independent reconciliation reads committed Markdown without calling the builder. Every expected
+# line is re-derived from canonical records so a builder formatting, ordering, or escaping defect
+# cannot be masked by regenerating the projection with the same faulty logic.
 $text=[IO.File]::ReadAllText($IndexPath); $listed=@([regex]::Matches($text,'(?m)^- \*\*.+?\*\* \(`(?<id>[a-z0-9-]+)`\)') | ForEach-Object {$_.Groups['id'].Value})
 if($listed.Count -ne $records.Count){throw "Experiment index lists $($listed.Count) A-Z records but $($records.Count) canonical records exist."}
 foreach($record in $records){if($record.id -notin $listed){throw "Canonical experiment missing from index: $($record.id)"}}
+foreach($marker in @('System.Object[]','$(')){if($text.Contains($marker)){throw "Experiment index contains unexpanded template output ('$marker'); the builder emitted raw object text instead of markdown."}}
+$present=[Collections.Generic.HashSet[string]]::new([string[]]($text -split '\r?\n'))
+$expected=[Collections.Generic.List[string]]::new()
+foreach($heading in @('# AudioMuse Experiment Index','## A-Z','## By Type','## By Canonical Node','## By Vocabulary Term','## By Session')){$expected.Add($heading)}
+$expected.Add("Canonical experiments: $($records.Count)")
+foreach($record in $records){$expected.Add(('- **{0}** (`{1}`) — {2}' -f $record.title,$record.id,$record.purpose))}
+foreach($line in $expected){if(-not $present.Contains($line)){throw "Experiment index is missing expected line: $line"}}
+# A-Z ordering is asserted against an independently sorted title list, not against builder output.
+$azTitles=@([regex]::Matches($text,'(?m)^- \*\*(?<title>.+?)\*\* \(') | ForEach-Object {$_.Groups['title'].Value})
+$sortedTitles=[string[]]@($azTitles); [Array]::Sort($sortedTitles,[StringComparer]::Ordinal)
+for($i=0;$i -lt $sortedTitles.Count;$i++){if($azTitles[$i] -cne $sortedTitles[$i]){throw "Experiment index A-Z section is not in ordinal title order at position $($i+1): expected '$($sortedTitles[$i])', found '$($azTitles[$i])'."}}
+$knownKeys=[Collections.Generic.HashSet[string]]::new([string[]]@(@($records.type)+@($records.node_refs | ForEach-Object {$_})+@($records.vocabulary_refs | ForEach-Object {$_})+@($records.session_refs | ForEach-Object {$_})))
+foreach($match in [regex]::Matches($text,'(?m)^### `(?<id>[^`]*)` — ')){if(-not $knownKeys.Contains($match.Groups['id'].Value)){throw "Experiment index contains an unresolved grouping heading: $($match.Groups['id'].Value)"}}
 foreach($view in @('type','node_refs','vocabulary_refs','session_refs')){
     foreach($key in @($records.$view | ForEach-Object {$_} | Sort-Object -Unique)){
         $members=@($records | Where-Object {$key -in @($_.$view)})
@@ -59,4 +74,4 @@ $temp=Join-Path ([IO.Path]::GetTempPath()) ('audiomuse-experiments-'+[guid]::New
 try { & (Join-Path $PSScriptRoot 'build-experiment-index.ps1') -ExperimentDirectory $ExperimentDirectory -OutputPath $temp | Out-Null; if([Convert]::ToBase64String([IO.File]::ReadAllBytes($temp)) -cne [Convert]::ToBase64String([IO.File]::ReadAllBytes($IndexPath))){throw 'Generated experiment index is stale.'} } finally {if(Test-Path $temp){Remove-Item -LiteralPath $temp -Force}}
 Write-Output "experiments: $($records.Count)"; foreach($type in $validType){Write-Output "  ${type}: $(@($records | Where-Object type -eq $type).Count)"}
 Write-Output "experiment_node_refs: $nodeRefs";Write-Output "experiment_vocabulary_refs: $vocabRefs";Write-Output "experiment_session_refs: $sessionRefs";Write-Output "experiment_source_refs: $sourceRefs";Write-Output "related_experiment_refs: $relatedRefs"
-Write-Output 'unresolved_experiment_refs: 0';Write-Output 'duplicate_experiment_ids: 0';Write-Output 'experiment_index_reconciled: true';Write-Output 'experiment_index_current: true'
+Write-Output 'unresolved_experiment_refs: 0';Write-Output 'duplicate_experiment_ids: 0';Write-Output 'experiment_index_reconciled: true';Write-Output 'experiment_index_structure_verified: true';Write-Output 'experiment_index_current: true'
