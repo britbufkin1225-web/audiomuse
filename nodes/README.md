@@ -13,7 +13,8 @@ A node file lives at `nodes/<domain>/<id>.md`, where `<domain>` is the node's pr
 - Add a session ID to `session_origin` only when that session introduced or materially developed the node.
 - Promote a vocabulary term to a node when it supports durable relationships, experiments, applications, or project work.
 - Keep prose concise and durable; preserve chronological detail in sessions.
-- Phase 2 proof nodes link only to other proof nodes. Future nodes may be introduced when their content is ready.
+- Keep relationships curated and conceptually meaningful; reciprocal links may be added where they improve traversal.
+- Treat `related_nodes` as an untyped adjacency list. An entry records that two concepts are explicitly related; it does not assert an edge type or direction, and Phase 2 defines no edge-type vocabulary.
 
 ## Domains and statuses
 
@@ -26,3 +27,5 @@ Allowed domains and statuses are defined in `schemas/node.schema.yaml`. Domains 
 - `resonance`
 - `timbre`
 - `sampling`
+
+These nodes remain canonical and were reused in the Phase 3 expansion. See `docs/session-node-map.md` for the first session-derived graph overview.

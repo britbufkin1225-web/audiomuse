@@ -28,3 +28,5 @@ Sources provide provenance and evidence. They answer: "Where did this knowledge 
 Node-to-node relationships use stable node IDs rather than filenames. Source relationships use stable registry IDs. The schemas in `schemas/` define the allowed values and Phase 2 contracts.
 
 A vocabulary term does not automatically need its own node. Promote concepts when they become important enough to support meaningful relationships, experiments, or future work.
+
+The many-to-many contribution view for the first three sessions lives in `docs/session-node-map.md`. It complements rather than replaces node-level provenance.

@@ -14,10 +14,16 @@ core_concepts:
   - receiver
   - auditory perception
 related_nodes:
+  - vibration
   - frequency
+  - phase
   - resonance
   - timbre
+  - psychoacoustics
+  - recording
   - sampling
+  - synthesis
+  - digital-signal-processing
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
