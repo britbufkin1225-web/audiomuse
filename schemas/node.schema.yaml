@@ -1,5 +1,5 @@
 schema: audiomuse-node
-version: 1
+version: 2
 description: Canonical front-matter contract for durable AudioMuse knowledge nodes.
 required:
   - id
@@ -9,7 +9,7 @@ required:
   - session_origin
   - definition
   - core_concepts
-  - related_nodes
+  - relationships
   - sources
   - experiments
   - practical_applications
@@ -51,11 +51,19 @@ properties:
   core_concepts:
     type: array
     items: { type: string }
-  related_nodes:
+  relationships:
     type: array
     items:
-      type: string
-      pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      type: object
+      required: [target, type]
+      properties:
+        target:
+          type: string
+          pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        type:
+          type: string
+          description: Canonical ID from schemas/relationship-types.yaml.
+      additional_properties: false
   sources:
     type: array
     items:

@@ -13,14 +13,15 @@ core_concepts:
   - envelope
   - filter
   - modulation
-related_nodes:
-  - sound
-  - frequency
-  - pitch
-  - timbre
-  - sequencing
-  - midi
-  - digital-signal-processing
+relationships:
+  - target: sound
+    type: produces
+  - target: frequency
+    type: controls
+  - target: pitch
+    type: produces
+  - target: timbre
+    type: produces
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music

@@ -26,8 +26,9 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - Session 03 — History of Electronic Music
 - Session 01 Vocabulary Atlas
 - AudioMuse Brand Identity Guidelines
-- A curated 15-node knowledge graph derived from Sessions 1–3
+- A curated 15-node typed relationship graph derived from Sessions 1–3
 - A many-to-many session-to-node map and human-readable graph overview
+- A dependency-free graph integrity validator
 
 See `docs/session-node-map.md` for the emerging graph. This is a deliberately small foundation, not a complete encyclopedia.
 

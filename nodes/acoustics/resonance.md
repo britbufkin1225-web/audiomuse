@@ -13,11 +13,11 @@ core_concepts:
   - standing wave
   - room mode
   - spectral decay
-related_nodes:
-  - sound
-  - vibration
-  - frequency
-  - timbre
+relationships:
+  - target: sound
+    type: influences
+  - target: timbre
+    type: contributes_to
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

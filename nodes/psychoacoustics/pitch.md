@@ -13,12 +13,9 @@ core_concepts:
   - harmonic series
   - periodicity
   - missing fundamental
-related_nodes:
-  - frequency
-  - timbre
-  - psychoacoustics
-  - synthesis
-  - midi
+relationships:
+  - target: timbre
+    type: influences
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

@@ -13,11 +13,11 @@ core_concepts:
   - pattern
   - timeline
   - automation
-related_nodes:
-  - rhythm
-  - sampling
-  - synthesis
-  - midi
+relationships:
+  - target: sampling
+    type: controls
+  - target: synthesis
+    type: controls
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music

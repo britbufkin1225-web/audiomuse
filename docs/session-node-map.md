@@ -44,45 +44,39 @@ This map shows how chronological Sessions 1–3 contribute to durable AudioMuse 
 
 ## Emerging graph
 
-This diagram is an explanatory view of selected explicit `related_nodes` links. The node files remain canonical.
-
-Arrow direction records only which node file lists the other. `related_nodes` is untyped, so no arrow asserts causation, production, containment, or subtype. Read every arrow as "these two concepts are explicitly related."
+This diagram is an explanatory view of selected typed relationships. Node files remain canonical, and each arrow label records the stored relationship type and direction.
 
 ```mermaid
 graph TD
-    VIBRATION[Vibration] --> SOUND[Sound]
-    VIBRATION --> FREQUENCY[Frequency]
-    VIBRATION --> RESONANCE[Resonance]
+    VIBRATION[Vibration] -- produces --> SOUND[Sound]
+    VIBRATION -- characterized_by --> FREQUENCY[Frequency]
+    VIBRATION -- influences --> RESONANCE[Resonance]
 
-    SOUND --> PHASE[Phase]
-    SOUND --> FREQUENCY
-    SOUND --> TIMBRE[Timbre]
-    SOUND --> PSYCHO[Psychoacoustics]
-    SOUND --> RECORDING[Recording]
-    SOUND --> SYNTHESIS[Synthesis]
-    SOUND --> DSP[Digital Signal Processing]
+    SOUND -- characterized_by --> PHASE[Phase]
+    SOUND -- characterized_by --> FREQUENCY
+    SOUND -- characterized_by --> TIMBRE[Timbre]
 
-    FREQUENCY --> PITCH[Pitch]
-    FREQUENCY --> TIMBRE
-    FREQUENCY --> SYNTHESIS
-    PHASE --> RECORDING
-    PHASE --> DSP
+    FREQUENCY -- influences --> PITCH[Pitch]
+    FREQUENCY -- influences --> TIMBRE
+    SYNTHESIS[Synthesis] -- controls --> FREQUENCY
+    PHASE -- influences --> RECORDING[Recording]
+    PHASE -- influences --> DSP[Digital Signal Processing]
 
-    PSYCHO --> PITCH
-    PSYCHO --> TIMBRE
-    PSYCHO --> RHYTHM[Rhythm]
+    PSYCHO[Psychoacoustics] -- studies --> PITCH
+    PSYCHO -- studies --> TIMBRE
+    PSYCHO -- studies --> RHYTHM[Rhythm]
 
-    RECORDING --> SAMPLING[Sampling]
-    RECORDING --> DSP
-    RHYTHM --> SAMPLING
-    RHYTHM --> SEQUENCING[Sequencing]
-    SEQUENCING --> SAMPLING
-    SEQUENCING --> SYNTHESIS
-    SEQUENCING --> MIDI[MIDI]
-    MIDI --> SAMPLING
-    MIDI --> SYNTHESIS
-    SYNTHESIS --> DSP
-    SAMPLING --> DSP
+    RECORDING -- enables --> SAMPLING[Sampling]
+    RECORDING -- enables --> DSP
+    RHYTHM -- influences --> SAMPLING
+    RHYTHM -- influences --> SEQUENCING[Sequencing]
+    SEQUENCING -- controls --> SAMPLING
+    SEQUENCING -- controls --> SYNTHESIS
+    MIDI[MIDI] -- used_in --> SEQUENCING
+    MIDI -- controls --> SAMPLING
+    MIDI -- controls --> SYNTHESIS
+    DSP -- used_in --> SYNTHESIS
+    SAMPLING -- enables --> DSP
 ```
 
 ## Curation boundary

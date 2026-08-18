@@ -13,12 +13,11 @@ core_concepts:
   - meter
   - groove
   - syncopation
-related_nodes:
-  - sound
-  - psychoacoustics
-  - sampling
-  - sequencing
-  - midi
+relationships:
+  - target: sampling
+    type: influences
+  - target: sequencing
+    type: influences
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music

@@ -16,6 +16,10 @@ Establish canonical node and source contracts, provenance conventions, and a sma
 
 Promote a curated set of foundational Sessions 1–3 concepts, connect them through canonical node relationships, and expose the many-to-many session-to-node map.
 
+## Phase 4 — Typed Relationship Graph + Edge Semantics Foundation
+
+Replace untyped adjacency with a bounded directed relationship vocabulary, migrate the initial graph to explicit semantic edges, and add deterministic integrity validation.
+
 ## Near-term follow-up
 
 - Deepen high-value nodes through focused research and experiments

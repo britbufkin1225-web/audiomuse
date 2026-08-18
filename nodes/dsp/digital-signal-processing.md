@@ -14,13 +14,13 @@ core_concepts:
   - filtering
   - analysis
   - transformation
-related_nodes:
-  - sound
-  - frequency
-  - phase
-  - sampling
-  - recording
-  - synthesis
+relationships:
+  - target: sampling
+    type: processes
+  - target: recording
+    type: processes
+  - target: synthesis
+    type: used_in
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

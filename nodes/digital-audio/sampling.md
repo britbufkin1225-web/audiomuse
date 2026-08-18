@@ -14,15 +14,13 @@ core_concepts:
   - bit depth
   - analog-to-digital conversion
   - sampler
-related_nodes:
-  - sound
-  - frequency
-  - timbre
-  - rhythm
-  - recording
-  - sequencing
-  - midi
-  - digital-signal-processing
+relationships:
+  - target: sound
+    type: represents
+  - target: timbre
+    type: represents
+  - target: digital-signal-processing
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

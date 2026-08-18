@@ -13,12 +13,17 @@ core_concepts:
   - auditory scene
   - masking
   - expectation
-related_nodes:
-  - sound
-  - frequency
-  - pitch
-  - timbre
-  - rhythm
+relationships:
+  - target: sound
+    type: studies
+  - target: frequency
+    type: studies
+  - target: pitch
+    type: studies
+  - target: timbre
+    type: studies
+  - target: rhythm
+    type: studies
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

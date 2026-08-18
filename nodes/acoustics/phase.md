@@ -13,11 +13,11 @@ core_concepts:
   - interference
   - polarity
   - timing
-related_nodes:
-  - frequency
-  - sound
-  - recording
-  - digital-signal-processing
+relationships:
+  - target: recording
+    type: influences
+  - target: digital-signal-processing
+    type: influences
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

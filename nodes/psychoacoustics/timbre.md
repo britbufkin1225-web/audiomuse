@@ -13,14 +13,7 @@ core_concepts:
   - envelope
   - transient
   - modulation
-related_nodes:
-  - sound
-  - frequency
-  - resonance
-  - pitch
-  - psychoacoustics
-  - sampling
-  - synthesis
+relationships: []
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
