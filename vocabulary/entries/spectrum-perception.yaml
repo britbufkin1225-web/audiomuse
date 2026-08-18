@@ -1,0 +1,108 @@
+---
+id: "fundamental-frequency"
+term: "Fundamental Frequency"
+domain: "psychoacoustics"
+definition: "The lowest periodic component strongly associated with a sound's perceived pitch."
+digital_relationship: "Detected or estimated by pitch trackers and spectral algorithms."
+best_use: "Tuning, transcription, pitch correction, synthesis, and sample organization."
+technologies: ["tuners", "pitch detectors", "autocorrelation", "FFT analysis"]
+node_refs: ["frequency", "pitch"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["frequency", "harmonic", "overtone", "timbre"]
+tags: ["psychoacoustics", "spectrum"]
+---
+id: "harmonic"
+term: "Harmonic"
+domain: "psychoacoustics"
+definition: "A frequency component at an integer multiple of a fundamental."
+digital_relationship: "Measured in spectra and generated through oscillation, saturation, or nonlinear processing."
+best_use: "Shaping timbre, synthesis, distortion, instrument analysis, and bass enhancement."
+technologies: ["spectrum analyzers", "saturators", "additive synthesizers"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["fundamental-frequency", "overtone", "spectrum", "timbre"]
+tags: ["psychoacoustics", "spectrum"]
+---
+id: "overtone"
+term: "Overtone"
+domain: "psychoacoustics"
+definition: "Any frequency component above the fundamental; it may be harmonic or inharmonic."
+digital_relationship: "Displayed and measured through spectral analysis."
+best_use: "Describing instrument character, resonance, and complex sound design."
+technologies: ["spectrograms", "FFT analyzers", "resynthesis tools"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["fundamental-frequency", "harmonic", "spectrum", "timbre"]
+tags: ["psychoacoustics", "spectrum"]
+---
+id: "timbre"
+term: "Timbre"
+domain: "psychoacoustics"
+definition: "The qualities that distinguish sounds sharing similar pitch and loudness."
+digital_relationship: "Represented through spectral shape, envelope, modulation, noise, and temporal features."
+best_use: "Instrument choice, synthesis, mixing, classification, and sample search."
+technologies: ["synthesizers", "samplers", "spectral tools"]
+node_refs: ["timbre"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["fundamental-frequency", "harmonic", "overtone", "spectrum"]
+tags: ["psychoacoustics", "perception"]
+---
+id: "spectrum"
+term: "Spectrum"
+domain: "psychoacoustics"
+definition: "The distribution of a sound's energy across frequency."
+digital_relationship: "Computed with Fourier transforms and displayed as magnitude versus frequency."
+best_use: "EQ decisions, noise diagnosis, timbre analysis, and mastering."
+technologies: ["FFT spectrum analyzers", "spectrograms", "EQ displays"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["frequency", "harmonic", "overtone", "timbre"]
+tags: ["psychoacoustics", "spectrum"]
+---
+id: "psychoacoustics"
+term: "Psychoacoustics"
+domain: "psychoacoustics"
+definition: "The study of relationships between physical sound and auditory perception."
+digital_relationship: "Guides codecs, loudness models, spatial audio, masking tools, and interface design."
+best_use: "Efficient coding, better mixes, hearing research, and perceptually informed products."
+technologies: ["perceptual codecs", "loudness meters", "hearing-test software", "spatial engines"]
+node_refs: ["psychoacoustics"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["masking", "consonance", "dissonance", "timbre"]
+tags: ["psychoacoustics", "perception"]
+---
+id: "masking"
+term: "Masking"
+domain: "psychoacoustics"
+definition: "Reduced audibility of one sound because another occupies nearby time or frequency regions."
+digital_relationship: "Predicted by perceptual codecs and managed with EQ, arrangement, or source separation."
+best_use: "Mix clarity, data compression, noise design, and psychoacoustic experiments."
+technologies: ["EQs", "codecs", "perceptual analyzers"]
+node_refs: []
+session_refs: []
+related_terms: ["psychoacoustics", "spectrum", "timbre"]
+tags: ["psychoacoustics", "perception"]
+---
+id: "consonance"
+term: "Consonance"
+domain: "psychoacoustics"
+definition: "A perceived quality of stability or compatibility among tones, shaped by acoustics and culture."
+digital_relationship: "Analyzed through interval ratios, roughness models, and harmonic relationships."
+best_use: "Harmony, tuning systems, arrangement, generative music, and music-information retrieval."
+technologies: ["DAWs", "tuning software", "harmonic analyzers", "composition systems"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["dissonance", "harmonic", "psychoacoustics"]
+tags: ["psychoacoustics", "music-theory"]
+---
+id: "dissonance"
+term: "Dissonance"
+domain: "psychoacoustics"
+definition: "A perceived quality of tension, roughness, or instability among sounds."
+digital_relationship: "Modeled through beating, spectral roughness, tuning, and contextual musical rules."
+best_use: "Creating tension, color, motion, experimental texture, and emotional contrast."
+technologies: ["synthesizers", "microtonal tools", "spectral analyzers", "composition software"]
+node_refs: []
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["consonance", "harmonic", "psychoacoustics"]
+tags: ["psychoacoustics", "music-theory"]

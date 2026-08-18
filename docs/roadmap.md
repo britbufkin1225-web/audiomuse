@@ -24,10 +24,15 @@ Replace untyped adjacency with a bounded directed relationship vocabulary, migra
 
 Generate deterministic, rebuildable indexes for domains, typed relationships, inbound/outbound connections, session coverage, and source coverage while keeping canonical repository content authoritative.
 
+## Phase 6 — Vocabulary Atlas Integration + Concept Cross-Reference Foundation
+
+Formalize a bounded foundation vocabulary with practical digital-audio context, curated session and node cross-references, strict validation, and a deterministic read-only vocabulary index without creating a second graph.
+
 ## Near-term follow-up
 
 - Deepen high-value nodes through focused research and experiments
 - Extend source and citation coverage as new evidence is introduced
 - Listening / measurement / visualization experiments
+- Deepen selected vocabulary terms only as future sessions or research justify them
 
 Keep later phases intentionally flexible so the research can determine what deserves implementation.

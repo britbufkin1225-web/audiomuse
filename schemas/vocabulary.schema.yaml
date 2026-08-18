@@ -1,0 +1,22 @@
+schema: audiomuse-vocabulary
+version: 1
+description: Canonical contract for AudioMuse terminology entries.
+required: [id, term, domain, definition, digital_relationship, best_use, technologies, node_refs, session_refs, related_terms, tags]
+properties:
+  id: { type: string, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+  term: { type: string }
+  domain:
+    type: string
+    description: Reuses a domain from schemas/node.schema.yaml.
+  definition: { type: string }
+  digital_relationship: { type: string }
+  best_use: { type: string }
+  technologies: { type: array, items: { type: string } }
+  node_refs: { type: array, items: { type: string } }
+  session_refs: { type: array, items: { type: string } }
+  related_terms:
+    type: array
+    items: { type: string }
+    description: Vocabulary IDs used only for navigation; never graph edges.
+  tags: { type: array, items: { type: string } }
+additional_properties: false
