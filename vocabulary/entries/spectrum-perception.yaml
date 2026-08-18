@@ -7,7 +7,7 @@ digital_relationship: "Detected or estimated by pitch trackers and spectral algo
 best_use: "Tuning, transcription, pitch correction, synthesis, and sample organization."
 technologies: ["tuners", "pitch detectors", "autocorrelation", "FFT analysis"]
 node_refs: ["frequency", "pitch"]
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["frequency", "harmonic", "overtone", "timbre"]
 tags: ["psychoacoustics", "spectrum"]
 ---
@@ -19,7 +19,7 @@ digital_relationship: "Measured in spectra and generated through oscillation, sa
 best_use: "Shaping timbre, synthesis, distortion, instrument analysis, and bass enhancement."
 technologies: ["spectrum analyzers", "saturators", "additive synthesizers"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["fundamental-frequency", "overtone", "spectrum", "timbre"]
 tags: ["psychoacoustics", "spectrum"]
 ---
@@ -31,7 +31,7 @@ digital_relationship: "Displayed and measured through spectral analysis."
 best_use: "Describing instrument character, resonance, and complex sound design."
 technologies: ["spectrograms", "FFT analyzers", "resynthesis tools"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["fundamental-frequency", "harmonic", "spectrum", "timbre"]
 tags: ["psychoacoustics", "spectrum"]
 ---
@@ -43,7 +43,7 @@ digital_relationship: "Represented through spectral shape, envelope, modulation,
 best_use: "Instrument choice, synthesis, mixing, classification, and sample search."
 technologies: ["synthesizers", "samplers", "spectral tools"]
 node_refs: ["timbre"]
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["fundamental-frequency", "harmonic", "overtone", "spectrum"]
 tags: ["psychoacoustics", "perception"]
 ---
@@ -55,7 +55,7 @@ digital_relationship: "Computed with Fourier transforms and displayed as magnitu
 best_use: "EQ decisions, noise diagnosis, timbre analysis, and mastering."
 technologies: ["FFT spectrum analyzers", "spectrograms", "EQ displays"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["frequency", "harmonic", "overtone", "timbre"]
 tags: ["psychoacoustics", "spectrum"]
 ---
@@ -67,7 +67,7 @@ digital_relationship: "Guides codecs, loudness models, spatial audio, masking to
 best_use: "Efficient coding, better mixes, hearing research, and perceptually informed products."
 technologies: ["perceptual codecs", "loudness meters", "hearing-test software", "spatial engines"]
 node_refs: ["psychoacoustics"]
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["masking", "consonance", "dissonance", "timbre"]
 tags: ["psychoacoustics", "perception"]
 ---
@@ -79,7 +79,7 @@ digital_relationship: "Predicted by perceptual codecs and managed with EQ, arran
 best_use: "Mix clarity, data compression, noise design, and psychoacoustic experiments."
 technologies: ["EQs", "codecs", "perceptual analyzers"]
 node_refs: []
-session_refs: ["session-01-vocabulary-atlas"]
+session_refs: []
 related_terms: ["psychoacoustics", "spectrum", "timbre"]
 tags: ["psychoacoustics", "perception"]
 ---
@@ -91,7 +91,7 @@ digital_relationship: "Analyzed through interval ratios, roughness models, and h
 best_use: "Harmony, tuning systems, arrangement, generative music, and music-information retrieval."
 technologies: ["DAWs", "tuning software", "harmonic analyzers", "composition systems"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["dissonance", "harmonic", "psychoacoustics"]
 tags: ["psychoacoustics", "music-theory"]
 ---
@@ -103,6 +103,6 @@ digital_relationship: "Modeled through beating, spectral roughness, tuning, and 
 best_use: "Creating tension, color, motion, experimental texture, and emotional contrast."
 technologies: ["synthesizers", "microtonal tools", "spectral analyzers", "composition software"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["consonance", "harmonic", "psychoacoustics"]
 tags: ["psychoacoustics", "music-theory"]

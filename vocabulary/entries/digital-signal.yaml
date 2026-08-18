@@ -7,7 +7,7 @@ digital_relationship: "In digital systems it is a sequence of sample values orga
 best_use: "Recording, routing, processing, transmission, and playback."
 technologies: ["audio interfaces", "DAWs", "mixers", "DSP systems"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["sound", "transducer", "sample", "waveform"]
 tags: ["digital-audio", "signal"]
 ---
@@ -19,7 +19,7 @@ digital_relationship: "Connects acoustic and electrical or digital domains throu
 best_use: "Capturing and reproducing sound or vibration."
 technologies: ["microphones", "speakers", "pickups", "headphones", "accelerometers"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["audio-signal", "analog-to-digital-converter", "digital-to-analog-converter"]
 tags: ["digital-audio", "hardware"]
 ---
@@ -31,7 +31,7 @@ digital_relationship: "Defines sample rate, bit depth, noise, distortion, and in
 best_use: "Recording microphones, instruments, vinyl, and measurement signals."
 technologies: ["audio interfaces", "field recorders", "measurement hardware"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["digital-to-analog-converter", "sample", "sample-rate", "bit-depth"]
 tags: ["digital-audio", "conversion"]
 ---
@@ -43,7 +43,7 @@ digital_relationship: "Feeds amplifiers, headphones, monitors, or other analog e
 best_use: "Monitoring, playback, mastering, and equipment testing."
 technologies: ["audio interfaces", "headphone DACs", "controllers", "digital mixers"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["analog-to-digital-converter", "sample", "audio-signal"]
 tags: ["digital-audio", "conversion"]
 ---
@@ -55,7 +55,7 @@ digital_relationship: "The fundamental time-domain unit of pulse-code-modulated 
 best_use: "Editing, DSP, synthesis, storage, and analysis."
 technologies: ["DAWs", "audio files", "DSP libraries", "samplers"]
 node_refs: ["sampling"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["sample-rate", "bit-depth", "waveform", "audio-signal"]
 tags: ["digital-audio", "sampling"]
 ---
@@ -67,7 +67,7 @@ digital_relationship: "Determines the highest representable frequency under samp
 best_use: "Choosing recording formats, designing DSP, resampling, and video synchronization."
 technologies: ["audio interfaces", "DAWs", "sample-rate converters"]
 node_refs: ["sampling"]
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["sample", "bit-depth", "frequency", "analog-to-digital-converter"]
 tags: ["digital-audio", "sampling"]
 ---
@@ -79,7 +79,7 @@ digital_relationship: "Influences quantization resolution and available digital 
 best_use: "Recording with headroom, selecting file formats, and controlling noise in processing."
 technologies: ["ADCs", "DAWs", "WAV files", "dither processors"]
 node_refs: ["sampling"]
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["sample", "sample-rate", "analog-to-digital-converter"]
 tags: ["digital-audio", "sampling"]
 ---
@@ -91,7 +91,7 @@ digital_relationship: "Implements filters, dynamics, effects, analysis, coding, 
 best_use: "Nearly every modern audio workflow, from EQ to machine listening."
 technologies: ["CPUs", "DSP chips", "plug-ins", "audio software libraries"]
 node_refs: ["digital-signal-processing"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["audio-signal", "sample", "filter", "latency"]
 tags: ["dsp", "processing"]
 ---
@@ -103,7 +103,7 @@ digital_relationship: "Implemented with digital algorithms such as FIR or IIR st
 best_use: "EQ, crossover design, noise removal, synthesis, and anti-aliasing."
 technologies: ["EQ plug-ins", "synthesizers", "DSP libraries", "crossovers"]
 node_refs: ["digital-signal-processing"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["frequency", "spectrum", "resonance", "digital-signal-processing"]
 tags: ["dsp", "filtering"]
 ---
@@ -115,6 +115,6 @@ digital_relationship: "Created by buffering, conversion, processing, operating s
 best_use: "Live monitoring, DJ performance, recording, networked audio, and interactive instruments."
 technologies: ["audio drivers", "low-latency interfaces", "buffer controls", "network-audio protocols"]
 node_refs: []
-session_refs: ["session-01-vocabulary-atlas"]
+session_refs: []
 related_terms: ["audio-signal", "digital-signal-processing", "analog-to-digital-converter", "digital-to-analog-converter"]
 tags: ["digital-audio", "timing"]

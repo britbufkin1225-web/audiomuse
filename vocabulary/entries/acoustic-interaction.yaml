@@ -7,7 +7,7 @@ digital_relationship: "Modeled by delay taps, convolution, early-reflection engi
 best_use: "Creating spatial realism, measuring rooms, positioning treatment, and designing reverbs."
 technologies: ["convolution reverbs", "room simulators", "impulse-response tools", "acoustic panels"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["absorption", "transmission", "reverberation", "diffraction"]
 tags: ["acoustics", "rooms"]
 ---
@@ -19,7 +19,7 @@ digital_relationship: "Represented by frequency-dependent absorption coefficient
 best_use: "Reducing reflections, flutter echo, and room decay without necessarily soundproofing."
 technologies: ["porous panels", "mineral wool", "acoustic modeling", "reverberation measurement"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["reflection", "transmission", "reverberation"]
 tags: ["acoustics", "rooms"]
 ---
@@ -31,7 +31,7 @@ digital_relationship: "Measured and modeled with transmission loss and frequency
 best_use: "Soundproofing, enclosure design, privacy, and controlling equipment noise."
 technologies: ["STC/TL testing", "acoustic simulation", "isolation construction", "measurement microphones"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["reflection", "absorption", "medium"]
 tags: ["acoustics", "isolation"]
 ---
@@ -43,7 +43,7 @@ digital_relationship: "Simulated in spatial-audio engines and boundary or finite
 best_use: "Speaker cabinet design, array behavior, architectural acoustics, and microphone placement."
 technologies: ["acoustic simulators", "wave-field models", "loudspeaker design software"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["wavelength", "reflection", "transmission"]
 tags: ["acoustics", "propagation"]
 ---
@@ -55,7 +55,7 @@ digital_relationship: "Appears as peaks and prolonged decay in spectra, waterfal
 best_use: "Tuning instruments, diagnosing rooms, designing enclosures, and creative filtering."
 technologies: ["spectrum analyzers", "resonators", "parametric EQ", "room-measurement software"]
 node_refs: ["resonance"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["standing-wave", "room-mode", "reverberation", "filter"]
 tags: ["acoustics", "rooms"]
 ---
@@ -67,7 +67,7 @@ digital_relationship: "Seen as location-dependent peaks and nulls and modeled fr
 best_use: "Understanding bass inconsistencies and positioning speakers, subs, and listeners."
 technologies: ["room calculators", "measurement microphones", "bass-management software"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["phase", "resonance", "room-mode", "wavelength"]
 tags: ["acoustics", "rooms"]
 ---
@@ -79,7 +79,7 @@ digital_relationship: "Calculated by software and confirmed with frequency sweep
 best_use: "Bass treatment, subwoofer placement, room correction, and mix-position selection."
 technologies: ["room-measurement software", "calibrated microphones", "DSP room correction"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["standing-wave", "resonance", "wavelength", "reverberation"]
 tags: ["acoustics", "rooms"]
 ---
@@ -91,6 +91,6 @@ digital_relationship: "Created by algorithmic reverb or convolution and measured
 best_use: "Establishing space, depth, cohesion, realism, or dramatic scale."
 technologies: ["reverb plug-ins", "convolution engines", "impulse-response libraries"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["reflection", "absorption", "resonance", "room-mode"]
 tags: ["acoustics", "rooms"]

@@ -7,7 +7,7 @@ digital_relationship: "Captured as an electrical signal and represented digitall
 best_use: "Recording, synthesis, playback, measurement, and analysis."
 technologies: ["microphones", "audio interfaces", "DAWs", "speakers", "oscilloscopes"]
 node_refs: ["sound"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["vibration", "medium", "pressure-wave", "audio-signal"]
 tags: ["acoustics", "foundation"]
 ---
@@ -19,7 +19,7 @@ digital_relationship: "Represented by changing sample values; modeled with oscil
 best_use: "Generating tones, analyzing machinery, synthesis, and speaker design."
 technologies: ["oscillators", "accelerometers", "contact microphones", "waveform generators"]
 node_refs: ["vibration"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["sound", "medium", "amplitude", "frequency"]
 tags: ["acoustics", "motion"]
 ---
@@ -31,7 +31,7 @@ digital_relationship: "Usually simulated through acoustic models rather than sto
 best_use: "Predicting propagation, isolation, underwater audio, and structural noise."
 technologies: ["acoustic simulation", "finite-element modeling", "hydrophones", "vibration sensors"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["sound", "vibration", "pressure-wave", "wavelength"]
 tags: ["acoustics", "propagation"]
 ---
@@ -43,7 +43,7 @@ digital_relationship: "A microphone converts pressure variation into voltage, th
 best_use: "Recording, SPL measurement, loudspeaker testing, and acoustic sensing."
 technologies: ["measurement microphones", "ADCs", "SPL meters", "pressure transducers"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["compression-acoustic", "rarefaction", "medium", "waveform"]
 tags: ["acoustics", "propagation"]
 ---
@@ -55,7 +55,7 @@ digital_relationship: "Appears as one polarity of a recorded waveform; not the s
 best_use: "Understanding speaker motion, microphone polarity, and wave propagation."
 technologies: ["microphones", "oscilloscopes", "polarity tests", "acoustic simulators"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["rarefaction", "pressure-wave", "phase"]
 tags: ["acoustics", "wave-cycle"]
 ---
@@ -67,7 +67,7 @@ digital_relationship: "Appears as the opposite waveform polarity from compressio
 best_use: "Understanding wave cycles, phase, polarity, and transducer behavior."
 technologies: ["waveform displays", "oscilloscopes", "microphones", "speaker test systems"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["compression-acoustic", "pressure-wave", "phase"]
 tags: ["acoustics", "wave-cycle"]
 ---
@@ -79,7 +79,7 @@ digital_relationship: "Mapped to spectral bins by Fourier analysis and controlle
 best_use: "Pitch control, EQ, tuning, crossover design, and fault detection."
 technologies: ["spectrum analyzers", "FFTs", "tuners", "EQs", "synthesizers"]
 node_refs: ["frequency"]
-session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
 related_terms: ["wavelength", "phase", "fundamental-frequency", "spectrum"]
 tags: ["acoustics", "measurement"]
 ---
@@ -91,7 +91,7 @@ digital_relationship: "Stored as sample magnitude and adjusted by gain, faders, 
 best_use: "Controlling level, shaping transients, modulation, and preventing clipping."
 technologies: ["faders", "gain stages", "compressors", "limiters", "waveform editors"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["vibration", "waveform", "sample"]
 tags: ["acoustics", "measurement"]
 ---
@@ -103,7 +103,7 @@ digital_relationship: "Used in acoustic calculators and spatial models rather th
 best_use: "Room treatment, speaker placement, microphone arrays, and bass management."
 technologies: ["acoustic calculators", "simulation tools", "measurement systems"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["frequency", "phase", "room-mode", "diffraction"]
 tags: ["acoustics", "measurement"]
 ---
@@ -115,7 +115,7 @@ digital_relationship: "Represented by timing and angular relationships; altered 
 best_use: "Aligning microphones and subs, layering samples, widening, and cancellation control."
 technologies: ["phase meters", "correlation meters", "delay tools", "all-pass filters"]
 node_refs: ["phase"]
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["frequency", "wavelength", "waveform", "standing-wave"]
 tags: ["acoustics", "measurement"]
 ---
@@ -127,6 +127,6 @@ digital_relationship: "Displayed from stored samples and edited directly in samp
 best_use: "Editing, transient inspection, looping, clipping detection, and sound design."
 technologies: ["DAWs", "sample editors", "oscilloscopes", "waveform viewers"]
 node_refs: []
-session_refs: ["session-01-what-is-sound", "session-01-vocabulary-atlas"]
+session_refs: ["session-01-what-is-sound"]
 related_terms: ["amplitude", "phase", "sample", "audio-signal"]
 tags: ["acoustics", "representation"]

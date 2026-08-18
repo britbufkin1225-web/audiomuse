@@ -25,7 +25,7 @@ Sources provide provenance and evidence. They answer: "Where did this knowledge 
 
 Vocabulary is the terminology, definition, and practical-context layer. It answers what a term means, how it appears in digital audio, why it matters in practice, and which technologies commonly use it. Entries may explicitly reference canonical nodes and sessions, but vocabulary does not duplicate or outrank either layer.
 
-`node_refs` are cross-layer pointers, not graph edges. `session_refs` identify substantial discussion, not definition ownership. `related_terms` are glossary navigation associations only: they are untyped, do not imply equivalence, do not affect node degree, and never alter the Phase 5 graph or indexes.
+`node_refs` are cross-layer pointers, not graph edges. `session_refs` identify substantial discussion, not definition ownership, and may name only sources registered as `type: session` — the same constraint node `session_origin` obeys, so reference documents stay in the provenance layer instead of appearing as chronology. `related_terms` are glossary navigation associations only: they are untyped, do not imply equivalence, do not affect node degree, and never alter the Phase 5 graph or indexes. They are curated one-directional pointers and are deliberately not required to be symmetric.
 
 The layers remain distinct:
 
