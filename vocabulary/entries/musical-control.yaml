@@ -27,9 +27,9 @@ id: "beatgrid"
 term: "Beatgrid"
 domain: "digital-audio"
 definition: "A digital coordinate system for musical time that records where a track's beats fall."
-digital_relationship: "Stored as beat positions analyzed from or assigned to an audio file; an incorrect grid breaks synchronization even when the audio itself is intact."
-best_use: "Beatmatching and synchronizing tracks, and locating beats and phrase markers during DJ preparation."
-technologies: ["DJ software", "DJ-library software", "beat-detection tools", "DAWs"]
+digital_relationship: "Represents beat positions as measurable musical-time data; an incorrect grid can break synchronization even when the audio itself is intact."
+best_use: "Checking beat alignment before synchronizing tracks in a DJ workflow."
+technologies: ["DJ software"]
 node_refs: ["rhythm"]
 session_refs: ["session-02-what-is-music"]
 related_terms: ["beat", "tempo", "pulse", "rhythm"]
