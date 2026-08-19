@@ -8,7 +8,7 @@
     "relationship_type_count": 11,
     "source_count": 5,
     "session_count": 3,
-    "vocabulary_count": 38,
+    "vocabulary_count": 52,
     "experiment_count": 3,
     "experiment_run_count": 2
   },
@@ -124,9 +124,11 @@
         ]
       },
       "vocabulary": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "midi"
+        ]
       },
       "experiments": {
         "state": "unlinked",
@@ -208,8 +210,9 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 1,
+        "count": 2,
         "ids": [
+          "detuning",
           "fundamental-frequency"
         ]
       },
@@ -373,9 +376,18 @@
         ]
       },
       "vocabulary": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 8,
+        "ids": [
+          "beat",
+          "beatgrid",
+          "groove",
+          "pulse",
+          "quantization-timing",
+          "rhythm",
+          "swing",
+          "tempo"
+        ]
       },
       "experiments": {
         "state": "unlinked",
@@ -456,9 +468,12 @@
         ]
       },
       "vocabulary": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "quantization-timing",
+          "sequencer"
+        ]
       },
       "experiments": {
         "state": "unlinked",
@@ -537,9 +552,14 @@
         ]
       },
       "vocabulary": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "adsr-envelope",
+          "detuning",
+          "oscillator",
+          "synthesizer"
+        ]
       },
       "experiments": {
         "state": "covered",
@@ -580,8 +600,10 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 1,
+        "count": 3,
         "ids": [
+          "adsr-envelope",
+          "synthesizer",
           "timbre"
         ]
       },
@@ -659,7 +681,7 @@
     {
       "id": "digital-audio",
       "node_count": 2,
-      "vocabulary_count": 8,
+      "vocabulary_count": 11,
       "experiment_count": 0,
       "source_count": 4
     },
@@ -722,7 +744,7 @@
     {
       "id": "rhythm-time",
       "node_count": 2,
-      "vocabulary_count": 0,
+      "vocabulary_count": 7,
       "experiment_count": 0,
       "source_count": 2
     },
@@ -743,7 +765,7 @@
     {
       "id": "synthesis",
       "node_count": 1,
-      "vocabulary_count": 0,
+      "vocabulary_count": 4,
       "experiment_count": 2,
       "source_count": 2
     }
@@ -752,19 +774,19 @@
     {
       "id": "session-01-what-is-sound",
       "mapped_node_count": 11,
-      "vocabulary_count": 36,
+      "vocabulary_count": 37,
       "experiment_count": 3
     },
     {
       "id": "session-02-what-is-music",
       "mapped_node_count": 13,
-      "vocabulary_count": 11,
+      "vocabulary_count": 25,
       "experiment_count": 3
     },
     {
       "id": "session-03-history-of-electronic-music",
       "mapped_node_count": 7,
-      "vocabulary_count": 0,
+      "vocabulary_count": 4,
       "experiment_count": 0
     }
   ],
@@ -931,47 +953,11 @@
     {
       "candidate_type": "vocabulary_bridge",
       "subject_type": "node",
-      "subject_id": "midi",
-      "evidence": {
-        "vocabulary_count": 0
-      },
-      "reason": "The canonical midi node currently has no explicit vocabulary entry cross-reference."
-    },
-    {
-      "candidate_type": "vocabulary_bridge",
-      "subject_type": "node",
       "subject_id": "recording",
       "evidence": {
         "vocabulary_count": 0
       },
       "reason": "The canonical recording node currently has no explicit vocabulary entry cross-reference."
-    },
-    {
-      "candidate_type": "vocabulary_bridge",
-      "subject_type": "node",
-      "subject_id": "rhythm",
-      "evidence": {
-        "vocabulary_count": 0
-      },
-      "reason": "The canonical rhythm node currently has no explicit vocabulary entry cross-reference."
-    },
-    {
-      "candidate_type": "vocabulary_bridge",
-      "subject_type": "node",
-      "subject_id": "sequencing",
-      "evidence": {
-        "vocabulary_count": 0
-      },
-      "reason": "The canonical sequencing node currently has no explicit vocabulary entry cross-reference."
-    },
-    {
-      "candidate_type": "vocabulary_bridge",
-      "subject_type": "node",
-      "subject_id": "synthesis",
-      "evidence": {
-        "vocabulary_count": 0
-      },
-      "reason": "The canonical synthesis node currently has no explicit vocabulary entry cross-reference."
     }
   ]
 }

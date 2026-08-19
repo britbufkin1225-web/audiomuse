@@ -256,6 +256,24 @@ psychoacoustics vocabulary that already handles spectrum and timbre.
 
 **Resolves candidates.** `vocabulary_bridge` for `midi`, `rhythm`, `sequencing`, `synthesis`.
 
+**Implementation status.** Implemented in Phase 12A. Fourteen vocabulary entries were added from
+Sessions 1 through 3: `beat`, `groove`, `pulse`, `quantization-timing`, `rhythm`, `swing`, and `tempo`
+in `rhythm-time`; `adsr-envelope`, `detuning`, `oscillator`, and `synthesizer` in `synthesis`; and
+`beatgrid`, `midi`, and `sequencer` in `digital-audio`. The four `vocabulary_bridge` candidates above
+are now resolved by canonical content. The `recording` vocabulary bridge remains deferred as decided
+below. The measurements recorded earlier in this document describe the Phase 10 baseline that Phase 11
+reviewed and are deliberately left unchanged.
+
+**Terms deliberately excluded.** The following appear in the repository only inside Session 2's
+taxonomy blocks, or as single-word mentions, and were left out rather than defined from general
+knowledge: `meter`, `syncopation`, `polyrhythm`, and `subdivision` (Rhythm & Time block; `subdivision`
+is demonstrated in the swing section but never defined); `BPM` (recorded inside the `tempo` entry
+instead of as a separate term); `modulation`, `automation`, `loop`, `PCM`, `time stretching`, `pitch
+shifting`, and `resampling` (listed without discussion). Each remains available to a future session
+that develops it. Session 3 was mined only where it develops a durable concept — `oscillator`,
+`sequencer`, `synthesizer`, and `midi` — and not for instruments, artists, genres, manufacturers, or
+dates.
+
 ### Target 2 — Establish the DJ and turntablism domain
 
 **Target.** First durable node or nodes in `dj-turntablism`.

@@ -11,7 +11,7 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 - relationship_type_count: 11
 - source_count: 5
 - session_count: 3
-- vocabulary_count: 38
+- vocabulary_count: 52
 - experiment_count: 3
 - experiment_run_count: 2
 
@@ -21,18 +21,18 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | `digital-signal-processing` | dsp | 3 | 3 | 2 | 1 | 0 | 4 | 3 | 4 |
 | `frequency` | acoustics | 2 | 3 | 2 | 3 | 0 | 4 | 6 | 4 |
-| `midi` | digital-audio | 2 | 2 | 0 | 0 | 0 | 0 | 5 | 3 |
+| `midi` | digital-audio | 2 | 2 | 1 | 0 | 0 | 0 | 5 | 3 |
 | `phase` | acoustics | 2 | 3 | 1 | 2 | 0 | 2 | 2 | 2 |
-| `pitch` | psychoacoustics | 2 | 3 | 1 | 1 | 0 | 4 | 1 | 4 |
+| `pitch` | psychoacoustics | 2 | 3 | 2 | 1 | 0 | 4 | 1 | 4 |
 | `psychoacoustics` | psychoacoustics | 2 | 3 | 1 | 1 | 0 | 0 | 5 | 1 |
 | `recording` | recording | 2 | 2 | 0 | 0 | 0 | 2 | 4 | 4 |
 | `resonance` | acoustics | 2 | 3 | 1 | 1 | 0 | 2 | 2 | 2 |
-| `rhythm` | rhythm-time | 2 | 2 | 0 | 0 | 0 | 2 | 2 | 3 |
+| `rhythm` | rhythm-time | 2 | 2 | 8 | 0 | 0 | 2 | 2 | 3 |
 | `sampling` | digital-audio | 3 | 4 | 3 | 0 | 0 | 6 | 3 | 5 |
-| `sequencing` | rhythm-time | 2 | 2 | 0 | 0 | 0 | 2 | 2 | 3 |
+| `sequencing` | rhythm-time | 2 | 2 | 2 | 0 | 0 | 2 | 2 | 3 |
 | `sound` | acoustics | 2 | 3 | 1 | 1 | 0 | 6 | 3 | 6 |
-| `synthesis` | synthesis | 2 | 2 | 0 | 2 | 0 | 3 | 4 | 3 |
-| `timbre` | psychoacoustics | 2 | 3 | 1 | 1 | 0 | 7 | 0 | 6 |
+| `synthesis` | synthesis | 2 | 2 | 4 | 2 | 0 | 3 | 4 | 3 |
+| `timbre` | psychoacoustics | 2 | 3 | 3 | 1 | 0 | 7 | 0 | 6 |
 | `vibration` | acoustics | 1 | 2 | 1 | 0 | 0 | 1 | 3 | 4 |
 
 ## Domain coverage
@@ -41,7 +41,7 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 |---|---:|---:|---:|---:|
 | `acoustics` | 5 | 19 | 3 | 3 |
 | `audio-hardware` | 0 | 0 | 0 | 0 |
-| `digital-audio` | 2 | 8 | 0 | 4 |
+| `digital-audio` | 2 | 11 | 0 | 4 |
 | `dj-turntablism` | 0 | 0 | 0 | 0 |
 | `dsp` | 1 | 2 | 1 | 3 |
 | `history-culture` | 0 | 0 | 0 | 0 |
@@ -50,18 +50,18 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 | `music-theory` | 0 | 0 | 0 | 0 |
 | `psychoacoustics` | 3 | 9 | 2 | 3 |
 | `recording` | 1 | 0 | 0 | 2 |
-| `rhythm-time` | 2 | 0 | 0 | 2 |
+| `rhythm-time` | 2 | 7 | 0 | 2 |
 | `sound-design` | 0 | 0 | 0 | 0 |
 | `spatial-audio` | 0 | 0 | 0 | 0 |
-| `synthesis` | 1 | 0 | 2 | 2 |
+| `synthesis` | 1 | 4 | 2 | 2 |
 
 ## Session coverage
 
 | Session | Nodes | Vocabulary | Experiments |
 |---|---:|---:|---:|
-| `session-01-what-is-sound` | 11 | 36 | 3 |
-| `session-02-what-is-music` | 13 | 11 | 3 |
-| `session-03-history-of-electronic-music` | 7 | 0 | 0 |
+| `session-01-what-is-sound` | 11 | 37 | 3 |
+| `session-02-what-is-music` | 13 | 25 | 3 |
+| `session-03-history-of-electronic-music` | 7 | 4 | 0 |
 
 ## Research-gap candidates
 
@@ -99,12 +99,4 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 
 - **practical_evidence** — `node:vibration` — evidence: practical_application_count=3, experiment_count=0. The canonical vibration node declares practical applications but no experiment definition explicitly references it.
 
-- **vocabulary_bridge** — `node:midi` — evidence: vocabulary_count=0. The canonical midi node currently has no explicit vocabulary entry cross-reference.
-
 - **vocabulary_bridge** — `node:recording` — evidence: vocabulary_count=0. The canonical recording node currently has no explicit vocabulary entry cross-reference.
-
-- **vocabulary_bridge** — `node:rhythm` — evidence: vocabulary_count=0. The canonical rhythm node currently has no explicit vocabulary entry cross-reference.
-
-- **vocabulary_bridge** — `node:sequencing` — evidence: vocabulary_count=0. The canonical sequencing node currently has no explicit vocabulary entry cross-reference.
-
-- **vocabulary_bridge** — `node:synthesis` — evidence: vocabulary_count=0. The canonical synthesis node currently has no explicit vocabulary entry cross-reference.

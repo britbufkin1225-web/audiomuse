@@ -4,7 +4,11 @@ function Reset-Fixture {if(Test-Path $fixture){Remove-Item $fixture -Recurse -Fo
 function Replace([string]$Path,[string]$Old,[string]$New){$t=[IO.File]::ReadAllText($Path);if(-not$t.Contains($Old)){throw "Fixture text missing: $Old"};[IO.File]::WriteAllText($Path,$t.Replace($Old,$New),[Text.UTF8Encoding]::new($false))}
 function Read-Model {return ([IO.File]::ReadAllText((Join-Path $fixture 'indexes/knowledge-coverage.json'))|ConvertFrom-Json)}
 function Write-Model($Model){[IO.File]::WriteAllText((Join-Path $fixture 'indexes/knowledge-coverage.json'),((($Model|ConvertTo-Json -Depth 12) -split '\r?\n') -join "`n").TrimEnd()+"`n",[Text.UTF8Encoding]::new($false))}
-function Candidate($Model,[string]$Type,[string]$Subject){return @($Model.research_gap_candidates|Where-Object{$_.candidate_type -ceq $Type -and $_.subject_id -ceq $Subject})[0]}
+# Tamper targets are selected by candidate TYPE, not by a hard-coded subject id. Canonical
+# content legitimately resolves individual candidates as the atlas deepens, and a fixture that
+# names one subject would then tamper with $null and fail for a reason unrelated to the
+# failure class under test.
+function AnyCandidate($Model,[string]$Type){$c=@($Model.research_gap_candidates|Where-Object{$_.candidate_type -ceq $Type});if(-not $c.Count){throw "Fixture has no $Type candidate to tamper with."};return $c[0]}
 # Every failure class asserts the specific validator message so a test cannot pass
 # by accidentally tripping the generic stale-output byte comparison instead.
 function Expect-Failure([string]$Name,[string]$ExpectedMessage,[scriptblock]$Change){Reset-Fixture;&$Change;try{& (Join-Path $PSScriptRoot 'validate-knowledge-coverage.ps1') -RepositoryRoot $fixture *> $null;throw "Unexpected pass: $Name"}catch{$message=$_.Exception.Message;if($message -like 'Unexpected pass:*'){throw};if($message -notlike $ExpectedMessage){throw "Wrong failure for '$Name': expected like '$ExpectedMessage', got '$message'"};$script:passed++;Write-Output "PASS: $Name"}}
@@ -17,14 +21,14 @@ try{
  Expect-Failure 'canonical drift without rebuild' '*Coverage count disagrees with canonical facts*' {Replace (Join-Path $fixture 'vocabulary/entries/acoustic-interaction.yaml') 'node_refs: ["resonance"]' 'node_refs: ["sound"]'}
  Expect-Failure 'duplicate gap candidate' '*Duplicate gap candidate*' {$m=Read-Model;$m.research_gap_candidates=@($m.research_gap_candidates)+@($m.research_gap_candidates[0]);Write-Model $m}
  Expect-Failure 'malformed candidate type' '*Malformed candidate type*' {$m=Read-Model;$m.research_gap_candidates[0].candidate_type='knowledge_quality';Write-Model $m}
- Expect-Failure 'nonexistent candidate node subject' '*Candidate subject does not exist*' {$m=Read-Model;(Candidate $m 'practical_evidence' 'midi').subject_id='missing-node';Write-Model $m}
- Expect-Failure 'nonexistent candidate domain subject' '*Candidate subject does not exist*' {$m=Read-Model;(Candidate $m 'domain_representation' 'synthesis').subject_id='zz-missing-domain';Write-Model $m}
- Expect-Failure 'candidate evidence inconsistent with canonical facts' '*Candidate evidence inconsistent with canonical facts*' {$m=Read-Model;(Candidate $m 'vocabulary_bridge' 'midi').evidence.vocabulary_count=1;Write-Model $m}
- Expect-Failure 'unsupported research-gap candidate' '*not supported by canonical facts*' {$m=Read-Model;$extra=(Candidate $m 'vocabulary_bridge' 'synthesis').PSObject.Copy();$extra.subject_id='timbre';$m.research_gap_candidates=@($m.research_gap_candidates)+@($extra);Write-Model $m}
- Expect-Failure 'missing research-gap candidate' '*Missing research-gap candidate*' {$m=Read-Model;$m.research_gap_candidates=@($m.research_gap_candidates|Where-Object{$_.candidate_type -cne 'vocabulary_bridge' -or $_.subject_id -cne 'midi'});Write-Model $m}
+ Expect-Failure 'nonexistent candidate node subject' '*Candidate subject does not exist*' {$m=Read-Model;(AnyCandidate $m 'practical_evidence').subject_id='missing-node';Write-Model $m}
+ Expect-Failure 'nonexistent candidate domain subject' '*Candidate subject does not exist*' {$m=Read-Model;(AnyCandidate $m 'domain_representation').subject_id='zz-missing-domain';Write-Model $m}
+ Expect-Failure 'candidate evidence inconsistent with canonical facts' '*Candidate evidence inconsistent with canonical facts*' {$m=Read-Model;(AnyCandidate $m 'vocabulary_bridge').evidence.vocabulary_count=1;Write-Model $m}
+ Expect-Failure 'unsupported research-gap candidate' '*not supported by canonical facts*' {$m=Read-Model;$extra=(AnyCandidate $m 'vocabulary_bridge').PSObject.Copy();$extra.subject_id='timbre';$m.research_gap_candidates=@($m.research_gap_candidates)+@($extra);Write-Model $m}
+ Expect-Failure 'missing research-gap candidate' '*Missing research-gap candidate*' {$m=Read-Model;$dropped=AnyCandidate $m 'vocabulary_bridge';$m.research_gap_candidates=@($m.research_gap_candidates|Where-Object{$_.candidate_type -cne 'vocabulary_bridge' -or $_.subject_id -cne $dropped.subject_id});Write-Model $m}
  Expect-Failure 'broken generated candidate ordering' '*ordering is not deterministic*' {$m=Read-Model;$c=@($m.research_gap_candidates);$last=$c.Count-1;$swap=$c[$last];$c[$last]=$c[$last-1];$c[$last-1]=$swap;$m.research_gap_candidates=$c;Write-Model $m}
  Expect-Failure 'impossible coverage state' '*Impossible coverage state*' {$m=Read-Model;$m.nodes[0].sessions.state='good';Write-Model $m}
- Expect-Failure 'coverage id list disagrees with its own count' '*id list disagrees with its own count*' {$m=Read-Model;$row=@($m.nodes|Where-Object id -ceq 'midi')[0];$row.vocabulary.ids=@('');Write-Model $m}
+ Expect-Failure 'coverage id list disagrees with its own count' '*id list disagrees with its own count*' {$m=Read-Model;$row=@($m.nodes|Where-Object id -ceq 'midi')[0];$row.vocabulary.ids=@(@($row.vocabulary.ids)+@(''));Write-Model $m}
  Expect-Failure 'coverage id list disagrees with canonical facts' '*id list disagrees with canonical facts*' {$m=Read-Model;$row=@($m.nodes|Where-Object id -ceq 'resonance')[0];$row.sources.ids=@('session-01-what-is-sound','session-02-what-is-music','session-02-what-is-music');Write-Model $m}
  Expect-Failure 'node coverage count disagrees with canonical facts' '*Coverage count disagrees with canonical facts*' {$m=Read-Model;$row=@($m.nodes|Where-Object id -ceq 'resonance')[0];$row.sources.count=99;Write-Model $m}
  Expect-Failure 'node coverage state disagrees with canonical facts' '*Coverage state disagrees with canonical facts*' {$m=Read-Model;$row=@($m.nodes|Where-Object id -ceq 'resonance')[0];$row.completed_experiment_runs.state='covered';Write-Model $m}
