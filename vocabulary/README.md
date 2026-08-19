@@ -2,7 +2,7 @@
 
 Vocabulary is AudioMuse's terminology and practical-context layer. It answers what a term means, how it relates to digital audio, why it is useful, what technologies use it, and where the existing atlas explains it further.
 
-Canonical entries live in domain-grouped YAML files under `entries/` and conform to `schemas/vocabulary.schema.yaml`. The initial set is a bounded migration from the Session 1 Vocabulary Atlas, registered as the source `session-01-vocabulary-atlas`; the original DOCX remains source material, not a session and not a second canonical store. Because that atlas is the shared origin of every entry in this migration, it is recorded here once rather than repeated as a per-entry reference. Keep entries concise and preserve the distinctions among `definition`, `digital_relationship`, `best_use`, and `technologies`.
+Canonical entries live in domain-grouped YAML files under `entries/` and conform to `schemas/vocabulary.schema.yaml`. The initial set is a bounded migration from the Session 1 Vocabulary Atlas, registered as the source `session-01-vocabulary-atlas`; the original DOCX remains source material, not a session and not a second canonical store. Because that atlas is the shared origin of every entry in this migration, it is recorded here once rather than repeated as a per-entry reference. Entries added after that migration do not come from the atlas: each one is derived from the registered sessions named in its own `session_refs`, and is written only where a session develops the concept rather than merely listing the term. Keep entries concise and preserve the distinctions among `definition`, `digital_relationship`, `best_use`, and `technologies`.
 
 ## Cross-reference semantics
 

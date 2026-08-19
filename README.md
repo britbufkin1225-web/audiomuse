@@ -32,10 +32,11 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - A many-to-many session-to-node map and human-readable graph overview
 - A dependency-free graph integrity validator
 - Deterministic, rebuildable knowledge indexes for graph, session, and provenance inspection
-- A validated 38-entry vocabulary foundation with deterministic A-Z, domain, session, and node views
+- A validated 52-entry vocabulary foundation with deterministic A-Z, domain, session, and node views
 - A validated three-experiment practical foundation with listening, visualization, safety, provenance, and repeatability contracts
 - Deterministic, evidence-backed knowledge coverage observations and research-gap candidates, without completeness or quality scoring
 - A human triage of all 22 research-gap candidates and a four-target research-deepening plan for Phase 12
+- Session 2 and 3 vocabulary bridges into rhythm, sequencing, synthesis, and MIDI (Phase 12A, Target 1)
 
 See `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
 

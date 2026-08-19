@@ -1,0 +1,84 @@
+---
+id: "pulse"
+term: "Pulse"
+domain: "rhythm-time"
+definition: "The repeating underlying beat a listener perceives as music's steady time reference."
+digital_relationship: "Expressed in software as measurable time data such as BPM, bars, beats, subdivisions, ticks, samples, and milliseconds."
+best_use: "Establishing a stable time reference for arrangement, performance, and synchronization."
+technologies: ["DAWs", "drum machines", "sequencers", "DJ software"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["beat", "tempo", "rhythm", "beatgrid"]
+tags: ["rhythm-time", "foundation"]
+---
+id: "beat"
+term: "Beat"
+domain: "rhythm-time"
+definition: "The perceived unit of musical time that listeners count, follow, and move to."
+digital_relationship: "Represented as numbered positions within bars and marked on a beatgrid; distinct from the acoustic beating produced by two near frequencies."
+best_use: "Counting and aligning musical time, programming patterns, and matching one track to another."
+technologies: ["DAWs", "sequencers", "drum machines", "DJ software"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["pulse", "tempo", "rhythm", "beatgrid"]
+tags: ["rhythm-time", "foundation"]
+---
+id: "tempo"
+term: "Tempo"
+domain: "rhythm-time"
+definition: "The speed of the beat, describing how quickly musical time passes."
+digital_relationship: "Quantified as beats per minute, carried as track metadata, and estimated automatically by audio-analysis tools."
+best_use: "Setting a project's speed, matching tracks for mixing, and organizing libraries by BPM."
+technologies: ["DAWs", "drum machines", "DJ software", "beat-detection tools"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["pulse", "beat", "swing", "beatgrid"]
+tags: ["rhythm-time", "measurement"]
+---
+id: "rhythm"
+term: "Rhythm"
+domain: "rhythm-time"
+definition: "The pattern of sonic events and silences through time, including repetition, emphasis, and variation."
+digital_relationship: "Encoded as event timing on a grid of bars, beats, and subdivisions, or as sample and millisecond positions."
+best_use: "Drum programming, arrangement, and analyzing why a pattern feels the way it does."
+technologies: ["DAWs", "sequencers", "drum machines", "samplers"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["pulse", "beat", "groove", "swing", "quantization-timing"]
+tags: ["rhythm-time", "foundation"]
+---
+id: "groove"
+term: "Groove"
+domain: "rhythm-time"
+definition: "The perceived rhythmic feel created by small timing, velocity, and accent relationships rather than by exact grid positions."
+digital_relationship: "Depends on how a sequencer treats microtiming: snapping every event to the grid can remove it, while preserved timing offsets keep it."
+best_use: "Programming patterns that feel performed, and deciding how strictly to quantize a take."
+technologies: ["sequencers", "DAWs", "drum machines", "samplers"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["rhythm", "swing", "quantization-timing", "beat"]
+tags: ["rhythm-time", "perception"]
+---
+id: "swing"
+term: "Swing"
+domain: "rhythm-time"
+definition: "A deliberate change of subdivision timing that makes consecutive subdivisions unequal rather than evenly spaced."
+digital_relationship: "Exposed by drum machines and DAWs as a swing or shuffle amount that displaces subdivisions from the strict grid."
+best_use: "Adding rhythmic feel to programmed patterns without performing them by hand."
+technologies: ["drum machines", "DAWs", "sequencers"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["groove", "rhythm", "tempo", "quantization-timing"]
+tags: ["rhythm-time", "timing"]
+---
+id: "quantization-timing"
+term: "Quantization (Timing)"
+domain: "rhythm-time"
+definition: "Alignment of musical events to exact positions on a timing grid."
+digital_relationship: "Applied by sequencers and DAWs when recorded or programmed events are snapped to grid positions; the deviation left unquantized is what carries groove."
+best_use: "Tightening programmed or performed patterns, and choosing how much timing deviation to preserve."
+technologies: ["sequencers", "DAWs", "drum machines"]
+node_refs: ["rhythm", "sequencing"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["groove", "swing", "rhythm", "sequencer"]
+tags: ["rhythm-time", "timing"]

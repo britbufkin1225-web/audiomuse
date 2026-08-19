@@ -66,6 +66,18 @@ Decisions, evidence, deferred and watch items, and the Phase 12 boundaries are r
 Implement one or more of the four Phase 11 targets under the evidence requirements and guardrails that
 document records. Phase 12 may not substitute a deferred or watch item without a new triage decision.
 
+### Phase 12A — Focused Vocabulary Deepening. Complete.
+
+Target 1 only. Extended the vocabulary layer from Sessions 2 and 3 with fourteen entries: seven in
+`rhythm-time`, four in `synthesis`, and three musical-control entries in `digital-audio`. Each entry is
+derived from session prose that develops the concept; terms appearing only inside Session 2's taxonomy
+blocks were deliberately left out. This established vocabulary bridges to the existing `rhythm`,
+`sequencing`, `synthesis`, and `midi` nodes. No node, relationship, source, session, or experiment was
+created or modified.
+
+Targets 2, 3, and 4 remain pending. The recommended next phase is
+`Phase 12B — DJ + Turntablism Domain Foundation`.
+
 ## Near-term follow-up
 
 - Independently review Phase 10 thresholds and candidate evidence against future repository growth

@@ -1,0 +1,36 @@
+---
+id: "midi"
+term: "MIDI"
+domain: "digital-audio"
+definition: "A standard protocol that carries musical control instructions such as note, velocity, and channel rather than recorded audio."
+digital_relationship: "Structured event messaging: note on, note off, velocity, pitch bend, control changes, and clock travel between devices while the receiving instrument decides the resulting sound."
+best_use: "Controlling instruments from a keyboard or sequencer, editing performances as data, and synchronizing equipment from different manufacturers."
+technologies: ["keyboards", "synthesizers", "drum machines", "sequencers", "DAWs"]
+node_refs: ["midi"]
+session_refs: ["session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["sequencer", "synthesizer", "audio-signal", "beatgrid"]
+tags: ["digital-audio", "control"]
+---
+id: "sequencer"
+term: "Sequencer"
+domain: "digital-audio"
+definition: "A device or program that stores and plays back ordered musical events so patterns repeat and stay editable."
+digital_relationship: "Early designs stepped through analog voltages; later ones store digital event data, and MIDI lets one sequencer drive several instruments."
+best_use: "Programming drum and melodic patterns, automating repetition, and driving synthesizers and samplers."
+technologies: ["step sequencers", "drum machines", "MIDI hardware", "DAWs", "samplers"]
+node_refs: ["sequencing"]
+session_refs: ["session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["midi", "quantization-timing", "rhythm", "synthesizer"]
+tags: ["digital-audio", "control"]
+---
+id: "beatgrid"
+term: "Beatgrid"
+domain: "digital-audio"
+definition: "A digital coordinate system for musical time that records where a track's beats fall."
+digital_relationship: "Represents beat positions as measurable musical-time data; an incorrect grid can break synchronization even when the audio itself is intact."
+best_use: "Checking beat alignment before synchronizing tracks in a DJ workflow."
+technologies: ["DJ software"]
+node_refs: ["rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["beat", "tempo", "pulse", "rhythm"]
+tags: ["digital-audio", "timing"]

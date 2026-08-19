@@ -1,0 +1,48 @@
+---
+id: "synthesizer"
+term: "Synthesizer"
+domain: "synthesis"
+definition: "An electronic instrument that generates and shapes sound rather than reproducing a recording."
+digital_relationship: "Built from hardware modules or software instruments and driven by control events that name notes rather than carry audio."
+best_use: "Creating timbres no recorded instrument supplies, and performing them under electronic control."
+technologies: ["modular synthesizers", "software synthesizers", "MIDI controllers", "sequencers"]
+node_refs: ["synthesis", "timbre"]
+session_refs: ["session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["oscillator", "detuning", "adsr-envelope", "midi", "timbre"]
+tags: ["synthesis", "instrument"]
+---
+id: "oscillator"
+term: "Oscillator"
+domain: "synthesis"
+definition: "A circuit or module that produces a continuous periodic signal used as a sound source at a chosen pitch."
+digital_relationship: "Reproduced in software synthesizers as computed sample values; in voltage-controlled designs its frequency is set by a control voltage."
+best_use: "Supplying the raw tone of a synthesizer voice, and layering slightly detuned copies for thickness."
+technologies: ["modular synthesizers", "software synthesizers", "voltage-controlled oscillators"]
+node_refs: ["synthesis"]
+session_refs: ["session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["synthesizer", "detuning", "filter", "frequency"]
+tags: ["synthesis", "sound-source"]
+---
+id: "detuning"
+term: "Detuning"
+domain: "synthesis"
+definition: "Deliberately offsetting one sound source slightly in pitch from another so the two interact instead of matching exactly."
+digital_relationship: "Set as a small pitch offset per oscillator or layer; the offset produces an audible amplitude fluctuation at the difference frequency."
+best_use: "Creating thickness and movement in synthesizer and layered sounds."
+technologies: ["synthesizers", "oscillators", "chorus effects", "tuners"]
+node_refs: ["pitch", "synthesis"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["oscillator", "synthesizer", "dissonance", "fundamental-frequency"]
+tags: ["synthesis", "tuning"]
+---
+id: "adsr-envelope"
+term: "ADSR Envelope"
+domain: "synthesis"
+definition: "A four-stage model of how a sound's amplitude changes over time: attack, decay, sustain, and release."
+digital_relationship: "Implemented as an envelope generator that shapes a sound's amplitude over time in synthesizers and samplers."
+best_use: "Shaping articulation, from a percussive hit with fast attack and short decay to a pad with slow attack and long release."
+technologies: ["synthesizers", "samplers", "envelope generators", "transient shapers"]
+node_refs: ["synthesis", "timbre"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["synthesizer", "timbre", "amplitude", "oscillator"]
+tags: ["synthesis", "envelope"]
