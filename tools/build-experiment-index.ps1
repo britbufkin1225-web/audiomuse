@@ -43,7 +43,7 @@ foreach ($view in @(@{Heading='By Type';Field='type'}, @{Heading='By Canonical N
     $lines.Add(''); $lines.Add("## $($view.Heading)")
     $keys = @(Sort-Ordinal @($records.($view.Field) | ForEach-Object { $_ } | Select-Object -Unique))
     foreach ($key in $keys) {
-        $members = @(Sort-RecordsByTitle @($records | Where-Object { $key -in @($_.($view.Field)) }))
+        $members = @(Sort-RecordsByTitle @($records | Where-Object { $key -cin @($_.($view.Field)) }))
         $noun = if ($members.Count -eq 1) { 'experiment' } else { 'experiments' }
         $lines.Add(''); $lines.Add("### ``$key`` — $($members.Count) $noun"); $lines.Add('')
         foreach ($member in $members) { $lines.Add("- ``$($member.id)`` — $($member.title)") }

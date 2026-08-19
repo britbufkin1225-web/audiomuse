@@ -34,7 +34,7 @@ try {
             throw "Generated index is stale: indexes/$name"
         }
     }
-    $unexpected = @(Get-ChildItem $indexDirectory -File | Where-Object Name -notin $expectedFiles)
+    $unexpected = @(Get-ChildItem $indexDirectory -File | Where-Object Name -cnotin $expectedFiles)
     if ($unexpected.Count -gt 0) { throw "Unexpected generated index file: $($unexpected[0].Name)" }
 
     $connections = Get-Content -Raw -LiteralPath (Join-Path $indexDirectory 'node-connections.md')
@@ -117,8 +117,8 @@ try {
     if ($declaredDomains -ne $canonicalDomainCount -or $domainHeadings -ne $canonicalDomainCount) {
         throw "Domain totals do not reconcile: canonical=$canonicalDomainCount declared=$declaredDomains headings=$domainHeadings"
     }
-    $missingIds = @($canonicalNodeIds | Where-Object { $_ -notin $listedNodeIds })
-    $extraIds = @($listedNodeIds | Where-Object { $_ -notin $canonicalNodeIds })
+    $missingIds = @($canonicalNodeIds | Where-Object { $_ -cnotin $listedNodeIds })
+    $extraIds = @($listedNodeIds | Where-Object { $_ -cnotin $canonicalNodeIds })
     if ($missingIds.Count -gt 0) { throw "Canonical node missing from nodes-by-domain.md: $($missingIds[0])" }
     if ($extraIds.Count -gt 0) { throw "nodes-by-domain.md lists a non-canonical node: $($extraIds[0])" }
 

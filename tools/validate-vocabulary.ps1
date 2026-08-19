@@ -23,21 +23,21 @@ function Assert-VocabularyIndexStructure([string]$Path, [object[]]$Entries) {
     foreach ($marker in @('System.Object[]', '$(')) {
         if ($text.Contains($marker)) { throw "Vocabulary index contains unexpanded template output ('$marker'); the builder emitted raw object text instead of markdown." }
     }
-    $present = [Collections.Generic.HashSet[string]]::new([string[]]($text -split '\r?\n'))
+    $present = [Collections.Generic.HashSet[string]]::new([string[]]($text -split '\r?\n'), [StringComparer]::Ordinal)
     $expected = [Collections.Generic.List[string]]::new()
     foreach ($heading in @('# AudioMuse Vocabulary Index','## A-Z','## By Domain','## By Session','## By Canonical Node')) { $expected.Add($heading) }
     $expected.Add("Canonical vocabulary entries: $($Entries.Count)")
     foreach ($entry in $Entries) { $expected.Add(('- **{0}** (`{1}`) — {2}' -f $entry.term, $entry.id, $entry.definition)) }
     foreach ($domain in @($Entries.domain | Select-Object -Unique)) {
-        $members = @($Entries | Where-Object domain -eq $domain)
+        $members = @($Entries | Where-Object domain -ceq $domain)
         $expected.Add(('### {0} — {1} terms' -f (Get-DisplayLabel $domain), $members.Count))
         foreach ($entry in $members) { $expected.Add(('- `{0}` — {1}' -f $entry.id, $entry.term)) }
     }
     foreach ($sessionId in @($Entries.session_refs | ForEach-Object { $_ } | Select-Object -Unique)) {
-        $expected.Add(('### `{0}` — {1} terms' -f $sessionId, @($Entries | Where-Object { $sessionId -in $_.session_refs }).Count))
+        $expected.Add(('### `{0}` — {1} terms' -f $sessionId, @($Entries | Where-Object { $sessionId -cin $_.session_refs }).Count))
     }
     foreach ($nodeId in @($Entries.node_refs | ForEach-Object { $_ } | Select-Object -Unique)) {
-        $expected.Add(('### `{0}` — {1} terms' -f $nodeId, @($Entries | Where-Object { $nodeId -in $_.node_refs }).Count))
+        $expected.Add(('### `{0}` — {1} terms' -f $nodeId, @($Entries | Where-Object { $nodeId -cin $_.node_refs }).Count))
     }
     foreach ($line in $expected) { if (-not $present.Contains($line)) { throw "Vocabulary index is missing expected line: $line" } }
     # A-Z ordering is asserted against an independently sorted term list, not against builder output.
@@ -45,7 +45,7 @@ function Assert-VocabularyIndexStructure([string]$Path, [object[]]$Entries) {
     if ($azTerms.Count -ne $Entries.Count) { throw "Vocabulary index A-Z section lists $($azTerms.Count) terms but $($Entries.Count) canonical entries exist." }
     $sortedTerms = [string[]]@($azTerms); [Array]::Sort($sortedTerms, [StringComparer]::Ordinal)
     for ($i = 0; $i -lt $sortedTerms.Count; $i++) { if ($azTerms[$i] -cne $sortedTerms[$i]) { throw "Vocabulary index A-Z section is not in ordinal term order at position $($i + 1): expected '$($sortedTerms[$i])', found '$($azTerms[$i])'." } }
-    $known = [Collections.Generic.HashSet[string]]::new([string[]]@(@($Entries.session_refs | ForEach-Object { $_ }) + @($Entries.node_refs | ForEach-Object { $_ })))
+    $known = [Collections.Generic.HashSet[string]]::new([string[]]@(@($Entries.session_refs | ForEach-Object { $_ }) + @($Entries.node_refs | ForEach-Object { $_ })), [StringComparer]::Ordinal)
     foreach ($match in [regex]::Matches($text, '(?m)^### `(?<id>[^`]*)` — ')) {
         if (-not $known.Contains($match.Groups['id'].Value)) { throw "Vocabulary index contains an unresolved grouping heading: $($match.Groups['id'].Value)" }
     }
@@ -70,34 +70,34 @@ foreach ($file in @(Get-ChildItem -LiteralPath $VocabularyDirectory -Filter '*.y
     }
 }
 if ($entries.Count -eq 0) { throw 'No canonical vocabulary entries found.' }
-$ids = @{}; $terms = @{}
+$ids = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); $terms = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 foreach ($entry in $entries) {
-    if ($ids.ContainsKey($entry.id)) { throw "Duplicate vocabulary id: $($entry.id)" }; $ids[$entry.id] = $true
-    $termKey = $entry.term.ToLowerInvariant(); if ($terms.ContainsKey($termKey)) { throw "Duplicate canonical vocabulary term: $($entry.term)" }; $terms[$termKey] = $true
+    if (-not $ids.Add($entry.id)) { throw "Duplicate vocabulary id: $($entry.id)" }
+    if (-not $terms.Add($entry.term)) { throw "Duplicate canonical vocabulary term: $($entry.term)" }
 }
 $domainText = [IO.File]::ReadAllText((Join-Path $repoRoot 'schemas/node.schema.yaml'))
 $domainMatch = [regex]::Match($domainText, '(?ms)^  domain:\r?\n(?<body>.*?)^  status:')
 if (-not $domainMatch.Success) { throw 'Could not parse canonical domain vocabulary.' }
 $domainBlock = $domainMatch.Groups['body'].Value
 $validDomains = @([regex]::Matches($domainBlock, '(?m)^      - (?<id>[a-z0-9-]+)\r?$') | ForEach-Object { $_.Groups['id'].Value })
-$nodeIds = @{}; Get-ChildItem (Join-Path $repoRoot 'nodes') -Recurse -Filter '*.md' | Where-Object Name -ne 'README.md' | ForEach-Object { $m=[regex]::Match([IO.File]::ReadAllText($_.FullName),'(?m)^id: (?<id>[a-z0-9-]+)\r?$'); if($m.Success){$nodeIds[$m.Groups['id'].Value]=$true} }
+$nodeIds = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); Get-ChildItem (Join-Path $repoRoot 'nodes') -Recurse -Filter '*.md' | Where-Object Name -ne 'README.md' | ForEach-Object { $m=[regex]::Match([IO.File]::ReadAllText($_.FullName),'(?m)^id: (?<id>[a-z0-9-]+)\r?$'); if($m.Success){[void]$nodeIds.Add($m.Groups['id'].Value)} }
 # Session refs resolve by registered source TYPE, matching the Phase 5 rule that session lists may
 # only name type: session sources. An id that merely starts with "session-" is not sufficient.
-$sourceTypes = @{}; [regex]::Matches([IO.File]::ReadAllText((Join-Path $repoRoot 'sources/source-registry.yaml')), '(?m)^  - id: (?<id>[a-z0-9-]+)\r?\n    type: (?<type>[a-z0-9-]+)\r?$') | ForEach-Object { $sourceTypes[$_.Groups['id'].Value] = $_.Groups['type'].Value }
-if (-not @($sourceTypes.Values | Where-Object { $_ -eq 'session' }).Count) { throw 'Could not parse registered session sources.' }
+$sourceTypes = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::Ordinal); [regex]::Matches([IO.File]::ReadAllText((Join-Path $repoRoot 'sources/source-registry.yaml')), '(?m)^  - id: (?<id>[a-z0-9-]+)\r?\n    type: (?<type>[a-z0-9-]+)\r?$') | ForEach-Object { $sourceTypes[$_.Groups['id'].Value] = $_.Groups['type'].Value }
+if (-not @($sourceTypes.Values | Where-Object { $_ -ceq 'session' }).Count) { throw 'Could not parse registered session sources.' }
 $nodeRefs=0; $sessionRefs=0; $relatedRefs=0
 foreach ($entry in $entries) {
-    if ($entry.domain -notin $validDomains) { throw "Invalid vocabulary domain for $($entry.id): $($entry.domain)" }
+    if ($entry.domain -cnotin $validDomains) { throw "Invalid vocabulary domain for $($entry.id): $($entry.domain)" }
     foreach ($field in @('technologies','node_refs','session_refs','related_terms','tags')) {
-        $seen=@{}; foreach($value in $entry.$field) { if($value -isnot [string] -or -not $value.Trim()){throw "Empty or non-string $field value for $($entry.id)"}; if($seen.ContainsKey($value)){throw "Duplicate $field reference for $($entry.id): $value"}; $seen[$value]=$true }
+        $seen=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); foreach($value in $entry.$field) { if($value -isnot [string] -or -not $value.Trim()){throw "Empty or non-string $field value for $($entry.id)"}; if(-not $seen.Add($value)){throw "Duplicate $field reference for $($entry.id): $value"} }
     }
-    foreach ($ref in $entry.node_refs) { if (-not $nodeIds.ContainsKey($ref)) { throw "Unresolved node reference for $($entry.id): $ref" }; $nodeRefs++ }
+    foreach ($ref in $entry.node_refs) { if (-not $nodeIds.Contains($ref)) { throw "Unresolved node reference for $($entry.id): $ref" }; $nodeRefs++ }
     foreach ($ref in $entry.session_refs) {
         if (-not $sourceTypes.ContainsKey($ref)) { throw "Unresolved session reference for $($entry.id): $ref" }
-        if ($sourceTypes[$ref] -ne 'session') { throw "Vocabulary session_refs references a non-session source for $($entry.id): $ref (registered type: $($sourceTypes[$ref]))" }
+        if ($sourceTypes[$ref] -cne 'session') { throw "Vocabulary session_refs references a non-session source for $($entry.id): $ref (registered type: $($sourceTypes[$ref]))" }
         $sessionRefs++
     }
-    foreach ($ref in $entry.related_terms) { if ($ref -eq $entry.id) { throw "Self-related vocabulary term: $($entry.id)" }; if (-not $ids.ContainsKey($ref)) { throw "Unresolved related term for $($entry.id): $ref" }; $relatedRefs++ }
+    foreach ($ref in $entry.related_terms) { if ($ref -ceq $entry.id) { throw "Self-related vocabulary term: $($entry.id)" }; if (-not $ids.Contains($ref)) { throw "Unresolved related term for $($entry.id): $ref" }; $relatedRefs++ }
 }
 if (-not (Test-Path -LiteralPath $IndexPath)) { throw 'Missing generated vocabulary index.' }
 Assert-VocabularyIndexStructure $IndexPath @($entries)
@@ -107,7 +107,9 @@ try {
     if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($temp)) -cne [Convert]::ToBase64String([IO.File]::ReadAllBytes($IndexPath))) { throw 'Generated vocabulary index is stale.' }
 } finally { if (Test-Path $temp) { Remove-Item -LiteralPath $temp -Force } }
 Write-Output "vocabulary_entries: $($entries.Count)"
-foreach ($domain in ($entries.domain | Sort-Object -Unique)) { Write-Output "  ${domain}: $(@($entries | Where-Object domain -eq $domain).Count)" }
+$domainNames = [string[]]@([Collections.Generic.HashSet[string]]::new([string[]]@($entries.domain), [StringComparer]::Ordinal))
+[Array]::Sort($domainNames, [StringComparer]::Ordinal)
+foreach ($domain in $domainNames) { Write-Output "  ${domain}: $(@($entries | Where-Object domain -ceq $domain).Count)" }
 Write-Output "vocabulary_node_refs: $nodeRefs"
 Write-Output "vocabulary_session_refs: $sessionRefs"
 Write-Output "vocabulary_related_term_refs: $relatedRefs"

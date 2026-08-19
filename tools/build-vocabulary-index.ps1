@@ -63,19 +63,19 @@ foreach ($entry in (Sort-EntriesByTerm $entries)) {
 }
 $lines.Add(''); $lines.Add('## By Domain')
 foreach ($domain in (Sort-Ordinal @($entries.domain | Select-Object -Unique))) {
-    $members = Sort-EntriesByTerm @($entries | Where-Object domain -eq $domain)
+    $members = Sort-EntriesByTerm @($entries | Where-Object domain -ceq $domain)
     $lines.Add(''); $lines.Add(('### {0} — {1} terms' -f (Display $domain), $members.Count)); $lines.Add('')
     foreach ($entry in $members) { $lines.Add(('- `{0}` — {1}' -f $entry.id, $entry.term)) }
 }
 $lines.Add(''); $lines.Add('## By Session')
 foreach ($sessionId in (Sort-Ordinal @($entries.session_refs | ForEach-Object { $_ } | Select-Object -Unique))) {
-    $members = Sort-EntriesByTerm @($entries | Where-Object { $sessionId -in $_.session_refs })
+    $members = Sort-EntriesByTerm @($entries | Where-Object { $sessionId -cin $_.session_refs })
     $lines.Add(''); $lines.Add(('### `{0}` — {1} terms' -f $sessionId, $members.Count)); $lines.Add('')
     foreach ($entry in $members) { $lines.Add(('- `{0}` — {1}' -f $entry.id, $entry.term)) }
 }
 $lines.Add(''); $lines.Add('## By Canonical Node')
 foreach ($nodeId in (Sort-Ordinal @($entries.node_refs | ForEach-Object { $_ } | Select-Object -Unique))) {
-    $members = Sort-EntriesByTerm @($entries | Where-Object { $nodeId -in $_.node_refs })
+    $members = Sort-EntriesByTerm @($entries | Where-Object { $nodeId -cin $_.node_refs })
     $lines.Add(''); $lines.Add(('### `{0}` — {1} terms' -f $nodeId, $members.Count)); $lines.Add('')
     foreach ($entry in $members) { $lines.Add(('- `{0}` — {1}' -f $entry.id, $entry.term)) }
 }

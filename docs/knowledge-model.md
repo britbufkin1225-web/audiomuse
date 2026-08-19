@@ -91,3 +91,27 @@ Observation means a qualitative report. Measurement means a numeric result with 
 Experiment definitions say what to do; experiment runs say whether one execution was planned, completed, left incomplete, or invalidated. A definition may have no runs or many runs without acquiring mutable result state. Run records preserve environment, equipment/software, deviations, controls, direct observations, measurements, confounds, safety notes, interpretation, and follow-up questions in a separate repository layer.
 
 Observations are direct qualitative or perceptual evidence, including subjective listening notes. Measurements are numeric evidence with a unit, method, tool, calibration state, uncertainty, and limitations. Nominal generator settings and DAW controls remain control settings, not measured acoustic output. Neither evidence form changes node maturity, creates a graph edge, or becomes scientific fact automatically; interpretation is explicit and remains bounded by recorded limitations.
+
+## Canonical identity semantics
+
+Canonical repository IDs and contract-defined enum values are compared using exact, case-sensitive ordinal semantics. IDs are data contracts: silently normalizing their case hides authoring defects, and locale-sensitive or case-insensitive matching is inappropriate for repository identity. Human-friendly search is a separate concern and may be tolerant without weakening canonical-reference validation.
+
+| Validator | Reference type | Previous behavior | Phase 9 behavior |
+| --- | --- | --- | --- |
+| `validate-graph.ps1` | node IDs, relationship targets, relationship types | default hashtables and case-insensitive operators | ordinal dictionary/set lookup and case-sensitive enum equality |
+| `validate-experiments.ps1`, `validate-experiment-runs.ps1` | duplicate detection within reference and prose arrays | default hashtables | ordinal sets, matching `validate-vocabulary.ps1` |
+| `validate-graph.ps1`, `validate-vocabulary.ps1` | reported per-type and per-domain count ordering | `Sort-Object` (current culture) | ordinal sort |
+| `validate-knowledge-index.ps1` | generated node membership and filenames | case-insensitive membership | exact case-sensitive reconciliation |
+| `validate-vocabulary.ps1` | vocabulary IDs, node IDs, session IDs, related vocabulary IDs, domains | default hashtables and case-insensitive membership | ordinal sets/dictionary and case-sensitive domain validation |
+| `validate-experiments.ps1` | experiment IDs, node IDs, vocabulary IDs, session/source IDs, related experiment IDs, closed enums | default hashtables and case-insensitive membership | ordinal sets/dictionary and case-sensitive enum validation |
+| `validate-experiment-runs.ps1` | run IDs, experiment IDs, source IDs, status and calibration enums | experiment/source sets and enums were ordinal; run IDs and status-dependent rules were not fully cohesive | all canonical IDs and closed-enum decisions use exact case-sensitive semantics |
+
+In `validate-graph.ps1` the relationship parser already restricts targets and types to lowercase, so
+case drift is rejected before reference resolution runs and reports a malformed-entry defect. The
+ordinal lookup behind it is defence in depth: it keeps identity exact if that pattern is ever widened.
+
+Duplicate detection is ordinal for the same reason resolution is. A case-insensitive set reports a
+case-drifted canonical reference as a duplicate rather than as an unresolved reference, and rejects
+two prose entries that legitimately differ only by case. Vocabulary terms remain the one deliberate
+exception: they are human-readable labels rather than identifiers, so `term` uniqueness stays
+case-insensitive while every ID, reference, and closed-enum comparison is ordinal.

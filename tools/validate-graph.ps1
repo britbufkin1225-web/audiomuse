@@ -17,7 +17,7 @@ $validTypes = [regex]::Matches($vocabularyText, '(?m)^  - id: ([a-z0-9_]+)\r?$')
     ForEach-Object { $_.Groups[1].Value }
 if (-not $validTypes) { throw 'No relationship types found in canonical vocabulary.' }
 
-$nodes = @{}
+$nodes = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::Ordinal)
 $parsed = @()
 foreach ($file in $nodeFiles) {
     $text = Get-Content -Raw $file.FullName
@@ -64,19 +64,18 @@ $invalidTypes = 0
 $selfLinks = 0
 $duplicates = 0
 $edgeCount = 0
-$counts = @{}
+$counts = [Collections.Generic.Dictionary[string,int]]::new([StringComparer]::Ordinal)
 foreach ($node in $parsed) {
-    $seen = @{}
+    $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     foreach ($edge in $node.Edges) {
         $edgeCount++
         $target = $edge.Groups['target'].Value
         $type = $edge.Groups['type'].Value
         if (-not $nodes.ContainsKey($target)) { $unresolved++; $violations += "$($node.Id): unresolved target $target" }
-        if ($type -notin $validTypes) { $invalidTypes++; $violations += "$($node.Id): invalid type $type" }
-        if ($target -eq $node.Id) { $selfLinks++; $violations += "$($node.Id): self-link" }
+        if ($type -cnotin $validTypes) { $invalidTypes++; $violations += "$($node.Id): invalid type $type" }
+        if ($target -ceq $node.Id) { $selfLinks++; $violations += "$($node.Id): self-link" }
         $key = "$type|$target"
-        if ($seen.ContainsKey($key)) { $duplicates++; $violations += "$($node.Id): duplicate edge $key" }
-        $seen[$key] = $true
+        if (-not $seen.Add($key)) { $duplicates++; $violations += "$($node.Id): duplicate edge $key" }
         if (-not $counts.ContainsKey($type)) { $counts[$type] = 0 }
         $counts[$type]++
     }
@@ -86,7 +85,10 @@ foreach ($violation in $violations) { Write-Output "violation: $violation" }
 
 Write-Output "nodes: $($nodes.Count)"
 Write-Output "typed_relationships: $edgeCount"
-foreach ($type in ($counts.Keys | Sort-Object)) { Write-Output "  ${type}: $($counts[$type])" }
+# Sort-Object collates by current culture; cs-CZ orders the "ch" digraph after "h" and reordered
+# this listing. Reported identity ordering must not depend on the operator's locale.
+$typeNames = [string[]]@($counts.Keys); [Array]::Sort($typeNames, [StringComparer]::Ordinal)
+foreach ($type in $typeNames) { Write-Output "  ${type}: $($counts[$type])" }
 Write-Output "unresolved_targets: $unresolved"
 Write-Output "invalid_relationship_types: $invalidTypes"
 Write-Output "duplicate_edges: $duplicates"
