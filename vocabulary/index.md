@@ -24,7 +24,7 @@ Canonical vocabulary entries: 64
 
 - **Bit Depth** (`bit-depth`) — The number of bits used to represent each sample's amplitude.
 
-- **Breakbeat** (`breakbeat`) — A rhythmic break isolated from a record and extended or repeated, originally by alternating two copies of the same release.
+- **Breakbeat** (`breakbeat`) — A rhythmic break isolated from a record and extended or repeated; Session 3 describes doing this by alternating two copies of the same release.
 
 - **Compression (Acoustic)** (`compression-acoustic`) — A region where particles are temporarily crowded and pressure rises above equilibrium.
 
@@ -96,7 +96,7 @@ Canonical vocabulary entries: 64
 
 - **Sample Rate** (`sample-rate`) — The number of samples captured or reproduced per second.
 
-- **Scratching** (`scratching`) — Manual manipulation of a record's playback position, velocity, and direction by hand, combined with amplitude gating at the mixer.
+- **Scratching** (`scratching`) — Manual manipulation of a record's playback position, velocity, and direction by hand, often articulated through amplitude gating at the mixer.
 
 - **Sequencer** (`sequencer`) — A device or program that stores and plays back ordered musical events so patterns repeat and stay editable.
 

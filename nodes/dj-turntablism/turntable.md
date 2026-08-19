@@ -45,7 +45,7 @@ The intended path runs one way:
 record groove -> stylus -> mechanical vibration -> electrical signal -> playback
 ```
 
-The stored edge `turntable --produces--> vibration` records that step, and the existing `vibration --produces--> sound` edge continues it. Everything a turntablist does — changing platter speed, holding or reversing the record, lifting and dropping the needle at a cue point — acts on this path.
+The stored edge `turntable --produces--> vibration` records that step, and the existing `vibration --produces--> sound` edge continues it. Manual changes to platter speed, playback position, or direction act on this path.
 
 The unwanted path runs the other way. Energy from a loudspeaker, a floor, or a supporting surface reaches the same stylus that is meant to read only the groove. Near a system's natural frequency this coupling is strongest, which is why `resonance --influences--> turntable` is recorded on the `resonance` node and why decoupling, placement, and isolation are practical concerns rather than decoration. Session 1's more general principle applies here: a surface that moves more air, or a support that transmits vibration into another object, is doing so whether or not the result is wanted.
 

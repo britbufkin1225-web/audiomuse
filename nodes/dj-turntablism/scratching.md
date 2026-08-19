@@ -7,7 +7,7 @@ session_origin:
   - session-01-what-is-sound
   - session-02-what-is-music
   - session-03-history-of-electronic-music
-definition: Manual manipulation of a record's playback position, velocity, and direction by hand, combined with amplitude gating at the mixer.
+definition: Manual manipulation of a record's playback position, velocity, and direction by hand, often articulated through amplitude gating at the mixer.
 core_concepts:
   - playback position
   - playback velocity

@@ -3,7 +3,7 @@ id: "djing"
 term: "DJing"
 domain: "dj-turntablism"
 definition: "The live practice of selecting recorded music and controlling how it is cued, aligned, layered, and transitioned for an audience."
-digital_relationship: "Depends on library metadata such as BPM, cue points, and beatgrids, and increasingly on software that analyzes, time-stretches, and separates tracks in real time."
+digital_relationship: "Uses measurable timing data such as BPM and beatgrids; digital systems can also analyze libraries, separate stems, and map physical turntable control to digital playback."
 best_use: "Performing recorded music as a continuous set rather than as isolated playback."
 technologies: ["turntables", "DJ mixers", "CDJs", "DJ controllers", "DJ software"]
 node_refs: ["djing"]
@@ -50,7 +50,7 @@ tags: ["dj-turntablism", "medium"]
 id: "scratching"
 term: "Scratching"
 domain: "dj-turntablism"
-definition: "Manual manipulation of a record's playback position, velocity, and direction by hand, combined with amplitude gating at the mixer."
+definition: "Manual manipulation of a record's playback position, velocity, and direction by hand, often articulated through amplitude gating at the mixer."
 digital_relationship: "Equivalent to driving a sample player's transport in real time: hand velocity sets playback rate, direction reverses waveform traversal, and the fader gates the output."
 best_use: "Turning a recorded fragment into a rhythmically articulated, frequency-shifted performance gesture."
 technologies: ["turntables", "DJ mixers", "timecode records", "DJ software"]
@@ -63,7 +63,7 @@ id: "crossfader"
 term: "Crossfader"
 domain: "dj-turntablism"
 definition: "A mixer control that moves audibility between two channels, and in turntablism a gate deciding whether manipulated audio is heard at all."
-digital_relationship: "Implemented as a gain law across two signal paths, with adjustable curves that trade smooth blending against fast on-off cutting."
+digital_relationship: "Controls the gain of two signal paths so a performer can blend between them or gate a manipulated signal into discrete events."
 best_use: "Blending between two recordings, or cutting a moving record into discrete rhythmic events."
 technologies: ["DJ mixers", "battle mixers", "DJ controllers", "DJ software"]
 node_refs: ["scratching", "djing"]
@@ -87,7 +87,7 @@ id: "phrase-matching"
 term: "Phrase Matching"
 domain: "dj-turntablism"
 definition: "Aligning two recordings at the level of musical sections and phrase boundaries rather than only at individual beats."
-digital_relationship: "Relies on bar and phrase counting above the beatgrid, and on cue points or markers placed at structural boundaries."
+digital_relationship: "Relates the beat and bar timing represented by a beatgrid to larger structural boundaries in a recording."
 best_use: "Making a transition land where both tracks change section, so the mix follows structure and not only tempo."
 technologies: ["DJ software", "CDJs", "DJ controllers", "cue-point systems"]
 node_refs: ["beatmatching", "djing"]
@@ -98,8 +98,8 @@ tags: ["dj-turntablism", "structure"]
 id: "breakbeat"
 term: "Breakbeat"
 domain: "dj-turntablism"
-definition: "A rhythmic break isolated from a record and extended or repeated, originally by alternating two copies of the same release."
-digital_relationship: "Became straightforward once samplers could store, loop, and re-trigger the fragment that two turntables had previously extended by hand."
+definition: "A rhythmic break isolated from a record and extended or repeated; Session 3 describes doing this by alternating two copies of the same release."
+digital_relationship: "A sampler can store, loop, and re-trigger the kind of recorded fragment that paired turntables can extend by hand."
 best_use: "Building an extended rhythmic section out of a short passage inside an existing recording."
 technologies: ["paired turntables", "samplers", "drum machines", "DAWs"]
 node_refs: ["turntablism", "djing", "sampling"]
