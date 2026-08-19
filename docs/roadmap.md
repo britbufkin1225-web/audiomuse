@@ -44,6 +44,28 @@ Enforce ordinal canonical identity and cohesive cross-reference validation acros
 
 Derive deterministic, read-only coverage observations and evidence-backed research-gap candidates from canonical repository facts. Keep coverage distinct from correctness and quality, preserve experiment-definition versus completed-run evidence, and leave all research decisions to humans.
 
+## Phase 11 — Research Gap Triage + Knowledge Deepening Plan
+
+Review every Phase 10 research-gap candidate by hand, classify each as accept, defer, dismiss, or watch
+with repository-grounded rationale, and convert the accepted signals into a small prioritized
+research-deepening plan. Documentation only; no canonical knowledge is created or modified. Complete.
+
+Selected Phase 12 research-deepening targets:
+
+1. Extend vocabulary into Sessions 2 and 3 for the `rhythm-time` and `synthesis` domains and
+   musical-control terminology.
+2. Establish the `dj-turntablism` domain with its first durable node.
+3. Convert Session 3 into durable structure, or record why it stays chronology-only.
+4. Produce the first completed experiment run, anchored on `vibration`.
+
+Decisions, evidence, deferred and watch items, and the Phase 12 boundaries are recorded in
+`docs/research-gap-triage.md`.
+
+## Phase 12 — Focused Knowledge Deepening
+
+Implement one or more of the four Phase 11 targets under the evidence requirements and guardrails that
+document records. Phase 12 may not substitute a deferred or watch item without a new triage decision.
+
 ## Near-term follow-up
 
 - Independently review Phase 10 thresholds and candidate evidence against future repository growth
