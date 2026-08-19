@@ -21,6 +21,8 @@ relationships:
     type: represents
   - target: digital-signal-processing
     type: enables
+  - target: digital-vinyl-system
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
@@ -42,3 +44,5 @@ future_questions:
 In digital audio, sampling stores numerical measurements of signal amplitude taken at regular intervals; sample rate states how many measurements are taken per second, while bit depth describes numerical resolution.
 
 In musical practice, sampling also means turning recorded sound into playable and rearrangeable material. Digital samplers joined capture, playback, pitching, chopping, looping, and sequencing, making recorded sound an instrument and a compositional resource.
+
+That digital representation is also what a digital vinyl system plays: the timecode record supplies transport control while the audio itself remains a stored digital file.

@@ -18,6 +18,8 @@ relationships:
     type: influences
   - target: timbre
     type: contributes_to
+  - target: turntable
+    type: influences
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
@@ -38,3 +40,5 @@ future_questions:
 Physical systems respond especially strongly near particular natural frequencies. That response may shape an instrument's character, produce room-mode peaks and nulls, or cause hardware to ring, rattle, or feed back.
 
 Resonance is therefore contextual: it can be useful, expressive, or destructive. Spectra, impulse responses, and decay plots make its frequency and time behavior observable.
+
+Playback hardware is a practical case. A turntable can receive unwanted vibration through the furniture supporting it, and near a resonant frequency that structure-borne energy reaches the stylus strongly enough to color playback or feed back.

@@ -21,6 +21,8 @@ relationships:
     type: processes
   - target: synthesis
     type: used_in
+  - target: djing
+    type: used_in
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
@@ -41,3 +43,5 @@ future_questions:
 Digital signal processing applies computational operations to sampled signals. It can measure, filter, transform, synthesize, restore, compress, or otherwise reshape numerical representations of sound.
 
 DSP connects sampling to modern recording, synthesis, effects, analysis, and machine-audio work. The algorithms operate on signals, while psychoacoustics helps evaluate how their results are heard.
+
+DJ systems are one place those algorithms are applied rather than studied: Session 3 records DJ software analyzing libraries, driving timecode-controlled playback, and, by the 2020s, separating a finished mix into stems in real time.

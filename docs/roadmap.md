@@ -75,8 +75,47 @@ blocks were deliberately left out. This established vocabulary bridges to the ex
 `sequencing`, `synthesis`, and `midi` nodes. No node, relationship, source, session, or experiment was
 created or modified.
 
-Targets 2, 3, and 4 remain pending. The recommended next phase is
-`Phase 12B — DJ + Turntablism Domain Foundation`.
+### Phase 12B — DJ + Turntablism Domain Foundation. Complete.
+
+Target 2 only. Established `dj-turntablism` as a populated domain with six nodes — `djing`,
+`turntablism`, `scratching`, `turntable`, `beatmatching`, and `digital-vinyl-system` — plus twelve
+vocabulary entries and eighteen typed relationships, five of which were added to existing nodes so the
+domain connects into acoustics, recording, rhythm, sampling, and DSP rather than standing apart.
+
+The domain exists to make cross-disciplinary traversal possible: hand motion through playback velocity
+to frequency and pitch; crossfader gesture through amplitude gating to rhythm; and stylus, groove, and
+platter through mechanical vibration to resonance and isolation. Every claim is drawn from Sessions 1,
+2, and 3. No source, session, schema, relationship type, or validator was added or changed.
+
+Targets 3 and 4 remain pending.
+
+### Deferred — Third Coast, Houston, and chopped-and-screwed research
+
+Phase 12B deliberately did not attempt this material. The registered sessions document DJ practice
+through New York breakbeat DJing, Chicago house, Detroit techno, UK breakbeat and dubstep, and later
+digital systems. They contain nothing on regional Southern United States DJ traditions, so AudioMuse
+currently has no source basis for Houston or Third Coast practice, chopped-and-screwed technique, or
+later chopped-and-slowed derivatives. Writing it now would mean inventing history.
+
+What Phase 12B established instead is the seam. `djing` and `turntablism` each carry an explicit
+`future_questions` entry naming the gap, the `dj-turntablism` domain gives the material a place to
+land, and `scratching` already models playback rate as a manipulable parameter — the same parameter a
+sustained slowed-playback study would extend from a momentary gesture to a whole-track treatment. The
+conceptual links a future phase would need to make are therefore playback rate, pitch, time, sampling,
+DJ performance, and remix practice, all of which now exist as nodes.
+
+This deserves a dedicated researched phase with its own registered sources, not a paragraph appended
+to an existing one. The proposed shape is:
+
+- Register primary or scholarly sources before writing any node.
+- Separate source-supported history, conceptual interpretation, and open research question, as
+  `docs/research-gap-triage.md` already requires.
+- Cover technique — sustained rate reduction, its effect on pitch, time, and timbre, and its
+  relationship to tape, sampler, and software-based slowing — alongside cultural history.
+- Treat regional lineage claims as requiring citation, not inference.
+
+Nothing in this section is canonical AudioMuse knowledge; it records what is absent and what a future
+phase would need.
 
 ## Near-term follow-up
 
