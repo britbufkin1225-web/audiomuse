@@ -107,7 +107,9 @@ try {
     if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($temp)) -cne [Convert]::ToBase64String([IO.File]::ReadAllBytes($IndexPath))) { throw 'Generated vocabulary index is stale.' }
 } finally { if (Test-Path $temp) { Remove-Item -LiteralPath $temp -Force } }
 Write-Output "vocabulary_entries: $($entries.Count)"
-foreach ($domain in ($entries.domain | Sort-Object -Unique)) { Write-Output "  ${domain}: $(@($entries | Where-Object domain -ceq $domain).Count)" }
+$domainNames = [string[]]@([Collections.Generic.HashSet[string]]::new([string[]]@($entries.domain), [StringComparer]::Ordinal))
+[Array]::Sort($domainNames, [StringComparer]::Ordinal)
+foreach ($domain in $domainNames) { Write-Output "  ${domain}: $(@($entries | Where-Object domain -ceq $domain).Count)" }
 Write-Output "vocabulary_node_refs: $nodeRefs"
 Write-Output "vocabulary_session_refs: $sessionRefs"
 Write-Output "vocabulary_related_term_refs: $relatedRefs"

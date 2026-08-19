@@ -85,7 +85,10 @@ foreach ($violation in $violations) { Write-Output "violation: $violation" }
 
 Write-Output "nodes: $($nodes.Count)"
 Write-Output "typed_relationships: $edgeCount"
-foreach ($type in ($counts.Keys | Sort-Object)) { Write-Output "  ${type}: $($counts[$type])" }
+# Sort-Object collates by current culture; cs-CZ orders the "ch" digraph after "h" and reordered
+# this listing. Reported identity ordering must not depend on the operator's locale.
+$typeNames = [string[]]@($counts.Keys); [Array]::Sort($typeNames, [StringComparer]::Ordinal)
+foreach ($type in $typeNames) { Write-Output "  ${type}: $($counts[$type])" }
 Write-Output "unresolved_targets: $unresolved"
 Write-Output "invalid_relationship_types: $invalidTypes"
 Write-Output "duplicate_edges: $duplicates"

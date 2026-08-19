@@ -30,7 +30,7 @@ $sourceTypes=[Collections.Generic.Dictionary[string,string]]::new([StringCompare
 $nodeRefs=0;$vocabRefs=0;$sessionRefs=0;$sourceRefs=0;$relatedRefs=0
 foreach($record in $records){
     if($record.status -cnotin $validStatus){throw "Invalid experiment status for $($record.id): $($record.status)"}; if($record.type -cnotin $validType){throw "Invalid experiment type for $($record.id): $($record.type)"}; if($record.difficulty -cnotin $validDifficulty){throw "Invalid experiment difficulty for $($record.id): $($record.difficulty)"}
-    foreach($field in $arrayFields){$seen=@{}; foreach($value in $record.$field){if($value -isnot [string] -or -not $value.Trim()){throw "Empty or non-string $field value for $($record.id)"};if($seen.ContainsKey($value)){throw "Duplicate $field value for $($record.id): $value"};$seen[$value]=$true}}
+    foreach($field in $arrayFields){$seen=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); foreach($value in $record.$field){if($value -isnot [string] -or -not $value.Trim()){throw "Empty or non-string $field value for $($record.id)"};if(-not $seen.Add($value)){throw "Duplicate $field value for $($record.id): $value"}}}
     foreach($ref in $record.node_refs){if(-not $nodeIds.Contains($ref)){throw "Unresolved node reference for $($record.id): $ref"};$nodeRefs++}
     foreach($ref in $record.vocabulary_refs){if(-not $vocabIds.Contains($ref)){throw "Unresolved vocabulary reference for $($record.id): $ref"};$vocabRefs++}
     foreach($ref in $record.session_refs){if(-not $sourceTypes.ContainsKey($ref) -or $sourceTypes[$ref] -cne 'session'){throw "Invalid session reference for $($record.id): $ref"};$sessionRefs++}

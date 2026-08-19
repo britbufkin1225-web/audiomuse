@@ -19,12 +19,15 @@ function Assert-ExactObjectFields($Object, [string[]]$Fields, [string]$Context) 
 function Assert-NonEmptyString($Value, [string]$Context) {
     if ($Value -isnot [string] -or -not $Value.Trim()) { throw "$Context must be a non-empty string." }
 }
+# Ordinal duplicate detection. A default hashtable is case-insensitive, so a case-drifted canonical
+# reference reported "Duplicate value" instead of the unresolved-reference defect that actually
+# applies, and two prose entries differing only by case were rejected as the same value.
 function Assert-UniqueStrings($Values, [string]$Context) {
-    $seen = @{}
-    foreach ($value in $Values) { Assert-NonEmptyString $value $Context; if ($seen.ContainsKey($value)) { throw "Duplicate value in ${Context}: $value" }; $seen[$value] = $true }
+    $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($value in $Values) { Assert-NonEmptyString $value $Context; if (-not $seen.Add($value)) { throw "Duplicate value in ${Context}: $value" } }
 }
 function Assert-UniqueObjects($Values, [string]$Context) {
-    $seen=@{}; foreach($value in $Values){$key=$value | ConvertTo-Json -Compress -Depth 5; if($seen.ContainsKey($key)){throw "Duplicate object in $Context."}; $seen[$key]=$true}
+    $seen=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); foreach($value in $Values){$key=$value | ConvertTo-Json -Compress -Depth 5; if(-not $seen.Add($key)){throw "Duplicate object in $Context."}}
 }
 function Get-Ordinal([object[]]$Values) { $items=[string[]]@($Values | ForEach-Object {[string]$_}); [Array]::Sort($items,[StringComparer]::Ordinal); return $items }
 
@@ -116,4 +119,4 @@ foreach($view in @(@{Field='experiment_id';Heading='By Experiment'},@{Field='sta
 }
 $temp=Join-Path ([IO.Path]::GetTempPath()) ('audiomuse-runs-'+[guid]::NewGuid().ToString('N')+'.md')
 try { & (Join-Path $PSScriptRoot 'build-experiment-run-index.ps1') -RunDirectory $RunDirectory -OutputPath $temp | Out-Null; if([Convert]::ToBase64String([IO.File]::ReadAllBytes($temp)) -cne [Convert]::ToBase64String([IO.File]::ReadAllBytes($IndexPath))){throw 'Generated experiment-run index is stale.'} } finally {if(Test-Path $temp){Remove-Item -LiteralPath $temp -Force}}
-Write-Output "experiment_runs: $($records.Count)"; foreach($status in $validStatus){Write-Output "  ${status}: $(@($records | Where-Object status -eq $status).Count)"}; Write-Output "run_observations: $observationCount"; Write-Output "run_measurements: $measurementCount"; Write-Output 'unresolved_run_experiment_refs: 0'; Write-Output 'duplicate_run_ids: 0'; Write-Output 'experiment_run_index_reconciled: true'; Write-Output 'experiment_run_index_structure_verified: true'; Write-Output 'experiment_run_index_current: true'
+Write-Output "experiment_runs: $($records.Count)"; foreach($status in $validStatus){Write-Output "  ${status}: $(@($records | Where-Object status -ceq $status).Count)"}; Write-Output "run_observations: $observationCount"; Write-Output "run_measurements: $measurementCount"; Write-Output 'unresolved_run_experiment_refs: 0'; Write-Output 'duplicate_run_ids: 0'; Write-Output 'experiment_run_index_reconciled: true'; Write-Output 'experiment_run_index_structure_verified: true'; Write-Output 'experiment_run_index_current: true'
