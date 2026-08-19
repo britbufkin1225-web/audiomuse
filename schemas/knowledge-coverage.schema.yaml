@@ -9,8 +9,8 @@ coverage_states:
   - not_applicable
 dimensions:
   node: [domain, sessions, sources, vocabulary, experiments, completed_experiment_runs, inbound_relationships, outbound_relationships, relationship_type_diversity]
-  domain: [nodes, vocabulary_entries, experiments, distinct_sources]
-  session: [mapped_nodes, vocabulary_entries, experiments]
+  domain: [node_count, vocabulary_count, experiment_count, source_count]
+  session: [mapped_node_count, vocabulary_count, experiment_count]
 candidate_types:
   - source_coverage
   - session_coverage
@@ -23,3 +23,7 @@ notes:
   - Coverage measures explicit repository relationships; it does not measure correctness, quality, truth, or universal completeness.
   - Every candidate is a bounded signal for human review, never an inferred knowledge defect.
   - Canonical repository content wins whenever this derived view disagrees.
+  - overview.relationship_type_count is the number of relationship types declared in schemas/relationship-types.yaml, not the number represented by current edges.
+  - completed_experiment_runs composes two explicit canonical references only: an experiment record's node_refs and a run record's experiment_id. No similarity, filename, or directory inference is used anywhere.
+  - A completed_experiment_runs state of partial means a linked experiment definition exists and no run with canonical status completed does. It never asserts that any run record exists.
+  - Every dimension id list mirrors its own count exactly; a zero count carries an empty list.
