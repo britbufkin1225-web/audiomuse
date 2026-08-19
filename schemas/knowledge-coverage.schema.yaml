@@ -1,0 +1,25 @@
+schema: audiomuse-knowledge-coverage
+version: 1
+description: Contract for deterministic, generated coverage observations and research-gap candidates.
+authority: derived-read-only
+coverage_states:
+  - covered
+  - partial
+  - unlinked
+  - not_applicable
+dimensions:
+  node: [domain, sessions, sources, vocabulary, experiments, completed_experiment_runs, inbound_relationships, outbound_relationships, relationship_type_diversity]
+  domain: [nodes, vocabulary_entries, experiments, distinct_sources]
+  session: [mapped_nodes, vocabulary_entries, experiments]
+candidate_types:
+  - source_coverage
+  - session_coverage
+  - vocabulary_bridge
+  - practical_evidence
+  - relationship_coverage
+  - domain_representation
+required_candidate_fields: [candidate_type, subject_type, subject_id, evidence, reason]
+notes:
+  - Coverage measures explicit repository relationships; it does not measure correctness, quality, truth, or universal completeness.
+  - Every candidate is a bounded signal for human review, never an inferred knowledge defect.
+  - Canonical repository content wins whenever this derived view disagrees.

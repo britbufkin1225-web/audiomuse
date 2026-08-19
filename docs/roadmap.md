@@ -36,10 +36,18 @@ Establish a small canonical experiment contract, lightweight safety and observat
 
 Separate individual experiment executions from canonical definitions, distinguish qualitative observations from instrument measurements and nominal controls, and provide strict validation plus a deterministic run index without mutating the knowledge graph.
 
+## Phase 9 — Repository-Wide Reference Integrity
+
+Enforce ordinal canonical identity and cohesive cross-reference validation across nodes, sources, sessions, vocabulary, experiments, and experiment runs.
+
+## Phase 10 — Knowledge Coverage + Research Gap Analysis Foundation
+
+Derive deterministic, read-only coverage observations and evidence-backed research-gap candidates from canonical repository facts. Keep coverage distinct from correctness and quality, preserve experiment-definition versus completed-run evidence, and leave all research decisions to humans.
+
 ## Near-term follow-up
 
-- Independently audit the Phase 8 run contract, evidence distinctions, and validator failure modes
-- Deepen high-value nodes only where proof experiments reveal a documented knowledge gap
+- Independently review Phase 10 thresholds and candidate evidence against future repository growth
+- Deepen high-value nodes only where human review confirms a documented research need
 - Extend source and citation coverage as new evidence is introduced
 - Add further experiments or vocabulary terms only as future sessions or research justify them
 

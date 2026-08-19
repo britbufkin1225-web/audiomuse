@@ -1,0 +1,1029 @@
+{
+  "schema": "audiomuse-knowledge-coverage",
+  "version": 1,
+  "authority": "derived-read-only",
+  "overview": {
+    "node_count": 15,
+    "relationship_count": 45,
+    "relationship_type_count": 11,
+    "source_count": 5,
+    "session_count": 3,
+    "vocabulary_count": 38,
+    "experiment_count": 3,
+    "experiment_run_count": 2
+  },
+  "nodes": [
+    {
+      "id": "digital-signal-processing",
+      "domain": "dsp",
+      "sessions": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "digital-signal-processing",
+          "filter"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "waveform-timbre-comparison"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 4,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "frequency",
+      "domain": "acoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "frequency",
+          "fundamental-frequency"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "frequency-room-position",
+          "near-frequency-beating",
+          "waveform-timbre-comparison"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 4,
+      "outbound_relationships": 6,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "midi",
+      "domain": "digital-audio",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 5,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "phase",
+      "domain": "acoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "phase"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "frequency-room-position",
+          "near-frequency-beating"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "pitch",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "fundamental-frequency"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "near-frequency-beating"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 4,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "psychoacoustics",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "psychoacoustics"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "near-frequency-beating"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 5,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "recording",
+      "domain": "recording",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "resonance",
+      "domain": "acoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "resonance"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "frequency-room-position"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "rhythm",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "sampling",
+      "domain": "digital-audio",
+      "sessions": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "bit-depth",
+          "sample",
+          "sample-rate"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 6,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 5
+    },
+    {
+      "id": "sequencing",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "sound",
+      "domain": "acoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "sound"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "frequency-room-position"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 6,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 6
+    },
+    {
+      "id": "synthesis",
+      "domain": "synthesis",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "near-frequency-beating",
+          "waveform-timbre-comparison"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 3,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "timbre",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "timbre"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "waveform-timbre-comparison"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 7,
+      "outbound_relationships": 0,
+      "relationship_type_diversity": 6
+    },
+    {
+      "id": "vibration",
+      "domain": "acoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-01-what-is-sound"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-vocabulary-atlas",
+          "session-01-what-is-sound"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "vibration"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": [
+          ""
+        ]
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 4
+    }
+  ],
+  "domains": [
+    {
+      "id": "acoustics",
+      "node_count": 5,
+      "vocabulary_count": 19,
+      "experiment_count": 3,
+      "source_count": 3
+    },
+    {
+      "id": "audio-hardware",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "digital-audio",
+      "node_count": 2,
+      "vocabulary_count": 8,
+      "experiment_count": 0,
+      "source_count": 4
+    },
+    {
+      "id": "dj-turntablism",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "dsp",
+      "node_count": 1,
+      "vocabulary_count": 2,
+      "experiment_count": 1,
+      "source_count": 3
+    },
+    {
+      "id": "history-culture",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "machine-audio",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "mixing-mastering",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "music-theory",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "psychoacoustics",
+      "node_count": 3,
+      "vocabulary_count": 9,
+      "experiment_count": 2,
+      "source_count": 3
+    },
+    {
+      "id": "recording",
+      "node_count": 1,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 2
+    },
+    {
+      "id": "rhythm-time",
+      "node_count": 2,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 2
+    },
+    {
+      "id": "sound-design",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "spatial-audio",
+      "node_count": 0,
+      "vocabulary_count": 0,
+      "experiment_count": 0,
+      "source_count": 0
+    },
+    {
+      "id": "synthesis",
+      "node_count": 1,
+      "vocabulary_count": 0,
+      "experiment_count": 2,
+      "source_count": 2
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session-01-what-is-sound",
+      "mapped_node_count": 11,
+      "vocabulary_count": 36,
+      "experiment_count": 3
+    },
+    {
+      "id": "session-02-what-is-music",
+      "mapped_node_count": 13,
+      "vocabulary_count": 11,
+      "experiment_count": 3
+    },
+    {
+      "id": "session-03-history-of-electronic-music",
+      "mapped_node_count": 7,
+      "vocabulary_count": 0,
+      "experiment_count": 0
+    }
+  ],
+  "research_gap_candidates": [
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "audio-hardware",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain audio-hardware currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "dj-turntablism",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain dj-turntablism currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "dsp",
+      "evidence": {
+        "node_count": 1
+      },
+      "reason": "The canonical domain dsp currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "history-culture",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain history-culture currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "machine-audio",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain machine-audio currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "mixing-mastering",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain mixing-mastering currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "music-theory",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain music-theory currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "recording",
+      "evidence": {
+        "node_count": 1
+      },
+      "reason": "The canonical domain recording currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "sound-design",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain sound-design currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "spatial-audio",
+      "evidence": {
+        "node_count": 0
+      },
+      "reason": "The canonical domain spatial-audio currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "domain_representation",
+      "subject_type": "domain",
+      "subject_id": "synthesis",
+      "evidence": {
+        "node_count": 1
+      },
+      "reason": "The canonical domain synthesis currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "midi",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical midi node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "recording",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical recording node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "rhythm",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical rhythm node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "sampling",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical sampling node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "sequencing",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical sequencing node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "vibration",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical vibration node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "midi",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical midi node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "recording",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical recording node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "rhythm",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical rhythm node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "sequencing",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical sequencing node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "synthesis",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical synthesis node currently has no explicit vocabulary entry cross-reference."
+    }
+  ]
+}
