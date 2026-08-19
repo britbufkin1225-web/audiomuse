@@ -32,9 +32,13 @@ Formalize a bounded foundation vocabulary with practical digital-audio context, 
 
 Establish a small canonical experiment contract, lightweight safety and observation-versus-measurement conventions, three source-supported proof exercises, strict cross-reference validation, and a deterministic read-only experiment index without mutating the knowledge graph.
 
+## Phase 8 — Experiment Run Records + Observation Evidence Foundation
+
+Separate individual experiment executions from canonical definitions, distinguish qualitative observations from instrument measurements and nominal controls, and provide strict validation plus a deterministic run index without mutating the knowledge graph.
+
 ## Near-term follow-up
 
-- Independently audit the Phase 7 contract, safety language, provenance, and validator failure modes
+- Independently audit the Phase 8 run contract, evidence distinctions, and validator failure modes
 - Deepen high-value nodes only where proof experiments reveal a documented knowledge gap
 - Extend source and citation coverage as new evidence is introduced
 - Add further experiments or vocabulary terms only as future sessions or research justify them

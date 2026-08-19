@@ -35,6 +35,7 @@ The layers remain distinct:
 - Sources = provenance and evidence
 - Indexes = deterministic read-only projections
 - Experiments = reproducible listening, observation, visualization, and measurement exercises
+- Experiment runs = separate records of planned or performed experiment executions and their evidence
 
 The intended path is `Session -> Vocabulary -> Node -> Sources / Graph Relationships`; no step collapses one layer into another.
 
@@ -84,3 +85,9 @@ Experiments keep AudioMuse from becoming an encyclopedia that only accumulates d
 Experiment references are cross-layer pointers, not canonical graph edges. The graph continues to own conceptual meaning; experiments provide practical routes through that meaning. Their generated index is disposable for the same reason as the knowledge and vocabulary indexes: navigation can be rebuilt, while authored records remain authoritative.
 
 Observation means a qualitative report. Measurement means a numeric result with enough method and equipment context to interpret it. Keeping them separate prevents subjective impressions from acquiring false precision and avoids forcing measurement hardware into critical-listening exercises.
+
+## Experiment runs
+
+Experiment definitions say what to do; experiment runs say whether one execution was planned, completed, left incomplete, or invalidated. A definition may have no runs or many runs without acquiring mutable result state. Run records preserve environment, equipment/software, deviations, controls, direct observations, measurements, confounds, safety notes, interpretation, and follow-up questions in a separate repository layer.
+
+Observations are direct qualitative or perceptual evidence, including subjective listening notes. Measurements are numeric evidence with a unit, method, tool, calibration state, uncertainty, and limitations. Nominal generator settings and DAW controls remain control settings, not measured acoustic output. Neither evidence form changes node maturity, creates a graph edge, or becomes scientific fact automatically; interpretation is explicit and remains bounded by recorded limitations.

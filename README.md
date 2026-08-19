@@ -16,6 +16,7 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - `vocabulary/` — canonical terminology entries, source atlases, and a read-only cross-reference index
 - `research/` — sources and research notes
 - `experiments/` — canonical listening/measurement exercises and a generated cross-reference index
+- `experiment-runs/` — individual planned/performed execution records, evidence, and a generated index
 - `assets/brand/` — canonical AudioMuse identity assets and guidelines
 - `docs/` — project scope, knowledge model, and roadmap
 - `indexes/` — generated, read-only navigation and coverage views
@@ -34,7 +35,7 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - A validated 38-entry vocabulary foundation with deterministic A-Z, domain, session, and node views
 - A validated three-experiment practical foundation with listening, visualization, safety, provenance, and repeatability contracts
 
-See `indexes/README.md` for graph-derived views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
+See `indexes/README.md` for graph-derived views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
 
 ## Project posture
 
