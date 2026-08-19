@@ -157,7 +157,7 @@ domains are small" but "which small domains already have unused source evidence"
 | Candidate | Nodes | Decision | Gap type | Rationale |
 |---|---:|---|---|---|
 | `domain:dj-turntablism` | 0 | accept | `missing_knowledge` | Strongest evidence-to-representation mismatch in the repository. Session 1 has dedicated "Vinyl scratching" and "DJ monitoring" sections; Session 2 has a full section on scratching as real-time sample manipulation plus an explicit twelve-term "DJ / Turntablism" vocabulary block; Session 3 covers the growth of DJ culture. The directory `nodes/dj-turntablism/` exists and is empty. |
-| `domain:history-culture` | 0 | accept | `session_depth_gap` | Session 3 is the largest source in the repository (32 KB) and is entirely historical. It maps to 7 nodes, contributes 0 vocabulary entries, and produces no node in its own domain. The largest single source has the thinnest durable representation. |
+| `domain:history-culture` | 0 | accept | `session_depth_gap` | Session 3 is the largest session transcript in the repository (32 KB) and is entirely historical. It maps to 7 nodes, contributes 0 vocabulary entries, and produces no node in its own domain. The largest session transcript has the thinnest durable representation. |
 | `domain:music-theory` | 0 | defer | `undeveloped_territory` | Substantial Session 2 evidence: dedicated sections on melody, the octave, harmony, consonance and dissonance, texture, structure, and form. Deferred because of size, not weakness — it is the largest single unclaimed territory and would consume a bounded Phase 12 on its own, and `pitch`, `timbre`, and `rhythm` already carry its perceptual half. |
 | `domain:mixing-mastering` | 0 | defer | `undeveloped_territory` | Session 2 lists eleven mixing and engineering terms, but tight matching across all three sessions finds roughly a dozen occurrences of mixing, mastering, or headroom in total. Legitimate territory that follows naturally from `recording`; thinner evidence than the accepted targets. |
 | `domain:audio-hardware` | 0 | watch | `undeveloped_territory` | Loudspeakers, amplifiers, and interfaces appear only in passing (about seven lines across Sessions 1 and 3). The `transducer` vocabulary entry is the only durable trace. Becomes important when measurement equipment enters the project. |
@@ -178,7 +178,7 @@ underlying gaps plus a set of non-gaps:
 | `cross_reference_gap` | 5 | The vocabulary layer stops at Session 1. Sessions 2 and 3 have never been mined for terminology. |
 | `practical_evidence_gap` | 4 | No completed experiment run exists anywhere; six nodes additionally lack a definition. |
 | `missing_knowledge` | 1 | DJ and turntablism material is discussed across all three sessions with no durable node. |
-| `session_depth_gap` | 1 | Session 3 is the largest source and the least converted into durable structure. |
+| `session_depth_gap` | 1 | Session 3 is the largest session transcript and the least converted into durable structure. |
 | `undeveloped_territory` | 5 | Declared domains awaiting future sessions, correctly empty for now. |
 | not a knowledge gap | 6 | Rule artifacts on well-supported nodes and domains. |
 
@@ -291,7 +291,7 @@ actually discuss.
 **Target.** Representation of the historical and technological-lineage material in Session 3.
 
 **Why it matters.** AudioMuse's stated model treats sessions as chronology and nodes as durable
-structure. Session 3 is the largest source in the repository and has been converted the least, which
+structure. Session 3 is the largest session transcript in the repository and has been converted the least, which
 means the atlas currently under-represents how its concepts came to exist. The `history-culture` domain
 was declared for exactly this.
 
