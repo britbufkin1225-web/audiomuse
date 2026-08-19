@@ -34,7 +34,8 @@ try {
             throw "Generated index is stale: indexes/$name"
         }
     }
-    $unexpected = @(Get-ChildItem $indexDirectory -File | Where-Object Name -cnotin $expectedFiles)
+    $separateGeneratedViews = @('knowledge-coverage.md', 'knowledge-coverage.json')
+    $unexpected = @(Get-ChildItem $indexDirectory -File | Where-Object { $_.Name -cnotin $expectedFiles -and $_.Name -cnotin $separateGeneratedViews })
     if ($unexpected.Count -gt 0) { throw "Unexpected generated index file: $($unexpected[0].Name)" }
 
     $connections = Get-Content -Raw -LiteralPath (Join-Path $indexDirectory 'node-connections.md')

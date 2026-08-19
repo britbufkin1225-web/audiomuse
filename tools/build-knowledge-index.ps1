@@ -222,7 +222,7 @@ $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('# AudioMuse Knowledge Index'); $lines.Add('')
 $lines.Add('This directory contains generated, read-only views of canonical AudioMuse repository content. Node, session, schema, and source/provenance files remain authoritative. These indexes are navigation and audit conveniences—not a database or a duplicate knowledge store.')
 $lines.Add(''); $lines.Add('Do not edit these files manually. Regenerate and validate them from the repository root:')
-$lines.Add(''); $lines.Add('```powershell'); $lines.Add('.\tools\build-knowledge-index.ps1'); $lines.Add('.\tools\validate-knowledge-index.ps1'); $lines.Add('```')
+$lines.Add(''); $lines.Add('```powershell'); $lines.Add('.\tools\build-knowledge-index.ps1'); $lines.Add('.\tools\validate-knowledge-index.ps1'); $lines.Add('.\tools\build-knowledge-coverage.ps1'); $lines.Add('.\tools\validate-knowledge-coverage.ps1'); $lines.Add('```')
 $lines.Add(''); $lines.Add('## Summary'); $lines.Add('')
 $lines.Add("- Nodes: $($nodes.Count)"); $lines.Add("- Relationships: $($edgeList.Count)"); $lines.Add("- Relationship types represented: $($representedTypes.Count)"); $lines.Add("- Sessions represented: $($sessionIds.Count)"); $lines.Add("- Registered sources: $($sources.Count)"); $lines.Add("- Sources referenced by nodes: $($sourceToNodes.Count)"); $lines.Add("- Domains represented: $($domains.Count)")
 $lines.Add(''); $lines.Add('## Views'); $lines.Add('')
@@ -231,6 +231,14 @@ $lines.Add('- `relationships-by-type.md` groups explicit directed edges by canon
 $lines.Add('- `node-connections.md` shows typed outbound and inbound navigation without synthesizing reverse edges.')
 $lines.Add('- `session-coverage.md` shows the many-to-many session-to-node contribution map in both directions.')
 $lines.Add('- `source-coverage.md` reports provenance presence and reuse without scoring source quality.')
+$lines.Add('- `knowledge-coverage.md` summarizes explicit node, domain, session, vocabulary, experiment, run-evidence, provenance, and connectivity coverage and explains bounded research-gap candidates.')
+$lines.Add('- `knowledge-coverage.json` is the machine-readable form of that same derived view.')
+$lines.Add(''); $lines.Add('## Knowledge coverage boundaries'); $lines.Add('')
+$lines.Add('Coverage is a measurable relationship between canonical entities; an observation is a deterministic interpretation of that structure; a research-gap candidate is a reason-backed signal for human review. None of those is a confirmed knowledge defect. Coverage does not measure correctness, research quality, truth, or universal completeness.')
+$lines.Add('')
+$lines.Add('The bounded candidate rules flag nodes with zero sources, zero sessions, zero vocabulary cross-references, practical applications but zero linked experiment definitions, or at most one typed connection. They also flag canonical domains containing at most one node. These fixed rules were chosen because their evidence is directly auditable. Relative rankings, percentages, confidence scores, and inferred semantic matches were rejected because the repository has no defensible completeness denominator and does not authorize manufactured provenance.')
+$lines.Add('')
+$lines.Add('Experiment definitions and completed runs remain distinct. A linked definition counts as experiment coverage; only a run whose canonical status is `completed` counts as performed evidence. A node with a linked definition and no completed run therefore reports `partial` run-evidence coverage whether its experiment has planned runs or no run records at all, which records the absence of performed evidence rather than the presence of any run. Canonical files remain authoritative, and humans decide whether any candidate warrants research.')
 Write-GeneratedFile 'README.md' $lines
 
 Write-Output "Generated 6 knowledge index files from $($nodes.Count) nodes and $($edgeList.Count) relationships."
