@@ -1,0 +1,144 @@
+---
+id: "djing"
+term: "DJing"
+domain: "dj-turntablism"
+definition: "The live practice of selecting recorded music and controlling how it is cued, aligned, layered, and transitioned for an audience."
+digital_relationship: "Uses measurable timing data such as BPM and beatgrids; digital systems can also analyze libraries, separate stems, and map physical turntable control to digital playback."
+best_use: "Performing recorded music as a continuous set rather than as isolated playback."
+technologies: ["turntables", "DJ mixers", "CDJs", "DJ controllers", "DJ software"]
+node_refs: ["djing"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["turntablism", "beatmatching", "phrase-matching", "crossfader", "digital-vinyl-system"]
+tags: ["dj-turntablism", "performance"]
+---
+id: "turntablism"
+term: "Turntablism"
+domain: "dj-turntablism"
+definition: "The practice of performing recorded music by manipulating the turntable and record directly, treating playback hardware as an instrument."
+digital_relationship: "Continues in digital workflows through timecode control, where hand motion still supplies playback position, direction, and speed to a software deck."
+best_use: "Performing, rearranging, and articulating existing recordings rather than reproducing them unchanged."
+technologies: ["turntables", "DJ mixers", "timecode records", "DJ software"]
+node_refs: ["turntablism", "turntable"]
+session_refs: ["session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["djing", "scratching", "breakbeat", "vinyl", "digital-vinyl-system"]
+tags: ["dj-turntablism", "performance"]
+---
+id: "turntable"
+term: "Turntable"
+domain: "dj-turntablism"
+definition: "A mechanical playback system in which a stylus tracks the groove of a rotating record, and in DJ practice a hand-controllable instrument."
+digital_relationship: "Becomes a control surface rather than an audio source when it plays timecode records, while remaining a mechanical system whose vibration behavior affects any signal it produces."
+best_use: "Playing records, performing manual transport control, and studying a complete mechanical playback chain."
+technologies: ["turntables", "cartridges and styli", "slipmats", "isolation platforms"]
+node_refs: ["turntable"]
+session_refs: ["session-01-what-is-sound", "session-03-history-of-electronic-music"]
+related_terms: ["vinyl", "turntablism", "scratching", "vibration", "resonance"]
+tags: ["dj-turntablism", "hardware"]
+---
+id: "vinyl"
+term: "Vinyl"
+domain: "dj-turntablism"
+definition: "A record whose spiral groove stores audio as a physical shape that a stylus can trace, and that a performer can move by hand."
+digital_relationship: "Exposes playback position physically rather than as a file offset, and the same medium can instead carry a timecode signal that drives digital audio."
+best_use: "Playing, cueing, and manually manipulating recorded audio as a physical object."
+technologies: ["turntables", "cartridges and styli", "timecode records", "cutting lathes"]
+node_refs: ["turntable", "turntablism"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["turntable", "scratching", "turntablism", "timecode-vinyl"]
+tags: ["dj-turntablism", "medium"]
+---
+id: "scratching"
+term: "Scratching"
+domain: "dj-turntablism"
+definition: "Manual manipulation of a record's playback position, velocity, and direction by hand, often articulated through amplitude gating at the mixer."
+digital_relationship: "Equivalent to driving a sample player's transport in real time: hand velocity sets playback rate, direction reverses waveform traversal, and the fader gates the output."
+best_use: "Turning a recorded fragment into a rhythmically articulated, frequency-shifted performance gesture."
+technologies: ["turntables", "DJ mixers", "timecode records", "DJ software"]
+node_refs: ["scratching", "turntablism", "turntable"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["crossfader", "turntablism", "vinyl", "waveform", "frequency"]
+tags: ["dj-turntablism", "technique"]
+---
+id: "crossfader"
+term: "Crossfader"
+domain: "dj-turntablism"
+definition: "A mixer control that moves audibility between two channels, and in turntablism a gate deciding whether manipulated audio is heard at all."
+digital_relationship: "Controls the gain of two signal paths so a performer can blend between them or gate a manipulated signal into discrete events."
+best_use: "Blending between two recordings, or cutting a moving record into discrete rhythmic events."
+technologies: ["DJ mixers", "battle mixers", "DJ controllers", "DJ software"]
+node_refs: ["scratching", "djing"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["scratching", "djing", "amplitude", "turntablism"]
+tags: ["dj-turntablism", "control"]
+---
+id: "beatmatching"
+term: "Beatmatching"
+domain: "dj-turntablism"
+definition: "Aligning the tempo and beat positions of two recordings so that they can play together in time."
+digital_relationship: "Depends on a track's beatgrid and detected BPM, so an incorrect grid can break synchronization even when the audio itself is intact."
+best_use: "Playing two records together in time before and during a transition."
+technologies: ["turntables", "CDJs", "DJ software", "beat-detection tools"]
+node_refs: ["beatmatching", "djing", "rhythm"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+related_terms: ["beatgrid", "tempo", "beat", "phrase-matching", "djing"]
+tags: ["dj-turntablism", "timing"]
+---
+id: "phrase-matching"
+term: "Phrase Matching"
+domain: "dj-turntablism"
+definition: "Aligning two recordings at the level of musical sections and phrase boundaries rather than only at individual beats."
+digital_relationship: "Relates the beat and bar timing represented by a beatgrid to larger structural boundaries in a recording."
+best_use: "Making a transition land where both tracks change section, so the mix follows structure and not only tempo."
+technologies: ["DJ software", "CDJs", "DJ controllers", "cue-point systems"]
+node_refs: ["beatmatching", "djing"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["beatmatching", "beatgrid", "djing", "rhythm"]
+tags: ["dj-turntablism", "structure"]
+---
+id: "breakbeat"
+term: "Breakbeat"
+domain: "dj-turntablism"
+definition: "A rhythmic break isolated from a record and extended or repeated; Session 3 describes doing this by alternating two copies of the same release."
+digital_relationship: "A sampler can store, loop, and re-trigger the kind of recorded fragment that paired turntables can extend by hand."
+best_use: "Building an extended rhythmic section out of a short passage inside an existing recording."
+technologies: ["paired turntables", "samplers", "drum machines", "DAWs"]
+node_refs: ["turntablism", "djing", "sampling"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["turntablism", "djing", "rhythm", "beat"]
+tags: ["dj-turntablism", "technique"]
+---
+id: "digital-vinyl-system"
+term: "Digital Vinyl System (DVS)"
+domain: "dj-turntablism"
+definition: "A DJ system in which timecode records played on ordinary turntables control the playback of digital audio files."
+digital_relationship: "Converts stylus motion into position, speed, and direction data that drives a software deck, so vinyl mechanics stay in the loop while the audio stays digital."
+best_use: "Playing and scratching a digital library without giving up the turntable interface."
+technologies: ["turntables", "timecode records", "audio interfaces", "DJ software"]
+node_refs: ["digital-vinyl-system", "djing", "turntablism"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["timecode-vinyl", "turntablism", "scratching", "latency", "djing"]
+tags: ["dj-turntablism", "digital"]
+---
+id: "timecode-vinyl"
+term: "Timecode Vinyl"
+domain: "dj-turntablism"
+definition: "A record whose groove carries a control signal instead of music, so that its motion can be read as playback position and speed."
+digital_relationship: "Decoded by DJ software into transport control for a digital file, making the groove data about motion rather than the audio being heard."
+best_use: "Driving a digital deck from a real turntable while keeping normal cueing and scratching gestures."
+technologies: ["timecode records", "audio interfaces", "DJ software", "turntables"]
+node_refs: ["digital-vinyl-system", "turntable"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["digital-vinyl-system", "vinyl", "turntable", "audio-signal"]
+tags: ["dj-turntablism", "digital"]
+---
+id: "stem-separation"
+term: "Stem Separation"
+domain: "dj-turntablism"
+definition: "Extraction of components such as vocals, drums, bass, or instrumental parts from an already mixed recording."
+digital_relationship: "Offered by modern DJ platforms in real time, turning a finished track into something closer to a manipulable multitrack session."
+best_use: "Isolating or removing one layer of a finished track during a live mix or a turntablist routine."
+technologies: ["DJ software", "DJ controllers", "source-separation tools"]
+node_refs: ["djing", "digital-vinyl-system"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["djing", "turntablism", "digital-signal-processing", "sample"]
+tags: ["dj-turntablism", "digital"]

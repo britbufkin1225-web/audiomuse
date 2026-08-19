@@ -18,6 +18,8 @@ relationships:
     type: influences
   - target: sequencing
     type: influences
+  - target: beatmatching
+    type: influences
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music
@@ -37,3 +39,5 @@ future_questions:
 Rhythm emerges from the timing of sound and silence, including repetition, emphasis, grouping, and variation. It is perceived rather than merely clocked: perfectly equal intervals and performed timing can create different musical feels.
 
 Digital tools represent timing with samples, milliseconds, beatgrids, steps, and MIDI events. Rhythm therefore connects embodied musical perception to sequencing, sampling, and programmable instruments.
+
+The same measurable time governs DJ practice. Beat and tempo are what beatmatching aligns, and a beatgrid is the digital coordinate system that alignment reads, which is why an incorrect grid can break synchronization even when the audio itself is intact.

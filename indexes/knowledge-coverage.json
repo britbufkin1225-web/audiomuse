@@ -3,16 +3,57 @@
   "version": 1,
   "authority": "derived-read-only",
   "overview": {
-    "node_count": 15,
-    "relationship_count": 45,
+    "node_count": 21,
+    "relationship_count": 63,
     "relationship_type_count": 11,
     "source_count": 5,
     "session_count": 3,
-    "vocabulary_count": 52,
+    "vocabulary_count": 64,
     "experiment_count": 3,
     "experiment_run_count": 2
   },
   "nodes": [
+    {
+      "id": "beatmatching",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "beatmatching",
+          "phrase-matching"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 2
+    },
     {
       "id": "digital-signal-processing",
       "domain": "dsp",
@@ -55,8 +96,96 @@
         "ids": []
       },
       "inbound_relationships": 4,
-      "outbound_relationships": 3,
+      "outbound_relationships": 4,
       "relationship_type_diversity": 4
+    },
+    {
+      "id": "digital-vinyl-system",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "digital-vinyl-system",
+          "stem-separation",
+          "timecode-vinyl"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "djing",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 7,
+        "ids": [
+          "beatmatching",
+          "breakbeat",
+          "crossfader",
+          "digital-vinyl-system",
+          "djing",
+          "phrase-matching",
+          "stem-separation"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 5,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 2
     },
     {
       "id": "frequency",
@@ -100,7 +229,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 4,
+      "inbound_relationships": 5,
       "outbound_relationships": 6,
       "relationship_type_diversity": 4
     },
@@ -310,7 +439,7 @@
         "ids": []
       },
       "inbound_relationships": 2,
-      "outbound_relationships": 4,
+      "outbound_relationships": 5,
       "relationship_type_diversity": 4
     },
     {
@@ -353,7 +482,7 @@
         "ids": []
       },
       "inbound_relationships": 2,
-      "outbound_relationships": 2,
+      "outbound_relationships": 3,
       "relationship_type_diversity": 2
     },
     {
@@ -377,10 +506,11 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 8,
+        "count": 9,
         "ids": [
           "beat",
           "beatgrid",
+          "beatmatching",
           "groove",
           "pulse",
           "quantization-timing",
@@ -399,9 +529,9 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 2,
-      "outbound_relationships": 2,
-      "relationship_type_diversity": 3
+      "inbound_relationships": 4,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 4
     },
     {
       "id": "sampling",
@@ -427,9 +557,10 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 3,
+        "count": 4,
         "ids": [
           "bit-depth",
+          "breakbeat",
           "sample",
           "sample-rate"
         ]
@@ -444,9 +575,52 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 6,
-      "outbound_relationships": 3,
-      "relationship_type_diversity": 5
+      "inbound_relationships": 8,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 6
+    },
+    {
+      "id": "scratching",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "crossfader",
+          "scratching"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 4
     },
     {
       "id": "sequencing",
@@ -624,6 +798,94 @@
       "relationship_type_diversity": 6
     },
     {
+      "id": "turntable",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-01-what-is-sound",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "scratching",
+          "timecode-vinyl",
+          "turntable",
+          "turntablism",
+          "vinyl"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "turntablism",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "breakbeat",
+          "digital-vinyl-system",
+          "scratching",
+          "turntablism",
+          "vinyl"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 4,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 4
+    },
+    {
       "id": "vibration",
       "domain": "acoustics",
       "sessions": {
@@ -658,7 +920,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 1,
+      "inbound_relationships": 2,
       "outbound_relationships": 3,
       "relationship_type_diversity": 4
     }
@@ -687,10 +949,10 @@
     },
     {
       "id": "dj-turntablism",
-      "node_count": 0,
-      "vocabulary_count": 0,
+      "node_count": 6,
+      "vocabulary_count": 12,
       "experiment_count": 0,
-      "source_count": 0
+      "source_count": 3
     },
     {
       "id": "dsp",
@@ -773,20 +1035,20 @@
   "sessions": [
     {
       "id": "session-01-what-is-sound",
-      "mapped_node_count": 11,
-      "vocabulary_count": 37,
+      "mapped_node_count": 15,
+      "vocabulary_count": 43,
       "experiment_count": 3
     },
     {
       "id": "session-02-what-is-music",
-      "mapped_node_count": 13,
-      "vocabulary_count": 25,
+      "mapped_node_count": 17,
+      "vocabulary_count": 32,
       "experiment_count": 3
     },
     {
       "id": "session-03-history-of-electronic-music",
-      "mapped_node_count": 7,
-      "vocabulary_count": 4,
+      "mapped_node_count": 12,
+      "vocabulary_count": 12,
       "experiment_count": 0
     }
   ],
@@ -799,15 +1061,6 @@
         "node_count": 0
       },
       "reason": "The canonical domain audio-hardware currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
-      "subject_id": "dj-turntablism",
-      "evidence": {
-        "node_count": 0
-      },
-      "reason": "The canonical domain dj-turntablism currently contains at most one node; representation is sparse, not defective."
     },
     {
       "candidate_type": "domain_representation",
@@ -893,6 +1146,36 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "beatmatching",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical beatmatching node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "digital-vinyl-system",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical digital-vinyl-system node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "djing",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical djing node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "midi",
       "evidence": {
         "practical_application_count": 3,
@@ -933,12 +1216,42 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "scratching",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical scratching node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "sequencing",
       "evidence": {
         "practical_application_count": 3,
         "experiment_count": 0
       },
       "reason": "The canonical sequencing node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "turntable",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical turntable node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "turntablism",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical turntablism node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",

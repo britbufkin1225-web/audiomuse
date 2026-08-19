@@ -15,6 +15,10 @@ This map shows how chronological Sessions 1–3 contribute to durable AudioMuse 
 - `recording`
 - `sampling`
 - `digital-signal-processing`
+- `djing`
+- `scratching`
+- `turntable`
+- `beatmatching`
 
 ## Session 2 — What Is Music?
 
@@ -31,6 +35,10 @@ This map shows how chronological Sessions 1–3 contribute to durable AudioMuse 
 - `sequencing`
 - `midi`
 - `digital-signal-processing`
+- `djing`
+- `turntablism`
+- `scratching`
+- `beatmatching`
 
 ## Session 3 — History of Electronic Music
 
@@ -41,6 +49,11 @@ This map shows how chronological Sessions 1–3 contribute to durable AudioMuse 
 - `sequencing`
 - `midi`
 - `digital-signal-processing`
+- `djing`
+- `turntablism`
+- `scratching`
+- `turntable`
+- `digital-vinyl-system`
 
 ## Emerging graph
 
@@ -77,6 +90,25 @@ graph TD
     MIDI -- controls --> SYNTHESIS
     DSP -- used_in --> SYNTHESIS
     SAMPLING -- enables --> DSP
+
+    RECORDING -- enables --> DJING[DJing]
+    DSP -- used_in --> DJING
+    DJING -- enables --> TURNTABLISM[Turntablism]
+    TURNTABLISM -- contributes_to --> SAMPLING
+    TURNTABLISM -- influences --> RHYTHM
+    SCRATCHING[Scratching] -- used_in --> TURNTABLISM
+    SCRATCHING -- controls --> SAMPLING
+    SCRATCHING -- influences --> FREQUENCY
+    SCRATCHING -- contributes_to --> RHYTHM
+    TURNTABLE[Turntable] -- produces --> VIBRATION
+    TURNTABLE -- used_in --> DJING
+    TURNTABLE -- used_in --> TURNTABLISM
+    RESONANCE -- influences --> TURNTABLE
+    RHYTHM -- influences --> BEATMATCHING[Beatmatching]
+    BEATMATCHING -- used_in --> DJING
+    SAMPLING -- enables --> DVS[Digital Vinyl System]
+    DVS -- used_in --> DJING
+    DVS -- used_in --> TURNTABLISM
 ```
 
 ## Curation boundary

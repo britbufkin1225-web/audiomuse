@@ -22,6 +22,8 @@ relationships:
     type: enables
   - target: digital-signal-processing
     type: enables
+  - target: djing
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-03-history-of-electronic-music
@@ -40,4 +42,4 @@ future_questions:
 
 Recording converts a changing physical event into a storable signal. That signal can later be reproduced, edited, layered, analyzed, or treated as musical material.
 
-Historically, recording separated sound from its original time and place. It also enabled musique concrète, sampling, studio composition, turntable practice, digital audio, and computational processing.
+Historically, recording separated sound from its original time and place. It also enabled musique concrète, sampling, studio composition, DJ and turntable practice, digital audio, and computational processing.

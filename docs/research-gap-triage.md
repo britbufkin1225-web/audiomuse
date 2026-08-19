@@ -304,6 +304,35 @@ actually discuss.
 
 **Resolves candidates.** `domain_representation` for `dj-turntablism`.
 
+**Implementation status.** Implemented in Phase 12B. Six nodes were created in `dj-turntablism` —
+`djing`, `turntablism`, `scratching`, `turntable`, `beatmatching`, and `digital-vinyl-system` — together
+with twelve vocabulary entries and eighteen typed relationships. Thirteen edges belong to the new nodes;
+five were added to the existing `recording`, `rhythm`, `sampling`, `resonance`, and
+`digital-signal-processing` nodes so the domain connects into the existing graph instead of forming an
+island. The `domain_representation` candidate for `dj-turntablism` is resolved by canonical content. The
+`rhythm` practical-evidence deferral recorded below now has the DJ and turntablism context it was
+waiting for, though the experiment work it needs remains Target 4 and is untouched.
+
+**Source position.** No external source was registered. The readiness criteria below anticipated one for
+Target 2; Phase 12B instead met the stricter Target 2 evidence requirement directly, restricting every
+node, edge, and vocabulary entry to material the registered Sessions 1, 2, and 3 actually develop, and
+omitting the rest. A future phase that wants the omitted material must register sources first.
+
+**Terms and techniques deliberately excluded.** `backspin`, `cutting`, `cueing`, `cue point`, `beat
+juggling`, `slipmat`, and `pitch control` appear in the repository only as list entries — inside Session
+2's twelve-term DJ/Turntablism block, or inside Session 3's enumeration of techniques that develop
+around the turntable — and were not defined from general knowledge. `stylus`, `tonearm`, `platter`, and
+the record groove come from a single Session 1 sentence naming them as parts of one mechanical system;
+they are recorded as `core_concepts` on the `turntable` node and described in its prose rather than
+given thin standalone vocabulary entries. The rhythm-time vocabulary term `groove` was left alone: the
+record groove is a different concept and was not allowed to collide with it.
+
+**Regional research gap recorded.** Phase 12B established a structural seam for Houston and Third Coast
+DJ culture, chopped-and-screwed technique, and later chopped-and-slowed practice, and wrote none of its
+history. The registered sessions contain no material on regional Southern United States DJ traditions.
+The gap is named in the `future_questions` of `djing` and `turntablism`, and the shape a future
+dedicated phase would need is recorded in `docs/roadmap.md`. This is a research target, not knowledge.
+
 ### Target 3 — Convert Session 3 into durable structure
 
 **Target.** Representation of the historical and technological-lineage material in Session 3.

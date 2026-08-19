@@ -1,7 +1,7 @@
 # Nodes by Domain
 
-Canonical nodes: 15
-Domains represented: 7
+Canonical nodes: 21
+Domains represented: 8
 
 ## Acoustics — 5 nodes
 
@@ -15,6 +15,15 @@ Domains represented: 7
 
 - **MIDI** (`midi`)
 - **Sampling** (`sampling`)
+
+## Dj Turntablism — 6 nodes
+
+- **Beatmatching** (`beatmatching`)
+- **Digital Vinyl System** (`digital-vinyl-system`)
+- **DJing** (`djing`)
+- **Scratching** (`scratching`)
+- **Turntable** (`turntable`)
+- **Turntablism** (`turntablism`)
 
 ## Dsp — 1 nodes
 
