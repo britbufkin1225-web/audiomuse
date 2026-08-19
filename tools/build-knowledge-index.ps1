@@ -57,7 +57,7 @@ $validTypes = Get-OrdinalSortedStrings ([regex]::Matches($vocabularyText, '(?m)^
     ForEach-Object { $_.Groups['id'].Value })
 if ($validTypes.Count -eq 0) { throw 'No canonical relationship types found.' }
 
-$nodes = @{}
+$nodes = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
 foreach ($file in $nodeFiles) {
     $yaml = Get-FrontMatter $file
     if ($yaml -match '(?m)^related_nodes:') { throw "Legacy related_nodes field remains: $($file.FullName)" }
@@ -89,7 +89,7 @@ $sourceRegistryPath = Join-Path $repoRoot 'sources/source-registry.yaml'
 $sourceRegistryText = Get-Content -Raw -LiteralPath $sourceRegistryPath
 $sourceEntries = [regex]::Matches($sourceRegistryText,
     '(?ms)^  - id: (?<id>[a-z0-9]+(?:-[a-z0-9]+)*)\r?\n    type: (?<type>[^\r\n]+)\r?\n    title: (?<title>[^\r\n]+)\r?\n    locator: (?<locator>[^\r\n]+)')
-$sources = @{}
+$sources = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
 foreach ($entry in $sourceEntries) {
     $sourceId = $entry.Groups['id'].Value
     if ($sources.ContainsKey($sourceId)) { throw "Duplicate source id: $sourceId" }
@@ -105,13 +105,13 @@ foreach ($entry in $sourceEntries) {
 if ($sources.Count -eq 0) { throw 'No source registry entries found.' }
 
 $edgeList = [Collections.Generic.List[object]]::new()
-$sessionToNodes = @{}
-$sourceToNodes = @{}
+$sessionToNodes = [Collections.Generic.Dictionary[string,Collections.Generic.List[string]]]::new([StringComparer]::Ordinal)
+$sourceToNodes = [Collections.Generic.Dictionary[string,Collections.Generic.List[string]]]::new([StringComparer]::Ordinal)
 foreach ($nodeId in (Get-OrdinalSortedStrings $nodes.Keys)) {
     $node = $nodes[$nodeId]
     foreach ($sessionId in $node.Sessions) {
         if (-not $sources.ContainsKey($sessionId)) { throw "Node $nodeId references unresolved session: $sessionId" }
-        if ($sources[$sessionId].Type -ne 'session') { throw "Node $nodeId session_origin references a non-session source: $sessionId" }
+        if ($sources[$sessionId].Type -cne 'session') { throw "Node $nodeId session_origin references a non-session source: $sessionId" }
         if (-not $sessionToNodes.ContainsKey($sessionId)) { $sessionToNodes[$sessionId] = [Collections.Generic.List[string]]::new() }
         $sessionToNodes[$sessionId].Add($nodeId)
     }
@@ -120,14 +120,13 @@ foreach ($nodeId in (Get-OrdinalSortedStrings $nodes.Keys)) {
         if (-not $sourceToNodes.ContainsKey($sourceId)) { $sourceToNodes[$sourceId] = [Collections.Generic.List[string]]::new() }
         $sourceToNodes[$sourceId].Add($nodeId)
     }
-    $seenEdges = @{}
+    $seenEdges = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     foreach ($edge in $node.Edges) {
         if (-not $nodes.ContainsKey($edge.Target)) { throw "Node $nodeId has unresolved relationship target: $($edge.Target)" }
-        if ($edge.Type -notin $validTypes) { throw "Node $nodeId has invalid relationship type: $($edge.Type)" }
-        if ($edge.Target -eq $nodeId) { throw "Node $nodeId has a self-link." }
+        if ($edge.Type -cnotin $validTypes) { throw "Node $nodeId has invalid relationship type: $($edge.Type)" }
+        if ($edge.Target -ceq $nodeId) { throw "Node $nodeId has a self-link." }
         $key = "$($edge.Type)|$($edge.Target)"
-        if ($seenEdges.ContainsKey($key)) { throw "Node $nodeId has duplicate relationship: $key" }
-        $seenEdges[$key] = $true
+        if (-not $seenEdges.Add($key)) { throw "Node $nodeId has duplicate relationship: $key" }
         $edgeList.Add([pscustomobject]@{ Source = $nodeId; Target = $edge.Target; Type = $edge.Type })
     }
 }
@@ -143,7 +142,7 @@ $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('# Nodes by Domain'); $lines.Add('')
 $lines.Add("Canonical nodes: $($nodes.Count)"); $lines.Add("Domains represented: $($domains.Count)")
 foreach ($domain in $domains) {
-    $members = @($nodeIds | Where-Object { $nodes[$_].Domain -eq $domain })
+    $members = @($nodeIds | Where-Object { $nodes[$_].Domain -ceq $domain })
     $lines.Add(''); $lines.Add("## $(Get-DisplayName $domain) — $($members.Count) nodes"); $lines.Add('')
     foreach ($id in $members) { $lines.Add(('- **{0}** (`{1}`)' -f $nodes[$id].Title, $id)) }
 }
@@ -153,7 +152,7 @@ $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('# Relationships by Type'); $lines.Add('')
 $lines.Add("Canonical relationships: $($edgeList.Count)"); $lines.Add("Relationship types represented: $($representedTypes.Count)")
 foreach ($type in $representedTypes) {
-    $typedEdges = @($edgeList | Where-Object Type -eq $type | ForEach-Object { "$($_.Source)|$($_.Target)" })
+    $typedEdges = @($edgeList | Where-Object Type -ceq $type | ForEach-Object { "$($_.Source)|$($_.Target)" })
     $typedEdges = Get-OrdinalSortedStrings $typedEdges
     $lines.Add(''); $lines.Add(('## `{0}` — {1} relationships' -f $type, $typedEdges.Count)); $lines.Add('')
     foreach ($edgeKey in $typedEdges) {
@@ -166,8 +165,8 @@ $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('# Node Connections'); $lines.Add('')
 $lines.Add("Canonical relationships: $($edgeList.Count)"); $lines.Add("Outbound total: $($edgeList.Count)"); $lines.Add("Inbound total: $($edgeList.Count)")
 foreach ($nodeId in $nodeIds) {
-    $outbound = Get-OrdinalSortedStrings @($edgeList | Where-Object Source -eq $nodeId | ForEach-Object { "$($_.Type)|$($_.Target)" })
-    $inbound = Get-OrdinalSortedStrings @($edgeList | Where-Object Target -eq $nodeId | ForEach-Object { "$($_.Source)|$($_.Type)" })
+    $outbound = Get-OrdinalSortedStrings @($edgeList | Where-Object Source -ceq $nodeId | ForEach-Object { "$($_.Type)|$($_.Target)" })
+    $inbound = Get-OrdinalSortedStrings @($edgeList | Where-Object Target -ceq $nodeId | ForEach-Object { "$($_.Source)|$($_.Type)" })
     $lines.Add(''); $lines.Add(('## {0} (`{1}`)' -f $nodes[$nodeId].Title, $nodeId)); $lines.Add('')
     $lines.Add("Outbound: $($outbound.Count)"); $lines.Add("Inbound: $($inbound.Count)"); $lines.Add('')
     $lines.Add('### Outbound')

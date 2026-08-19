@@ -51,9 +51,9 @@ if (-not $records.Count) { throw 'No experiment-run records found.' }
 # which would accept a record reference that does not literally match the registered canonical id.
 $experimentIds = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); Get-ChildItem (Join-Path $repoRoot 'experiments/records') -Filter '*.yaml' -File | ForEach-Object { $m=[regex]::Match([IO.File]::ReadAllText($_.FullName),'(?m)^id: "(?<id>[a-z0-9-]+)"\r?$'); if($m.Success){[void]$experimentIds.Add($m.Groups['id'].Value)} }
 $sourceIds = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); [regex]::Matches([IO.File]::ReadAllText((Join-Path $repoRoot 'sources/source-registry.yaml')),'(?m)^  - id: (?<id>[a-z0-9-]+)\r?$') | ForEach-Object {[void]$sourceIds.Add($_.Groups['id'].Value)}
-$ids=@{}; $observationCount=0; $measurementCount=0
+$ids=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal); $observationCount=0; $measurementCount=0
 foreach ($record in $records) {
-    if ($ids.ContainsKey($record.id)) { throw "Duplicate experiment-run id: $($record.id)" }; $ids[$record.id]=$true
+    if (-not $ids.Add($record.id)) { throw "Duplicate experiment-run id: $($record.id)" }
     if (-not $experimentIds.Contains($record.experiment_id)) { throw "Unresolved experiment id for $($record.id): $($record.experiment_id)" }
     if (-not ($validStatus -ccontains $record.status)) { throw "Invalid experiment-run status for $($record.id): $($record.status)" }
     if ($null -ne $record.run_date -and ($record.run_date -isnot [string] -or $record.run_date -notmatch '^\d{4}-(0[1-9]|1[0-2])-([012]\d|3[01])$')) { throw "Invalid run_date for $($record.id); use ISO YYYY-MM-DD or null." }
@@ -61,10 +61,10 @@ foreach ($record in $records) {
         # One day of tolerance covers author time zones ahead of UTC without admitting a date that cannot have happened.
         if($parsed.Date -gt [datetime]::UtcNow.Date.AddDays(1)){throw "Future run_date for $($record.id): $($record.run_date); a run cannot be recorded before it is performed."} }
     $hasEvidence = $record.observations.Count -gt 0 -or $record.measurements.Count -gt 0
-    if ($record.status -eq 'planned' -and ($null -ne $record.run_date -or $hasEvidence -or $record.interpretation.Count -gt 0 -or $record.procedure_deviations.Count -gt 0)) { throw "Planned run $($record.id) cannot contain a run date, evidence, interpretation, or procedure deviations." }
-    if ($record.status -ne 'planned' -and $null -eq $record.run_date) { throw "Performed run $($record.id) requires run_date." }
-    if ($record.status -eq 'completed' -and -not $hasEvidence) { throw "Completed run $($record.id) requires observation or measurement evidence." }
-    if ($record.status -eq 'invalid' -and $record.interpretation.Count -gt 0) { throw "Invalid run $($record.id) cannot contain interpretation." }
+    if ($record.status -ceq 'planned' -and ($null -ne $record.run_date -or $hasEvidence -or $record.interpretation.Count -gt 0 -or $record.procedure_deviations.Count -gt 0)) { throw "Planned run $($record.id) cannot contain a run date, evidence, interpretation, or procedure deviations." }
+    if ($record.status -cne 'planned' -and $null -eq $record.run_date) { throw "Performed run $($record.id) requires run_date." }
+    if ($record.status -ceq 'completed' -and -not $hasEvidence) { throw "Completed run $($record.id) requires observation or measurement evidence." }
+    if ($record.status -ceq 'invalid' -and $record.interpretation.Count -gt 0) { throw "Invalid run $($record.id) cannot contain interpretation." }
     foreach ($setting in $record.control_settings) {
         Assert-ExactObjectFields $setting @('quantity','value','unit','context') "control setting for $($record.id)"
         Assert-NonEmptyString $setting.quantity "control-setting quantity for $($record.id)"; Assert-NonEmptyString $setting.context "control-setting context for $($record.id)"
@@ -91,11 +91,11 @@ foreach ($record in $records) {
 if (-not (Test-Path -LiteralPath $IndexPath)) { throw 'Missing generated experiment-run index.' }
 $text=[IO.File]::ReadAllText($IndexPath)
 foreach($marker in @('System.Object[]','$(')){if($text.Contains($marker)){throw "Experiment-run index contains raw or unexpanded template output: $marker"}}
-$lines=[Collections.Generic.HashSet[string]]::new([string[]]($text -split '\r?\n'))
+$lines=[Collections.Generic.HashSet[string]]::new([string[]]($text -split '\r?\n'),[StringComparer]::Ordinal)
 foreach($heading in @('# AudioMuse Experiment Run Index','## By Experiment','## By Status')){if(-not $lines.Contains($heading)){throw "Experiment-run index missing section: $heading"}}
 if(-not $lines.Contains("Experiment runs: $($records.Count)")){throw 'Experiment-run index has an incorrect declared count.'}
 $listed=@([regex]::Matches($text,'(?m)^- `(?<id>[a-z0-9-]+)` — `(?<value>[a-z0-9-]+)`(?: — .+)?$') | ForEach-Object {$_.Groups['id'].Value})
-foreach($id in $listed){if(-not $ids.ContainsKey($id)){throw "Experiment-run index contains invented id: $id"}}
+foreach($id in $listed){if(-not $ids.Contains($id)){throw "Experiment-run index contains invented id: $id"}}
 foreach($record in $records){if(@($listed | Where-Object {$_ -ceq $record.id}).Count -ne 2){throw "Experiment-run index omits or duplicates record: $($record.id)"}}
 # Every projected line is re-derived in full from the canonical records, not just its run id. Verifying
 # only the id would leave the projected status, experiment mapping, and run date detectable solely by the
