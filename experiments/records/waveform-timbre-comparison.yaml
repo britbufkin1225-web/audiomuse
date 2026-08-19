@@ -1,0 +1,23 @@
+id: "waveform-timbre-comparison"
+title: "Waveform and Timbre Comparison"
+status: "proof"
+type: "hybrid"
+difficulty: "introductory"
+purpose: "Compare how sine, triangle, square, and sawtooth signals at one fundamental differ in sound, waveform shape, and spectrum."
+node_refs: ["frequency", "timbre", "synthesis", "digital-signal-processing"]
+vocabulary_refs: ["waveform", "fundamental-frequency", "harmonic", "spectrum", "timbre", "frequency"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+source_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+required_equipment: ["oscillator or synthesizer with sine, triangle, square, and sawtooth shapes", "speaker or headphones", "observation notes"]
+optional_equipment: ["waveform display", "spectrum analyzer"]
+safety: ["Set a conservative level with the sine wave before switching shapes.", "Lower the output if a brighter waveform sounds substantially louder or uncomfortable.", "Do not add clipping or distortion as part of this exercise."]
+setup: ["Select one comfortable midrange fundamental frequency and disable filters, modulation, effects, and envelopes that differ between shapes.", "Keep frequency and nominal oscillator level fixed; use careful perceptual level matching if the tool permits it.", "Open waveform and spectrum views if available without treating display magnitude as calibrated acoustic level."]
+procedure: ["Listen to each waveform in a consistent order, then repeat in a different order.", "Describe brightness, smoothness, and tonal character without looking at the display first.", "Compare the waveform and spectrum views and connect visible components to the listening notes."]
+observations: ["Record perceived differences despite the shared fundamental.", "Record visible differences in shape and the number and relative pattern of spectral components."]
+measurements: ["Optional: record the selected fundamental frequency and analyzer peak frequencies or relative digital levels.", "Do not call the nominal oscillator setting or an uncalibrated display an acoustic SPL measurement."]
+expected_behavior: ["The sine should show the simplest spectrum; the other shapes should contain additional harmonic components and sound different in timbre.", "Shared fundamental frequency does not imply identical waveform, spectrum, or timbre."]
+interpretation: ["Fourier analysis connects complex periodic shapes to sinusoidal components, while hearing integrates their spectrum into timbre.", "Differences in generator implementation or level can also influence the comparison."]
+limitations: ["Oscillator design, aliasing, playback response, display windowing, and imperfect level matching can confound results.", "This exercise compares examples from one tool and does not prove that every implementation is identical."]
+repeatability: ["Record oscillator, sample rate, fundamental, level settings, signal path, analyzer settings, and listening device."]
+related_experiments: ["near-frequency-beating"]
+project_connections: ["synthesis sound design", "spectrum-reading practice"]

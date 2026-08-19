@@ -28,11 +28,15 @@ Generate deterministic, rebuildable indexes for domains, typed relationships, in
 
 Formalize a bounded foundation vocabulary with practical digital-audio context, curated session and node cross-references, strict validation, and a deterministic read-only vocabulary index without creating a second graph.
 
+## Phase 7 — Listening + Measurement Experiment Foundation
+
+Establish a small canonical experiment contract, lightweight safety and observation-versus-measurement conventions, three source-supported proof exercises, strict cross-reference validation, and a deterministic read-only experiment index without mutating the knowledge graph.
+
 ## Near-term follow-up
 
-- Deepen high-value nodes through focused research and experiments
+- Independently audit the Phase 7 contract, safety language, provenance, and validator failure modes
+- Deepen high-value nodes only where proof experiments reveal a documented knowledge gap
 - Extend source and citation coverage as new evidence is introduced
-- Listening / measurement / visualization experiments
-- Deepen selected vocabulary terms only as future sessions or research justify them
+- Add further experiments or vocabulary terms only as future sessions or research justify them
 
 Keep later phases intentionally flexible so the research can determine what deserves implementation.

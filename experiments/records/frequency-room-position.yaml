@@ -1,0 +1,23 @@
+id: "frequency-room-position"
+title: "Frequency and Room Position Listening Test"
+status: "proof"
+type: "listening"
+difficulty: "introductory"
+purpose: "Hear how perceived low-frequency level changes with frequency and listening position in a room."
+node_refs: ["frequency", "phase", "resonance", "sound"]
+vocabulary_refs: ["frequency", "wavelength", "phase", "standing-wave", "room-mode", "resonance"]
+session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
+source_refs: ["session-01-what-is-sound", "session-02-what-is-music", "session-01-vocabulary-atlas"]
+required_equipment: ["speaker capable of clean low-frequency playback", "sine-tone generator or slow sweep source", "room with several safe listening positions", "observation notes"]
+optional_equipment: ["tape measure for marking positions", "calibrated microphone and measurement software for a separate quantitative extension"]
+safety: ["Set a conservative level before starting and avoid abrupt or high-level test tones.", "Use speakers rather than headphones because room position is the variable.", "Stop if playback distorts, rattles equipment, or causes discomfort."]
+setup: ["Place one speaker in a stable location and disable changing enhancement or room-correction settings.", "Mark at least three listening positions, including the normal seat and a position nearer a wall.", "Choose several low test frequencies or a slow sweep and keep the playback control unchanged between positions."]
+procedure: ["Start playback at a conservative level while seated at the normal position.", "At each marked position, listen to the same frequencies in the same order without changing gain.", "Repeat the route once, then compare notes rather than relying on memory alone."]
+observations: ["Record where each frequency appears louder, quieter, or less stable.", "Note whether a wall or corner position changes the impression and whether different frequencies change differently."]
+measurements: ["No quantitative measurement is required.", "If using a calibrated chain, record frequency, position, level, microphone, software settings, and relative dB result; keep those values separate from listening notes."]
+expected_behavior: ["Some positions may exaggerate a low frequency while others produce a perceived reduction or null.", "The pattern should change with frequency because wavelength and room resonances are frequency dependent."]
+interpretation: ["Position-dependent differences are consistent with reflections, phase interaction, standing waves, and room modes.", "A listening impression demonstrates audibility but does not establish calibrated room response."]
+limitations: ["Speaker response, room geometry, background noise, listener position, and level matching are confounds.", "Uncalibrated phone or microphone readings must not be reported as laboratory SPL or response data."]
+repeatability: ["Reuse the same speaker position, gain, frequency list, route, and marked listening locations."]
+related_experiments: ["near-frequency-beating"]
+project_connections: ["speaker and listening-position decisions", "future calibrated room-response study"]
