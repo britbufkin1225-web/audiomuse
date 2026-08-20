@@ -10,7 +10,7 @@ A node file lives at `nodes/<domain>/<id>.md`, where `<domain>` is the node's pr
 
 - Use stable node IDs as relationship `target` values, never filenames or paths.
 - Use registry IDs from `sources/source-registry.yaml` in `sources`.
-- Add a session ID to `session_origin` only when that session introduced or materially developed the node.
+- Add a session ID to `session_origin` only when that session introduced or materially developed the node. A node derived from external research records `session_origin: []` and carries its provenance in `sources`; see the historical-node section of `docs/knowledge-model.md`.
 - Promote a vocabulary term to a node when it supports durable relationships, experiments, applications, or project work.
 - Keep prose concise and durable; preserve chronological detail in sessions.
 - Keep relationships curated, typed, and conceptually meaningful. Read each entry as `current node --type--> target`.

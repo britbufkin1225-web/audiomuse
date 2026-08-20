@@ -17,6 +17,33 @@ Canonical knowledge-maturity statuses:
 - `practical`
 - `project-applied`
 
+## Historical and cultural nodes
+
+Most AudioMuse nodes are concept nodes derived from session exploration. Phase 12C introduced a second
+shape: nodes in `history-culture`, and history-bearing nodes in other domains, which describe places,
+institutions, people, practices, and objects rather than physical or perceptual concepts. They obey the
+same schema and the same relationship vocabulary, and differ in three declared ways.
+
+First, provenance replaces session origin. A historical node records `session_origin: []` where no
+registered session developed it, and cites external registered sources instead. That is not missing
+provenance; it is provenance from a different layer, and the knowledge-coverage view reports it as a
+session-coverage candidate rather than as a defect.
+
+Second, factual claims carry their evidence and their uncertainty in the node prose. Dates,
+attributions, and firsts are not promoted from repetition, and where sources disagree the node says so
+and adopts neither version. `docs/houston-musical-cartography.md` holds the chronology and the
+dispute register those nodes point at.
+
+Third, relationship types are chosen conservatively. A widely credited origin is stored as
+`contributes_to` rather than `produces` when the evidence attributes rather than demonstrates, and no
+new relationship type is invented to express a historical nuance. Where no directed claim is
+supported, the node records `relationships: []`.
+
+A future phase will need claim confidence as stored data rather than as prose — evidence type,
+corroboration count, chronology precision, disputed status, and whether the cited text was retrieved.
+Phase 12C deliberately did not change any schema to add it, and preserved enough provenance in
+`research/sources/` for it to be applied retroactively.
+
 ## Sources
 
 Sources provide provenance and evidence. They answer: "Where did this knowledge come from?" Nodes reference stable source-registry IDs; the registry records human-readable titles and repository-relative locators. Provenance is curated explicitly, not reconstructed automatically.

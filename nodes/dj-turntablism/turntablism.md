@@ -18,6 +18,8 @@ relationships:
     type: contributes_to
   - target: rhythm
     type: influences
+  - target: chopped-and-screwed
+    type: contributes_to
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music
@@ -30,7 +32,7 @@ project_connections:
   - AudioMuse recorded-sound-as-instrument studies
 future_questions:
   - Which registered sources would let AudioMuse document cueing, backspinning, cutting, and beat juggling as described techniques rather than as listed terms?
-  - How should AudioMuse treat sustained slowed playback, such as Houston chopped-and-screwed practice, alongside the momentary rate and direction changes turntablism already covers?
+  - Phase 12C answered the sustained-slowed-playback question with the `slowed-playback` and `chopped-and-screwed` nodes; what measurement would let AudioMuse compare a momentary rate gesture and a sustained one from recordings alone?
 ---
 
 # Turntablism

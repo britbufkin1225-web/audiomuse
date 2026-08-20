@@ -333,6 +333,14 @@ history. The registered sessions contain no material on regional Southern United
 The gap is named in the `future_questions` of `djing` and `turntablism`, and the shape a future
 dedicated phase would need is recorded in `docs/roadmap.md`. This is a research target, not knowledge.
 
+**Implementation status.** Resolved by Phase 12C, which registered twenty-eight external sources
+before writing anything and then added twenty-two nodes, twenty-four vocabulary entries, and a sourced
+chronology at `docs/houston-musical-cartography.md`. The evidence requirement recorded above was met
+by external provenance rather than by session transcripts: the registered sessions still say nothing
+about this material, so the new nodes carry `session_origin: []` and cite archives, reference entries,
+books, and dated journalism instead. Disputed dates were preserved as disputes rather than resolved by
+repetition.
+
 ### Target 3 — Convert Session 3 into durable structure
 
 **Target.** Representation of the historical and technological-lineage material in Session 3.

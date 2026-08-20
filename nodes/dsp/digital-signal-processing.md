@@ -23,6 +23,8 @@ relationships:
     type: used_in
   - target: djing
     type: used_in
+  - target: time-stretching
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

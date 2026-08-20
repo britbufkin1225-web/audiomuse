@@ -114,3 +114,14 @@ graph TD
 ## Curation boundary
 
 A vocabulary entry is a concise terminology reference. A canonical node is a durable concept selected to accumulate relationships, provenance, sessions, experiments, projects, and deeper research. Terms do not become nodes automatically and may remain vocabulary-only indefinitely.
+
+## Nodes with no session origin
+
+Phase 12C added twenty-two nodes derived from registered external sources rather than from session
+transcripts. They are absent from the lists above by design: no session introduced or developed them,
+so each records `session_origin: []` and carries its provenance in `sources`. One exception is
+`repetition`, which Session 2 develops directly and which therefore appears with a session origin.
+
+The map remains a session-contribution view, not a coverage score. A node missing from it is either
+session-derived and not yet mapped, or source-derived and correctly absent; `indexes/source-coverage.md`
+is the view that shows provenance for those nodes.

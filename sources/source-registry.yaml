@@ -27,3 +27,216 @@ sources:
     title: AudioMuse Brand Identity Guidelines
     locator: assets/brand/guidelines/audiomuse-brand-identity-guidelines-v1.docx
     relationship: reference
+  - id: uh-houston-hip-hop-research-collection
+    type: website
+    title: Houston Hip Hop Research Collection
+    locator: research/sources/houston-third-coast/uh-houston-hip-hop-research-collection.md
+    relationship: reference
+    author: University of Houston Libraries, Special Collections
+    notes: "Institutional archive. External locator https://libraries.uh.edu/special-collections/houston-hip-hop — full text retrieved during independent review."
+  - id: uh-dj-screw-collection-finding-aid
+    type: website
+    title: DJ Screw Collection finding aid
+    locator: research/sources/houston-third-coast/uh-dj-screw-collection-finding-aid.md
+    relationship: reference
+    author: University of Houston Libraries, Special Collections
+    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/14 — full text retrieved during independent review."
+  - id: uh-pen-and-pixel-records-finding-aid
+    type: website
+    title: Pen and Pixel Graphics, Inc. Records finding aid
+    locator: research/sources/houston-third-coast/uh-pen-and-pixel-records-finding-aid.md
+    relationship: reference
+    author: University of Houston Libraries, Special Collections
+    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/8 — full text retrieved during independent review."
+  - id: uh-cia-records-finding-aid
+    type: website
+    title: C.I.A. Records corporate entity record
+    locator: research/sources/houston-third-coast/uh-cia-records-finding-aid.md
+    relationship: reference
+    author: University of Houston Libraries, Special Collections
+    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/agents/corporate_entities/301 — full text retrieved during independent review."
+  - id: uh-stories-dj-screw
+    type: website
+    title: Keeping DJ Screw's Memory Alive
+    locator: research/sources/houston-third-coast/uh-stories-dj-screw.md
+    relationship: historical
+    author: University of Houston
+    notes: "Institutional feature on university holdings. External locator https://stories.uh.edu/dj-screw/index.html — full text retrieved."
+  - id: uh-news-dj-screw-exhibit
+    type: website
+    title: "UH Moment: The Chopped and Screwed History of Houston Hip-Hop"
+    locator: research/sources/houston-third-coast/uh-news-dj-screw-exhibit.md
+    relationship: historical
+    author: University of Houston
+    notes: "Institutional news item; carries a curator definition of the technique. External locator https://www.uh.edu/news-events/stories/2012/august/08282012uhmdjscrew.php — full text retrieved; page date ambiguous."
+  - id: hpl-african-american-history-research-center
+    type: website
+    title: African American History Research Center at the Gregory School
+    locator: research/sources/houston-third-coast/hpl-african-american-history-research-center.md
+    relationship: reference
+    author: Houston Public Library
+    notes: "Municipal archive. External locator https://houstonlibrary.org/aahrc — citation verified, full text not retrieved."
+  - id: museum-gulf-coast-ugk
+    type: website
+    title: UGK, Museum of the Gulf Coast Music Hall of Fame
+    locator: research/sources/houston-third-coast/museum-gulf-coast-ugk.md
+    relationship: historical
+    author: Museum of the Gulf Coast
+    notes: "Museum record for Port Arthur music history. External locator https://www.museumofthegulfcoast.org/ugk — full text retrieved."
+  - id: tsha-dj-screw
+    type: article
+    title: "Davis, Robert Earl, Jr. [DJ Screw], Handbook of Texas"
+    locator: research/sources/houston-third-coast/tsha-dj-screw.md
+    relationship: historical
+    author: Jesse J. Esparza
+    year: 2006
+    notes: "Texas State Historical Association; revised 2020. External locator https://www.tshaonline.org/handbook/entries/davis-robert-earl-jr-dj-screw — full text retrieved."
+  - id: tsha-fat-pat
+    type: article
+    title: "Hawkins, Patrick Lamont [Fat Pat], Handbook of Texas"
+    locator: research/sources/houston-third-coast/tsha-fat-pat.md
+    relationship: historical
+    author: Carolyn M. Davis
+    year: 2013
+    notes: "Texas State Historical Association; revised 2017. External locator https://www.tshaonline.org/handbook/entries/hawkins-patrick-lamont-fat-pat — full text retrieved."
+  - id: tsha-pimp-c
+    type: article
+    title: "Butler, Chad Lamont [Pimp C], Handbook of Texas"
+    locator: research/sources/houston-third-coast/tsha-pimp-c.md
+    relationship: historical
+    author: Raymond Lopez
+    year: 2013
+    notes: "Texas State Historical Association; updated 2016. External locator https://www.tshaonline.org/handbook/entries/butler-chad-lamont-pimp-c — full text retrieved."
+  - id: tsha-duke-peacock-records
+    type: article
+    title: Duke and Peacock Records, Handbook of Texas
+    locator: research/sources/houston-third-coast/tsha-duke-peacock-records.md
+    relationship: historical
+    author: Martin Donell Kohout
+    year: 2013
+    notes: "Texas State Historical Association; revised 2017. External locator https://www.tshaonline.org/handbook/entries/duke-peacock-records — full text retrieved."
+  - id: tsha-aca-recording-studio
+    type: article
+    title: Audio Company of America Recording Studio, Inc., Handbook of Texas
+    locator: research/sources/houston-third-coast/tsha-aca-recording-studio.md
+    relationship: historical
+    author: Mary Manning and Laurie E. Jasinski
+    year: 2026
+    notes: "Texas State Historical Association. External locator https://www.tshaonline.org/handbook/entries/audio-company-of-america-recording-studio-inc — full text retrieved."
+  - id: tsha-sugarhill-recording-studios
+    type: article
+    title: SugarHill Recording Studios, Handbook of Texas
+    locator: research/sources/houston-third-coast/tsha-sugarhill-recording-studios.md
+    relationship: historical
+    notes: "Texas State Historical Association; no byline presented in the retrieved text. External locator https://www.tshaonline.org/handbook/entries/sugarhill-recording-studios — full text retrieved."
+  - id: walker-dj-screw-biography
+    type: book
+    title: "DJ Screw: A Life in Slow Revolution"
+    locator: research/sources/houston-third-coast/walker-dj-screw-biography.md
+    relationship: historical
+    author: Lance Scott Walker
+    year: 2022
+    notes: "University of Texas Press, American Music Series; ISBN 9781477325131. Publisher record retrieved; book interior not read, so no page-level claim rests on it."
+  - id: bradley-wood-house-of-hits
+    type: book
+    title: "House of Hits: The Story of Houston's Gold Star/SugarHill Recording Studios"
+    locator: research/sources/houston-third-coast/bradley-wood-house-of-hits.md
+    relationship: reference
+    author: Andy Bradley and Roger Wood
+    year: 2010
+    notes: "University of Texas Press; ISBN 9780292763180. Publisher distribution record retrieved during independent review; book interior not read and no specific claim rests on it."
+  - id: wilkins-welcome-2-houston
+    type: book
+    title: "Welcome 2 Houston: Hip Hop Heritage in Hustle Town"
+    locator: research/sources/houston-third-coast/wilkins-welcome-2-houston.md
+    relationship: reference
+    author: Langston Collin Wilkins
+    year: 2023
+    notes: "University of Illinois Press. Scholarly folklore and ethnomusicology; registered as the entry point for a later slab-culture phase. Citation verified, full text not retrieved."
+  - id: sarig-third-coast
+    type: book
+    title: "Third Coast: OutKast, Timbaland, and How Hip-Hop Became a Southern Thing"
+    locator: research/sources/houston-third-coast/sarig-third-coast.md
+    relationship: reference
+    author: Roni Sarig
+    year: 2007
+    notes: "Da Capo Press; ISBN 9780306814303. Evidence that Third Coast is a used organizing term, not a definition of its boundaries. Citation verified, full text not retrieved."
+  - id: smith-spectral-audio-signal-processing
+    type: book
+    title: Spectral Audio Signal Processing
+    locator: research/sources/houston-third-coast/smith-spectral-audio-signal-processing.md
+    relationship: reference
+    author: Julius O. Smith III
+    year: 2011
+    notes: "W3K Publishing; Stanford CCRMA; ISBN 978-0-9745607-3-1. Technical citation for phase vocoder time-scale modification. Phase vocoder page retrieved in full."
+  - id: npr-microphone-check-mike-dean
+    type: interview
+    title: Mike Dean on Working with Selena, Scarface and Kanye
+    locator: research/sources/houston-third-coast/npr-microphone-check-mike-dean.md
+    relationship: historical
+    author: Ali Shaheed Muhammad and Frannie Kelley
+    year: 2013
+    notes: "NPR Microphone Check, carried by WUNC. Participant testimony. External locator https://www.wunc.org/npr-music/2013-06-27/mike-dean-on-working-with-selena-scarface-and-kanye — full text retrieved."
+  - id: allhiphop-southwest-wholesale-closing
+    type: article
+    title: Popular Rap Distributor Southwest to Close Doors
+    locator: research/sources/houston-third-coast/allhiphop-southwest-wholesale-closing.md
+    relationship: historical
+    author: AllHipHop
+    year: 2003
+    notes: "Contemporary trade report on the distributor's collapse. External locator https://allhiphop.com/news/popular-rap-distributor-southwest-to-close-doors/ — full text retrieved."
+  - id: popula-screw-tape-records
+    type: article
+    title: The Screwtape Records
+    locator: research/sources/houston-third-coast/popula-screw-tape-records.md
+    relationship: supporting
+    author: Chris O'Connell
+    year: 2019
+    notes: "Reported visit to Screwed Up Records and Tapes; catalog and format practice. External locator https://popula.com/2019/02/19/the-screwtape-records/ — full text retrieved."
+  - id: complex-pen-and-pixel
+    type: article
+    title: Pen and Pixel's Iconic Rap Album Covers Still Inspire Designers Today
+    locator: research/sources/houston-third-coast/complex-pen-and-pixel.md
+    relationship: historical
+    author: Mike DeStefano
+    year: 2017
+    notes: "Journalism with participant interview. External locator https://www.complex.com/style/a/mike-destefano/pen-and-pixel-iconic-rap-album-covers-still-inspire-designers-today — full text retrieved."
+  - id: ida-thunder-soul-kashmere
+    type: article
+    title: "Make It Funky: Thunder Soul Celebrates a High School Impresario"
+    locator: research/sources/houston-third-coast/ida-thunder-soul-kashmere.md
+    relationship: historical
+    author: Ron Deutsch
+    year: 2011
+    notes: "International Documentary Association. Documents the Kashmere reissue and rediscovery loop. External locator https://www.documentary.org/online-feature/make-it-funky-thunder-soul-celebrates-high-school-impresario — full text retrieved."
+  - id: black-enterprise-michael-watts
+    type: article
+    title: Swishahouse Co-Founder Michael 5000 Watts Dies at 52
+    locator: research/sources/houston-third-coast/black-enterprise-michael-watts.md
+    relationship: historical
+    author: Robert Hill
+    year: 2026
+    notes: "Obituary. External locator https://www.blackenterprise.com/swishahouse-michael-5000-watts-dies/ — full text retrieved; radio frequency reported here conflicts with common accounts."
+  - id: black-enterprise-kcoh
+    type: article
+    title: End of an Era for KCOH, Historic Black Owned Radio Station
+    locator: research/sources/houston-third-coast/black-enterprise-kcoh.md
+    relationship: historical
+    author: C. Daniel Baker
+    year: 2012
+    notes: "External locator https://www.blackenterprise.com/kcoh-historic-black-radio-station/ — full text retrieved."
+  - id: texas-standard-june-27
+    type: article
+    title: "This Week in Texas Music History: DJ Screw Lays Down the June 27th Freestyle"
+    locator: research/sources/houston-third-coast/texas-standard-june-27.md
+    relationship: historical
+    author: Texas Standard
+    notes: "Public radio history segment. External locator https://texasstandard.org/stories/dj-screw-june-27-freestyle-mixtape-houston-texas-music-history/ — full text retrieved during independent review."
+  - id: houston-press-spc-anniversary
+    type: article
+    title: South Park Coalition Celebrates 25 Years
+    locator: research/sources/houston-third-coast/houston-press-spc-anniversary.md
+    relationship: historical
+    author: Houston Press
+    year: 2012
+    notes: "External locator https://www.houstonpress.com/music/south-park-coalition-celebrates-25-years-this-saturday-6510254/ — full text retrieved during independent review."
