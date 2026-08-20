@@ -13,13 +13,13 @@ Do not edit these files manually. Regenerate and validate them from the reposito
 
 ## Summary
 
-- Nodes: 43
-- Relationships: 109
+- Nodes: 78
+- Relationships: 220
 - Relationship types represented: 11
 - Sessions represented: 3
-- Registered sources: 33
-- Sources referenced by nodes: 32
-- Domains represented: 9
+- Registered sources: 51
+- Sources referenced by nodes: 50
+- Domains represented: 12
 
 ## Views
 

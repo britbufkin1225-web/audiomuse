@@ -23,6 +23,10 @@ relationships:
     type: enables
   - target: digital-vinyl-system
     type: enables
+  - target: retriggering
+    type: enables
+  - target: granular-fragmentation
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

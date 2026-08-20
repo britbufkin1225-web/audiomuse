@@ -90,9 +90,9 @@ definition: "A perceived quality of stability or compatibility among tones, shap
 digital_relationship: "Analyzed through interval ratios, roughness models, and harmonic relationships."
 best_use: "Harmony, tuning systems, arrangement, generative music, and music-information retrieval."
 technologies: ["DAWs", "tuning software", "harmonic analyzers", "composition systems"]
-node_refs: []
+node_refs: ["musical-consonance", "harmonicity"]
 session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
-related_terms: ["dissonance", "harmonic", "psychoacoustics"]
+related_terms: ["dissonance", "harmonic", "psychoacoustics", "musical-consonance", "spectral-fusion"]
 tags: ["psychoacoustics", "music-theory"]
 ---
 id: "dissonance"
@@ -102,7 +102,7 @@ definition: "A perceived quality of tension, roughness, or instability among sou
 digital_relationship: "Modeled through beating, spectral roughness, tuning, and contextual musical rules."
 best_use: "Creating tension, color, motion, experimental texture, and emotional contrast."
 technologies: ["synthesizers", "microtonal tools", "spectral analyzers", "composition software"]
-node_refs: []
+node_refs: ["musical-dissonance", "sensory-dissonance"]
 session_refs: ["session-01-what-is-sound", "session-02-what-is-music"]
-related_terms: ["consonance", "harmonic", "psychoacoustics"]
+related_terms: ["consonance", "harmonic", "psychoacoustics", "musical-dissonance", "sensory-dissonance", "roughness"]
 tags: ["psychoacoustics", "music-theory"]

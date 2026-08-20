@@ -1,0 +1,264 @@
+---
+id: "roughness"
+term: "Roughness"
+domain: "psychoacoustics"
+definition: "A sensation produced by rapid envelope variation within a critical band, occupying a bounded range of modulation rates and peaking near 70 Hz for a 1 kHz carrier."
+digital_relationship: "Measurable by hearing-model algorithms in units of asper, and producible by any process that adds close-spaced partials, including distortion and detuning."
+best_use: "Naming the sensation, not a judgement about whether the sound is unpleasant."
+technologies: ["distortion", "chorus and detuning", "roughness analysis", "amplitude modulation"]
+node_refs: ["roughness", "sensory-dissonance", "timbre"]
+session_refs: []
+related_terms: ["sensory-dissonance", "fluctuation-strength", "modulation-rate", "critical-band"]
+tags: ["psychoacoustics", "spectral", "measurement"]
+---
+id: "fluctuation-strength"
+term: "Fluctuation Strength"
+domain: "psychoacoustics"
+definition: "The sensation produced by slow envelope variation, peaking near a 4 Hz modulation rate, measured in vacil and distinct from roughness by rate rather than by kind."
+digital_relationship: "The region a tremolo, a slow gate, or a pumping compressor operates in, which is also the region of ordinary speech syllable rate."
+best_use: "Distinguishing slow modulation, which is tracked as pulsation, from fast modulation, which is not."
+technologies: ["tremolo", "slow LFO", "sidechain compression", "psychoacoustic analysis"]
+node_refs: ["roughness", "amplitude-envelope", "dynamic-range-compression"]
+session_refs: []
+related_terms: ["roughness", "modulation-rate", "gate-rate"]
+tags: ["psychoacoustics", "measurement", "time-domain"]
+---
+id: "critical-band"
+term: "Critical Band"
+domain: "psychoacoustics"
+definition: "The frequency region within which components interact rather than being resolved separately, which sets where close-spaced partials produce roughness instead of two distinct pitches."
+digital_relationship: "Used implicitly by perceptual codecs and roughness models, and encountered practically whenever a low-register voicing turns muddy."
+best_use: "Explaining why interval spacing behaves differently in different registers."
+technologies: ["perceptual coding", "roughness models", "filter-bank analysis"]
+node_refs: ["sensory-dissonance", "roughness", "psychoacoustics"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["roughness", "sensory-dissonance", "masking", "harmonicity"]
+tags: ["psychoacoustics", "spectral"]
+---
+id: "harmonicity"
+term: "Harmonicity"
+domain: "psychoacoustics"
+definition: "The degree to which a sound's partials approximate integer multiples of a common fundamental, which governs whether components fuse into one perceived source or separate into several."
+digital_relationship: "Manipulable directly by inharmonic synthesis, partial stretching, and ring modulation, and measurable from a spectrum."
+best_use: "Predicting fusion, not predicting pleasantness — the two have been shown to dissociate."
+technologies: ["additive synthesis", "FM synthesis", "ring modulation", "spectral analysis"]
+node_refs: ["harmonicity", "pitch", "musical-consonance"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["spectral-fusion", "sensory-dissonance", "musical-consonance", "roughness"]
+tags: ["psychoacoustics", "spectral"]
+---
+id: "spectral-fusion"
+term: "Spectral Fusion"
+domain: "psychoacoustics"
+definition: "The perceptual merging of concurrent components into a single source, strongest for simple integer ratios, demonstrated across listeners from very different musical cultures."
+digital_relationship: "The reason layered parts in exact ratios disappear into one another, and the reason slight detuning restores their separateness."
+best_use: "Naming a grouping outcome, which research has shown does not predict aesthetic preference."
+technologies: ["layering", "detuning", "unison stacking"]
+node_refs: ["harmonicity", "musical-consonance"]
+session_refs: []
+related_terms: ["harmonicity", "musical-consonance", "critical-band"]
+tags: ["psychoacoustics", "spectral", "perception"]
+---
+id: "sensory-dissonance"
+term: "Sensory Dissonance"
+domain: "psychoacoustics"
+definition: "The component of perceived dissonance attributable to interaction between spectral components in the auditory periphery, principally roughness, considered apart from learned musical judgements."
+digital_relationship: "Rises sharply with distortion and saturation, because nonlinear processing multiplies the number of close-spaced partial pairs."
+best_use: "Separating what the ear does from what a tonal system expects."
+technologies: ["distortion", "voicing decisions", "roughness models"]
+node_refs: ["sensory-dissonance", "musical-dissonance", "roughness"]
+session_refs: []
+related_terms: ["roughness", "critical-band", "musical-dissonance", "musical-consonance"]
+tags: ["psychoacoustics", "spectral"]
+---
+id: "musical-consonance"
+term: "Musical Consonance"
+domain: "music-theory"
+definition: "A judgement that simultaneous tones belong together, arising from spectral fusion, peripheral interaction, and learned exposure to a tonal system rather than from any one of them."
+digital_relationship: "Cannot be computed from a spectrum alone, because the learned component is a property of the listener rather than of the signal."
+best_use: "Naming a judgement with several contributors, rather than asserting an acoustic definition."
+technologies: ["voicing", "arrangement", "spectral analysis"]
+node_refs: ["musical-consonance", "harmonicity"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["musical-dissonance", "sensory-dissonance", "spectral-fusion", "enculturation"]
+tags: ["music-theory", "perception"]
+---
+id: "musical-dissonance"
+term: "Musical Dissonance"
+domain: "music-theory"
+definition: "A judgement that simultaneous tones do not belong together or require resolution, combining peripheral sensory contributions with learned expectations, and carrying no fixed emotional value."
+digital_relationship: "Its sensory component changes with processing while the notated interval stays fixed, which is why distortion alters dissonance without altering harmony."
+best_use: "Naming instability relative to a context, rather than a property an interval carries around."
+technologies: ["distortion", "voicing", "arrangement"]
+node_refs: ["musical-dissonance", "sensory-dissonance", "musical-expectation"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["musical-consonance", "sensory-dissonance", "expectancy", "roughness"]
+tags: ["music-theory", "perception"]
+---
+id: "auditory-looming"
+term: "Auditory Looming"
+domain: "spatial-audio"
+definition: "A perceptual asymmetry favouring approaching over receding sound sources, demonstrated with spectral cues while overall intensity is held constant."
+digital_relationship: "Approximated by risers, filter sweeps, reverb reduction, and level automation, all of which construct approach cues artificially."
+best_use: "Naming the perceptual bias, not an emotional reaction — the evidence concerns alertness and reaction time."
+technologies: ["reverb automation", "filter sweeps", "binaural rendering", "HRTF processing"]
+node_refs: ["auditory-looming", "perceived-space"]
+session_refs: []
+related_terms: ["brain-stem-reflex", "salience", "perceived-space", "direct-to-reverberant-ratio"]
+tags: ["spatial-audio", "perception"]
+---
+id: "direct-to-reverberant-ratio"
+term: "Direct-to-Reverberant Ratio"
+domain: "spatial-audio"
+definition: "The relationship between the level of sound arriving directly from a source and the level of its reflected energy, one of the primary cues from which listeners infer distance."
+digital_relationship: "Set explicitly as a wet/dry balance, which makes apparent distance a mix control rather than a recording condition."
+best_use: "Describing a distance decision precisely instead of talking about reverb amount."
+technologies: ["reverb processors", "convolution reverb", "microphone placement"]
+node_refs: ["perceived-space"]
+session_refs: []
+related_terms: ["early-reflections", "perceived-space", "auditory-looming"]
+tags: ["spatial-audio", "mixing"]
+---
+id: "early-reflections"
+term: "Early Reflections"
+domain: "spatial-audio"
+definition: "The first discrete reflections arriving after the direct sound, whose pattern and delay contribute to impressions of room size and source distance before the diffuse reverberant field develops."
+digital_relationship: "Modelled separately from the reverb tail in most processors, which makes size and decay independently adjustable in a way physical rooms do not allow."
+best_use: "Naming the cue that carries room size, as distinct from decay time."
+technologies: ["algorithmic reverb", "convolution reverb", "room simulation"]
+node_refs: ["perceived-space"]
+session_refs: []
+related_terms: ["direct-to-reverberant-ratio", "perceived-space"]
+tags: ["spatial-audio", "mixing"]
+---
+id: "auditory-transduction"
+term: "Auditory Transduction"
+domain: "psychoacoustics"
+definition: "The conversion of airborne pressure variation into neural activity by the ear, in which the cochlea decomposes the signal by frequency along its length before anything is computed."
+digital_relationship: "Structurally analogous to a filter bank followed by envelope detection, which is why perceptual models of hearing are built that way."
+best_use: "Explaining that frequency analysis is mechanical and happens first."
+technologies: ["filter-bank models", "perceptual coding", "cochlear implants"]
+node_refs: ["auditory-transduction", "auditory-pathway"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["tonotopy", "phase-locking", "critical-band"]
+tags: ["psychoacoustics", "biology"]
+---
+id: "tonotopy"
+term: "Tonotopy"
+domain: "psychoacoustics"
+definition: "Organization by frequency along a physical axis, established mechanically in the cochlea and retained at every level of the central auditory system."
+digital_relationship: "The reason a spectrum display corresponds to something real about how hearing is arranged, rather than being only an analytical convenience."
+best_use: "Naming the place code for frequency, as distinct from the temporal code."
+technologies: ["spectrum analysis", "cochlear implants", "filter banks"]
+node_refs: ["auditory-transduction", "auditory-pathway", "frequency"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["auditory-transduction", "phase-locking", "critical-band"]
+tags: ["psychoacoustics", "biology"]
+---
+id: "phase-locking"
+term: "Phase Locking"
+domain: "psychoacoustics"
+definition: "The tendency of auditory nerve fibres to fire preferentially at particular phases of a low-frequency waveform, providing a temporal frequency code that operates up to about 3 kHz in a one-to-one fashion."
+digital_relationship: "The biological counterpart of sample-accurate timing, and the reason interaural time differences are usable as a localization cue at low frequencies."
+best_use: "Naming the temporal code for frequency, and its upper limit."
+technologies: ["binaural rendering", "auditory modelling"]
+node_refs: ["auditory-pathway", "auditory-transduction", "phase"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["tonotopy", "auditory-transduction"]
+tags: ["psychoacoustics", "biology", "time-domain"]
+---
+id: "auditory-scene-analysis"
+term: "Auditory Scene Analysis"
+domain: "psychoacoustics"
+definition: "The process by which a mixture of sound is organized into separate perceived sources, using cues including harmonicity, common onset, spatial position, and continuity."
+digital_relationship: "The perceptual problem a mix engineer is really working on, and the reason shared onsets and shared modulation make parts merge."
+best_use: "Describing separation and merging of parts as a grouping problem rather than a level problem."
+technologies: ["mixing", "source separation", "spectral editing"]
+node_refs: ["psychoacoustics", "harmonicity", "amplitude-envelope"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["spectral-fusion", "harmonicity", "masking", "temporal-discontinuity"]
+tags: ["psychoacoustics", "perception"]
+---
+id: "affective-timbre"
+term: "Affective Timbre"
+domain: "psychoacoustics"
+definition: "The relationship between spectral and envelope properties and the affective qualities listeners attribute to a sound, in which distinct descriptor combinations relate to distinct affective dimensions."
+digital_relationship: "Reachable through brightness, spectral slope, attack, and decay controls, each of which relates to more than one affective dimension rather than to a single one."
+best_use: "Choosing which property to change when a sound reads wrong, instead of adjusting everything."
+technologies: ["equalization", "transient shaping", "synthesis", "distortion"]
+node_refs: ["affective-timbre", "timbre", "amplitude-envelope"]
+session_refs: []
+related_terms: ["spectral-centroid", "valence", "arousal", "roughness"]
+tags: ["psychoacoustics", "affect", "timbre"]
+---
+id: "spectral-centroid"
+term: "Spectral Centroid"
+domain: "machine-audio"
+definition: "The amplitude-weighted mean frequency of a spectrum, a descriptor that correlates with perceived brightness without being identical to it."
+digital_relationship: "Computed per analysis frame, and one of the descriptors that related to more than one affective rating dimension in published work."
+best_use: "Reporting a measurable spectral property, kept distinct from the perceptual word brightness."
+technologies: ["feature extraction libraries", "spectral analysis", "MIR toolkits"]
+node_refs: ["audio-feature-extraction", "affective-timbre"]
+session_refs: []
+related_terms: ["spectral-flux", "affective-timbre", "audio-descriptor"]
+tags: ["machine-audio", "measurement", "spectral"]
+---
+id: "spectral-flux"
+term: "Spectral Flux"
+domain: "machine-audio"
+definition: "A measure of how much a spectrum changes between successive analysis frames, which in one EEG study predicted neural synchronization to music better than the amplitude envelope did."
+digital_relationship: "Used for onset detection and for tracking rhythmic change that level alone does not reveal."
+best_use: "Describing rhythmic change that involves timbre rather than only loudness."
+technologies: ["onset detection", "beat tracking", "MIR toolkits"]
+node_refs: ["audio-feature-extraction", "rhythmic-entrainment"]
+session_refs: []
+related_terms: ["spectral-centroid", "onset-density", "audio-descriptor"]
+tags: ["machine-audio", "measurement", "time-domain"]
+---
+id: "audio-descriptor"
+term: "Audio Descriptor"
+domain: "machine-audio"
+definition: "A number computed from a signal that describes a property of that signal and nothing about a listener."
+digital_relationship: "Deterministic given the audio and the extraction method, which is why the method has to be recorded alongside the value."
+best_use: "Keeping measured signal properties in a separate column from rated perceptual ones."
+technologies: ["MIR toolkits", "feature extraction", "analysis plugins"]
+node_refs: ["audio-feature-extraction", "emotion-measurement"]
+session_refs: []
+related_terms: ["spectral-centroid", "spectral-flux", "programme-loudness", "onset-density"]
+tags: ["machine-audio", "measurement"]
+---
+id: "programme-loudness"
+term: "Programme Loudness"
+domain: "mixing-mastering"
+definition: "A standardized algorithmic measure of the loudness of an audio programme, specified by ITU-R Recommendation BS.1770 alongside true-peak level."
+digital_relationship: "The basis of broadcast and streaming normalization, and a measurement of the signal rather than a report of how loud anyone found it."
+best_use: "Naming the standardized measurement, without treating it as equivalent to perceived loudness in a musical context."
+technologies: ["loudness meters", "broadcast normalization", "streaming delivery"]
+node_refs: ["audio-feature-extraction", "emotion-measurement"]
+session_refs: []
+related_terms: ["audio-descriptor", "dynamic-range"]
+tags: ["mixing-mastering", "measurement", "standard"]
+---
+id: "dynamic-range"
+term: "Dynamic Range"
+domain: "mixing-mastering"
+definition: "The span between the quietest and loudest parts of a signal, which determines how much room exists for contrast and therefore for dynamic surprise."
+digital_relationship: "Reduced deliberately by compression and limiting, which trades available contrast for consistent level."
+best_use: "Framing dynamics as available contrast rather than as a fidelity metric."
+technologies: ["compressor", "limiter", "loudness meters"]
+node_refs: ["dynamic-range-compression", "amplitude-envelope"]
+session_refs: []
+related_terms: ["programme-loudness", "temporal-discontinuity", "salience"]
+tags: ["mixing-mastering", "measurement", "dynamics"]
+---
+id: "perceived-space"
+term: "Perceived Space"
+domain: "spatial-audio"
+definition: "The impression of location, distance, size, and enclosure that a listener infers from timing, level, spectral, and reverberant cues rather than sensing directly."
+digital_relationship: "Constructible entirely artificially, because the cues are inferred; reverb, delay, filtering, and level automation supply a room that was never there."
+best_use: "Framing a reverb decision as a claim about where the listener is standing."
+technologies: ["reverb processors", "binaural rendering", "panning", "microphone placement"]
+node_refs: ["perceived-space", "auditory-looming"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["direct-to-reverberant-ratio", "early-reflections", "auditory-looming"]
+tags: ["spatial-audio", "perception"]

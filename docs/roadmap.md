@@ -179,6 +179,45 @@ Phase 12D is explicitly not the migration. `docs/claim-provenance-model.md` reco
 — historically sensitive claims, then origin claims, then regional chronology, then thinly sourced
 technical claims — and states that general explanatory prose mostly never becomes claim data.
 
+### Phase 12E — Music-Evoked Emotion, Affective Psychoacoustics + Temporal DSP Foundation. Complete.
+
+Research and knowledge architecture. The phase answers one question — how physical sound, auditory
+biology, signal processing, musical structure, expectation, memory, culture, and bodily response
+combine to produce emotion — as a layered model rather than as a feature-to-emotion table, and it
+builds the layer AudioMuse was missing.
+
+That layer is temporal DSP. The repository described signals on one side and musical expectation on
+the other, with nothing named in between: the operations that cut, hold, repeat, remove, and displace
+recorded material, which is most of what electronic music production and DJ performance consist of.
+Eight new `dsp` nodes plus `amplitude-envelope` establish gating, stutter, micro-looping, retriggering,
+temporal discontinuity, granular fragmentation, and dynamic-range compression as first-class concepts
+sharing one target: event boundaries. Existing `chopping`, `scratching`, `sampling`, `time-stretching`,
+and `repetition` nodes gained edges into that family rather than being rewritten.
+
+Thirty-five nodes were added across nine domains, populating `music-theory`, `spatial-audio`, and
+`machine-audio` for the first time and taking the graph from 43 nodes and 109 edges to 78 and 220.
+Eighteen external sources were registered — peer-reviewed primary research and reviews, an NIH
+reference page, a neuroscience textbook, a measurement-instrumentation technical note, and a standards
+recommendation — each with a research note recording what it may support, what it does not settle, and
+whether its text was actually retrieved. Sixty-eight vocabulary entries, seven experiment
+specifications, and thirty-eight claim records were added, and `docs/affective-mechanism-stack.md`
+holds the synthesis.
+
+The phase is defined as much by what it refuses. It states no emotional meaning for any chord, key,
+frequency, tempo, or instrument. It records that spectral fusion has been shown not to predict
+pleasantness, that roughness carries no fixed valence, that physiological response is not felt emotion,
+and that a music emotion recognition system predicts annotation labels rather than detecting feeling.
+Where evidence was absent it says so: `perceived-space` and `auditory-pathway` are seed nodes because
+no citable source was retrieved for the affective and central-pathway material, melody and contour are
+recorded as an unfilled gap, and the temporal-DSP proposals about stutter rate, micro-loop periodicity,
+dropout strength, and compression release are typed `hypothesis` at `low` confidence with open
+questions attached. Classic monographs that dominate this literature were deliberately not registered,
+because they were not read.
+
+No schema, relationship type, or validator rule was changed. One adversarial fixture in
+`tools/test-claim-validator.ps1` was repointed: it relied on `session-02-what-is-music` carrying no
+`evidence_class`, and Phase 12E annotated that source because claim records now cite it.
+
 ## Near-term follow-up
 
 - Independently review Phase 10 thresholds and candidate evidence against future repository growth
@@ -186,5 +225,9 @@ technical claims — and states that general explanatory prose mostly never beco
 - Extend source and citation coverage as new evidence is introduced
 - Begin the Phase 12D claim annotation migration at its first priority tier when a phase is allocated to it
 - Add further experiments or vocabulary terms only as future sessions or research justify them
+- Perform one Phase 12E experiment and record it as the first completed run, which would also supply the
+  repository's first `experiment_observation` claim
+- Close the Phase 12E research gaps in priority order: space and affect, melody and contour, and
+  listener response to compression and distortion
 
 Keep later phases intentionally flexible so the research can determine what deserves implementation.

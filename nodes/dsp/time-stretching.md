@@ -16,6 +16,8 @@ relationships:
     type: contributes_to
   - target: sampling
     type: processes
+  - target: temporal-dsp
+    type: used_in
 sources:
   - smith-spectral-audio-signal-processing
   - session-03-history-of-electronic-music

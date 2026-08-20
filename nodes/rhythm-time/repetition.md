@@ -17,10 +17,15 @@ relationships:
     type: used_in
   - target: rhythm
     type: contributes_to
+  - target: musical-expectation
+    type: influences
+  - target: micro-looping
+    type: contributes_to
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music
   - uh-news-dj-screw-exhibit
+  - deutsch-speech-to-song-illusion
 experiments: []
 practical_applications:
   - treating a repeat as a decision about listener expectation
@@ -46,3 +51,5 @@ The unit that repeats determines what the repetition does:
 The last of these is where the Houston material sharpens the general concept. A curator's description of chopped and screwed practice names the repetition of beats, words, and phrases as constitutive of the technique, alongside the slowing. Repeating a word inside a line that is already moving slowly does something a loop does not: it holds the listener on a semantic unit rather than a rhythmic one, delaying the sentence while the groove continues. `chopping` holds the physical act; this node holds why the act is compositional.
 
 Session 3 supplies the other end of the same idea, recording machine-controlled repetition through step sequencers and drum machines as a defining capability of electronic music production. Between them the two sessions bracket the range AudioMuse cares about: repetition performed by hand, and repetition automated by a machine, with the same effect on expectation and very different effects on timing.
+
+Phase 12E adds a third bracket to the two this node already carried. Deutsch, Henthorn, and Lapidis showed that repetition alone can reorganize what a listener takes a sound to be: a spoken phrase, repeated without any alteration to the signal, came to be heard as sung. The condition matters as much as the result — the transformation occurred when the repetitions were exact replicas, and did not occur when the phrase was transposed slightly or the syllables were jumbled. So exactness is part of the mechanism rather than a side effect of digital reproduction, which gives `micro-looping` a reason to exist as a separate node and gives the repeated word in a Screw tape a claim on more than emphasis.

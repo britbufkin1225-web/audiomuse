@@ -1,0 +1,252 @@
+---
+id: "music-evoked-emotion"
+term: "Music-Evoked Emotion"
+domain: "psychoacoustics"
+definition: "An emotional response arising in a listener during or after listening, produced by several distinguishable mechanisms acting on a combination of music, listener, and situation rather than by a property of the recording."
+digital_relationship: "Not a property a file can carry, which is why systems that tag audio with mood labels are predicting annotations rather than measuring responses."
+best_use: "Naming the response itself, kept separate from the emotion a listener hears the music as expressing."
+technologies: ["listening tests", "rating scales", "physiological recording"]
+node_refs: ["music-evoked-emotion", "affective-psychoacoustics"]
+session_refs: []
+related_terms: ["affect", "valence", "arousal", "perceived-emotion", "felt-emotion"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "affect"
+term: "Affect"
+domain: "psychoacoustics"
+definition: "An umbrella term covering evaluative states generally, including emotion, mood, preference, and aesthetic judgement, used when a more precise term is not intended."
+digital_relationship: "Nothing in a signal is affect; the term describes the listener's side of the relationship only."
+best_use: "Referring to valenced states in general without implying a brief, object-directed emotion."
+technologies: ["rating scales", "questionnaires"]
+node_refs: ["music-evoked-emotion"]
+session_refs: []
+related_terms: ["valence", "arousal", "mood", "music-evoked-emotion"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "valence"
+term: "Valence"
+domain: "psychoacoustics"
+definition: "The positive or negative quality of an evaluative state, one of the two dimensions that emotion measures recover most reliably."
+digital_relationship: "Commonly used as an axis in music emotion recognition datasets, where it is an averaged annotation rather than a measurement."
+best_use: "Naming the positive or negative axis specifically, rather than using it as a synonym for emotion."
+technologies: ["valence-arousal rating grids", "facial EMG"]
+node_refs: ["emotion-measurement", "affective-timbre"]
+session_refs: []
+related_terms: ["arousal", "affect", "emotion-measurement"]
+tags: ["psychoacoustics", "affect", "measurement"]
+---
+id: "arousal"
+term: "Arousal"
+domain: "psychoacoustics"
+definition: "Physical activation of the autonomic nervous system, one component of an emotional response which can also occur without any emotion at all."
+digital_relationship: "Approximated in datasets by an annotation axis, and measured physiologically by skin conductance among other indices."
+best_use: "Distinguishing activation from feeling, particularly when a physiological measure is the only evidence available."
+technologies: ["skin conductance", "heart rate monitoring", "pupillometry"]
+node_refs: ["autonomic-response-to-music", "emotion-measurement"]
+session_refs: []
+related_terms: ["valence", "affect", "autonomic-response", "frisson"]
+tags: ["psychoacoustics", "affect", "measurement"]
+---
+id: "perceived-emotion"
+term: "Perceived Emotion"
+domain: "psychoacoustics"
+definition: "The emotion a listener hears music as expressing, which can be reported without the listener feeling it."
+digital_relationship: "The target most music emotion recognition work actually models, because it is less influenced by the listener's situation than felt emotion is."
+best_use: "Stating which of the three emotion targets a claim or a dataset is about."
+technologies: ["listening tests", "annotation interfaces", "music emotion recognition"]
+node_refs: ["music-emotion-recognition", "music-evoked-emotion"]
+session_refs: []
+related_terms: ["felt-emotion", "expressed-emotion", "music-evoked-emotion"]
+tags: ["psychoacoustics", "affect", "machine-audio"]
+---
+id: "felt-emotion"
+term: "Felt Emotion"
+domain: "psychoacoustics"
+definition: "The emotion a listener actually experiences in response to music, as distinct from the emotion they hear it as expressing."
+digital_relationship: "Rarely the target of automatic systems, because it depends on listener and situation in ways a recording does not determine."
+best_use: "Marking that a claim concerns what someone experienced, not what they identified in the music."
+technologies: ["self-report", "physiological recording", "experience sampling"]
+node_refs: ["music-evoked-emotion", "emotion-measurement"]
+session_refs: []
+related_terms: ["perceived-emotion", "expressed-emotion", "music-evoked-emotion"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "expressed-emotion"
+term: "Expressed Emotion"
+domain: "psychoacoustics"
+definition: "The emotion a performer intends to communicate, distinct from both what a listener perceives and what a listener feels."
+digital_relationship: "Not recoverable from audio alone, since intention leaves no signature a signal analysis can isolate from result."
+best_use: "Completing the three-way distinction when discussing what an emotion label refers to."
+technologies: ["performance research", "annotation protocols"]
+node_refs: ["music-emotion-recognition"]
+session_refs: []
+related_terms: ["perceived-emotion", "felt-emotion"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "appraisal"
+term: "Appraisal"
+domain: "psychoacoustics"
+definition: "Evaluation of an event's significance for the listener, which mediates between a stimulus and an emotional response and explains why the same stimulus affects different people differently."
+digital_relationship: "Outside the signal entirely; its presence is why no audio analysis can be complete as an account of emotional response."
+best_use: "Naming the interpretive step that stops a stimulus from determining a response."
+technologies: ["listening tests with context manipulation"]
+node_refs: ["music-evoked-emotion", "affective-psychoacoustics"]
+session_refs: []
+related_terms: ["affect", "salience", "aesthetic-judgment"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "salience"
+term: "Salience"
+domain: "psychoacoustics"
+definition: "The degree to which an event captures attention, which temporal and dynamic operations change directly and which is separable from whether the event is liked."
+digital_relationship: "Manipulable by contrast, onset sharpness, modulation, and placement against expectation, all of which are ordinary production controls."
+best_use: "Describing what an edit did to attention, before saying anything about feeling."
+technologies: ["gating", "compression", "arrangement", "transient shaping"]
+node_refs: ["temporal-discontinuity", "music-evoked-emotion"]
+session_refs: []
+related_terms: ["appraisal", "arousal", "dropout", "auditory-looming"]
+tags: ["psychoacoustics", "attention"]
+---
+id: "frisson"
+term: "Frisson"
+domain: "psychoacoustics"
+definition: "A transient peak response reported as chills, shivers, tingling, or piloerection, accompanied by autonomic change and used in research as a marker of intense response."
+digital_relationship: "Not producible on demand by any signal manipulation; the structural triggers reported in the literature are correlational and sample-limited."
+best_use: "Naming the marker researchers actually measure, rather than treating it as a synonym for being moved."
+technologies: ["skin conductance", "piloerection recording", "continuous response interfaces"]
+node_refs: ["frisson", "autonomic-response-to-music"]
+session_refs: []
+related_terms: ["piloerection", "arousal", "autonomic-response", "aesthetic-judgment"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "piloerection"
+term: "Piloerection"
+domain: "psychoacoustics"
+definition: "Involuntary raising of body hair, sometimes accompanying frisson, whose status as definitional or merely associated is disputed in the literature."
+digital_relationship: "A bodily measure with no signal counterpart; recording it requires observation or specialized instrumentation rather than audio analysis."
+best_use: "Naming the physical sign precisely, and noting that its relationship to the reported experience is unsettled."
+technologies: ["video observation", "piloerection sensors"]
+node_refs: ["frisson", "autonomic-response-to-music"]
+session_refs: []
+related_terms: ["frisson", "autonomic-response"]
+tags: ["psychoacoustics", "physiology"]
+---
+id: "autonomic-response"
+term: "Autonomic Response"
+domain: "psychoacoustics"
+definition: "Involuntary bodily change such as altered heart rate, skin conductance, respiration, or pupil size, which is evidence of a response without being equivalent to a felt emotion."
+digital_relationship: "Measured with instrumentation entirely separate from the audio chain, and never inferable from the signal."
+best_use: "Reporting what was physically measured, kept apart from what the listener said they felt."
+technologies: ["electrodermal activity sensors", "ECG", "respiration belts", "pupillometry"]
+node_refs: ["autonomic-response-to-music", "emotion-measurement"]
+session_refs: []
+related_terms: ["arousal", "frisson", "emotion-measurement", "piloerection"]
+tags: ["psychoacoustics", "physiology", "measurement"]
+---
+id: "emotional-contagion"
+term: "Emotional Contagion"
+domain: "psychoacoustics"
+definition: "A proposed mechanism in which a listener perceives an emotional expression in music and internally mimics it, drawing on responses to voice-like features."
+digital_relationship: "Relevant wherever processing makes material more or less voice-like, including formant shifting, resampling, and vocoding."
+best_use: "Naming one specific proposed route from expression to feeling, rather than treating expression and feeling as the same thing."
+technologies: ["vocal processing", "formant shifting", "sampling"]
+node_refs: ["music-evoked-emotion", "affective-timbre"]
+session_refs: []
+related_terms: ["expressed-emotion", "perceived-emotion", "brain-stem-reflex"]
+tags: ["psychoacoustics", "affect", "mechanism"]
+---
+id: "evaluative-conditioning"
+term: "Evaluative Conditioning"
+domain: "psychoacoustics"
+definition: "A proposed mechanism in which a piece acquires affective value through repeated pairing with something positive or negative, described as subconscious, unintentional, and effortless."
+digital_relationship: "Independent of any signal property, which is why a musically unremarkable recording can carry a strong response for one listener and none for another."
+best_use: "Explaining acquired affective value that no acoustic analysis would predict."
+technologies: ["repeated exposure", "media pairing"]
+node_refs: ["music-and-memory", "music-evoked-emotion"]
+session_refs: []
+related_terms: ["episodic-memory", "music-evoked-emotion", "familiarity"]
+tags: ["psychoacoustics", "affect", "mechanism"]
+---
+id: "episodic-memory"
+term: "Episodic Memory"
+domain: "psychoacoustics"
+definition: "Memory for a specific personal event, which music can cue, bringing the emotion associated with the event along with the recollection."
+digital_relationship: "Attaches to a particular recording rather than to a composition, which is why a cover version often does not work as a cue."
+best_use: "Distinguishing a response caused by the listener's history from one caused by the sound."
+technologies: ["autobiographical memory protocols", "familiarity ratings"]
+node_refs: ["music-and-memory", "music-evoked-emotion"]
+session_refs: []
+related_terms: ["evaluative-conditioning", "familiarity", "autobiographical-salience"]
+tags: ["psychoacoustics", "memory"]
+---
+id: "autobiographical-salience"
+term: "Autobiographical Salience"
+domain: "psychoacoustics"
+definition: "How strongly a piece of music is bound to a listener's own past, measured separately from familiarity and shown to have effects beyond what familiarity alone predicts."
+digital_relationship: "A per-listener variable that no property of the file carries, and one that must be controlled in any listening test using known material."
+best_use: "Separating knowing a song from the song meaning something to you."
+technologies: ["rating scales", "post-listening interviews"]
+node_refs: ["music-and-memory"]
+session_refs: []
+related_terms: ["episodic-memory", "familiarity", "music-and-memory"]
+tags: ["psychoacoustics", "memory", "measurement"]
+---
+id: "familiarity"
+term: "Familiarity"
+domain: "psychoacoustics"
+definition: "How well a listener knows a piece of music, which affects neural tracking, physiological response, and rated experience, and which confounds any listening test that does not control it."
+digital_relationship: "Not a property of the audio; two listeners hearing the same file are running different experiments."
+best_use: "Naming the variable a listening test has to control before its results mean anything."
+technologies: ["familiarity ratings", "unfamiliar stimulus sets", "counterbalanced designs"]
+node_refs: ["music-and-memory", "rhythmic-entrainment", "musical-enculturation"]
+session_refs: []
+related_terms: ["autobiographical-salience", "episodic-memory", "enculturation"]
+tags: ["psychoacoustics", "memory", "measurement"]
+---
+id: "aesthetic-judgment"
+term: "Aesthetic Judgment"
+domain: "psychoacoustics"
+definition: "A subjective evaluation of music as art against a listener's own criteria, proposed as a mechanism distinct from the everyday emotion-induction routes."
+digital_relationship: "Depends on knowledge about how something was made, which audio alone does not carry and which changes when the listener learns it."
+best_use: "Naming admiration for craft as a separate route to affect, rather than folding it into liking."
+technologies: ["listening tests with attribution manipulation"]
+node_refs: ["music-evoked-emotion"]
+session_refs: []
+related_terms: ["appraisal", "affect", "frisson"]
+tags: ["psychoacoustics", "affect", "mechanism"]
+---
+id: "brain-stem-reflex"
+term: "Brain Stem Reflex"
+domain: "psychoacoustics"
+definition: "A proposed fast, automatic, unlearned response to acoustic properties signalling an urgent event, described as triggered by sounds that are sudden, loud, or dissonant, or that feature accelerating patterns."
+digital_relationship: "The mechanism most directly reachable by production controls, since level, transient sharpness, and acceleration are all ordinary parameters."
+best_use: "Naming the fastest and least interpretive route from a sound property toward arousal."
+technologies: ["dynamics processing", "transient design", "arrangement contrast"]
+node_refs: ["music-evoked-emotion", "auditory-looming", "temporal-discontinuity"]
+session_refs: []
+related_terms: ["salience", "arousal", "auditory-looming", "emotional-contagion"]
+tags: ["psychoacoustics", "affect", "mechanism"]
+---
+id: "mood"
+term: "Mood"
+domain: "psychoacoustics"
+definition: "An affective state lower in intensity than an emotion, without a clear object, and lasting far longer — hours to days rather than minutes."
+digital_relationship: "Widely used as the label in music tagging and playlisting, where it names a use context rather than a measured state."
+best_use: "Distinguishing a durable background state from a brief, object-directed emotion."
+technologies: ["playlisting", "mood tagging", "experience sampling"]
+node_refs: ["music-evoked-emotion"]
+session_refs: []
+related_terms: ["affect", "valence", "arousal", "music-evoked-emotion"]
+tags: ["psychoacoustics", "affect"]
+---
+id: "music-and-memory"
+term: "Music and Memory"
+domain: "psychoacoustics"
+definition: "The relationship in which a particular recording carries a personal association strong enough to produce a response that none of its acoustic properties would predict."
+digital_relationship: "Attaches to a specific recording rather than to a composition, so an exact copy carries it and a re-performance often does not."
+best_use: "Naming the route by which listener history rather than sound produces the response."
+technologies: ["autobiographical memory protocols", "familiarity ratings"]
+node_refs: ["music-and-memory", "music-evoked-emotion"]
+session_refs: []
+related_terms: ["episodic-memory", "autobiographical-salience", "familiarity", "evaluative-conditioning"]
+tags: ["psychoacoustics", "memory"]

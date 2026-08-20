@@ -16,6 +16,8 @@ core_concepts:
 relationships:
   - target: djing
     type: used_in
+  - target: rhythmic-entrainment
+    type: contributes_to
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

@@ -19,7 +19,7 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - `experiments/` — canonical listening/measurement exercises and a generated cross-reference index
 - `experiment-runs/` — individual planned/performed execution records, evidence, and a generated index
 - `assets/brand/` — canonical AudioMuse identity assets and guidelines
-- `docs/` — project scope, knowledge model, roadmap, research-gap triage, the Houston musical cartography, and the claim provenance model
+- `docs/` — project scope, knowledge model, roadmap, research-gap triage, the Houston musical cartography, the claim provenance model, and the affective mechanism stack
 - `indexes/` — generated, read-only navigation and coverage views
 
 ## Current foundation
@@ -40,9 +40,11 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - Session 2 and 3 vocabulary bridges into rhythm, sequencing, synthesis, and MIDI (Phase 12A, Target 1)
 - A six-node DJ and turntablism domain connecting recorded playback, mechanical vibration, musical time, sampling, and digital vinyl systems (Phase 12B, Target 2)
 - A source-backed Houston and Third Coast foundation — twenty-two nodes, twenty-eight registered external sources, and a chronology with per-claim confidence markers and a dispute register (Phase 12C)
-- A validated claim-provenance architecture separating claim type, evidence strength, evidence relationship, and dispute status, with ten representative records and fifty-four adversarial validator tests (Phase 12D)
+- A validated claim-provenance architecture separating claim type, evidence strength, evidence relationship, and dispute status, with ten representative records and adversarial validator tests (Phase 12D)
+- A layered affective mechanism model from cochlear encoding through psychoacoustic features, temporal organization, prediction, memory, and culture to bodily response, built on eighteen registered scientific sources (Phase 12E)
+- A temporal-DSP foundation naming gating, chopping, stutter, micro-looping, retriggering, discontinuity, granular fragmentation, and compression as one family acting on event boundaries (Phase 12E)
 
-See `docs/claim-provenance-model.md` for the claim taxonomy, confidence semantics, and annotation migration plan, `docs/houston-musical-cartography.md` for the sourced Houston chronology, `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
+See `docs/affective-mechanism-stack.md` for the layered sound-to-emotion model and the temporal-DSP layer, `docs/claim-provenance-model.md` for the claim taxonomy, confidence semantics, and annotation migration plan, `docs/houston-musical-cartography.md` for the sourced Houston chronology, `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
 
 ## Project posture
 

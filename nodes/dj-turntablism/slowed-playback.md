@@ -20,6 +20,8 @@ relationships:
     type: influences
   - target: timbre
     type: influences
+  - target: affective-timbre
+    type: influences
 sources:
   - session-01-what-is-sound
   - tsha-dj-screw

@@ -20,6 +20,8 @@ relationships:
     type: influences
   - target: beatmatching
     type: influences
+  - target: rhythmic-entrainment
+    type: influences
 sources:
   - session-02-what-is-music
   - session-03-history-of-electronic-music

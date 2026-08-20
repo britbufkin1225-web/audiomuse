@@ -1,0 +1,192 @@
+---
+id: "expectancy"
+term: "Expectancy"
+domain: "music-theory"
+definition: "The anticipation a listener forms about how music will continue, built from exposure to a style, which the music can confirm, delay, omit, or violate."
+digital_relationship: "Manipulable by any operation that changes when something arrives, which puts sequencing, editing, and temporal DSP in the same category as harmony."
+best_use: "Naming the listener's prediction, as distinct from what the score says should happen next."
+technologies: ["arrangement", "sequencing", "editing", "listening tests"]
+node_refs: ["musical-expectation", "predictive-processing-music"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["prediction-error", "surprise", "uncertainty", "statistical-learning"]
+tags: ["music-theory", "cognition"]
+---
+id: "prediction-error"
+term: "Prediction Error"
+domain: "psychoacoustics"
+definition: "The difference between what was predicted and what arrived, proposed as the quantity that drives learning and reward responses rather than the event itself."
+digital_relationship: "Not computable from audio alone, since it depends on a model of what a particular listener expected."
+best_use: "Naming the mismatch specifically, rather than describing an event as surprising in the abstract."
+technologies: ["computational models of expectation", "neuroimaging"]
+node_refs: ["predictive-processing-music", "auditory-reward"]
+session_refs: []
+related_terms: ["expectancy", "surprise", "information-content", "statistical-learning"]
+tags: ["psychoacoustics", "cognition"]
+---
+id: "statistical-learning"
+term: "Statistical Learning"
+domain: "psychoacoustics"
+definition: "Acquisition of a musical system's regularities through ordinary exposure rather than instruction, proposed as one of the two processes underlying enculturation."
+digital_relationship: "The human counterpart of what a trained model does with a corpus, which is a useful analogy and not an identity."
+best_use: "Explaining why style conventions feel like rules to a listener who was never taught them."
+technologies: ["computational models", "exposure studies"]
+node_refs: ["musical-enculturation", "predictive-processing-music"]
+session_refs: []
+related_terms: ["enculturation", "expectancy", "prediction-error", "probabilistic-prediction"]
+tags: ["psychoacoustics", "cognition"]
+---
+id: "probabilistic-prediction"
+term: "Probabilistic Prediction"
+domain: "psychoacoustics"
+definition: "Generating expectations about upcoming events as a distribution over possibilities rather than as a single guess, proposed as the second process underlying enculturation."
+digital_relationship: "Modelled explicitly by systems that assign probabilities to continuations, from which information content and entropy are computed."
+best_use: "Making clear that a listener expects a range of continuations with different likelihoods, not one continuation."
+technologies: ["variable-order Markov models", "music prediction models"]
+node_refs: ["predictive-processing-music", "musical-expectation"]
+session_refs: []
+related_terms: ["statistical-learning", "information-content", "entropy", "expectancy"]
+tags: ["psychoacoustics", "cognition"]
+---
+id: "information-content"
+term: "Information Content"
+domain: "psychoacoustics"
+definition: "A measure of how unexpected a particular event is in its context, distinct from how uncertain the prediction was beforehand."
+digital_relationship: "Computed from a model's probability for the event that actually occurred, so it depends entirely on which model is used."
+best_use: "Naming surprise as a quantity, and keeping it separate from uncertainty."
+technologies: ["music prediction models", "corpus analysis"]
+node_refs: ["predictive-processing-music", "musical-expectation"]
+session_refs: []
+related_terms: ["entropy", "surprise", "prediction-error", "probabilistic-prediction"]
+tags: ["psychoacoustics", "cognition", "measurement"]
+---
+id: "entropy"
+term: "Entropy"
+domain: "psychoacoustics"
+definition: "A measure of the uncertainty of a prediction before the next event is heard, maximal when all continuations are equally likely and minimal when one dominates."
+digital_relationship: "Computed from the whole predicted distribution rather than from the outcome, which is what distinguishes it from information content."
+best_use: "Describing a passage that keeps the listener unsure, as opposed to one that delivers something unexpected."
+technologies: ["music prediction models", "corpus analysis"]
+node_refs: ["predictive-processing-music", "musical-expectation"]
+session_refs: []
+related_terms: ["information-content", "uncertainty", "probabilistic-prediction"]
+tags: ["psychoacoustics", "cognition", "measurement"]
+---
+id: "surprise"
+term: "Surprise"
+domain: "psychoacoustics"
+definition: "The listener-side experience of an event that the current model rated as unlikely, associated in reviewed work with higher arousal and lower valence."
+digital_relationship: "Depends on the listener's model rather than on the signal, so the same edit surprises one listener and not another."
+best_use: "Reporting an experience, with information content as its modelled counterpart."
+technologies: ["listening tests", "continuous response interfaces"]
+node_refs: ["musical-expectation", "predictive-processing-music"]
+session_refs: []
+related_terms: ["information-content", "uncertainty", "expectancy", "prediction-error"]
+tags: ["psychoacoustics", "cognition"]
+---
+id: "uncertainty"
+term: "Uncertainty"
+domain: "psychoacoustics"
+definition: "A listener's lack of confidence about what comes next, distinct from surprise because it describes the state before the event rather than the reaction to it."
+digital_relationship: "Modelled as entropy, and manipulable by making a passage less predictable without making any single event unlikely."
+best_use: "Separating not knowing what is coming from being caught out by what arrived."
+technologies: ["listening tests", "prediction models"]
+node_refs: ["musical-expectation", "predictive-processing-music"]
+session_refs: []
+related_terms: ["entropy", "surprise", "expectancy"]
+tags: ["psychoacoustics", "cognition"]
+---
+id: "enculturation"
+term: "Enculturation"
+domain: "psychoacoustics"
+definition: "Acquisition of a musical culture's regularities through exposure, which shapes what a listener expects, hears as structured, and finds pleasant."
+digital_relationship: "Invisible to any analysis of the audio, and the reason a model trained on one corpus generalizes poorly to another tradition."
+best_use: "Naming learned musical competence acquired without instruction."
+technologies: ["exposure studies", "cross-cultural listening tests"]
+node_refs: ["musical-enculturation", "musical-consonance"]
+session_refs: []
+related_terms: ["statistical-learning", "familiarity", "expectancy", "musical-consonance"]
+tags: ["psychoacoustics", "culture", "cognition"]
+---
+id: "entrainment"
+term: "Entrainment"
+domain: "rhythm-time"
+definition: "Alignment of an internal periodic process with an external periodicity, used both for bodily and motor alignment and, more contentiously, for neural synchronization."
+digital_relationship: "Depends on cues a listener can track, and published EEG work found spectral flux a better predictor of neural synchronization than the amplitude envelope."
+best_use: "Stating which sense is meant, because the neural sense is a stronger and disputed claim."
+technologies: ["EEG", "tapping tasks", "motion capture", "beat tracking"]
+node_refs: ["rhythmic-entrainment", "groove"]
+session_refs: []
+related_terms: ["sensorimotor-synchronization", "groove", "beat-perception", "spectral-flux"]
+tags: ["rhythm-time", "perception"]
+---
+id: "sensorimotor-synchronization"
+term: "Sensorimotor Synchronization"
+domain: "rhythm-time"
+definition: "Coordination of movement with a perceived external rhythm, such as tapping to a beat, which is measurable directly and does not require any claim about neural oscillation."
+digital_relationship: "Measured by comparing tap timestamps against detected onsets, which makes it one of the few affect-adjacent measures available without laboratory instrumentation."
+best_use: "Naming the measurable behavioural version of locking to a beat."
+technologies: ["tapping tasks", "MIDI controllers", "motion capture"]
+node_refs: ["rhythmic-entrainment", "groove"]
+session_refs: []
+related_terms: ["entrainment", "beat-perception", "groove", "inter-onset-interval"]
+tags: ["rhythm-time", "measurement"]
+---
+id: "beat-perception"
+term: "Beat Perception"
+domain: "rhythm-time"
+definition: "Inference of a regular underlying pulse from a rhythmic pattern, associated in imaging work with basal ganglia and supplementary motor area activity even without movement."
+digital_relationship: "Approximated by beat-tracking algorithms, which infer a pulse from onsets in a broadly analogous way and fail on broadly analogous material."
+best_use: "Naming the inference of a pulse, as distinct from the pattern that induced it."
+technologies: ["beat tracking", "fMRI", "tapping tasks"]
+node_refs: ["rhythmic-entrainment", "rhythm", "groove"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["entrainment", "sensorimotor-synchronization", "perceptual-accent", "syncopation"]
+tags: ["rhythm-time", "perception"]
+---
+id: "perceptual-accent"
+term: "Perceptual Accent"
+domain: "rhythm-time"
+definition: "Prominence arising from temporal context alone, with pitch and loudness held constant, such as an onset not closely followed by another onset being heard as accented."
+digital_relationship: "Created by any editing operation that changes spacing, which means removing material can accent what remains without touching a level."
+best_use: "Explaining emphasis produced by silence and spacing rather than by dynamics."
+technologies: ["DAW editing", "step sequencing", "gating"]
+node_refs: ["silence-as-musical-material", "temporal-displacement", "gating"]
+session_refs: []
+related_terms: ["beat-perception", "onset-density", "silence-insertion", "syncopation"]
+tags: ["rhythm-time", "perception"]
+---
+id: "speech-to-song-illusion"
+term: "Speech-to-Song Illusion"
+domain: "psychoacoustics"
+definition: "A perceptual transformation in which an unaltered spoken phrase comes to be heard as sung after exact repetition, and which does not occur if the repetitions are transposed or the syllables jumbled."
+digital_relationship: "Depends on exact reproduction, which mechanical performance cannot supply and digital looping can, making it a property of the digital repeat specifically."
+best_use: "Demonstrating that repetition alone reorganizes perception, without any change to the signal."
+technologies: ["DAW looping", "sampler", "listening tests"]
+node_refs: ["repetition", "micro-looping", "temporal-dsp"]
+session_refs: []
+related_terms: ["repetition", "micro-looping", "word-repetition", "stutter"]
+tags: ["psychoacoustics", "perception", "repetition"]
+---
+id: "music-emotion-recognition"
+term: "Music Emotion Recognition"
+domain: "machine-audio"
+definition: "The machine-learning task of predicting emotion labels for music from audio features and annotated training data, which infers labels rather than detecting feeling."
+digital_relationship: "Trained on averaged subjective annotations, most often of perceived rather than felt emotion, so its ground truth carries the subjectivity it is meant to resolve."
+best_use: "Describing what such a system outputs, without implying that anything was measured or experienced."
+technologies: ["MIR toolkits", "supervised learning", "annotation platforms"]
+node_refs: ["music-emotion-recognition", "audio-feature-extraction"]
+session_refs: []
+related_terms: ["perceived-emotion", "felt-emotion", "audio-descriptor", "emotion-measurement"]
+tags: ["machine-audio", "affect"]
+---
+id: "emotion-measurement"
+term: "Emotion Measurement"
+domain: "psychoacoustics"
+definition: "The set of methods used to record affective response — self-report, behavioural, physiological, and neural — none of which is a gold standard and none of which is interchangeable with another."
+digital_relationship: "Entirely separate from signal measurement; conflating the two is the characteristic error this vocabulary exists to prevent."
+best_use: "Forcing a listening result to declare which measure produced it."
+technologies: ["rating scales", "skin conductance", "tapping tasks", "EEG"]
+node_refs: ["emotion-measurement", "autonomic-response-to-music"]
+session_refs: []
+related_terms: ["valence", "arousal", "autonomic-response", "audio-descriptor"]
+tags: ["psychoacoustics", "measurement"]
