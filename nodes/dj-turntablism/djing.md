@@ -17,6 +17,8 @@ core_concepts:
 relationships:
   - target: turntablism
     type: enables
+  - target: screw-tape
+    type: contributes_to
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music
@@ -30,7 +32,7 @@ project_connections:
   - AudioMuse DJ track-analysis and transition studies
 future_questions:
   - How should AudioMuse describe a DJ transition as a combined timing, phase, and amplitude event rather than as a single blend control?
-  - Which registered sources would let AudioMuse research regional DJ traditions, including Houston and Third Coast chopped-and-screwed practice, without inventing history?
+  - Which primary documents would let AudioMuse describe regional DJ traditions at session level, rather than at the scene level Phase 12C reached?
 ---
 
 # DJing
@@ -41,4 +43,4 @@ Three repository threads meet here. Session 1 places DJ work inside acoustics: p
 
 From that practice the turntable stopped being only a playback device, which is where `turntablism` begins. Digital tools later joined the same practice without replacing it: `digital-vinyl-system` keeps the turntable as the control surface, and Session 3 records real-time stem separation as a further extension.
 
-AudioMuse holds a deliberate gap open here. The registered sessions document DJ practice through New York breakbeat DJing, house, techno, and later digital systems. They contain no material on regional Southern United States DJ traditions, including Houston and Third Coast chopped-and-screwed practice. That absence is recorded as a research target in `docs/roadmap.md` and `docs/research-gap-triage.md` rather than filled from general knowledge.
+The registered sessions document DJ practice through New York breakbeat DJing, house, techno, and later digital systems, and contain no material on regional Southern United States DJ traditions. Phase 12C filled that gap from registered external sources rather than from the sessions: Houston and Third Coast practice now lives in `chopped-and-screwed`, `slowed-playback`, `chopping`, `screw-tape`, and the `history-culture` domain, and `djing --contributes_to--> screw-tape` records that a Screw tape is a DJ performance before it is anything else. The session layer still says nothing about that material, which is why those nodes cite external provenance instead of session origin.

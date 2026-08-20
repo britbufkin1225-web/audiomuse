@@ -91,6 +91,11 @@ Targets 3 and 4 remain pending.
 
 ### Deferred — Third Coast, Houston, and chopped-and-screwed research
 
+**Status: addressed by Phase 12C.** The section below is retained as the record of what was missing and
+of the shape the work was expected to take. Phase 12C followed that shape: sources were registered
+first, history was separated from interpretation, technique was covered alongside culture, and lineage
+claims were required to carry citations.
+
 Phase 12B deliberately did not attempt this material. The registered sessions document DJ practice
 through New York breakbeat DJing, Chicago house, Detroit techno, UK breakbeat and dubstep, and later
 digital systems. They contain nothing on regional Southern United States DJ traditions, so AudioMuse
@@ -116,6 +121,26 @@ to an existing one. The proposed shape is:
 
 Nothing in this section is canonical AudioMuse knowledge; it records what is absent and what a future
 phase would need.
+
+### Phase 12C — Houston / Third Coast + chopped-and-screwed foundation. Complete.
+
+The first AudioMuse phase built on external sources rather than on session transcripts. Twenty-eight
+sources were registered before any node was written — university archives and finding aids, signed
+Handbook of Texas entries, university-press and trade books, a technical reference, and dated
+journalism and participant interviews — each with a research note recording its citation, what it is
+allowed to support, what it does not settle, and whether its full text was actually retrieved.
+
+Twenty-two nodes were added: thirteen in the newly populated `history-culture` domain, three in
+`recording`, four in `dj-turntablism`, and one each in `rhythm-time` and `dsp`. Five edges were added
+to existing nodes so the material connects into DJ practice, recording, and DSP instead of forming an
+island. Twenty-four vocabulary entries were added across five domains. `docs/houston-musical-cartography.md`
+holds the sourced chronology, a confidence marker on every claim, and a dispute register.
+
+The phase is deliberately as notable for what it refused to state. No founding year is asserted for
+Rap-A-Lot or Southwest Wholesale; the Screw nickname, the store chronology, the South Park Coalition
+and Pen & Pixel founding years, and the Swishahouse lineup are recorded as unresolved; no canonical
+playback speed is given; and one proposed addition was excluded outright after research placed the
+figure outside Houston. No schema, relationship type, or validator was changed.
 
 ## Near-term follow-up
 

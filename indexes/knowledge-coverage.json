@@ -3,12 +3,12 @@
   "version": 1,
   "authority": "derived-read-only",
   "overview": {
-    "node_count": 21,
-    "relationship_count": 63,
+    "node_count": 43,
+    "relationship_count": 109,
     "relationship_type_count": 11,
-    "source_count": 5,
+    "source_count": 33,
     "session_count": 3,
-    "vocabulary_count": 64,
+    "vocabulary_count": 88,
     "experiment_count": 3,
     "experiment_run_count": 2
   },
@@ -55,6 +55,166 @@
       "relationship_type_diversity": 2
     },
     {
+      "id": "cassette-duplication",
+      "domain": "recording",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "popula-screw-tape-records",
+          "session-03-history-of-electronic-music",
+          "uh-stories-dj-screw"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "cassette-duplication",
+          "dubbing",
+          "generational-loss"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "chopped-and-screwed",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "tsha-dj-screw",
+          "uh-news-dj-screw-exhibit",
+          "uh-stories-dj-screw",
+          "walker-dj-screw-biography"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "chopped-and-screwed",
+          "screw-music",
+          "word-repetition"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 9,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 5
+    },
+    {
+      "id": "chopped-and-slowed",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-03-history-of-electronic-music",
+          "smith-spectral-audio-signal-processing"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "chopped-and-slowed"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 0,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "chopping",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-03-history-of-electronic-music",
+          "uh-news-dj-screw-exhibit",
+          "walker-dj-screw-biography"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "chopped-and-screwed",
+          "chopping",
+          "duplicate-record-technique",
+          "phrase-repetition",
+          "word-repetition"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "digital-signal-processing",
       "domain": "dsp",
       "sessions": {
@@ -77,10 +237,11 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 2,
+        "count": 3,
         "ids": [
           "digital-signal-processing",
-          "filter"
+          "filter",
+          "time-stretching"
         ]
       },
       "experiments": {
@@ -96,7 +257,7 @@
         "ids": []
       },
       "inbound_relationships": 4,
-      "outbound_relationships": 4,
+      "outbound_relationships": 5,
       "relationship_type_diversity": 4
     },
     {
@@ -138,6 +299,47 @@
       "inbound_relationships": 1,
       "outbound_relationships": 2,
       "relationship_type_diversity": 2
+    },
+    {
+      "id": "dj-screw",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "tsha-dj-screw",
+          "uh-dj-screw-collection-finding-aid",
+          "uh-news-dj-screw-exhibit",
+          "uh-stories-dj-screw",
+          "walker-dj-screw-biography"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "screw-tape",
+          "screwed-up-click"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 3
     },
     {
       "id": "djing",
@@ -184,8 +386,8 @@
         "ids": []
       },
       "inbound_relationships": 5,
-      "outbound_relationships": 1,
-      "relationship_type_diversity": 2
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
     },
     {
       "id": "frequency",
@@ -234,6 +436,121 @@
       "relationship_type_diversity": 4
     },
     {
+      "id": "houston-musical-cartography",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "black-enterprise-kcoh",
+          "tsha-duke-peacock-records",
+          "tsha-sugarhill-recording-studios",
+          "uh-houston-hip-hop-research-collection",
+          "wilkins-welcome-2-houston"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "houston-rap",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "sarig-third-coast",
+          "tsha-dj-screw",
+          "uh-houston-hip-hop-research-collection",
+          "uh-stories-dj-screw",
+          "wilkins-welcome-2-houston"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "houston-rap"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 8,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 5
+    },
+    {
+      "id": "houston-studio-infrastructure",
+      "domain": "recording",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "bradley-wood-house-of-hits",
+          "tsha-aca-recording-studio",
+          "tsha-duke-peacock-records",
+          "tsha-sugarhill-recording-studios"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 4
+    },
+    {
       "id": "midi",
       "domain": "digital-audio",
       "sessions": {
@@ -272,6 +589,157 @@
       "inbound_relationships": 0,
       "outbound_relationships": 5,
       "relationship_type_diversity": 3
+    },
+    {
+      "id": "mike-dean",
+      "domain": "recording",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "npr-microphone-check-mike-dean"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "music-archiving",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "hpl-african-american-history-research-center",
+          "ida-thunder-soul-kashmere",
+          "uh-cia-records-finding-aid",
+          "uh-dj-screw-collection-finding-aid",
+          "uh-houston-hip-hop-research-collection"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "music-distribution",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "allhiphop-southwest-wholesale-closing",
+          "complex-pen-and-pixel",
+          "popula-screw-tape-records",
+          "tsha-duke-peacock-records"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "cassette-duplication",
+          "cassette-mixtape",
+          "custom-tape",
+          "regional-distribution"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 6,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "pen-and-pixel",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "complex-pen-and-pixel",
+          "uh-pen-and-pixel-records-finding-aid"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "regional-distribution"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 1
     },
     {
       "id": "phase",
@@ -339,10 +807,12 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 2,
+        "count": 4,
         "ids": [
           "detuning",
-          "fundamental-frequency"
+          "fundamental-frequency",
+          "pitch-shifting",
+          "slowed-playback"
         ]
       },
       "experiments": {
@@ -357,7 +827,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 4,
+      "inbound_relationships": 5,
       "outbound_relationships": 1,
       "relationship_type_diversity": 4
     },
@@ -405,6 +875,44 @@
       "relationship_type_diversity": 1
     },
     {
+      "id": "rap-a-lot-records",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "complex-pen-and-pixel",
+          "npr-microphone-check-mike-dean",
+          "sarig-third-coast"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "houston-rap"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "recording",
       "domain": "recording",
       "sessions": {
@@ -424,9 +932,13 @@
         ]
       },
       "vocabulary": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "dubbing",
+          "generational-loss",
+          "varispeed"
+        ]
       },
       "experiments": {
         "state": "unlinked",
@@ -438,9 +950,51 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 2,
-      "outbound_relationships": 5,
-      "relationship_type_diversity": 4
+      "inbound_relationships": 3,
+      "outbound_relationships": 6,
+      "relationship_type_diversity": 5
+    },
+    {
+      "id": "repetition",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "session-02-what-is-music",
+          "session-03-history-of-electronic-music",
+          "uh-news-dj-screw-exhibit"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "phrase-repetition",
+          "repetition",
+          "word-repetition"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
     },
     {
       "id": "resonance",
@@ -506,14 +1060,16 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 9,
+        "count": 11,
         "ids": [
           "beat",
           "beatgrid",
           "beatmatching",
+          "chopping",
           "groove",
           "pulse",
           "quantization-timing",
+          "repetition",
           "rhythm",
           "swing",
           "tempo"
@@ -529,7 +1085,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 4,
+      "inbound_relationships": 7,
       "outbound_relationships": 3,
       "relationship_type_diversity": 4
     },
@@ -557,10 +1113,11 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 4,
+        "count": 5,
         "ids": [
           "bit-depth",
           "breakbeat",
+          "resampling",
           "sample",
           "sample-rate"
         ]
@@ -575,7 +1132,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 8,
+      "inbound_relationships": 9,
       "outbound_relationships": 4,
       "relationship_type_diversity": 6
     },
@@ -623,6 +1180,89 @@
       "relationship_type_diversity": 4
     },
     {
+      "id": "screw-tape",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "popula-screw-tape-records",
+          "tsha-dj-screw",
+          "uh-stories-dj-screw",
+          "walker-dj-screw-biography"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 6,
+        "ids": [
+          "cassette-duplication",
+          "cassette-mixtape",
+          "custom-tape",
+          "screw-music",
+          "screw-tape",
+          "screwed-up-click"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 4,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "screwed-up-click",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "texas-standard-june-27",
+          "tsha-dj-screw",
+          "tsha-fat-pat",
+          "uh-stories-dj-screw"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "screwed-up-click"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "sequencing",
       "domain": "rhythm-time",
       "sessions": {
@@ -662,6 +1302,47 @@
       "inbound_relationships": 2,
       "outbound_relationships": 2,
       "relationship_type_diversity": 3
+    },
+    {
+      "id": "slowed-playback",
+      "domain": "dj-turntablism",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "session-01-what-is-sound",
+          "smith-spectral-audio-signal-processing",
+          "tsha-dj-screw",
+          "uh-news-dj-screw-exhibit"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "chopped-and-screwed",
+          "slowed-playback",
+          "varispeed"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 2
     },
     {
       "id": "sound",
@@ -705,6 +1386,114 @@
       "inbound_relationships": 6,
       "outbound_relationships": 3,
       "relationship_type_diversity": 6
+    },
+    {
+      "id": "south-park-coalition",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "houston-press-spc-anniversary",
+          "wilkins-welcome-2-houston"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "houston-rap",
+          "south-park-coalition"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "southwest-wholesale",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "allhiphop-southwest-wholesale-closing"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "regional-distribution"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "swishahouse",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "black-enterprise-michael-watts"
+        ]
+      },
+      "vocabulary": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
     },
     {
       "id": "synthesis",
@@ -753,6 +1542,44 @@
       "relationship_type_diversity": 3
     },
     {
+      "id": "third-coast",
+      "domain": "history-culture",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "museum-gulf-coast-ugk",
+          "sarig-third-coast",
+          "tsha-pimp-c"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "third-coast"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 0,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "timbre",
       "domain": "psychoacoustics",
       "sessions": {
@@ -774,9 +1601,10 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 3,
+        "count": 4,
         "ids": [
           "adsr-envelope",
+          "slowed-playback",
           "synthesizer",
           "timbre"
         ]
@@ -793,9 +1621,49 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 7,
+      "inbound_relationships": 8,
       "outbound_relationships": 0,
       "relationship_type_diversity": 6
+    },
+    {
+      "id": "time-stretching",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "session-03-history-of-electronic-music",
+          "smith-spectral-audio-signal-processing"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "chopped-and-slowed",
+          "pitch-shifting",
+          "resampling",
+          "time-stretching"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
     },
     {
       "id": "turntable",
@@ -818,8 +1686,9 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 5,
+        "count": 6,
         "ids": [
+          "duplicate-record-technique",
           "scratching",
           "timecode-vinyl",
           "turntable",
@@ -838,7 +1707,7 @@
         "ids": []
       },
       "inbound_relationships": 1,
-      "outbound_relationships": 3,
+      "outbound_relationships": 4,
       "relationship_type_diversity": 3
     },
     {
@@ -862,10 +1731,12 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 5,
+        "count": 7,
         "ids": [
           "breakbeat",
+          "chopping",
           "digital-vinyl-system",
+          "duplicate-record-technique",
           "scratching",
           "turntablism",
           "vinyl"
@@ -881,8 +1752,8 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 4,
-      "outbound_relationships": 2,
+      "inbound_relationships": 5,
+      "outbound_relationships": 3,
       "relationship_type_diversity": 4
     },
     {
@@ -949,24 +1820,24 @@
     },
     {
       "id": "dj-turntablism",
-      "node_count": 6,
-      "vocabulary_count": 12,
+      "node_count": 10,
+      "vocabulary_count": 17,
       "experiment_count": 0,
-      "source_count": 3
+      "source_count": 8
     },
     {
       "id": "dsp",
-      "node_count": 1,
-      "vocabulary_count": 2,
+      "node_count": 2,
+      "vocabulary_count": 5,
       "experiment_count": 1,
-      "source_count": 3
+      "source_count": 4
     },
     {
       "id": "history-culture",
-      "node_count": 0,
-      "vocabulary_count": 0,
+      "node_count": 13,
+      "vocabulary_count": 9,
       "experiment_count": 0,
-      "source_count": 0
+      "source_count": 25
     },
     {
       "id": "machine-audio",
@@ -998,17 +1869,17 @@
     },
     {
       "id": "recording",
-      "node_count": 1,
-      "vocabulary_count": 0,
+      "node_count": 4,
+      "vocabulary_count": 4,
       "experiment_count": 0,
-      "source_count": 2
+      "source_count": 9
     },
     {
       "id": "rhythm-time",
-      "node_count": 2,
-      "vocabulary_count": 7,
+      "node_count": 3,
+      "vocabulary_count": 10,
       "experiment_count": 0,
-      "source_count": 2
+      "source_count": 3
     },
     {
       "id": "sound-design",
@@ -1041,14 +1912,14 @@
     },
     {
       "id": "session-02-what-is-music",
-      "mapped_node_count": 17,
-      "vocabulary_count": 32,
+      "mapped_node_count": 18,
+      "vocabulary_count": 33,
       "experiment_count": 3
     },
     {
       "id": "session-03-history-of-electronic-music",
       "mapped_node_count": 12,
-      "vocabulary_count": 12,
+      "vocabulary_count": 13,
       "experiment_count": 0
     }
   ],
@@ -1061,24 +1932,6 @@
         "node_count": 0
       },
       "reason": "The canonical domain audio-hardware currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
-      "subject_id": "dsp",
-      "evidence": {
-        "node_count": 1
-      },
-      "reason": "The canonical domain dsp currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
-      "subject_id": "history-culture",
-      "evidence": {
-        "node_count": 0
-      },
-      "reason": "The canonical domain history-culture currently contains at most one node; representation is sparse, not defective."
     },
     {
       "candidate_type": "domain_representation",
@@ -1106,15 +1959,6 @@
         "node_count": 0
       },
       "reason": "The canonical domain music-theory currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
-      "subject_id": "recording",
-      "evidence": {
-        "node_count": 1
-      },
-      "reason": "The canonical domain recording currently contains at most one node; representation is sparse, not defective."
     },
     {
       "candidate_type": "domain_representation",
@@ -1156,12 +2000,62 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "cassette-duplication",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical cassette-duplication node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "chopped-and-screwed",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical chopped-and-screwed node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "chopped-and-slowed",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical chopped-and-slowed node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "chopping",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical chopping node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "digital-vinyl-system",
       "evidence": {
         "practical_application_count": 3,
         "experiment_count": 0
       },
       "reason": "The canonical digital-vinyl-system node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "dj-screw",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical dj-screw node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -1176,6 +2070,36 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "houston-musical-cartography",
+      "evidence": {
+        "practical_application_count": 3,
+        "experiment_count": 0
+      },
+      "reason": "The canonical houston-musical-cartography node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "houston-rap",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical houston-rap node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "houston-studio-infrastructure",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical houston-studio-infrastructure node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "midi",
       "evidence": {
         "practical_application_count": 3,
@@ -1186,12 +2110,72 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "mike-dean",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical mike-dean node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "music-archiving",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical music-archiving node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "music-distribution",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical music-distribution node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "pen-and-pixel",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical pen-and-pixel node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "rap-a-lot-records",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical rap-a-lot-records node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "recording",
       "evidence": {
         "practical_application_count": 3,
         "experiment_count": 0
       },
       "reason": "The canonical recording node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "repetition",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical repetition node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -1226,12 +2210,92 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "screw-tape",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical screw-tape node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "screwed-up-click",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical screwed-up-click node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "sequencing",
       "evidence": {
         "practical_application_count": 3,
         "experiment_count": 0
       },
       "reason": "The canonical sequencing node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "slowed-playback",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical slowed-playback node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "south-park-coalition",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical south-park-coalition node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "southwest-wholesale",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical southwest-wholesale node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "swishahouse",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical swishahouse node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "third-coast",
+      "evidence": {
+        "practical_application_count": 1,
+        "experiment_count": 0
+      },
+      "reason": "The canonical third-coast node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "time-stretching",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical time-stretching node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -1264,13 +2328,271 @@
       "reason": "The canonical vibration node declares practical applications but no experiment definition explicitly references it."
     },
     {
+      "candidate_type": "relationship_coverage",
+      "subject_type": "node",
+      "subject_id": "pen-and-pixel",
+      "evidence": {
+        "inbound_count": 0,
+        "outbound_count": 1,
+        "total_connection_count": 1
+      },
+      "reason": "The canonical pen-and-pixel node currently participates in at most one typed relationship; this is a connectivity observation, not a defect."
+    },
+    {
+      "candidate_type": "relationship_coverage",
+      "subject_type": "node",
+      "subject_id": "south-park-coalition",
+      "evidence": {
+        "inbound_count": 0,
+        "outbound_count": 1,
+        "total_connection_count": 1
+      },
+      "reason": "The canonical south-park-coalition node currently participates in at most one typed relationship; this is a connectivity observation, not a defect."
+    },
+    {
+      "candidate_type": "relationship_coverage",
+      "subject_type": "node",
+      "subject_id": "southwest-wholesale",
+      "evidence": {
+        "inbound_count": 0,
+        "outbound_count": 1,
+        "total_connection_count": 1
+      },
+      "reason": "The canonical southwest-wholesale node currently participates in at most one typed relationship; this is a connectivity observation, not a defect."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "cassette-duplication",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical cassette-duplication node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "chopped-and-screwed",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical chopped-and-screwed node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "chopped-and-slowed",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical chopped-and-slowed node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "chopping",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical chopping node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "dj-screw",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical dj-screw node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "houston-musical-cartography",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical houston-musical-cartography node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "houston-rap",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical houston-rap node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "houston-studio-infrastructure",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical houston-studio-infrastructure node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "mike-dean",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical mike-dean node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "music-archiving",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical music-archiving node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "music-distribution",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical music-distribution node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "pen-and-pixel",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical pen-and-pixel node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "rap-a-lot-records",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical rap-a-lot-records node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "screw-tape",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical screw-tape node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "screwed-up-click",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical screwed-up-click node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "slowed-playback",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical slowed-playback node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "south-park-coalition",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical south-park-coalition node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "southwest-wholesale",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical southwest-wholesale node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "swishahouse",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical swishahouse node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "third-coast",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical third-coast node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "time-stretching",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical time-stretching node currently maps to no chronological sessions."
+    },
+    {
       "candidate_type": "vocabulary_bridge",
       "subject_type": "node",
-      "subject_id": "recording",
+      "subject_id": "houston-musical-cartography",
       "evidence": {
         "vocabulary_count": 0
       },
-      "reason": "The canonical recording node currently has no explicit vocabulary entry cross-reference."
+      "reason": "The canonical houston-musical-cartography node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "houston-studio-infrastructure",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical houston-studio-infrastructure node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "mike-dean",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical mike-dean node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "music-archiving",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical music-archiving node currently has no explicit vocabulary entry cross-reference."
+    },
+    {
+      "candidate_type": "vocabulary_bridge",
+      "subject_type": "node",
+      "subject_id": "swishahouse",
+      "evidence": {
+        "vocabulary_count": 0
+      },
+      "reason": "The canonical swishahouse node currently has no explicit vocabulary entry cross-reference."
     }
   ]
 }

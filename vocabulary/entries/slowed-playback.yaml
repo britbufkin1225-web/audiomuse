@@ -1,0 +1,180 @@
+---
+id: "chopped-and-screwed"
+term: "Chopped and Screwed"
+domain: "dj-turntablism"
+definition: "A DJ practice combining sustained reduction of playback rate with manual repetition of beats, words, and phrases, producing a recomposed version of a record rather than a slower copy of it."
+digital_relationship: "Reproducible in software through resampling plus slicing, though the digital version is edited offline rather than performed in a single recorded pass."
+best_use: "Naming the combined practice, not either operation on its own."
+technologies: ["turntables", "DJ mixer", "cassette deck", "two copies of one record"]
+node_refs: ["chopped-and-screwed", "slowed-playback", "chopping"]
+session_refs: []
+related_terms: ["slowed-playback", "chopping", "screw-music", "chopped-and-slowed", "duplicate-record-technique"]
+tags: ["dj-turntablism", "technique"]
+---
+id: "slowed-playback"
+term: "Slowed Playback"
+domain: "dj-turntablism"
+definition: "Sustained reduction of the rate at which a recording is played back, which lengthens duration, lowers pitch, and slows tempo together because all three follow from one rate change."
+digital_relationship: "Equivalent to resampling in the digital domain; software can also decouple the effects, which mechanical playback cannot."
+best_use: "Describing a whole-performance treatment rather than a momentary rate gesture."
+technologies: ["turntable pitch control", "tape varispeed", "resampling"]
+node_refs: ["slowed-playback", "pitch", "timbre"]
+session_refs: []
+related_terms: ["varispeed", "resampling", "chopped-and-screwed", "time-stretching"]
+tags: ["dj-turntablism", "playback-rate"]
+---
+id: "chopping"
+term: "Chopping"
+domain: "dj-turntablism"
+definition: "Manual re-striking of a phrase, word, or beat during playback so that selected material recurs, producing rhythmic interruption the source recording does not contain."
+digital_relationship: "Corresponds to slicing and re-triggering in a sampler or DAW, where placement is exact and revisable rather than performed."
+best_use: "Naming the discrete, hand-performed half of chopped and screwed practice."
+technologies: ["turntables", "crossfader", "two copies of one record", "sampler"]
+node_refs: ["chopping", "turntablism", "rhythm"]
+session_refs: []
+related_terms: ["duplicate-record-technique", "phrase-repetition", "word-repetition", "chopped-and-screwed"]
+tags: ["dj-turntablism", "technique"]
+---
+id: "duplicate-record-technique"
+term: "Duplicate-Record Technique"
+domain: "dj-turntablism"
+definition: "Playing two copies of the same record on separate decks so a passage can be replayed, extended, or interrupted without waiting for the record to return to that point."
+digital_relationship: "Made unnecessary by instant random access in samplers and DAWs, where any point in a file can be triggered immediately."
+best_use: "Explaining how repetition was achieved mechanically before random access existed."
+technologies: ["two turntables", "DJ mixer", "identical vinyl copies"]
+node_refs: ["chopping", "turntablism", "turntable"]
+session_refs: []
+related_terms: ["chopping", "chopped-and-screwed"]
+tags: ["dj-turntablism", "technique"]
+---
+id: "chopped-and-slowed"
+term: "Chopped and Slowed"
+domain: "dj-turntablism"
+definition: "Later software-based slowing and slicing of existing recordings, related to chopped and screwed practice by technique and terminology but produced by offline editing rather than by live performance."
+digital_relationship: "Native to the DAW, where slowing may resample, time-stretch, or shift pitch independently, so the term no longer describes one determinate transformation."
+best_use: "Naming digital descendants without implying that every slowed track descends from Houston practice."
+technologies: ["DAW", "time-stretching algorithms", "resampling", "audio slicing"]
+node_refs: ["chopped-and-slowed", "time-stretching"]
+session_refs: []
+related_terms: ["chopped-and-screwed", "time-stretching", "pitch-shifting", "resampling"]
+tags: ["dj-turntablism", "technique", "digital"]
+---
+id: "repetition"
+term: "Repetition"
+domain: "rhythm-time"
+definition: "The deliberate recurrence of a musical unit, which builds listener expectation that can then be fulfilled, delayed, modified, interrupted, or violated."
+digital_relationship: "Automated by sequencers, loop regions, and pattern-based tools, where exact recurrence is the default rather than an achievement."
+best_use: "Treating a repeat as a decision about listener expectation rather than as duplication."
+technologies: ["sequencer", "drum machine", "DAW loop regions", "turntables"]
+node_refs: ["repetition", "rhythm"]
+session_refs: ["session-02-what-is-music", "session-03-history-of-electronic-music"]
+related_terms: ["phrase-repetition", "word-repetition", "chopping"]
+tags: ["rhythm-time", "structure"]
+---
+id: "phrase-repetition"
+term: "Phrase Repetition"
+domain: "rhythm-time"
+definition: "Recurrence of a musical phrase rather than of a single beat, which creates a structural expectation the following phrase can satisfy or refuse."
+digital_relationship: "Expressed as loop length and arrangement structure in a DAW, where phrase boundaries are explicit and editable."
+best_use: "Distinguishing structural recurrence from beat-level recurrence when analyzing form."
+technologies: ["DAW arrangement", "sampler", "turntables"]
+node_refs: ["repetition", "chopping"]
+session_refs: []
+related_terms: ["repetition", "word-repetition", "chopping"]
+tags: ["rhythm-time", "structure"]
+---
+id: "word-repetition"
+term: "Word Repetition"
+domain: "rhythm-time"
+definition: "Recurrence of a single word or syllable during playback, which holds attention on a semantic unit and delays the line it belongs to while the groove continues."
+digital_relationship: "Trivial to produce by slicing a vocal in an editor, which makes the choice of which word to hold the only remaining difficulty."
+best_use: "Describing repetition that changes emphasis and meaning rather than rhythm alone."
+technologies: ["turntables", "sampler", "DAW editing"]
+node_refs: ["repetition", "chopping", "chopped-and-screwed"]
+session_refs: []
+related_terms: ["repetition", "phrase-repetition", "chopping"]
+tags: ["rhythm-time", "structure", "vocal"]
+---
+id: "varispeed"
+term: "Varispeed"
+domain: "recording"
+definition: "Continuous adjustment of a playback or record transport's speed, which changes duration and pitch together because both follow from the same transport rate."
+digital_relationship: "Its digital equivalent is resampling; software can also break the coupling, which a mechanical transport cannot."
+best_use: "Naming coupled speed-and-pitch change on tape or turntable, as opposed to independent time or pitch processing."
+technologies: ["tape machine", "turntable pitch control", "resampling"]
+node_refs: ["slowed-playback", "recording"]
+session_refs: []
+related_terms: ["slowed-playback", "resampling", "time-stretching", "pitch-shifting"]
+tags: ["recording", "playback-rate"]
+---
+id: "dubbing"
+term: "Dubbing"
+domain: "recording"
+definition: "Copying recorded material from one tape to another, producing a second physical object whose audio is one generation removed from its source."
+digital_relationship: "Replaced by file copying, which is exact and lossless, removing the generational degradation that defined analog copying."
+best_use: "Naming the copy operation itself, separately from the duplication economy built on it."
+technologies: ["cassette deck", "dual-deck recorder", "reel-to-reel"]
+node_refs: ["cassette-duplication", "recording"]
+session_refs: []
+related_terms: ["cassette-duplication", "generational-loss", "custom-tape"]
+tags: ["recording", "format"]
+---
+id: "cassette-duplication"
+term: "Cassette Duplication"
+domain: "recording"
+definition: "The copying of a recorded cassette master onto further cassettes, which made small-scale independent distribution possible without a pressing plant or minimum order."
+digital_relationship: "The economic function survives in digital distribution, while the technical constraints of speed, stock, and generational loss do not."
+best_use: "Explaining how a tape-based scene distributed music outside the industrial chain."
+technologies: ["cassette deck", "high-speed dubbing bay", "blank tape stock"]
+node_refs: ["cassette-duplication", "music-distribution", "screw-tape"]
+session_refs: []
+related_terms: ["dubbing", "generational-loss", "cassette-mixtape", "regional-distribution"]
+tags: ["recording", "circulation"]
+---
+id: "generational-loss"
+term: "Generational Loss"
+domain: "recording"
+definition: "Cumulative degradation introduced each time analog material is copied, so a copy of a copy carries more noise and less detail than the master."
+digital_relationship: "Absent from lossless digital copying, though repeated lossy re-encoding reintroduces a comparable cumulative degradation."
+best_use: "Reasoning about which copy of a recording is actually being heard."
+technologies: ["magnetic tape", "cassette deck", "lossy codecs"]
+node_refs: ["cassette-duplication", "recording"]
+session_refs: []
+related_terms: ["dubbing", "cassette-duplication"]
+tags: ["recording", "fidelity"]
+---
+id: "time-stretching"
+term: "Time Stretching"
+domain: "dsp"
+definition: "Digital modification of a signal's duration without a corresponding change in pitch, separating two properties that mechanical rate change moves together."
+digital_relationship: "Implemented by short-time analysis and resynthesis, classically through the phase vocoder, at the cost of characteristic artifacts."
+best_use: "Changing length while holding pitch, and knowing that this is not what a turntable does."
+technologies: ["phase vocoder", "DAW time-stretch algorithms", "granular processing"]
+node_refs: ["time-stretching", "digital-signal-processing"]
+session_refs: []
+related_terms: ["pitch-shifting", "resampling", "varispeed", "chopped-and-slowed"]
+tags: ["dsp", "time-domain"]
+---
+id: "pitch-shifting"
+term: "Pitch Shifting"
+domain: "dsp"
+definition: "Digital modification of a signal's pitch without a corresponding change in duration, commonly realized as time stretching followed by resampling back to the original length."
+digital_relationship: "A composition of two operations rather than a primitive, which is why its artifacts resemble those of stretching."
+best_use: "Moving pitch while holding length, as distinct from changing playback rate."
+technologies: ["phase vocoder", "DAW pitch algorithms", "hardware harmonizers"]
+node_refs: ["time-stretching", "pitch"]
+session_refs: []
+related_terms: ["time-stretching", "resampling", "varispeed"]
+tags: ["dsp", "spectral"]
+---
+id: "resampling"
+term: "Resampling"
+domain: "dsp"
+definition: "Reading stored samples at a different rate than they were recorded at, which scales duration and frequency together and is the digital counterpart of mechanical varispeed."
+digital_relationship: "The operation software uses when it deliberately reproduces turntable or tape behavior instead of decoupling time from pitch."
+best_use: "Reproducing coupled speed-and-pitch change in the digital domain on purpose."
+technologies: ["sample rate conversion", "DAW", "sampler"]
+node_refs: ["time-stretching", "sampling"]
+session_refs: []
+related_terms: ["varispeed", "time-stretching", "pitch-shifting", "slowed-playback"]
+tags: ["dsp", "sampling"]

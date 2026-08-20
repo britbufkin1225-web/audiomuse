@@ -1,0 +1,108 @@
+---
+id: "houston-rap"
+term: "Houston Rap"
+domain: "history-culture"
+definition: "The rap economy and set of practices centered on Houston, built on independent labels, local studios, neighborhood networks, and physical distribution rather than on major-label investment."
+digital_relationship: "Its surviving evidence is largely analog — cassettes, flyers, photographs — now held in digitized archival collections that make the scene searchable rather than only remembered."
+best_use: "Describing a regional scene through ownership, infrastructure, and circulation instead of through a list of releases."
+technologies: ["cassette", "vinyl", "recording studio", "independent distribution", "archival digitization"]
+node_refs: ["houston-rap", "rap-a-lot-records", "south-park-coalition"]
+session_refs: []
+related_terms: ["third-coast", "south-park-coalition", "screwed-up-click", "screw-tape", "regional-distribution"]
+tags: ["history-culture", "regional"]
+---
+id: "third-coast"
+term: "Third Coast"
+domain: "history-culture"
+definition: "A contested regional term for Texas, the Gulf Coast, or the wider South as a third center of American popular music, whose boundaries differ by speaker and context."
+digital_relationship: "Used loosely as a genre tag in catalogs and streaming metadata, where its geographic ambiguity is flattened into a single label."
+best_use: "Naming a regional network of scenes while making clear that the term itself is disputed."
+technologies: ["catalog metadata", "genre tagging"]
+node_refs: ["third-coast"]
+session_refs: []
+related_terms: ["houston-rap"]
+tags: ["history-culture", "regional", "contested-term"]
+---
+id: "south-park-coalition"
+term: "South Park Coalition"
+domain: "history-culture"
+definition: "A Houston rap collective organized around the South Park neighborhood by K-Rino, functioning as a network of independently releasing artists rather than as a label roster."
+digital_relationship: "A pre-internet model of the artist-owned network that later online distribution made ordinary."
+best_use: "Describing a music scene organized as a collective rather than as a signed roster."
+technologies: ["independent release", "cassette", "self-distribution"]
+node_refs: ["south-park-coalition"]
+session_refs: []
+related_terms: ["houston-rap", "regional-distribution"]
+tags: ["history-culture", "collective"]
+---
+id: "screwed-up-click"
+term: "Screwed Up Click"
+domain: "history-culture"
+definition: "The Houston network of rappers who freestyled on DJ Screw's tapes and organized around his sessions, a social network rather than a signed group."
+digital_relationship: "Its output survives mainly as recorded sessions, which makes the network legible today through audio rather than through documents."
+best_use: "Reading a recording credit as a social network instead of a lineup."
+technologies: ["cassette", "live recording"]
+node_refs: ["screwed-up-click", "screw-tape", "dj-screw"]
+session_refs: []
+related_terms: ["screw-tape", "houston-rap", "screw-music"]
+tags: ["history-culture", "network"]
+---
+id: "screw-tape"
+term: "Screw Tape"
+domain: "history-culture"
+definition: "A cassette of slowed, chopped, and often freestyle-carrying material recorded by DJ Screw and sold directly to listeners, functioning at once as recording, performance document, and commodity."
+digital_relationship: "Later reissued and traded as CD and digital files, which separates the audio from the physical object that originally defined it."
+best_use: "Distinguishing a performance, a master, a copy, and a reissue of the same material."
+technologies: ["compact cassette", "turntables", "DJ mixer", "cassette deck"]
+node_refs: ["screw-tape", "dj-screw"]
+session_refs: []
+related_terms: ["custom-tape", "cassette-mixtape", "chopped-and-screwed", "cassette-duplication", "screw-music"]
+tags: ["history-culture", "format"]
+---
+id: "screw-music"
+term: "Screw Music"
+domain: "history-culture"
+definition: "Community terminology for the slowed and chopped Houston tape tradition, used for the music as a body of work rather than for the technique alone."
+digital_relationship: "Persists as a listener and catalog term long after the cassette format it names stopped being the delivery medium."
+best_use: "Referring to the Houston tradition as a repertoire rather than describing an operation applied to a record."
+technologies: ["compact cassette", "CD"]
+node_refs: ["chopped-and-screwed", "screw-tape"]
+session_refs: []
+related_terms: ["chopped-and-screwed", "screw-tape", "screwed-up-click"]
+tags: ["history-culture", "terminology"]
+---
+id: "custom-tape"
+term: "Custom Tape"
+domain: "history-culture"
+definition: "A tape recorded to order for a named buyer, often naming that person during the session, so the copy is unique rather than one unit of an edition."
+digital_relationship: "The commissioned, one-off recording has no clean digital analogue, since a file can be duplicated without cost or degradation."
+best_use: "Explaining a music economy in which the buyer commissions the artifact rather than selecting from stock."
+technologies: ["compact cassette", "cassette deck"]
+node_refs: ["screw-tape", "music-distribution"]
+session_refs: []
+related_terms: ["screw-tape", "cassette-mixtape", "dubbing"]
+tags: ["history-culture", "format", "commerce"]
+---
+id: "cassette-mixtape"
+term: "Cassette Mixtape"
+domain: "history-culture"
+definition: "A continuous DJ-assembled program recorded to cassette and circulated as a release in its own right rather than as a promotional item."
+digital_relationship: "Superseded first by CD-R and then by streaming mix formats, which removed both the fixed length and the physical scarcity that shaped the form."
+best_use: "Describing a DJ release whose unit is the whole tape rather than the individual track."
+technologies: ["compact cassette", "turntables", "DJ mixer"]
+node_refs: ["screw-tape", "music-distribution"]
+session_refs: []
+related_terms: ["screw-tape", "custom-tape", "cassette-duplication"]
+tags: ["history-culture", "format"]
+---
+id: "regional-distribution"
+term: "Regional Distribution"
+domain: "history-culture"
+definition: "The movement of physical recordings from a label to stores within and beyond a region through wholesalers, one-stops, and direct sale, independent of major-label distribution."
+digital_relationship: "Replaced functionally by digital aggregators and streaming platforms, which perform placement and cataloging without warehousing anything."
+best_use: "Explaining how independent recordings reached buyers before digital distribution."
+technologies: ["wholesale distribution", "retail placement", "barcodes", "physical inventory"]
+node_refs: ["music-distribution", "southwest-wholesale", "pen-and-pixel"]
+session_refs: []
+related_terms: ["houston-rap", "cassette-duplication"]
+tags: ["history-culture", "circulation"]

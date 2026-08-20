@@ -20,6 +20,8 @@ relationships:
     type: used_in
   - target: turntablism
     type: used_in
+  - target: chopped-and-screwed
+    type: used_in
 sources:
   - session-01-what-is-sound
   - session-03-history-of-electronic-music

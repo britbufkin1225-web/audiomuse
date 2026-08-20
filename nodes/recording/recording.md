@@ -24,6 +24,8 @@ relationships:
     type: enables
   - target: djing
     type: enables
+  - target: cassette-duplication
+    type: enables
 sources:
   - session-01-what-is-sound
   - session-03-history-of-electronic-music
