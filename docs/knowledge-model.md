@@ -39,10 +39,34 @@ Third, relationship types are chosen conservatively. A widely credited origin is
 new relationship type is invented to express a historical nuance. Where no directed claim is
 supported, the node records `relationships: []`.
 
-A future phase will need claim confidence as stored data rather than as prose — evidence type,
-corroboration count, chronology precision, disputed status, and whether the cited text was retrieved.
-Phase 12C deliberately did not change any schema to add it, and preserved enough provenance in
-`research/sources/` for it to be applied retroactively.
+Phase 12D supplies the fourth thing those nodes needed: claim confidence as stored data rather than as
+prose. Evidence type, corroboration, chronology precision, disputed status, and whether the cited text
+was retrieved are now validated fields on canonical claim records, and the provenance Phase 12C
+preserved in `research/sources/` is what makes them applicable retroactively. The prose markers in
+`docs/houston-musical-cartography.md` remain; annotation proceeds by priority rather than in one
+sweep.
+
+## Claims
+
+Claims are the epistemic layer. A node answers what AudioMuse knows about a concept; a claim answers
+what one checkable statement asserts, what kind of statement it is, which registered sources support,
+contradict, or qualify it, how strong that evidence is, and whether the sources conflict. Those four
+things are stored independently and are never combined into a single score, and confidence grades the
+repository's evidence rather than anyone's certainty.
+
+Not every sentence becomes a claim. The layer exists for statements that are externally checkable and
+that matter if they are wrong: dates, attributions, origin and priority assertions, contested
+chronology, actionable technical statements, and conclusions AudioMuse reached by combining sources.
+Definitions, explanations, and framing stay as prose.
+
+Claims name their appearance sites; nodes and documents do not list their claims in return. The
+reverse view is derived into `claims/index.md`, following the same rule the graph uses for inverse
+edges. Node `sources:` lists are unchanged and keep their topical meaning: a source relevant to a node
+is not the same statement as a source supporting a claim, and only the second is an evidence
+relationship. `schemas/claim.schema.yaml` holds the contract and every bounded vocabulary;
+`docs/claim-provenance-model.md` holds the taxonomy, the semantics, the origin-claim rule, and the
+migration plan. Run `pwsh -NoProfile -File tools/validate-claims.ps1` after changing claims, and
+`pwsh -NoProfile -File tools/test-claim-validator.ps1` after changing the validator.
 
 ## Sources
 
@@ -63,6 +87,7 @@ The layers remain distinct:
 - Indexes = deterministic read-only projections
 - Experiments = reproducible listening, observation, visualization, and measurement exercises
 - Experiment runs = separate records of planned or performed experiment executions and their evidence
+- Claims = checkable statements with typed provenance, graded evidence, and dispute status
 
 The intended path is `Session -> Vocabulary -> Node -> Sources / Graph Relationships`; no step collapses one layer into another.
 

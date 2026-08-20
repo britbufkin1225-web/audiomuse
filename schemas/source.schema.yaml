@@ -21,6 +21,22 @@ properties:
   relationship:
     type: string
     enum: [origin, supporting, historical, experimental, reference, contrasting]
+  evidence_class:
+    type: [string, "null"]
+    enum: [institutional_archive, reference_entry, scholarly_work, technical_reference, journalism, participant_account, session_record, project_document]
+    description: >
+      What kind of evidence this source is, independent of what it says. Optional registry-wide and
+      required only of sources cited by a claim record; see schemas/claim.schema.yaml and
+      docs/claim-provenance-model.md. Progressive annotation is deliberate: a source acquires this
+      field when a claim depends on it, not in a repository-wide sweep.
+  retrieval:
+    type: [string, "null"]
+    enum: [full_text, partial_text, citation_only]
+    description: >
+      Whether the cited text was actually read. full_text means the whole cited work or page was
+      retrieved; partial_text means the cited portion was retrieved and the whole work was not;
+      citation_only means the citation was verified without retrieving the text. Required of any
+      source cited by a claim record. The note under research/sources/ remains the prose record.
   notes:
     type: [string, "null"]
 additional_properties: false

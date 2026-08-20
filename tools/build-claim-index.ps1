@@ -1,0 +1,140 @@
+[CmdletBinding()]
+param(
+    [string]$ClaimDirectory,
+    [string]$OutputPath
+)
+
+$ErrorActionPreference = 'Stop'
+$repoRoot = Split-Path -Parent $PSScriptRoot
+if (-not $ClaimDirectory) { $ClaimDirectory = Join-Path $repoRoot 'claims/records' }
+if (-not $OutputPath) { $OutputPath = Join-Path $repoRoot 'claims/index.md' }
+$schemaPath = Join-Path $repoRoot 'schemas/claim.schema.yaml'
+
+function Sort-Ordinal([object[]]$Values) {
+    $items = [string[]]@($Values | ForEach-Object { [string]$_ })
+    [Array]::Sort($items, [StringComparer]::Ordinal)
+    return $items
+}
+
+function Sort-UniqueOrdinal([object[]]$Values) {
+    $set = [Collections.Generic.HashSet[string]]::new([string[]]@($Values | ForEach-Object { [string]$_ }), [StringComparer]::Ordinal)
+    return (Sort-Ordinal @($set))
+}
+
+function Sort-ClaimsById([object[]]$Claims) {
+    $items = [object[]]@($Claims)
+    if ($items.Count -le 1) { return $items }
+    $selector = [Func[object,string]]{ param($item) [string]$item.id }
+    return [Linq.Enumerable]::ToArray([Linq.Enumerable]::OrderBy($items, $selector, [StringComparer]::Ordinal))
+}
+
+# The schema file is the single canonical definition of every claim vocabulary. Both this builder and
+# tools/validate-claims.ps1 read it rather than embedding copies of the enums.
+function Get-SchemaList([string]$Text, [string]$Key) {
+    $match = [regex]::Match($Text, ('(?ms)^{0}:\r?\n(?<body>(?:  - [^\r\n]+\r?\n)+)' -f [regex]::Escape($Key)))
+    if (-not $match.Success) { throw "Claim schema does not declare a '$Key' list." }
+    $values = @([regex]::Matches($match.Groups['body'].Value, '(?m)^  - (?<value>[^\r\n]+?)\r?$') | ForEach-Object { $_.Groups['value'].Value })
+    if ($values.Count -eq 0) { throw "Claim schema list '$Key' is empty." }
+    return $values
+}
+
+function Read-ClaimRecords([string]$Directory, [string[]]$Required) {
+    $results = [Collections.Generic.List[object]]::new()
+    $files = @(Get-ChildItem -LiteralPath $Directory -Filter '*.yaml' -File)
+    foreach ($name in (Sort-Ordinal @($files | ForEach-Object { $_.Name }))) {
+        $file = $files | Where-Object Name -ceq $name | Select-Object -First 1
+        $documents = [regex]::Split([IO.File]::ReadAllText($file.FullName), '(?m)^---\r?\n') | Where-Object { $_.Trim() }
+        foreach ($document in $documents) {
+            $values = [ordered]@{}
+            foreach ($line in ($document.Trim() -split '\r?\n')) {
+                if ($line -notmatch '^(?<key>[a-z_]+): (?<value>.+)$') { throw "Malformed claim line in $($file.Name): $line" }
+                $key = $Matches.key
+                if ($key -notin $Required -or $values.Contains($key)) { throw "Unsupported or duplicate claim field '$key' in $($file.Name)" }
+                try { $values[$key] = $Matches.value | ConvertFrom-Json -NoEnumerate } catch { throw "Claim field '$key' must use a JSON-compatible YAML value in $($file.Name)" }
+            }
+            if (@($values.Keys).Count -ne $Required.Count -or (@($Required | Where-Object { -not $values.Contains($_) })).Count) {
+                throw "Claim record in $($file.Name) does not contain exactly the required fields."
+            }
+            $results.Add([pscustomobject]$values)
+        }
+    }
+    return $results
+}
+
+# One row per (source, claim, relation). Attribution is reported as its own relation so the provenance
+# view shows credited accounts beside supporting, contradicting, and qualifying evidence.
+function Get-SourceRows([object[]]$Claims, [string[]]$Relations) {
+    $rows = [Collections.Generic.List[object]]::new()
+    foreach ($claim in $Claims) {
+        foreach ($relation in @($Relations + @('attribution'))) {
+            $ids = if ($relation -ceq 'attribution') {
+                @($claim.attribution | ForEach-Object { $_.source_id })
+            } else {
+                @($claim.evidence | Where-Object { $_.relation -ceq $relation } | ForEach-Object { $_.source_id })
+            }
+            foreach ($sourceId in (Sort-UniqueOrdinal @($ids))) {
+                $rows.Add([pscustomobject]@{ SourceId = $sourceId; ClaimId = [string]$claim.id; Relation = $relation })
+            }
+        }
+    }
+    return $rows
+}
+
+$schemaText = [IO.File]::ReadAllText($schemaPath)
+$required = @(Get-SchemaList $schemaText 'required')
+$claimTypes = @(Get-SchemaList $schemaText 'claim_types')
+$confidenceLevels = @(Get-SchemaList $schemaText 'confidence_levels')
+$disputeStatuses = @(Get-SchemaList $schemaText 'dispute_statuses')
+$evidenceRelations = @(Get-SchemaList $schemaText 'evidence_relations')
+$appearsInKinds = @(Get-SchemaList $schemaText 'appears_in_kinds')
+
+$claims = Sort-ClaimsById @(Read-ClaimRecords $ClaimDirectory $required)
+if ($claims.Count -eq 0) { throw 'No canonical claim records found.' }
+$sourceRows = @(Get-SourceRows $claims $evidenceRelations)
+
+$lines = [Collections.Generic.List[string]]::new()
+$lines.Add('# AudioMuse Claim Index'); $lines.Add('')
+$lines.Add('This file is generated by `tools/build-claim-index.ps1`. Edit canonical records in `claims/records/`, not this projection.')
+$lines.Add(''); $lines.Add("Canonical claims: $($claims.Count)")
+
+$lines.Add(''); $lines.Add('## Claims'); $lines.Add('')
+foreach ($claim in $claims) {
+    $lines.Add(('- `{0}` — `{1}` — `{2}` — `{3}` — {4}' -f $claim.id, $claim.claim_type, $claim.confidence, $claim.dispute_status, $claim.statement))
+}
+
+foreach ($grouping in @(
+        @{ Heading = '## By Claim Type'; Field = 'claim_type'; Values = $claimTypes },
+        @{ Heading = '## By Confidence'; Field = 'confidence'; Values = $confidenceLevels },
+        @{ Heading = '## By Dispute Status'; Field = 'dispute_status'; Values = $disputeStatuses })) {
+    $lines.Add(''); $lines.Add([string]$grouping.Heading)
+    foreach ($value in $grouping.Values) {
+        $members = @($claims | Where-Object { $_.($grouping.Field) -ceq $value })
+        if ($members.Count -eq 0) { continue }
+        $lines.Add(''); $lines.Add(('### `{0}` — {1} claims' -f $value, $members.Count)); $lines.Add('')
+        foreach ($member in $members) { $lines.Add(('- `{0}`' -f $member.id)) }
+    }
+}
+
+$lines.Add(''); $lines.Add('## By Source')
+foreach ($sourceId in (Sort-UniqueOrdinal @($sourceRows | ForEach-Object { $_.SourceId }))) {
+    $rows = @($sourceRows | Where-Object { $_.SourceId -ceq $sourceId })
+    $claimCount = @(Sort-UniqueOrdinal @($rows | ForEach-Object { $_.ClaimId })).Count
+    $lines.Add(''); $lines.Add(('### `{0}` — {1} claims' -f $sourceId, $claimCount)); $lines.Add('')
+    foreach ($row in $rows) { $lines.Add(('- `{0}` — `{1}`' -f $row.ClaimId, $row.Relation)) }
+}
+
+$lines.Add(''); $lines.Add('## By Appearance Site')
+foreach ($kind in $appearsInKinds) {
+    $refs = Sort-UniqueOrdinal @($claims | ForEach-Object { $_.appears_in } | Where-Object { $_.kind -ceq $kind } | ForEach-Object { $_.ref })
+    foreach ($ref in $refs) {
+        $members = @($claims | Where-Object { @($_.appears_in | Where-Object { $_.kind -ceq $kind -and $_.ref -ceq $ref }).Count -gt 0 })
+        $lines.Add(''); $lines.Add(('### {0} `{1}` — {2} claims' -f $kind, $ref, $members.Count)); $lines.Add('')
+        foreach ($member in $members) { $lines.Add(('- `{0}`' -f $member.id)) }
+    }
+}
+
+$content = ($lines -join "`n") + "`n"
+$parent = Split-Path -Parent $OutputPath
+New-Item -ItemType Directory -Force -Path $parent | Out-Null
+[IO.File]::WriteAllText($OutputPath, $content, [Text.UTF8Encoding]::new($false))
+Write-Output "Generated claim index from $($claims.Count) records."

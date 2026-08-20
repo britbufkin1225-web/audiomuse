@@ -1,0 +1,26 @@
+---
+id: "playback-rate-couples-time-and-pitch"
+statement: "Changing the playback rate of a fixed recording scales duration and frequency together, so tempo, pitch, and spectral envelope cannot be moved independently of one another by that means."
+claim_type: "technical_fact"
+confidence: "high"
+confidence_basis: "Two retrieved sources support the mechanism from different directions: Session 1 establishes that frequency follows from how quickly stored cycles pass, and the technical reference states the contrast between mechanical rate change and phase-vocoder time-scale modification explicitly. The statement is a physical consequence of the storage format rather than a historical report, so no further corroboration is needed."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "smith-spectral-audio-signal-processing", "note": "States that time-scale modification and frequency shifting are phase-vocoder applications, which is the contrast case: digital processing can separate what mechanical rate change cannot."}, {"relation": "supported_by", "source_id": "session-01-what-is-sound", "note": "Establishes that frequency is set by the rate at which cycles pass, which is the mechanism that makes rate change move pitch."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "slowed-playback"}, {"kind": "node", "ref": "time-stretching"}, {"kind": "vocabulary", "ref": "varispeed"}]
+open_questions: []
+---
+id: "phase-vocoder-attributed-to-flanagan-and-golden"
+statement: "Spectral Audio Signal Processing credits Flanagan and Golden with introducing the phase vocoder by interpreting a vocoder filter bank as a sliding short-time Fourier transform."
+claim_type: "attributed_claim"
+confidence: "high"
+confidence_basis: "The claim is about what the reference states, and the cited page was retrieved, which settles it. It deliberately does not assert priority in the field: AudioMuse has not read the original Flanagan and Golden publication, so a claim about who first built a phase vocoder would carry a different confidence than this one does."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "smith-spectral-audio-signal-processing", "note": "The retrieved phase vocoder page carries the attribution and the filter-bank interpretation in its own words."}]
+attribution: [{"actor": "Flanagan and Golden", "source_id": "smith-spectral-audio-signal-processing"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "time-stretching"}]
+open_questions: ["Does the original Flanagan and Golden publication support the priority this reference asserts, and what date and institution does it carry?"]

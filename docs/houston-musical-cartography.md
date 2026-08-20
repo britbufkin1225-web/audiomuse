@@ -226,8 +226,8 @@ research rather than by inclusion, and the outcome is mixed and stated plainly.
   research target with a named strongest lead: Roni Sarig's *Third Coast* (`sarig-third-coast`).
 
 The gap is therefore narrowed but not closed, and it is closed for the wrong reason if it is closed by
-adding names without evidence. Phase 12D should pursue Yolanda Adams and Choice with archival and
-scholarly sourcing.
+adding names without evidence. A future research phase should pursue Yolanda Adams and Choice with
+archival and scholarly sourcing; Phase 12D was an architecture phase and deliberately did not.
 
 ## Deliberately deferred
 
@@ -236,11 +236,11 @@ Not attempted in this phase, and not to be inferred from it: a full slab culture
 and country histories; a full UGK and Port Arthur history; exhaustive S.U.C. biographies; a Houston
 club-network study; sampling genealogy; and any geographic visualization or interface work.
 
-## Future requirement: claim confidence as data
+## Claim confidence as data: implemented in Phase 12D
 
-This document carries confidence markers in prose because the repository's schemas record provenance
-as a source ID and nothing else. That is sufficient for a phase this size and will not stay
-sufficient. A future claim model would need to distinguish, as stored fields rather than as sentences:
+This document carries confidence markers in prose because, when it was written, the repository's
+schemas recorded provenance as a source ID and nothing else. Phase 12C recorded what a claim model
+would need to distinguish, as stored fields rather than as sentences:
 
 ```text
 confidence          how strongly the evidence supports the claim
@@ -251,7 +251,13 @@ disputed            whether sources conflict, and where
 retrieval status    whether the cited text was actually read
 ```
 
-Phase 12C deliberately does not change any schema to add these. The requirement is recorded so that a
-later phase can implement it against real content, and this phase preserves enough provenance — every
-source note carries a retrieval status, a supports list, and a does-not-settle list — for that model to
-be applied retroactively rather than re-researched.
+Phase 12C deliberately did not change any schema to add these. Phase 12D implemented them:
+`schemas/claim.schema.yaml` and `claims/records/` now store claim type, confidence, evidence
+relationship, dispute status, and temporal precision as validated fields, and `evidence_class` and
+`retrieval` were added to the source registry for the sources a claim cites. Six of the ten
+representative Phase 12D records annotate entries on this page, including the Screwed Up Records store
+conflict, the Fat Pat date, the Mike Dean interview, and the KCOH priority description.
+
+The markers above are not superseded and were not rewritten. They remain the reading aid for this
+chronology; the claim records are the machine-readable form, and the annotation of the remaining
+entries proceeds by the priority order in `docs/claim-provenance-model.md` rather than in one sweep.

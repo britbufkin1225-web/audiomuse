@@ -11,14 +11,15 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 
 - `sessions/` — chronological exploration records
 - `nodes/` — durable knowledge-graph concepts organized by domain
-- `schemas/` — canonical node, vocabulary, and source metadata contracts
+- `schemas/` — canonical node, vocabulary, source, and claim metadata contracts
 - `sources/` — provenance registry referenced by stable source IDs
+- `claims/` — checkable statements with typed provenance, graded evidence, dispute status, and a generated index
 - `vocabulary/` — canonical terminology entries, source atlases, and a read-only cross-reference index
 - `research/` — sources and research notes
 - `experiments/` — canonical listening/measurement exercises and a generated cross-reference index
 - `experiment-runs/` — individual planned/performed execution records, evidence, and a generated index
 - `assets/brand/` — canonical AudioMuse identity assets and guidelines
-- `docs/` — project scope, knowledge model, roadmap, research-gap triage, and the Houston musical cartography
+- `docs/` — project scope, knowledge model, roadmap, research-gap triage, the Houston musical cartography, and the claim provenance model
 - `indexes/` — generated, read-only navigation and coverage views
 
 ## Current foundation
@@ -39,8 +40,9 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - Session 2 and 3 vocabulary bridges into rhythm, sequencing, synthesis, and MIDI (Phase 12A, Target 1)
 - A six-node DJ and turntablism domain connecting recorded playback, mechanical vibration, musical time, sampling, and digital vinyl systems (Phase 12B, Target 2)
 - A source-backed Houston and Third Coast foundation — twenty-two nodes, twenty-eight registered external sources, and a chronology with per-claim confidence markers and a dispute register (Phase 12C)
+- A validated claim-provenance architecture separating claim type, evidence strength, evidence relationship, and dispute status, with ten representative records and fifty-four adversarial validator tests (Phase 12D)
 
-See `docs/houston-musical-cartography.md` for the sourced Houston chronology, `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
+See `docs/claim-provenance-model.md` for the claim taxonomy, confidence semantics, and annotation migration plan, `docs/houston-musical-cartography.md` for the sourced Houston chronology, `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
 
 ## Project posture
 

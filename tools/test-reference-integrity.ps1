@@ -3,7 +3,7 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$fixtureItems = @('tools','schemas','nodes','sources','sessions','vocabulary','experiments','experiment-runs','indexes','assets','research')
+$fixtureItems = @('tools','schemas','nodes','sources','sessions','vocabulary','experiments','experiment-runs','claims','docs','indexes','assets','research')
 $passed = 0
 
 function New-Fixture {
@@ -81,5 +81,13 @@ Assert-Failure 'case-drifted run source reference beside its canonical form' { p
 # The same ordinal rule must not reject prose entries that legitimately differ only by case.
 Assert-MutatedPass 'prose values differing only by case are distinct' { param($r) Replace-Exact (Join-Path $r 'experiments/records/near-frequency-beating.yaml') 'project_connections: ["instrument tuning",' 'project_connections: ["instrument tuning", "Instrument tuning",' } 'validate-experiments.ps1'
 Assert-MutatedPass 'run prose values differing only by case are distinct' { param($r) Replace-Exact (Join-Path $r 'experiment-runs/records/near-frequency-beating-planned-a.yaml') 'equipment: [' 'equipment: ["Bench notes", "bench notes", ' } 'validate-experiment-runs.ps1'
+
+# Phase 12D claim provenance. Claim references resolve against the same canonical universes as every
+# other layer, so they obey the same ordinal identity rule.
+Assert-Pass 'claim records and generated claim index' 'validate-claims.ps1'
+Assert-Failure 'claim evidence source case drift' { param($r) Replace-Exact (Join-Path $r 'claims/records/audio-technique.yaml') '"source_id": "session-01-what-is-sound"' '"source_id": "Session-01-What-Is-Sound"' } 'validate-claims.ps1' 'Unresolved evidence source.*Session-01-What-Is-Sound'
+Assert-Failure 'claim appearance node case drift' { param($r) Replace-Exact (Join-Path $r 'claims/records/audio-technique.yaml') '{"kind": "node", "ref": "slowed-playback"}' '{"kind": "node", "ref": "Slowed-Playback"}' } 'validate-claims.ps1' 'Unresolved appears_in node.*Slowed-Playback'
+Assert-Failure 'claim confidence enum case drift' { param($r) Replace-Exact (Join-Path $r 'claims/records/audio-technique.yaml') 'confidence: "high"' 'confidence: "HIGH"' } 'validate-claims.ps1' 'Invalid confidence.*HIGH'
+Assert-Failure 'claim cites an unregistered source' { param($r) Replace-Exact (Join-Path $r 'claims/records/audio-technique.yaml') '"source_id": "session-01-what-is-sound"' '"source_id": "nonexistent-source"' } 'validate-claims.ps1' 'Unresolved evidence source.*nonexistent-source'
 
 Write-Output "reference_integrity_tests: $passed"

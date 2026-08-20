@@ -1,0 +1,104 @@
+---
+id: "screw-master-tape-method"
+statement: "DJ Screw's master tapes were produced by switching between two slowed copies of the same record with a crossfader to repeat beats, words, and phrases onto a master cassette, which was then slowed further with a four-track pitch control."
+claim_type: "historical_claim"
+confidence: "high"
+confidence_basis: "The workflow is described by the institutional finding aid for the archive that holds Screw's papers and equipment, and its full text was retrieved. A single source carries it, but the class of source is the strongest the repository holds for this material and it describes holdings the institution physically has."
+dispute_status: "undisputed"
+temporal_precision: "era"
+evidence: [{"relation": "supported_by", "source_id": "uh-dj-screw-collection-finding-aid", "note": "Describes custom requests, two slowed copies switched with a crossfader to repeat material, a master cassette, and further slowing with a four-track pitch control."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "screw-tape"}, {"kind": "node", "ref": "cassette-duplication"}, {"kind": "document", "ref": "docs/houston-musical-cartography.md"}]
+open_questions: ["What equipment duplicated the master into sales copies, and at what dubbing speed and onto what tape stock?"]
+---
+id: "screwed-up-records-1996-store-claim"
+statement: "Screwed Up Records & Tapes existed in Houston as a store, label, and business by 1996."
+claim_type: "historical_claim"
+confidence: "low"
+confidence_basis: "One signed reference entry places the store, label, and business in Houston in 1996 while the institutional finding aid reports that the store opened in 1998. Both texts were retrieved and neither is obviously wrong; they may describe differently scoped events, and nothing retrieved reconciles them, so the 1996 formulation stands as one of two unreconciled positions rather than as the repository's settled chronology."
+dispute_status: "disputed"
+temporal_precision: "year"
+evidence: [{"relation": "supported_by", "source_id": "tsha-dj-screw", "note": "Places the store, the label, and the business in Houston in 1996."}, {"relation": "contradicted_by", "source_id": "uh-dj-screw-collection-finding-aid", "note": "Reports that Screwed Up Records & Tapes opened in 1998, which is incompatible with a 1996 store unless the two describe differently scoped events."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "dj-screw"}, {"kind": "document", "ref": "docs/houston-musical-cartography.md"}]
+open_questions: ["Does a business filing, lease, or dated advertisement distinguish business activity in 1996 from a storefront opening in 1998?", "Neither retrieved source establishes a month or a Cullen Boulevard address; what primary record would?"]
+---
+id: "fat-pat-death-1998"
+statement: "Patrick Lamont Hawkins, known as Fat Pat and one of the original members of the Screwed Up Click, was fatally shot in Houston on February 3, 1998."
+claim_type: "established_fact"
+confidence: "high"
+confidence_basis: "A signed, edited reference-encyclopedia entry carries the date and the circumstance, and its full text was retrieved. The entry is the class of source the repository treats as documentary, and nothing retrieved conflicts with it."
+dispute_status: "undisputed"
+temporal_precision: "exact_date"
+evidence: [{"relation": "supported_by", "source_id": "tsha-fat-pat", "note": "Gives the date, the city, the circumstance, and his membership in the Screwed Up Click."}, {"relation": "qualified_by", "source_id": "tsha-fat-pat", "note": "Records that the exact address differs between secondary accounts, which is why the statement asserts the city and not a street."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "screwed-up-click"}, {"kind": "document", "ref": "docs/houston-musical-cartography.md"}]
+open_questions: ["What primary record fixes the location that secondary accounts report inconsistently?"]
+---
+id: "mike-dean-rap-a-lot-account"
+statement: "Mike Dean has described entering Houston's music scene in the late 1980s and working extensively with Rap-A-Lot Records in the early 1990s as engineer and producer at once, preferring played instrumentation over direct sampling."
+claim_type: "oral_history"
+confidence: "moderate"
+confidence_basis: "The interview text was retrieved in full and the account is the subject's own, so the attribution is certain. The underlying chronology is self-reported and undated in the source itself, and no independent record corroborates it, so the evidence establishes what he says rather than when each credit occurred. Being oral history does not lower this to low: the account is first-hand, recorded, and published."
+dispute_status: "undisputed"
+temporal_precision: "era"
+evidence: [{"relation": "supported_by", "source_id": "npr-microphone-check-mike-dean", "note": "Carries his account of the late-1980s entry, the early-1990s Rap-A-Lot work alongside N.O. Joe, the combined engineer and producer role, and the instrumentation preference."}, {"relation": "qualified_by", "source_id": "npr-microphone-check-mike-dean", "note": "The interview does not date individual credits, so chronology stays relative rather than pinned to years."}]
+attribution: [{"actor": "Mike Dean", "source_id": "npr-microphone-check-mike-dean"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "mike-dean"}, {"kind": "document", "ref": "docs/houston-musical-cartography.md"}]
+open_questions: ["Which dated credits, studio logs, or label records would corroborate the early-1990s chronology the interview gives in relative terms?"]
+---
+id: "screw-slowing-alters-vocal-timbre"
+statement: "Because mechanical rate reduction moves duration, pitch, and spectral envelope together, the sustained slowing in Screw's tape method necessarily altered vocal timbre as well as tempo, which digital time-stretching does not force because it can hold pitch while changing duration."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "Both components are separately supported by retrieved sources and the step between them is mechanical rather than interpretive, but no retrieved source states the combined conclusion and no measurement of surviving tapes tests it. Recording it as high would treat an AudioMuse inference as a sourced finding."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "smith-spectral-audio-signal-processing", "note": "Supports the decoupling contrast that the second half of the statement depends on."}, {"relation": "supported_by", "source_id": "uh-dj-screw-collection-finding-aid", "note": "Establishes that the method applied sustained mechanical slowing, first between two copies and then to the master."}]
+attribution: []
+derived_from: [{"kind": "claim", "ref": "playback-rate-couples-time-and-pitch"}, {"kind": "claim", "ref": "screw-master-tape-method"}, {"kind": "node", "ref": "slowed-playback"}]
+appears_in: [{"kind": "node", "ref": "slowed-playback"}, {"kind": "node", "ref": "chopped-and-screwed"}]
+open_questions: ["What measurement of surviving tapes against their source records would quantify the spectral-envelope shift this inference predicts?"]
+---
+id: "screw-sales-copy-duplication-hypothesis"
+statement: "The duplication chain that produced Screw sales copies measurably shaped their timbre, so a circulated copy differs audibly from the master it descends from."
+claim_type: "hypothesis"
+confidence: "unknown"
+confidence_basis: "Generational loss in analog cassette duplication is established in the repository as general format mechanics, but no retrieved source describes the Screw sales-copy chain, no surviving copy has been measured against a master, and no repository evidence bears on the specific claim in either direction. There is therefore nothing to grade, which is what unknown records."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "qualified_by", "source_id": "uh-dj-screw-collection-finding-aid", "note": "Describes the master-production chain and explicitly does not describe the deck, dubbing speed, tape stock, or workflow used to duplicate sales copies."}, {"relation": "qualified_by", "source_id": "popula-screw-tape-records", "note": "Reports informal copying by sellers with no arrangement with Screw, which establishes that uncontrolled duplication happened without characterizing its audible effect."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "cassette-duplication"}]
+appears_in: [{"kind": "node", "ref": "cassette-duplication"}, {"kind": "node", "ref": "screw-tape"}]
+open_questions: ["What measurable differences separate a first-generation copy from a third under the duplication practices of the period?", "Do any archived Screw holdings pair a master with a known-generation sales copy of the same title?"]
+---
+id: "houston-layered-infrastructure-reading"
+statement: "Houston's 1990s rap economy is best read as a layered system of rooms, engineers, catalogs, retail, and duplication capacity rather than as a chronology of artists and releases."
+claim_type: "interpretation"
+confidence: "moderate"
+confidence_basis: "Each layer named in the reading is separately documented by a retrieved source, which is why the interpretation is not speculative. The ordering itself, and the claim that it explains more than a release chronology does, is an AudioMuse reading that no retrieved source states, so the evidence supports the parts and not the frame. Three supporting sources would permit high on the mechanical rule; it is deliberately not taken."
+dispute_status: "undisputed"
+temporal_precision: "era"
+evidence: [{"relation": "supported_by", "source_id": "tsha-sugarhill-recording-studios", "note": "Documents a commercial Houston studio economy from 1941, which is the rooms layer."}, {"relation": "supported_by", "source_id": "tsha-duke-peacock-records", "note": "Documents Black-owned catalog infrastructure from 1949 and the working division between recording, mastering, and pressing."}, {"relation": "supported_by", "source_id": "allhiphop-southwest-wholesale-closing", "note": "Documents independent rap-focused distribution capacity operating in Houston until 2003, which is the circulation layer."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "houston-musical-cartography"}, {"kind": "document", "ref": "docs/houston-musical-cartography.md"}]
+open_questions: ["Which scholarly treatments of Houston music argue for a different organizing frame, and on what evidence?"]
+---
+id: "kcoh-first-black-owned-texas-station-attribution"
+statement: "KCOH is described as the first Black-owned radio station in Texas following its purchase in 1953 by a group under Robert C. Meeker."
+claim_type: "attributed_claim"
+confidence: "low"
+confidence_basis: "A single journalism source carries the characterization, and no institutional or reference source retrieved in Phase 12C corroborates the priority. The broadcast and purchase dates in the same article are better supported than the superlative attached to them, which is exactly the split this record exists to make visible."
+dispute_status: "unresolved"
+temporal_precision: "year"
+evidence: [{"relation": "supported_by", "source_id": "black-enterprise-kcoh", "note": "States the 1948 start of broadcasting, the 1953 purchase, and the description of the station as the first Black-owned station in Texas."}]
+attribution: [{"actor": "Black Enterprise", "source_id": "black-enterprise-kcoh"}]
+derived_from: []
+appears_in: [{"kind": "document", "ref": "docs/houston-musical-cartography.md"}]
+open_questions: ["What licensing, FCC, or state broadcast record would establish whether an earlier Black-owned Texas station existed?", "Do the institutional Houston archives hold station records that carry the same characterization independently?"]

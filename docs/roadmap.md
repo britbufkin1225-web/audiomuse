@@ -142,11 +142,49 @@ and Pen & Pixel founding years, and the Swishahouse lineup are recorded as unres
 playback speed is given; and one proposed addition was excluded outright after research placed the
 figure outside Houston. No schema, relationship type, or validator was changed.
 
+### Phase 12D — Claim Confidence + Provenance Architecture. Complete.
+
+Architecture, not research. Phase 12C carried claim confidence in prose — `documented`, `reported`,
+`recollected`, `disputed`, `approximate` — and closed by naming the fields a later phase would need as
+data. Phase 12D implements them as a validated contract and adds the three the list did not name: an
+explicit claim taxonomy, a first-class category for AudioMuse's own inferences, and validation that
+detects broken provenance.
+
+A claim record stores four things independently and never combines them into a score: what kind of
+statement it is, how strongly repository evidence supports it, which registered sources support,
+contradict, or qualify it, and whether the sources conflict. Nine claim types, four confidence levels,
+three evidence relations, three dispute statuses, and six temporal precisions are declared in
+`schemas/claim.schema.yaml` and read from there by the tooling. `disputed_claim` was evaluated as a
+type and rejected: dispute is an independent axis, so collapsing it into the taxonomy would have
+contradicted the phase's own principle.
+
+Ten representative records prove the contract across technical, historical, attributed, oral-history,
+interpretive, synthesised, hypothetical, and disputed material, all drawn from existing repository
+content and registered sources. No dispute was invented to fill a category, and no Phase 12C prose,
+node, chronology, or dispute-register entry was rewritten. The source registry gained two optional
+fields, `evidence_class` and `retrieval`, required only of sources a claim actually cites, so
+annotation follows use instead of forcing a repository-wide sweep; eleven of thirty-three sources
+carry them, transcribed from research notes that already recorded both.
+
+Validation is semantic rather than structural. `tools/validate-claims.ps1` rejects unsupported high
+confidence, unknown confidence beside supporting evidence, settled-fact types that are disputed,
+ungrounded synthesis, attributed claims with no attribution, dispute statuses that contradict the
+cited evidence, priority language stated in AudioMuse's own voice, derivation cycles, and any
+unresolved reference. `tools/test-claim-validator.ps1` runs fifty-four adversarial cases over a baseline
+that asserts the committed fixtures pass, and each case declares the message it must fail with. The
+generated `claims/index.md` is reconciled line by line against canonical records before it is
+byte-compared against a fresh build.
+
+Phase 12D is explicitly not the migration. `docs/claim-provenance-model.md` records the priority order
+— historically sensitive claims, then origin claims, then regional chronology, then thinly sourced
+technical claims — and states that general explanatory prose mostly never becomes claim data.
+
 ## Near-term follow-up
 
 - Independently review Phase 10 thresholds and candidate evidence against future repository growth
 - Deepen high-value nodes only where human review confirms a documented research need
 - Extend source and citation coverage as new evidence is introduced
+- Begin the Phase 12D claim annotation migration at its first priority tier when a phase is allocated to it
 - Add further experiments or vocabulary terms only as future sessions or research justify them
 
 Keep later phases intentionally flexible so the research can determine what deserves implementation.
