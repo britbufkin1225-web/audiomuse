@@ -18,7 +18,7 @@ Canonical claims: 48
 - `exact-repetition-can-transform-speech-into-song` — `attributed_claim` — `moderate` — `undisputed` — Deutsch, Henthorn, and Lapidis report that a spoken phrase repeated without any alteration to the signal came to be heard as sung rather than spoken, and that listeners who heard ten presentations repeated the phrase back as song while listeners who heard one repeated it back as speech.
 - `familiarity-and-autobiographical-salience-are-separable` — `attributed_claim` — `moderate` — `undisputed` — Janata reports that medial prefrontal cortex responded parametrically to both familiarity and autobiographical salience during music listening, with salience producing effects beyond what familiarity alone predicted.
 - `fat-pat-death-1998` — `established_fact` — `high` — `undisputed` — Patrick Lamont Hawkins, known as Fat Pat and one of the original members of the Screwed Up Click, was fatally shot in Houston on February 3, 1998.
-- `fluctuation-strength-peaks-near-four-hertz` — `technical_fact` — `high` — `undisputed` — Fluctuation strength, the sensation produced by slow envelope variation, reaches its maximum near a 4 Hz modulation rate, and its unit the vacil is defined by a 1 kHz tone at 60 dB modulated at 4 Hz with full modulation depth.
+- `fluctuation-strength-peaks-near-four-hertz` — `technical_fact` — `moderate` — `undisputed` — Fluctuation strength, the sensation produced by slow envelope variation, reaches its maximum near a 4 Hz modulation rate, and its unit the vacil is defined by a 1 kHz tone at 60 dB modulated at 4 Hz with full modulation depth.
 - `frisson-terminology-lacks-consensus` — `attributed_claim` — `moderate` — `unresolved` — Harrison and Loui state that the term chills lacks operative consensus in the research literature, that authors disagree over whether piloerection is definitional, and that the direction of causation between musical features and the response has generally been assumed rather than tested.
 - `hair-cell-transduction-is-fast-and-minute` — `technical_fact` — `high` — `undisputed` — Hair cells convert stereocilia displacement into an electrical potential in as little as 10 microseconds, and bundle movements at the threshold of hearing are approximately 0.3 nanometres.
 - `houston-layered-infrastructure-reading` — `interpretation` — `moderate` — `undisputed` — Houston's 1990s rap economy is best read as a layered system of rooms, engineers, catalogs, retail, and duplication capacity rather than as a chronology of artists and releases.
@@ -41,7 +41,7 @@ Canonical claims: 48
 - `playback-rate-couples-time-and-pitch` — `technical_fact` — `high` — `undisputed` — Changing the playback rate of a fixed recording scales duration and frequency together, so tempo, pitch, and spectral envelope cannot be moved independently of one another by that means.
 - `removing-material-creates-perceptual-accent` — `audiomuse_synthesis` — `moderate` — `undisputed` — Removing or withholding material accents what remains around it, because an onset not closely followed by another onset is perceived as accented, so a gate, a chop, or an inserted silence can produce emphasis without any change in level.
 - `roughness-carries-no-fixed-valence` — `audiomuse_synthesis` — `moderate` — `undisputed` — Roughness is a sensation whose affective interpretation depends on the material and on what the listener wants from the sound, rather than a property carrying a fixed negative value.
-- `roughness-has-a-band-pass-relation-to-modulation-rate` — `technical_fact` — `high` — `undisputed` — Perceived roughness relates to envelope modulation rate as a band-pass rather than a monotonic function: envelope variation between roughly 20 and 300 Hz is heard as rough, roughness peaks near a 70 Hz modulation rate for a 1 kHz carrier and shifts lower for lower carriers, and above that band the sidebands become audible as separate tones.
+- `roughness-has-a-band-pass-relation-to-modulation-rate` — `technical_fact` — `moderate` — `undisputed` — Perceived roughness relates to envelope modulation rate as a band-pass rather than a monotonic function: envelope variation between roughly 20 and 300 Hz is heard as rough, roughness peaks near a 70 Hz modulation rate for a 1 kHz carrier and shifts lower for lower carriers, and above that band the sidebands become audible as separate tones.
 - `screw-master-tape-method` — `historical_claim` — `high` — `undisputed` — DJ Screw's master tapes were produced by switching between two slowed copies of the same record with a crossfader to repeat beats, words, and phrases onto a master cassette, which was then slowed further with a four-track pitch control.
 - `screw-sales-copy-duplication-hypothesis` — `hypothesis` — `unknown` — `undisputed` — The duplication chain that produced Screw sales copies measurably shaped their timbre, so a circulated copy differs audibly from the master it descends from.
 - `screw-slowing-alters-vocal-timbre` — `audiomuse_synthesis` — `moderate` — `undisputed` — Because mechanical rate reduction moves duration, pitch, and spectral envelope together, the sustained slowing in Screw's tape method necessarily altered vocal timbre as well as tempo, which digital time-stretching does not force because it can hold pitch while changing duration.
@@ -131,19 +131,17 @@ Canonical claims: 48
 
 ## By Confidence
 
-### `high` — 9 claims
+### `high` — 7 claims
 
 - `cochlea-analyzes-frequency-by-place`
 - `fat-pat-death-1998`
-- `fluctuation-strength-peaks-near-four-hertz`
 - `hair-cell-transduction-is-fast-and-minute`
 - `phase-locking-follows-stimuli-to-about-three-kilohertz`
 - `phase-vocoder-attributed-to-flanagan-and-golden`
 - `playback-rate-couples-time-and-pitch`
-- `roughness-has-a-band-pass-relation-to-modulation-rate`
 - `screw-master-tape-method`
 
-### `moderate` — 32 claims
+### `moderate` — 34 claims
 
 - `amazonian-listeners-showed-fusion-without-consonance-preference`
 - `anticipation-and-peak-pleasure-are-anatomically-separable`
@@ -153,6 +151,7 @@ Canonical claims: 48
 - `brecvema-names-eight-mechanisms`
 - `exact-repetition-can-transform-speech-into-song`
 - `familiarity-and-autobiographical-salience-are-separable`
+- `fluctuation-strength-peaks-near-four-hertz`
 - `frisson-terminology-lacks-consensus`
 - `houston-layered-infrastructure-reading`
 - `information-content-and-entropy-are-distinct-quantities`
@@ -169,6 +168,7 @@ Canonical claims: 48
 - `physiological-response-is-not-felt-emotion`
 - `removing-material-creates-perceptual-accent`
 - `roughness-carries-no-fixed-valence`
+- `roughness-has-a-band-pass-relation-to-modulation-rate`
 - `screw-slowing-alters-vocal-timbre`
 - `spectral-flux-predicted-neural-synchronization-better-than-envelope`
 - `spectral-fusion-does-not-predict-pleasantness`

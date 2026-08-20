@@ -41,8 +41,8 @@ open_questions: []
 id: "roughness-has-a-band-pass-relation-to-modulation-rate"
 statement: "Perceived roughness relates to envelope modulation rate as a band-pass rather than a monotonic function: envelope variation between roughly 20 and 300 Hz is heard as rough, roughness peaks near a 70 Hz modulation rate for a 1 kHz carrier and shifts lower for lower carriers, and above that band the sidebands become audible as separate tones."
 claim_type: "technical_fact"
-confidence: "high"
-confidence_basis: "One source, but it is a measurement-instrumentation technical reference retrieved in full, and it states the ranges, the peak, the carrier dependence, and the asper reference condition explicitly rather than in summary. The statement is a psychoacoustic regularity with a defined unit attached, not an interpretation."
+confidence: "moderate"
+confidence_basis: "The retrieved measurement-vendor application note states the ranges, the peak, the carrier dependence, and the asper reference condition explicitly rather than in summary. Confidence remains moderate because AudioMuse did not retrieve the underlying empirical psychoacoustics literature the note summarizes, so the vendor explanation is adequate for a bounded reference claim but not for high confidence on its own."
 dispute_status: "undisputed"
 temporal_precision: "not_temporal"
 evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "States the 20 to 300 Hz rough region, the maximum near 70 Hz for a 1 kHz carrier, the downward shift for lower carriers, the resolution of sidebands above the band, and the asper reference condition."}]
@@ -54,8 +54,8 @@ open_questions: []
 id: "fluctuation-strength-peaks-near-four-hertz"
 statement: "Fluctuation strength, the sensation produced by slow envelope variation, reaches its maximum near a 4 Hz modulation rate, and its unit the vacil is defined by a 1 kHz tone at 60 dB modulated at 4 Hz with full modulation depth."
 claim_type: "technical_fact"
-confidence: "high"
-confidence_basis: "A registered technical reference retrieved in full states both the peak rate and the unit definition directly. The claim reports a defined measurement convention rather than a research finding, so single-source support is adequate."
+confidence: "moderate"
+confidence_basis: "The retrieved measurement-vendor application note states both the peak rate and the unit definition directly. The unit definition is a bounded measurement convention, but AudioMuse did not retrieve the underlying empirical psychoacoustics literature supporting the peak-rate generalization, so this vendor explanation does not justify high confidence on its own."
 dispute_status: "undisputed"
 temporal_precision: "not_temporal"
 evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "States that fluctuation strength peaks around 4 Hz and defines the vacil by the same reference tone used for the asper with the modulation frequency changed to 4 Hz."}]
