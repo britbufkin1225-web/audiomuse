@@ -5,16 +5,18 @@
 - Publisher: Houston Press
 - Date: 2012
 - Stable locator: https://www.houstonpress.com/music/south-park-coalition-celebrates-25-years-this-saturday-6510254/
-- Retrieval: citation verified, full text not retrieved (host refused automated retrieval)
+- Retrieval: full text retrieved during independent review
 
 ## Supports
 
-- That the South Park Coalition marked twenty-five years in 2012, which is consistent with a 1987
-  formal founding and is the strongest available anchor for the collective's chronology.
+- That the South Park Coalition marked twenty-five years in 2012 and was already a few months old at
+  the time of a late-1987 battle recalled by K-Rino.
 - That the collective operated without radio airplay or major-label money, a claim repeated across
   accounts of its independence.
+- That K-Rino is identified as the founder and that the network grew from crews around Jones and
+  Sterling high schools in South Park.
 
 ## Uncertainty
 
-- **Founding year.** Accounts give 1986 for K-Rino's founding of the group and 1987 for its formal
-  establishment. Phase 12C records the range and does not choose.
+- This participant-based retrospective supports 1987, not 1986. Phase 12C has no registered source
+  for the 1986 date and therefore does not retain it as an evidenced alternative.

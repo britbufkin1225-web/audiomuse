@@ -33,28 +33,28 @@ sources:
     locator: research/sources/houston-third-coast/uh-houston-hip-hop-research-collection.md
     relationship: reference
     author: University of Houston Libraries, Special Collections
-    notes: "Institutional archive. External locator https://libraries.uh.edu/special-collections/houston-hip-hop — citation verified, full text not retrieved."
+    notes: "Institutional archive. External locator https://libraries.uh.edu/special-collections/houston-hip-hop — full text retrieved during independent review."
   - id: uh-dj-screw-collection-finding-aid
     type: website
     title: DJ Screw Collection finding aid
     locator: research/sources/houston-third-coast/uh-dj-screw-collection-finding-aid.md
     relationship: reference
     author: University of Houston Libraries, Special Collections
-    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/14 — citation verified, full text not retrieved."
+    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/14 — full text retrieved during independent review."
   - id: uh-pen-and-pixel-records-finding-aid
     type: website
     title: Pen and Pixel Graphics, Inc. Records finding aid
     locator: research/sources/houston-third-coast/uh-pen-and-pixel-records-finding-aid.md
     relationship: reference
     author: University of Houston Libraries, Special Collections
-    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/8 — citation verified, full text not retrieved."
+    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/8 — full text retrieved during independent review."
   - id: uh-cia-records-finding-aid
     type: website
     title: C.I.A. Records corporate entity record
     locator: research/sources/houston-third-coast/uh-cia-records-finding-aid.md
     relationship: reference
     author: University of Houston Libraries, Special Collections
-    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/agents/corporate_entities/301 — citation verified, full text not retrieved."
+    notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/agents/corporate_entities/301 — full text retrieved during independent review."
   - id: uh-stories-dj-screw
     type: website
     title: Keeping DJ Screw's Memory Alive
@@ -143,7 +143,8 @@ sources:
     locator: research/sources/houston-third-coast/bradley-wood-house-of-hits.md
     relationship: reference
     author: Andy Bradley and Roger Wood
-    notes: "University of Texas Press; ISBN 9780292763180. Registered as a research lead; publication year not independently verified in Phase 12C and no claim rests on it."
+    year: 2010
+    notes: "University of Texas Press; ISBN 9780292763180. Publisher distribution record retrieved during independent review; book interior not read and no specific claim rests on it."
   - id: wilkins-welcome-2-houston
     type: book
     title: "Welcome 2 Houston: Hip Hop Heritage in Hustle Town"
@@ -230,7 +231,7 @@ sources:
     locator: research/sources/houston-third-coast/texas-standard-june-27.md
     relationship: historical
     author: Texas Standard
-    notes: "Public radio history segment. External locator https://texasstandard.org/stories/dj-screw-june-27-freestyle-mixtape-houston-texas-music-history/ — citation verified, full text not retrieved."
+    notes: "Public radio history segment. External locator https://texasstandard.org/stories/dj-screw-june-27-freestyle-mixtape-houston-texas-music-history/ — full text retrieved during independent review."
   - id: houston-press-spc-anniversary
     type: article
     title: South Park Coalition Celebrates 25 Years
@@ -238,4 +239,4 @@ sources:
     relationship: historical
     author: Houston Press
     year: 2012
-    notes: "External locator https://www.houstonpress.com/music/south-park-coalition-celebrates-25-years-this-saturday-6510254/ — citation verified, full text not retrieved."
+    notes: "External locator https://www.houstonpress.com/music/south-park-coalition-celebrates-25-years-this-saturday-6510254/ — full text retrieved during independent review."

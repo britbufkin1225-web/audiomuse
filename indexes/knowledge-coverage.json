@@ -64,10 +64,11 @@
       },
       "sources": {
         "state": "covered",
-        "count": 3,
+        "count": 4,
         "ids": [
           "popula-screw-tape-records",
           "session-03-history-of-electronic-music",
+          "uh-dj-screw-collection-finding-aid",
           "uh-stories-dj-screw"
         ]
       },
@@ -1189,10 +1190,11 @@
       },
       "sources": {
         "state": "covered",
-        "count": 4,
+        "count": 5,
         "ids": [
           "popula-screw-tape-records",
           "tsha-dj-screw",
+          "uh-dj-screw-collection-finding-aid",
           "uh-stories-dj-screw",
           "walker-dj-screw-biography"
         ]
@@ -1872,7 +1874,7 @@
       "node_count": 4,
       "vocabulary_count": 4,
       "experiment_count": 0,
-      "source_count": 9
+      "source_count": 10
     },
     {
       "id": "rhythm-time",

@@ -85,11 +85,11 @@ This entry exists to record that Houston sustained self-released record economie
 same period. AudioMuse explicitly asserts no influence between punk tape practice and later Houston
 DJ practice; conceptual similarity is not evidence of lineage, and no retrieved source claims one.
 
-## 4. Rap infrastructure before the mature Screw practice, 1986-1992
+## 4. Rap infrastructure before the mature Screw practice, 1987-1992
 
-- **1986-1987** — K-Rino organizes the South Park Coalition around the South Park neighborhood; the
-  collective operates without radio airplay or major-label backing and marks twenty-five years in 2012.
-  `houston-press-spc-anniversary` — disputed on the founding year, reported on the independence
+- **1987** — K-Rino organizes the South Park Coalition around crews at Jones and Sterling high schools
+  in South Park; the collective operates without radio airplay or major-label backing and marks
+  twenty-five years in 2012. `houston-press-spc-anniversary` — reported from a participant retrospective
 - **Late 1980s** — Mike Dean enters Houston's music scene; by the early 1990s he is working extensively
   with Rap-A-Lot alongside N.O. Joe as engineer and producer at once, favoring played instrumentation
   over direct sampling and later adopting MPC hardware. `npr-microphone-check-mike-dean` — recollected
@@ -113,20 +113,20 @@ it, and the widely repeated year is not adopted on repetition alone.
 - **circa 1990-1992** — The mature slowed-and-chopped practice emerges. No first tape and no single
   invention date is asserted. `tsha-dj-screw`, `walker-dj-screw-biography` — approximate
 - **Nickname origin** — Two incompatible accounts circulate. `tsha-dj-screw` — disputed
-- **Practice** — Two copies of a record are spun, new rhythms are chopped in, local rappers freestyle
-  over the tracks, and the recording is slowed on tape. `walker-dj-screw-biography` — documented
-  (publisher record); the same combination of slowing and repetition of beats, words, and phrases is
-  stated by a University of Houston curator in `uh-news-dj-screw-exhibit` — documented
+- **Practice** — Two slowed copies of a record are switched with a crossfader to repeat beats, words,
+  and phrases into a master cassette; a four-track pitch control then slows the master further.
+  `uh-dj-screw-collection-finding-aid` — documented by the institutional finding aid
 - **Sales** — Tapes are made and sold from a house on Greenstone Street on the south side; more than
   three hundred original mixtapes are recorded. `uh-stories-dj-screw` — documented; reported daily
   volumes of ten to fifteen thousand copies are participant claims — recollected
-- **1996, June 27** — The June 27th freestyle session is recorded, described as marking a participant's
-  birthday. `texas-standard-june-27` — reported; the date is repeated independently across public
-  radio, magazine, and university-exhibit coverage whose full text could not be retrieved here
-- **1996 or 1998** — Screwed Up Records & Tapes begins. `tsha-dj-screw` places the store, label, and
-  business in Houston in 1996; widely circulated community accounts instead give a February 1998
-  storefront opening on Cullen Boulevard, which no source registered in this phase establishes —
-  disputed, with the 1998 version unverified
+- **1996, June 27** — The June 27th freestyle session is recorded for DeMo's birthday.
+  `texas-standard-june-27` — reported by a retrieved secondary public-radio history segment, not
+  verified against a primary session record
+- **1996 and 1998** — `tsha-dj-screw` places the store, label, and business in Houston in 1996; the
+  institutional `uh-dj-screw-collection-finding-aid` reports that Screwed Up Records & Tapes opened in
+  1998. These may describe business activity and a later storefront rather than incompatible events.
+  Neither retrieved source establishes February or a Cullen Boulevard address — documented as two
+  differently scoped claims, with the month and address unverified
 - **2000, November 16** — DJ Screw dies of a drug overdose. `tsha-dj-screw` — documented
 
 ## 6. The Screwed Up Click and 1998
@@ -195,16 +195,16 @@ circulation system — radio, retail CDs, national release — rather than by ha
 | --- | --- | --- |
 | Screw nickname | Screwing two records together (`tsha-dj-screw`) vs. defacing disliked records (widely repeated) | Both recorded as accounts; neither adopted |
 | Emergence of the technique | Various single dates asserted elsewhere | Recorded as approximately 1990-1992 |
-| Screwed Up Records & Tapes | 1996 business (`tsha-dj-screw`) vs. a February 1998 Cullen Boulevard storefront in unregistered community accounts | Both held; no date or address encoded, and the 1998 version marked unverified |
+| Screwed Up Records & Tapes | 1996 store/label/business (`tsha-dj-screw`) vs. a 1998 store opening (`uh-dj-screw-collection-finding-aid`) | Both retained as differently scoped institutional claims; February and Cullen Boulevard remain unverified |
 | June 27 | Culturally canonical date | Recorded as independently and repeatedly reported, not verified against a primary record |
-| South Park Coalition founding | 1986 vs. 1987 | Range recorded; neither chosen |
+| South Park Coalition founding | 1987 in the retrieved participant retrospective; no registered support for 1986 | 1987 reported; unsupported alternative removed |
 | Pen & Pixel founding | 1992 vs. 1993 (`complex-pen-and-pixel`) | Both recorded |
 | Pen & Pixel cover count | ~20,000 vs. 19,180 | Recorded as approximate |
 | Swishahouse founders | Watts and OG Ron C vs. those two plus G-Dash | Recorded as unresolved |
 | Swishahouse radio station | 97.5 in `black-enterprise-michael-watts` vs. 97.9 commonly reported | No frequency asserted |
 | Southwest Wholesale founding | 1976 widely reported | Not asserted; only the twenty-seven-year run to 2003 is stated |
 | Rap-A-Lot founding | Widely reported year | Not asserted; no retrieved source establishes it |
-| Screw tape duplication method | Not described by any retrieved source | Recorded as an open technical gap |
+| Screw tape production and duplication | Master production is described by the UH finding aid; copy duplication equipment, speed, stock, and workflow are not | Master workflow recorded; sales-copy duplication remains open |
 | Lyn Collins as a Houston figure | Proposed during review; sources place her upbringing in Abilene, Texas | Excluded from the Houston cartography; see below |
 
 ## Representation: who is and is not here

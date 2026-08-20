@@ -11,10 +11,11 @@ Nodes with source coverage: 43 of 43
 - `session-01-what-is-sound` — Session 1: What Is Sound?
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 
-### Cassette Duplication (`cassette-duplication`) — 3 sources
+### Cassette Duplication (`cassette-duplication`) — 4 sources
 
 - `popula-screw-tape-records` — The Screwtape Records
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
+- `uh-dj-screw-collection-finding-aid` — DJ Screw Collection finding aid
 - `uh-stories-dj-screw` — Keeping DJ Screw's Memory Alive
 
 ### Chopped and Screwed (`chopped-and-screwed`) — 4 sources
@@ -176,10 +177,11 @@ Nodes with source coverage: 43 of 43
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
 
-### Screw Tape (`screw-tape`) — 4 sources
+### Screw Tape (`screw-tape`) — 5 sources
 
 - `popula-screw-tape-records` — The Screwtape Records
 - `tsha-dj-screw` — Davis, Robert Earl, Jr. [DJ Screw], Handbook of Texas
+- `uh-dj-screw-collection-finding-aid` — DJ Screw Collection finding aid
 - `uh-stories-dj-screw` — Keeping DJ Screw's Memory Alive
 - `walker-dj-screw-biography` — DJ Screw: A Life in Slow Revolution
 
@@ -390,10 +392,12 @@ Nodes with source coverage: 43 of 43
 - `houston-musical-cartography` — Houston Musical Cartography
 - `houston-studio-infrastructure` — Houston Studio Infrastructure
 
-### DJ Screw Collection finding aid (`uh-dj-screw-collection-finding-aid`) — 2 nodes
+### DJ Screw Collection finding aid (`uh-dj-screw-collection-finding-aid`) — 4 nodes
 
+- `cassette-duplication` — Cassette Duplication
 - `dj-screw` — DJ Screw
 - `music-archiving` — Music Archiving
+- `screw-tape` — Screw Tape
 
 ### Houston Hip Hop Research Collection (`uh-houston-hip-hop-research-collection`) — 3 nodes
 

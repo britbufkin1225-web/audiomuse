@@ -22,7 +22,7 @@
 - **Nickname.** This entry derives the name from taking two records and "screwing" them together. That
   differs from the widely repeated account in which the name came from defacing disliked records.
   Phase 12C therefore records the nickname origin as unresolved between accounts.
-- **Screwed Up Records & Tapes.** This entry places the store, label, and business in Houston in 1996,
-  while widely circulated community accounts give a February 1998 storefront opening on Cullen
-  Boulevard that no registered source establishes. Phase 12C preserves the conflict and marks the
-  later version as unverified rather than encoding a date and address.
+- **Screwed Up Records & Tapes.** This entry places the store, label, and business in Houston in 1996.
+  The University of Houston finding aid reports a 1998 store opening, which may describe a later
+  storefront rather than the start of all business activity. Neither source establishes February or
+  a Cullen Boulevard address, so those details remain unverified.

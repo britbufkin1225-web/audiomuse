@@ -21,6 +21,7 @@ sources:
   - session-03-history-of-electronic-music
   - popula-screw-tape-records
   - uh-stories-dj-screw
+  - uh-dj-screw-collection-finding-aid
 experiments: []
 practical_applications:
   - reasoning about which copy of a recording is being heard
@@ -42,4 +43,4 @@ Labeling belongs to the same layer. A handwritten title, a catalog number, or a 
 
 Preservation is the long tail of the same facts. Magnetic tape is a decaying carrier played on increasingly rare machines, so a scene documented mainly on cassette is a scene whose primary evidence has a shelf life. That is one reason archival holdings of tapes and equipment, not only of recordings, are recorded in `music-archiving`.
 
-This node states no Screw-specific duplication method. No retrieved source in this phase describes the decks, dubbing speed, or tape stock used, so the general mechanics stand and the specific case is marked as an open question rather than filled in by analogy.
+The University of Houston finding aid describes Screw's master-production chain, including a master cassette and further four-track slowing, but it does not describe how sales copies were duplicated. This node therefore states no Screw-specific duplication deck, dubbing speed, tape stock, or copy-bank workflow; the general mechanics stand and the specific sales-copy case remains open.

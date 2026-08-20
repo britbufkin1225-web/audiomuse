@@ -4,15 +4,16 @@
 - Class: journalism (public radio history segment)
 - Publisher: Texas Standard / KUTX
 - Stable locator: https://texasstandard.org/stories/dj-screw-june-27-freestyle-mixtape-houston-texas-music-history/
-- Retrieval: citation verified, full text not retrieved (host refused automated retrieval)
+- Retrieval: full text retrieved during independent review
 
 ## Supports
 
 - That the June 27, 1996 freestyle session is treated as a documented event in Texas public radio's
   music history programming, alongside magazine and university-exhibit coverage of the same tape.
+- The report identifies the occasion as DeMo's birthday and names DeMo, Big Moe, Key-C, Yungstar,
+  Big Pokey, and Haircut Joe as participants.
 
 ## Uncertainty
 
-- Because the segment text was not retrieved, Phase 12C states the June 27 date as widely and
-  independently reported rather than as verified from a primary record, and attributes the birthday
-  occasion and participant list to reporting rather than to documentation.
+- The retrieved segment is secondary reporting, not a primary session record. Phase 12C therefore
+  retains `reported` status for the date, birthday occasion, and participant list.

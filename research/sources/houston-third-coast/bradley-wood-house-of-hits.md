@@ -6,7 +6,8 @@
 - Publisher: University of Texas Press
 - Identifier: ISBN 9780292763180 (as listed by the publisher's distribution record)
 - Stable locator: https://www.bibliovault.org/BV.book.epl?ISBN=9780292763180
-- Retrieval: citation verified, full text not retrieved
+- Publication date: April 2010
+- Retrieval: publisher distribution record retrieved during independent review; book interior not read
 
 ## Supports
 
@@ -15,6 +16,5 @@
 
 ## Does not settle
 
-- Any specific claim in this phase. The publication year was not independently confirmed during Phase
-  12C and is therefore not recorded in the registry. No node cites this source as evidence for a date,
-  a person, or a technical statement; it is registered as a research lead with a stable identifier.
+- Any specific historical or technical claim in this phase. No node cites this source as evidence for
+  a date, person, or technical statement; it remains a research lead with a stable identifier.

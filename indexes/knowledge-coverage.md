@@ -20,7 +20,7 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 | Node | Domain | Sessions | Sources | Vocabulary | Experiments | Completed runs | In | Out | Type diversity |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | `beatmatching` | dj-turntablism | 2 | 2 | 2 | 0 | 0 | 1 | 1 | 2 |
-| `cassette-duplication` | recording | 0 | 3 | 3 | 0 | 0 | 1 | 2 | 2 |
+| `cassette-duplication` | recording | 0 | 4 | 3 | 0 | 0 | 1 | 2 | 2 |
 | `chopped-and-screwed` | dj-turntablism | 0 | 4 | 3 | 0 | 0 | 9 | 1 | 5 |
 | `chopped-and-slowed` | dj-turntablism | 0 | 2 | 1 | 0 | 0 | 2 | 0 | 2 |
 | `chopping` | dj-turntablism | 0 | 3 | 5 | 0 | 0 | 0 | 3 | 2 |
@@ -47,7 +47,7 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 | `rhythm` | rhythm-time | 2 | 2 | 11 | 0 | 0 | 7 | 3 | 4 |
 | `sampling` | digital-audio | 3 | 4 | 5 | 0 | 0 | 9 | 4 | 6 |
 | `scratching` | dj-turntablism | 3 | 3 | 2 | 0 | 0 | 0 | 4 | 4 |
-| `screw-tape` | history-culture | 0 | 4 | 6 | 0 | 0 | 4 | 3 | 4 |
+| `screw-tape` | history-culture | 0 | 5 | 6 | 0 | 0 | 4 | 3 | 4 |
 | `screwed-up-click` | history-culture | 0 | 4 | 1 | 0 | 0 | 1 | 2 | 2 |
 | `sequencing` | rhythm-time | 2 | 2 | 2 | 0 | 0 | 2 | 2 | 3 |
 | `slowed-playback` | dj-turntablism | 0 | 4 | 3 | 0 | 0 | 0 | 4 | 2 |
@@ -77,7 +77,7 @@ Coverage measures explicit repository relationships. It is not correctness, qual
 | `mixing-mastering` | 0 | 0 | 0 | 0 |
 | `music-theory` | 0 | 0 | 0 | 0 |
 | `psychoacoustics` | 3 | 9 | 2 | 3 |
-| `recording` | 4 | 4 | 0 | 9 |
+| `recording` | 4 | 4 | 0 | 10 |
 | `rhythm-time` | 3 | 10 | 0 | 3 |
 | `sound-design` | 0 | 0 | 0 | 0 |
 | `spatial-audio` | 0 | 0 | 0 | 0 |

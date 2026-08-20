@@ -4,7 +4,7 @@
 - Class: institutional archive
 - Institution: University of Houston Libraries, Special Collections
 - Stable locator: https://libraries.uh.edu/special-collections/houston-hip-hop
-- Retrieval: citation verified, full text not retrieved (host refused automated retrieval)
+- Retrieval: full text retrieved during independent review
 
 ## Supports
 
