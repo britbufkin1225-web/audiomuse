@@ -80,7 +80,9 @@ authoritative_evidence_classes:
 # Priority and origin terms. A statement using one of these as a whole word asserts exclusivity, so
 # the record must say who credits it rather than stating it in the AudioMuse voice. Ordinary verbs
 # such as "created" are deliberately excluded: they are too common in explanatory prose to carry the
-# exclusivity meaning this guard exists to catch. See docs/claim-provenance-model.md.
+# exclusivity meaning this guard exists to catch. The bounded "created the ..." phrases below cover
+# sensitive creative-origin formulations without treating every use of created as a priority claim.
+# See docs/claim-provenance-model.md.
 origin_claim_terms:
   - first
   - earliest
@@ -91,6 +93,10 @@ origin_claim_terms:
   - pioneered
   - father of
   - birthplace of
+  - created the style
+  - created the technique
+  - created the sound
+  - created the scene
 
 required:
   - id

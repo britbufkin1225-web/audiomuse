@@ -170,7 +170,7 @@ Validation is semantic rather than structural. `tools/validate-claims.ps1` rejec
 confidence, unknown confidence beside supporting evidence, settled-fact types that are disputed,
 ungrounded synthesis, attributed claims with no attribution, dispute statuses that contradict the
 cited evidence, priority language stated in AudioMuse's own voice, derivation cycles, and any
-unresolved reference. `tools/test-claim-validator.ps1` runs fifty adversarial cases over a baseline
+unresolved reference. `tools/test-claim-validator.ps1` runs fifty-four adversarial cases over a baseline
 that asserts the committed fixtures pass, and each case declares the message it must fail with. The
 generated `claims/index.md` is reconciled line by line against canonical records before it is
 byte-compared against a fresh build.

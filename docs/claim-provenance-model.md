@@ -134,14 +134,14 @@ Together these express the cases Phase 12C had to write out in sentences: source
 
 ## 7. First, earliest, invented: origin claims
 
-Priority language asserts exclusivity, and exclusivity is almost never what the evidence supports. `schemas/claim.schema.yaml` declares a bounded list of origin terms — `first`, `earliest`, `invented`, `inventor`, `originated`, `originator`, `pioneered`, `father of`, `birthplace of` — and the validator enforces a rule on any statement containing one as a whole word:
+Priority language asserts exclusivity, and exclusivity is almost never what the evidence supports. `schemas/claim.schema.yaml` declares a bounded list of origin terms — `first`, `earliest`, `invented`, `inventor`, `originated`, `originator`, `pioneered`, `father of`, `birthplace of`, plus the contextual phrases `created the style`, `created the technique`, `created the sound`, and `created the scene` — and the validator enforces a rule on any statement containing one as a whole word:
 
 - it must be typed `historical_claim`, `attributed_claim`, or `oral_history` — never `established_fact`, `technical_fact`, `interpretation`, or `audiomuse_synthesis`; and
 - it must carry at least one `attribution` entry naming who credits it.
 
 AudioMuse may record a priority claim. It may not make one in its own voice without saying whose claim it is.
 
-`created` is deliberately **not** on the list. It appears constantly in ordinary explanatory prose ("created a tape economy") and adding it would fire the guard on sentences that assert no priority at all, which trains authors to work around the rule instead of heeding it.
+Bare `created` is deliberately **not** on the list. It appears constantly in ordinary explanatory prose ("created a tape economy") and adding it would fire the guard on sentences that assert no priority at all, which trains authors to work around the rule instead of heeding it. The four bounded `created the ...` phrases catch direct creative-origin claims while leaving ordinary uses alone.
 
 Where the evidence does not support exclusivity, the preferred formulations remain the ones Phase 12C used: *widely credited with*, *documented as an early example*, *one of the earliest documented examples*, *a central pioneering figure*, *commonly attributed to*. `kcoh-first-black-owned-texas-station-attribution` is the worked example: a single journalism source carries the superlative, so the claim records that the station *is described as* the first, attributes the description, grades it `low`, marks it `unresolved`, and names the record that would settle it.
 
@@ -218,7 +218,7 @@ There is deliberately **no requirement** that every sentence acquire claim metad
 
 Index reconciliation is independent: every expected line is re-derived from canonical records rather than by re-running the builder, and only then is the committed file byte-compared against a fresh build. A builder that formats every run the same wrong way is caught by the first check; a stale commit is caught by the second.
 
-`tools/test-claim-validator.ps1` runs fifty adversarial cases, each of which declares the message it must fail with, so a fixture rejected for an unrelated reason is reported as a broken test rather than as a pass. It also asserts up front that the committed fixtures validate, since otherwise every negative below it would prove nothing — fifty-one checks in all. Invalid fixtures exist only inside a temporary directory and never in canonical content paths.
+`tools/test-claim-validator.ps1` runs fifty-four adversarial cases, each of which declares the message it must fail with, so a fixture rejected for an unrelated reason is reported as a broken test rather than as a pass. It also asserts up front that the committed fixtures validate, since otherwise every negative below it would prove nothing — fifty-five checks in all. Invalid fixtures exist only inside a temporary directory and never in canonical content paths.
 
 ## 12. Representative fixtures
 

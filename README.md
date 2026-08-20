@@ -40,7 +40,7 @@ AudioMuse is an expandable, repository-first knowledge atlas for acoustics, musi
 - Session 2 and 3 vocabulary bridges into rhythm, sequencing, synthesis, and MIDI (Phase 12A, Target 1)
 - A six-node DJ and turntablism domain connecting recorded playback, mechanical vibration, musical time, sampling, and digital vinyl systems (Phase 12B, Target 2)
 - A source-backed Houston and Third Coast foundation — twenty-two nodes, twenty-eight registered external sources, and a chronology with per-claim confidence markers and a dispute register (Phase 12C)
-- A validated claim-provenance architecture separating claim type, evidence strength, evidence relationship, and dispute status, with ten representative records and fifty adversarial validator tests (Phase 12D)
+- A validated claim-provenance architecture separating claim type, evidence strength, evidence relationship, and dispute status, with ten representative records and fifty-four adversarial validator tests (Phase 12D)
 
 See `docs/claim-provenance-model.md` for the claim taxonomy, confidence semantics, and annotation migration plan, `docs/houston-musical-cartography.md` for the sourced Houston chronology, `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
 

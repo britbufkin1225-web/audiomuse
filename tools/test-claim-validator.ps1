@@ -87,6 +87,15 @@ try {
     Expect-Failure 'unresolved derived_from claim' { Replace-Text $houston '{"kind": "claim", "ref": "screw-master-tape-method"}' '{"kind": "claim", "ref": "screw-master-tape-methods"}'; Rebuild } 'Unresolved derived_from claim for .*: screw-master-tape-methods'
     Expect-Failure 'claim with no appearance site' { Replace-Text $technique '{"kind": "node", "ref": "time-stretching"}]' ']'; Rebuild } 'records no appearance site'
     Expect-Failure 'self-derivation' { Replace-Text $houston '{"kind": "claim", "ref": "screw-master-tape-method"}, ' '{"kind": "claim", "ref": "screw-slowing-alters-vocal-timbre"}, '; Rebuild } 'Claim derives from itself'
+    Expect-Failure 'two-claim derivation cycle' {
+        Replace-Text $technique "attribution: []`nderived_from: []" "attribution: []`nderived_from: [{`"kind`": `"claim`", `"ref`": `"phase-vocoder-attributed-to-flanagan-and-golden`"}]"
+        Replace-Text $technique "attribution: [{`"actor`": `"Flanagan and Golden`", `"source_id`": `"smith-spectral-audio-signal-processing`"}]`nderived_from: []" "attribution: [{`"actor`": `"Flanagan and Golden`", `"source_id`": `"smith-spectral-audio-signal-processing`"}]`nderived_from: [{`"kind`": `"claim`", `"ref`": `"playback-rate-couples-time-and-pitch`"}]"
+        Rebuild } 'Claim derivation cycle detected through:'
+    Expect-Failure 'three-claim derivation cycle' {
+        Replace-Text $technique "attribution: []`nderived_from: []" "attribution: []`nderived_from: [{`"kind`": `"claim`", `"ref`": `"phase-vocoder-attributed-to-flanagan-and-golden`"}]"
+        Replace-Text $technique "attribution: [{`"actor`": `"Flanagan and Golden`", `"source_id`": `"smith-spectral-audio-signal-processing`"}]`nderived_from: []" "attribution: [{`"actor`": `"Flanagan and Golden`", `"source_id`": `"smith-spectral-audio-signal-processing`"}]`nderived_from: [{`"kind`": `"claim`", `"ref`": `"screw-master-tape-method`"}]"
+        Replace-Text $houston "derived_from: []`nappears_in: [{`"kind`": `"node`", `"ref`": `"screw-tape`"}" "derived_from: [{`"kind`": `"claim`", `"ref`": `"playback-rate-couples-time-and-pitch`"}]`nappears_in: [{`"kind`": `"node`", `"ref`": `"screw-tape`"}"
+        Rebuild } 'Claim derivation cycle detected through:'
 
     # --- Evidence and confidence semantics ----------------------------------------------------
     Expect-Failure 'high confidence on one weak source' {
@@ -101,6 +110,7 @@ try {
     Expect-Failure 'settled fact left undisputed while contradicted' { Replace-Text $houston '"relation": "qualified_by", "source_id": "tsha-fat-pat", "note": "Records that the exact address differs' '"relation": "contradicted_by", "source_id": "uh-dj-screw-collection-finding-aid", "note": "Records that the exact address differs'; Rebuild } 'marked undisputed while citing contradicting evidence'
     Expect-Failure 'attributed_claim without attribution' { Replace-Text $technique 'attribution: [{"actor": "Flanagan and Golden", "source_id": "smith-spectral-audio-signal-processing"}]' 'attribution: []'; Rebuild } 'is typed attributed_claim without an attribution entry'
     Expect-Failure 'oral_history without attribution' { Replace-Text $houston 'attribution: [{"actor": "Mike Dean", "source_id": "npr-microphone-check-mike-dean"}]' 'attribution: []'; Rebuild } 'is typed oral_history without an attribution entry'
+    Expect-Failure 'experiment observation without a run' { Replace-Text $houston 'claim_type: "hypothesis"' 'claim_type: "experiment_observation"'; Rebuild } 'is not derived from an experiment run'
     Expect-Failure 'synthesis with no supporting source' {
         Replace-Text $houston '[{"relation": "supported_by", "source_id": "smith-spectral-audio-signal-processing", "note": "Supports the decoupling contrast that the second half of the statement depends on."}, {"relation": "supported_by", "source_id": "uh-dj-screw-collection-finding-aid", "note": "Establishes that the method applied sustained mechanical slowing, first between two copies and then to the master."}]' '[{"relation": "qualified_by", "source_id": "smith-spectral-audio-signal-processing", "note": "Supports the decoupling contrast that the second half of the statement depends on."}]'
         Rebuild } 'cites no supporting source'
@@ -116,6 +126,11 @@ try {
     Expect-Failure 'origin claim typed as a settled fact' {
         Replace-Text $houston 'statement: "Patrick Lamont Hawkins, known as Fat Pat and one of the original members of the Screwed Up Click, was fatally shot in Houston on February 3, 1998."' 'statement: "Patrick Lamont Hawkins, known as Fat Pat, was the first member of the Screwed Up Click to release a solo album."'
         Rebuild } "uses the origin term 'first' but is typed established_fact"
+    Expect-Failure 'created-the-style origin claim with no attribution' {
+        Replace-Text $houston 'statement: "KCOH is described as the first Black-owned radio station in Texas following its purchase in 1953 by a group under Robert C. Meeker."' 'statement: "A Houston artist created the style in 1995."'
+        Replace-Text $houston 'claim_type: "attributed_claim"' 'claim_type: "historical_claim"'
+        Replace-Text $houston 'attribution: [{"actor": "Black Enterprise", "source_id": "black-enterprise-kcoh"}]' 'attribution: []'
+        Rebuild } "uses the origin term 'created the style' without naming who credits it"
     Expect-Failure 'source cited by a claim without a declared evidence class' {
         Replace-Text $technique '"source_id": "session-01-what-is-sound"' '"source_id": "session-02-what-is-music"'
         Rebuild } 'does not declare evidence_class: session-02-what-is-music'
