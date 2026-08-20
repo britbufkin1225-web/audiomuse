@@ -6,6 +6,8 @@ sources:
     title: "Session 1: What Is Sound?"
     locator: sessions/session-01-what-is-sound/session-01-what-is-sound.txt
     relationship: origin
+    evidence_class: session_record
+    retrieval: full_text
   - id: session-02-what-is-music
     type: session
     title: "AudioMuse — Session 2: What Is Music?"
@@ -39,6 +41,8 @@ sources:
     title: DJ Screw Collection finding aid
     locator: research/sources/houston-third-coast/uh-dj-screw-collection-finding-aid.md
     relationship: reference
+    evidence_class: institutional_archive
+    retrieval: full_text
     author: University of Houston Libraries, Special Collections
     notes: "Institutional archive. External locator https://findingaids.lib.uh.edu/repositories/2/resources/14 — full text retrieved during independent review."
   - id: uh-pen-and-pixel-records-finding-aid
@@ -88,6 +92,8 @@ sources:
     title: "Davis, Robert Earl, Jr. [DJ Screw], Handbook of Texas"
     locator: research/sources/houston-third-coast/tsha-dj-screw.md
     relationship: historical
+    evidence_class: reference_entry
+    retrieval: full_text
     author: Jesse J. Esparza
     year: 2006
     notes: "Texas State Historical Association; revised 2020. External locator https://www.tshaonline.org/handbook/entries/davis-robert-earl-jr-dj-screw — full text retrieved."
@@ -96,6 +102,8 @@ sources:
     title: "Hawkins, Patrick Lamont [Fat Pat], Handbook of Texas"
     locator: research/sources/houston-third-coast/tsha-fat-pat.md
     relationship: historical
+    evidence_class: reference_entry
+    retrieval: full_text
     author: Carolyn M. Davis
     year: 2013
     notes: "Texas State Historical Association; revised 2017. External locator https://www.tshaonline.org/handbook/entries/hawkins-patrick-lamont-fat-pat — full text retrieved."
@@ -112,6 +120,8 @@ sources:
     title: Duke and Peacock Records, Handbook of Texas
     locator: research/sources/houston-third-coast/tsha-duke-peacock-records.md
     relationship: historical
+    evidence_class: reference_entry
+    retrieval: full_text
     author: Martin Donell Kohout
     year: 2013
     notes: "Texas State Historical Association; revised 2017. External locator https://www.tshaonline.org/handbook/entries/duke-peacock-records — full text retrieved."
@@ -128,6 +138,8 @@ sources:
     title: SugarHill Recording Studios, Handbook of Texas
     locator: research/sources/houston-third-coast/tsha-sugarhill-recording-studios.md
     relationship: historical
+    evidence_class: reference_entry
+    retrieval: full_text
     notes: "Texas State Historical Association; no byline presented in the retrieved text. External locator https://www.tshaonline.org/handbook/entries/sugarhill-recording-studios — full text retrieved."
   - id: walker-dj-screw-biography
     type: book
@@ -166,6 +178,8 @@ sources:
     title: Spectral Audio Signal Processing
     locator: research/sources/houston-third-coast/smith-spectral-audio-signal-processing.md
     relationship: reference
+    evidence_class: technical_reference
+    retrieval: partial_text
     author: Julius O. Smith III
     year: 2011
     notes: "W3K Publishing; Stanford CCRMA; ISBN 978-0-9745607-3-1. Technical citation for phase vocoder time-scale modification. Phase vocoder page retrieved in full."
@@ -174,6 +188,8 @@ sources:
     title: Mike Dean on Working with Selena, Scarface and Kanye
     locator: research/sources/houston-third-coast/npr-microphone-check-mike-dean.md
     relationship: historical
+    evidence_class: participant_account
+    retrieval: full_text
     author: Ali Shaheed Muhammad and Frannie Kelley
     year: 2013
     notes: "NPR Microphone Check, carried by WUNC. Participant testimony. External locator https://www.wunc.org/npr-music/2013-06-27/mike-dean-on-working-with-selena-scarface-and-kanye — full text retrieved."
@@ -182,6 +198,8 @@ sources:
     title: Popular Rap Distributor Southwest to Close Doors
     locator: research/sources/houston-third-coast/allhiphop-southwest-wholesale-closing.md
     relationship: historical
+    evidence_class: journalism
+    retrieval: full_text
     author: AllHipHop
     year: 2003
     notes: "Contemporary trade report on the distributor's collapse. External locator https://allhiphop.com/news/popular-rap-distributor-southwest-to-close-doors/ — full text retrieved."
@@ -190,6 +208,8 @@ sources:
     title: The Screwtape Records
     locator: research/sources/houston-third-coast/popula-screw-tape-records.md
     relationship: supporting
+    evidence_class: journalism
+    retrieval: full_text
     author: Chris O'Connell
     year: 2019
     notes: "Reported visit to Screwed Up Records and Tapes; catalog and format practice. External locator https://popula.com/2019/02/19/the-screwtape-records/ — full text retrieved."
@@ -222,6 +242,8 @@ sources:
     title: End of an Era for KCOH, Historic Black Owned Radio Station
     locator: research/sources/houston-third-coast/black-enterprise-kcoh.md
     relationship: historical
+    evidence_class: journalism
+    retrieval: full_text
     author: C. Daniel Baker
     year: 2012
     notes: "External locator https://www.blackenterprise.com/kcoh-historic-black-radio-station/ — full text retrieved."

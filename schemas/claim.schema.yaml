@@ -1,0 +1,248 @@
+schema: audiomuse-claim
+version: 1
+description: >
+  Canonical contract for AudioMuse claim records. A claim record answers four separate questions about
+  one statement: what it asserts, what kind of statement it is, what repository evidence stands behind
+  it, and how strong that evidence is. The four are stored independently and are never collapsed into
+  a single score.
+authority: canonical
+
+# --------------------------------------------------------------------------------------------------
+# Bounded vocabularies.
+#
+# Each list below is the single canonical definition of its enum. tools/validate-claims.ps1 reads
+# these lists instead of hard-coding values, so a vocabulary change is a schema change and cannot be
+# made silently inside a validator. Comparison is exact and case-sensitive, matching the Phase 9
+# canonical identity rule in docs/knowledge-model.md.
+# --------------------------------------------------------------------------------------------------
+
+# What kind of statement this is. Independent of how well it is evidenced.
+claim_types:
+  - established_fact
+  - technical_fact
+  - historical_claim
+  - attributed_claim
+  - oral_history
+  - interpretation
+  - audiomuse_synthesis
+  - hypothesis
+  - experiment_observation
+
+# How strongly repository evidence supports the statement. Not a probability, not a truth score.
+confidence_levels:
+  - high
+  - moderate
+  - low
+  - unknown
+
+# Whether registered sources conflict. Orthogonal to claim_type and to confidence.
+dispute_statuses:
+  - undisputed
+  - disputed
+  - unresolved
+
+# How precisely the statement is placed in time, where it is placed in time at all.
+temporal_precisions:
+  - exact_date
+  - month
+  - year
+  - range
+  - era
+  - not_temporal
+
+# How a registered source stands to the statement. supported_by is deliberately narrow: it means the
+# source materially supports the claim as written, not that the source mentions the topic.
+evidence_relations:
+  - supported_by
+  - contradicted_by
+  - qualified_by
+
+# What an AudioMuse-derived claim was built from. Registered sources belong in evidence, never here.
+derived_from_kinds:
+  - claim
+  - node
+  - experiment_run
+
+# Where in the repository the statement is actually made. Generated projections are not valid sites.
+appears_in_kinds:
+  - node
+  - vocabulary
+  - session
+  - document
+
+# Evidence classes strong enough to carry confidence high on a single source, provided the cited text
+# was retrieved. This mirrors the Phase 12C documented marker in docs/houston-musical-cartography.md.
+authoritative_evidence_classes:
+  - institutional_archive
+  - reference_entry
+  - technical_reference
+
+# Priority and origin terms. A statement using one of these as a whole word asserts exclusivity, so
+# the record must say who credits it rather than stating it in the AudioMuse voice. Ordinary verbs
+# such as "created" are deliberately excluded: they are too common in explanatory prose to carry the
+# exclusivity meaning this guard exists to catch. See docs/claim-provenance-model.md.
+origin_claim_terms:
+  - first
+  - earliest
+  - invented
+  - inventor
+  - originated
+  - originator
+  - pioneered
+  - father of
+  - birthplace of
+
+required:
+  - id
+  - statement
+  - claim_type
+  - confidence
+  - confidence_basis
+  - dispute_status
+  - temporal_precision
+  - evidence
+  - attribution
+  - derived_from
+  - appears_in
+  - open_questions
+
+properties:
+  id:
+    type: string
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    description: Stable identifier, unique across every file in claims/records/.
+  statement:
+    type: string
+    description: >
+      The claim in the AudioMuse voice, as one self-contained sentence that can be true or false on
+      its own. It must not require the surrounding node prose to be intelligible.
+  claim_type:
+    type: string
+    description: One value from claim_types.
+  confidence:
+    type: string
+    description: One value from confidence_levels. Describes the evidence, not model certainty.
+  confidence_basis:
+    type: string
+    description: >
+      Why this confidence level and not the next one up or down, in terms of the cited evidence. It
+      must not restate the claim.
+  dispute_status:
+    type: string
+    description: One value from dispute_statuses.
+  temporal_precision:
+    type: string
+    description: One value from temporal_precisions.
+  evidence:
+    type: array
+    items:
+      type: object
+      required: [relation, source_id, note]
+      properties:
+        relation:
+          type: string
+          description: One value from evidence_relations.
+        source_id:
+          type: string
+          description: Registered ID from sources/source-registry.yaml.
+        note:
+          type: string
+          description: What this source does for this claim specifically.
+      additional_properties: false
+  attribution:
+    type: array
+    items:
+      type: object
+      required: [actor, source_id]
+      properties:
+        actor:
+          type: string
+          description: The person, organization, or publication the statement is credited to.
+        source_id:
+          type: string
+          description: The registered source that records the attribution.
+      additional_properties: false
+  derived_from:
+    type: array
+    items:
+      type: object
+      required: [kind, ref]
+      properties:
+        kind:
+          type: string
+          description: One value from derived_from_kinds.
+        ref:
+          type: string
+          description: Claim ID, node ID, or experiment-run ID, resolved by kind.
+      additional_properties: false
+  appears_in:
+    type: array
+    items:
+      type: object
+      required: [kind, ref]
+      properties:
+        kind:
+          type: string
+          description: One value from appears_in_kinds.
+        ref:
+          type: string
+          description: >
+            Node ID, vocabulary entry ID, registered session source ID, or repository-relative
+            document path, resolved by kind.
+      additional_properties: false
+    description: At least one entry. A claim that appears nowhere in the repository is not a claim.
+  open_questions:
+    type: array
+    items: { type: string }
+    description: What would have to be found to raise the confidence or settle the dispute.
+additional_properties: false
+
+# --------------------------------------------------------------------------------------------------
+# Semantic rules enforced by tools/validate-claims.ps1. These are contract, not style guidance.
+# --------------------------------------------------------------------------------------------------
+rules:
+  - id: confidence-high-needs-real-support
+    statement: >
+      confidence high requires either two distinct supported_by sources or one supported_by source
+      whose registered evidence_class is in authoritative_evidence_classes and whose retrieval is not
+      citation_only.
+  - id: confidence-needs-evidence
+    statement: confidence moderate or low requires at least one evidence entry.
+  - id: confidence-unknown-has-no-support
+    statement: >
+      confidence unknown requires zero supported_by entries. A claim with support is at least low.
+  - id: settled-types-are-undisputed
+    statement: >
+      established_fact and technical_fact require dispute_status undisputed and confidence high or
+      moderate.
+  - id: attribution-required
+    statement: attributed_claim and oral_history require at least one attribution entry.
+  - id: synthesis-must-be-grounded
+    statement: >
+      audiomuse_synthesis requires at least one supported_by source and at least two grounding items,
+      counting supported_by sources and derived_from references together.
+  - id: hypothesis-is-not-high
+    statement: >
+      hypothesis may not carry confidence high and must cite at least one evidence or derived_from
+      entry.
+  - id: observation-needs-a-run
+    statement: experiment_observation requires at least one derived_from entry of kind experiment_run.
+  - id: dispute-status-matches-evidence
+    statement: >
+      undisputed requires zero contradicted_by entries; disputed requires at least one; unresolved
+      requires at least one open question and forbids confidence high.
+  - id: origin-claims-name-their-source
+    statement: >
+      A statement containing an origin_claim_terms word must be typed historical_claim,
+      attributed_claim, or oral_history and must carry at least one attribution entry.
+  - id: evidence-sources-declare-their-class
+    statement: >
+      Every source cited in evidence or attribution must declare evidence_class and retrieval in
+      sources/source-registry.yaml.
+  - id: references-resolve
+    statement: >
+      Every source, claim, node, vocabulary, session, experiment-run, and document reference must
+      resolve against canonical repository records. Document references may not point into indexes/
+      or at any generated projection.
+  - id: derivation-is-acyclic
+    statement: A claim may not derive from itself directly or through a chain of claim derivations.
