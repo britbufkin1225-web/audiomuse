@@ -131,9 +131,12 @@ try {
         Replace-Text $houston 'claim_type: "attributed_claim"' 'claim_type: "historical_claim"'
         Replace-Text $houston 'attribution: [{"actor": "Black Enterprise", "source_id": "black-enterprise-kcoh"}]' 'attribution: []'
         Rebuild } "uses the origin term 'created the style' without naming who credits it"
+    # The swapped-in source must be one the registry has not annotated. Phase 12E annotated
+    # session-02-what-is-music because claim records began citing it, which retired the previous
+    # choice; uh-stories-dj-screw is registered, uncited by any claim, and therefore unannotated.
     Expect-Failure 'source cited by a claim without a declared evidence class' {
-        Replace-Text $technique '"source_id": "session-01-what-is-sound"' '"source_id": "session-02-what-is-music"'
-        Rebuild } 'does not declare evidence_class: session-02-what-is-music'
+        Replace-Text $technique '"source_id": "session-01-what-is-sound"' '"source_id": "uh-stories-dj-screw"'
+        Rebuild } 'does not declare evidence_class: uh-stories-dj-screw'
 
     # --- Generated index reconciliation -------------------------------------------------------
     Expect-Failure 'invented index entry' { [IO.File]::AppendAllText($tempIndex, '- `invented-claim`' + "`n", [Text.UTF8Encoding]::new($false)) } 'Claim index lists an unknown claim: invented-claim'

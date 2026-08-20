@@ -68,6 +68,32 @@ relationship. `schemas/claim.schema.yaml` holds the contract and every bounded v
 migration plan. Run `pwsh -NoProfile -File tools/validate-claims.ps1` after changing claims, and
 `pwsh -NoProfile -File tools/test-claim-validator.ps1` after changing the validator.
 
+## Mechanism nodes and layered explanation
+
+Phase 12E introduced a third node shape alongside concept nodes and historical nodes: mechanism nodes,
+which describe a step in a causal or perceptual chain rather than a concept a session explored or an
+entity that existed. `auditory-transduction`, `roughness`, `predictive-processing-music`, `gating`, and
+`temporal-discontinuity` are all of this kind. They obey the same schema and relationship vocabulary
+and differ in three declared ways.
+
+First, they carry an explicit layer. A mechanism node states which level of the stack in
+`docs/affective-mechanism-stack.md` it belongs to, and a statement may be made at one layer at a time.
+Moving up a layer — from a measurable signal property to a perceptual tendency, or from a perceptual
+tendency to an affective response — requires either a source or an explicit label saying AudioMuse is
+inferring. This is the discipline that keeps a fact about modulation rate from becoming a claim about
+sadness.
+
+Second, an unfilled layer is recorded rather than filled. `auditory-pathway` and `perceived-space` are
+`seed` nodes because the research pass retrieved no authoritative source for the material they would
+otherwise assert. A seed node that says what is missing is preferable to a `foundation` node built from
+plausible sentences, and the coverage view reporting it as thin is the correct signal rather than a
+defect to be tidied away.
+
+Third, mechanism nodes lean on the claim layer more heavily than concept nodes do. A mechanism is a
+statement about how something works, which is exactly the externally checkable kind of statement
+`docs/claim-provenance-model.md` exists for, and proposals that a mechanism extends to untested
+material are typed `hypothesis` rather than written as prose hedges.
+
 ## Sources
 
 Sources provide provenance and evidence. They answer: "Where did this knowledge come from?" Nodes reference stable source-registry IDs; the registry records human-readable titles and repository-relative locators. Provenance is curated explicitly, not reconstructed automatically.

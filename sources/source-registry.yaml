@@ -13,11 +13,15 @@ sources:
     title: "AudioMuse — Session 2: What Is Music?"
     locator: sessions/session-02-what-is-music/session-02-what-is-music.txt
     relationship: origin
+    evidence_class: session_record
+    retrieval: full_text
   - id: session-03-history-of-electronic-music
     type: session
     title: "AudioMuse — History of Electronic Music Timeline"
     locator: sessions/session-03-history-of-electronic-music/session-03-history-of-electronic-music.txt
     relationship: historical
+    evidence_class: session_record
+    retrieval: full_text
   - id: session-01-vocabulary-atlas
     type: other
     title: "Audio Musings Vocabulary Atlas — Session 1: What Is Sound?"
@@ -262,3 +266,181 @@ sources:
     author: Houston Press
     year: 2012
     notes: "External locator https://www.houstonpress.com/music/south-park-coalition-celebrates-25-years-this-saturday-6510254/ — full text retrieved during independent review."
+  - id: zatorre-salimpoor-perception-to-pleasure
+    type: paper
+    title: "From perception to pleasure: music and its neural substrates"
+    locator: research/sources/affective-psychoacoustics/zatorre-salimpoor-perception-to-pleasure.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Robert J. Zatorre and Valorie N. Salimpoor
+    year: 2013
+    notes: "Peer-reviewed review, PNAS 110 Suppl. 2, 10430-10437. External locator https://pmc.ncbi.nlm.nih.gov/articles/PMC3690607/ - full text retrieved."
+  - id: mcpherson-amazonian-interval-fusion
+    type: paper
+    title: Perceptual fusion of musical notes by native Amazonians suggests universal representations of musical intervals
+    locator: research/sources/affective-psychoacoustics/mcpherson-amazonian-interval-fusion.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Malinda J. McPherson and colleagues
+    year: 2020
+    notes: "Peer-reviewed primary research, Nature Communications 11, 2786. External locator https://pmc.ncbi.nlm.nih.gov/articles/PMC7270137/ - full text retrieved."
+  - id: juslin-brecvema-unified-theory
+    type: paper
+    title: "From everyday emotions to aesthetic emotions: towards a unified theory of musical emotions"
+    locator: research/sources/affective-psychoacoustics/juslin-brecvema-unified-theory.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Patrik N. Juslin
+    year: 2013
+    notes: "Peer-reviewed review with open commentary, Physics of Life Reviews 10, 235-266. Source of the BRECVEMA mechanism framework. Full text retrieved."
+  - id: witek-syncopation-groove-pleasure
+    type: paper
+    title: "Syncopation, body-movement and pleasure in groove music"
+    locator: research/sources/affective-psychoacoustics/witek-syncopation-groove-pleasure.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Maria A. G. Witek and colleagues
+    year: 2014
+    notes: "Peer-reviewed primary research, PLOS ONE 9(4) e94446. External locator https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0094446 - full text retrieved."
+  - id: pearce-statistical-learning-enculturation
+    type: paper
+    title: "Statistical learning and probabilistic prediction in music cognition: mechanisms of stylistic enculturation"
+    locator: research/sources/affective-psychoacoustics/pearce-statistical-learning-enculturation.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Marcus T. Pearce
+    year: 2018
+    notes: "Peer-reviewed review, Annals of the New York Academy of Sciences 1423, 378-395. External locator https://pmc.ncbi.nlm.nih.gov/articles/PMC6849749/ - full text retrieved."
+  - id: nidcd-how-do-we-hear
+    type: website
+    title: How Do We Hear?
+    locator: research/sources/affective-psychoacoustics/nidcd-how-do-we-hear.md
+    relationship: reference
+    evidence_class: institutional_archive
+    retrieval: full_text
+    author: National Institute on Deafness and Other Communication Disorders
+    year: 2022
+    notes: "US National Institutes of Health reference page. External locator https://www.nidcd.nih.gov/health/how-do-we-hear - full text retrieved."
+  - id: purves-neuroscience-auditory-system
+    type: book
+    title: "Neuroscience, 2nd edition - auditory system sections"
+    locator: research/sources/affective-psychoacoustics/purves-neuroscience-auditory-system.md
+    relationship: reference
+    evidence_class: technical_reference
+    retrieval: partial_text
+    author: Dale Purves and colleagues, editors
+    year: 2001
+    notes: "University textbook hosted open access by the NCBI Bookshelf. Two sections retrieved in full: NBK10867 on hair cell transduction and NBK11105 on tuning and timing in the auditory nerve."
+  - id: weineck-neural-synchronization-spectral-flux
+    type: paper
+    title: Neural synchronization is strongest to the spectral flux of slow music and depends on familiarity and beat salience
+    locator: research/sources/affective-psychoacoustics/weineck-neural-synchronization-spectral-flux.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Kristin Weineck, Olivia Xin Wen and Molly J. Henry
+    year: 2022
+    notes: "Peer-reviewed primary research, eLife 11 e75515. External locator https://elifesciences.org/articles/75515 - full text retrieved."
+  - id: deutsch-speech-to-song-illusion
+    type: paper
+    title: Illusory transformation from speech to song
+    locator: research/sources/affective-psychoacoustics/deutsch-speech-to-song-illusion.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Diana Deutsch, Trevor Henthorn and Rachael Lapidis
+    year: 2011
+    notes: "Peer-reviewed primary research, JASA 129(4) 2245-2252. External locator https://deutsch.ucsd.edu/pdf/JASA-2011_129_2245-2252.pdf - full text retrieved."
+  - id: mauss-robinson-measures-of-emotion
+    type: paper
+    title: "Measures of emotion: a review"
+    locator: research/sources/affective-psychoacoustics/mauss-robinson-measures-of-emotion.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Iris B. Mauss and Michael D. Robinson
+    year: 2009
+    notes: "Peer-reviewed review, Cognition and Emotion 23(2) 209-237. General affective science, not music specific. Full text retrieved."
+  - id: grahn-brett-beat-perception-motor
+    type: paper
+    title: Rhythm and beat perception in motor areas of the brain
+    locator: research/sources/affective-psychoacoustics/grahn-brett-beat-perception-motor.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Jessica A. Grahn and Matthew Brett
+    year: 2007
+    notes: "Peer-reviewed primary research, Journal of Cognitive Neuroscience 19(5) 893-906. Full text retrieved."
+  - id: head-acoustics-psychoacoustic-analyses
+    type: manual
+    title: "Application Note 03/18: Psychoacoustic Analyses II"
+    locator: research/sources/affective-psychoacoustics/head-acoustics-psychoacoustic-analyses.md
+    relationship: reference
+    evidence_class: technical_reference
+    retrieval: full_text
+    author: HEAD acoustics GmbH
+    notes: "Measurement-instrumentation technical note giving the modulation-rate continuum, the asper and vacil reference conditions, and an explicit caution that modulation is not inherently annoying. Full text retrieved."
+  - id: ignatiadis-auditory-looming-bias
+    type: paper
+    title: Neural mechanisms underlying the auditory looming bias
+    locator: research/sources/affective-psychoacoustics/ignatiadis-auditory-looming-bias.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Kosmas Ignatiadis and colleagues
+    year: 2021
+    notes: "Peer-reviewed primary research, Auditory Perception and Cognition 4(1-2) 60-73. External locator https://pmc.ncbi.nlm.nih.gov/articles/PMC7612677/ - full text retrieved."
+  - id: harrison-loui-frisson-model
+    type: paper
+    title: "Thrills, chills, frissons, and skin orgasms: toward an integrative model of transcendent psychophysiological experiences in music"
+    locator: research/sources/affective-psychoacoustics/harrison-loui-frisson-model.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Luke Harrison and Psyche Loui
+    year: 2014
+    notes: "Peer-reviewed review, Frontiers in Psychology 5, 790. Full text retrieved."
+  - id: janata-music-evoked-autobiographical-memory
+    type: paper
+    title: The neural architecture of music-evoked autobiographical memories
+    locator: research/sources/affective-psychoacoustics/janata-music-evoked-autobiographical-memory.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Petr Janata
+    year: 2009
+    notes: "Peer-reviewed primary research, Cerebral Cortex 19(11) 2579-2594. External locator https://pmc.ncbi.nlm.nih.gov/articles/PMC2758676/ - full text retrieved."
+  - id: yang-chen-music-emotion-recognition-review
+    type: paper
+    title: "Machine recognition of music emotion: a review"
+    locator: research/sources/affective-psychoacoustics/yang-chen-music-emotion-recognition-review.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Yi-Hsuan Yang and Homer H. Chen
+    year: 2012
+    notes: "Peer-reviewed survey, ACM TIST 3(3) Article 40. Source of the expressed, perceived and felt emotion distinction AudioMuse uses for machine audio. Full text retrieved."
+  - id: mcadams-affective-qualities-instrument-sounds
+    type: paper
+    title: Perception and modeling of affective qualities of musical instrument sounds across pitch registers
+    locator: research/sources/affective-psychoacoustics/mcadams-affective-qualities-instrument-sounds.md
+    relationship: supporting
+    evidence_class: scholarly_work
+    retrieval: full_text
+    author: Stephen McAdams, Chelsea Douglas and Naresh N. Vempala
+    year: 2017
+    notes: "Peer-reviewed primary research, Frontiers in Psychology 8, 153. Isolated instrument tones, not musical context. Full text retrieved."
+  - id: itu-r-bs-1770-loudness
+    type: standard
+    title: Algorithms to measure audio programme loudness and true-peak audio level
+    locator: research/sources/affective-psychoacoustics/itu-r-bs-1770-loudness.md
+    relationship: reference
+    evidence_class: technical_reference
+    retrieval: citation_only
+    author: International Telecommunication Union, Radiocommunication Sector
+    notes: "Recommendation ITU-R BS.1770. The ITU record page was retrieved and confirms title, issuing body, and edition history through BS.1770-5 approved November 2023; the normative text was not read."

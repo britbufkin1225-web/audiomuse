@@ -1,0 +1,364 @@
+---
+id: "cochlea-analyzes-frequency-by-place"
+statement: "The cochlea separates a complex sound by frequency along its length before any neural computation, with position on the basilar membrane corresponding to frequency, and that place organization is retained at every level of the central auditory system."
+claim_type: "technical_fact"
+confidence: "high"
+confidence_basis: "Two retrieved sources support the mechanism independently: an NIH institutional reference page describes the travelling wave and the position-to-frequency correspondence, and a university neuroscience textbook section states that the tonotopic organization is retained throughout the central auditory system. Both were retrieved in the portions cited, and the statement is anatomical rather than interpretive."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "nidcd-how-do-we-hear", "note": "Describes the travelling wave along the basilar membrane and states that hair cells near the wide end detect higher-pitched sounds while those nearer the centre detect lower ones."}, {"relation": "supported_by", "source_id": "purves-neuroscience-auditory-system", "note": "The retrieved auditory nerve section states that the tonotopic organization of the cochlea is retained at all levels of the central auditory system."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-transduction"}, {"kind": "node", "ref": "auditory-pathway"}, {"kind": "vocabulary", "ref": "tonotopy"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "phase-locking-follows-stimuli-to-about-three-kilohertz"
+statement: "Auditory nerve fibres fire preferentially at particular phases of low-frequency waveforms, and can follow stimuli up to about 3 kHz in a one-to-one fashion, above which frequency information is carried by which fibres respond rather than by when they fire."
+claim_type: "technical_fact"
+confidence: "high"
+confidence_basis: "A single source carries this, but it is a university neuroscience textbook, registered as a technical reference, and the cited section was retrieved in full rather than cited from memory. The statement is a standard physiological result rather than a contested finding, and the figure is quoted as the source gives it, approximately rather than exactly."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "purves-neuroscience-auditory-system", "note": "The retrieved section states that hair cells and auditory nerve fibres can follow stimuli of up to about 3 kHz in a one-to-one fashion, and describes the two-mechanism account of frequency coding."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-pathway"}, {"kind": "vocabulary", "ref": "phase-locking"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "hair-cell-transduction-is-fast-and-minute"
+statement: "Hair cells convert stereocilia displacement into an electrical potential in as little as 10 microseconds, and bundle movements at the threshold of hearing are approximately 0.3 nanometres."
+claim_type: "technical_fact"
+confidence: "high"
+confidence_basis: "One source, but it is a registered technical reference whose cited section was retrieved in full, and both figures are quoted as the textbook states them. The claim reports magnitudes from a standard reference rather than combining or extrapolating them."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "purves-neuroscience-auditory-system", "note": "The retrieved transduction section gives both the 10 microsecond conversion time and the approximately 0.3 nanometre threshold bundle movement."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-transduction"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "roughness-has-a-band-pass-relation-to-modulation-rate"
+statement: "Perceived roughness relates to envelope modulation rate as a band-pass rather than a monotonic function: envelope variation between roughly 20 and 300 Hz is heard as rough, roughness peaks near a 70 Hz modulation rate for a 1 kHz carrier and shifts lower for lower carriers, and above that band the sidebands become audible as separate tones."
+claim_type: "technical_fact"
+confidence: "moderate"
+confidence_basis: "The retrieved measurement-vendor application note states the ranges, the peak, the carrier dependence, and the asper reference condition explicitly rather than in summary. Confidence remains moderate because AudioMuse did not retrieve the underlying empirical psychoacoustics literature the note summarizes, so the vendor explanation is adequate for a bounded reference claim but not for high confidence on its own."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "States the 20 to 300 Hz rough region, the maximum near 70 Hz for a 1 kHz carrier, the downward shift for lower carriers, the resolution of sidebands above the band, and the asper reference condition."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "roughness"}, {"kind": "node", "ref": "sensory-dissonance"}, {"kind": "vocabulary", "ref": "roughness"}, {"kind": "vocabulary", "ref": "modulation-rate"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "fluctuation-strength-peaks-near-four-hertz"
+statement: "Fluctuation strength, the sensation produced by slow envelope variation, reaches its maximum near a 4 Hz modulation rate, and its unit the vacil is defined by a 1 kHz tone at 60 dB modulated at 4 Hz with full modulation depth."
+claim_type: "technical_fact"
+confidence: "moderate"
+confidence_basis: "The retrieved measurement-vendor application note states both the peak rate and the unit definition directly. The unit definition is a bounded measurement convention, but AudioMuse did not retrieve the underlying empirical psychoacoustics literature supporting the peak-rate generalization, so this vendor explanation does not justify high confidence on its own."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "States that fluctuation strength peaks around 4 Hz and defines the vacil by the same reference tone used for the asper with the modulation frequency changed to 4 Hz."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "roughness"}, {"kind": "vocabulary", "ref": "fluctuation-strength"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "roughness-carries-no-fixed-valence"
+statement: "Roughness is a sensation whose affective interpretation depends on the material and on what the listener wants from the sound, rather than a property carrying a fixed negative value."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "Each component is sourced and the combination is not. The technical reference states that modulated sounds command attention but are not perceived as annoying when the listener wants the information they carry, and the cross-cultural study shows a perceptual regularity failing to predict pleasantness. Joining them into a general statement about roughness and valence is AudioMuse's inference, so this is graded moderate rather than high."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "States that modulated sounds are judged annoying when the sound is unwanted and are not perceived as annoying when the listener is interested in the information conveyed."}, {"relation": "supported_by", "source_id": "mcpherson-amazonian-interval-fusion", "note": "Supplies the general pattern that a perceptual regularity need not carry an aesthetic one, which is the structure this claim applies to roughness."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "roughness"}]
+appears_in: [{"kind": "node", "ref": "roughness"}, {"kind": "node", "ref": "affective-psychoacoustics"}, {"kind": "node", "ref": "musical-dissonance"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Is there a listening design that separates rated roughness from rated unpleasantness cleanly enough to test this directly?"]
+---
+id: "spectral-fusion-does-not-predict-pleasantness"
+statement: "McPherson and colleagues report that perceptual fusion of simple-integer-ratio intervals did not predict pleasantness ratings, with the octave being the most fused but not the most pleasant interval among Western listeners who showed robust consonance preferences."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and states the dissociation directly, so what the source says is settled. Confidence stops short of high because a single peer-reviewed study, however well designed, is one result rather than a corroborated body, and the registry class scholarly_work does not carry high on its own under the Phase 12D rule."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "mcpherson-amazonian-interval-fusion", "note": "Reports that fusion did not predict pleasantness, that the octave was most fused but not most pleasant, and that individual differences in fusion showed no correlation with consonance preference."}]
+attribution: [{"actor": "Malinda J. McPherson and colleagues", "source_id": "mcpherson-amazonian-interval-fusion"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "harmonicity"}, {"kind": "node", "ref": "musical-consonance"}, {"kind": "node", "ref": "affective-psychoacoustics"}, {"kind": "vocabulary", "ref": "spectral-fusion"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Does the dissociation hold for chords in musical context, given that the study used isolated two-note intervals?"]
+---
+id: "amazonian-listeners-showed-fusion-without-consonance-preference"
+statement: "McPherson and colleagues report that native Amazonian listeners with limited exposure to Western music showed the same interval-fusion pattern as Boston listeners while showing no preference for consonant over dissonant intervals."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved paper states both halves of the finding, so the attribution is secure. It is graded moderate rather than high because it rests on one study of one population and because the Phase 12D rule reserves high for corroborated or authoritative-class evidence."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "mcpherson-amazonian-interval-fusion", "note": "Reports matching fusion patterns across groups alongside an absence of consonance preference in the Amazonian participants."}]
+attribution: [{"actor": "Malinda J. McPherson and colleagues", "source_id": "mcpherson-amazonian-interval-fusion"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "musical-enculturation"}, {"kind": "node", "ref": "harmonicity"}, {"kind": "node", "ref": "musical-consonance"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "brecvema-names-eight-mechanisms"
+statement: "Juslin's BRECVEMA framework proposes eight psychological mechanisms by which music may induce emotion: brain stem reflex, rhythmic entrainment, evaluative conditioning, contagion, visual imagery, episodic memory, musical expectancy, and aesthetic judgment."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The review was retrieved in full and names the eight mechanisms explicitly, so the content of the attribution is not in doubt. Confidence is held at moderate because the object being attributed is a theoretical framework published with open peer commentary rather than a settled result, and because one scholarly source does not meet the Phase 12D bar for high."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "juslin-brecvema-unified-theory", "note": "Names all eight mechanisms, records that the earlier version had six and then seven, and defines each in its own section."}]
+attribution: [{"actor": "Patrik N. Juslin", "source_id": "juslin-brecvema-unified-theory"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "music-evoked-emotion"}, {"kind": "node", "ref": "rhythmic-entrainment"}, {"kind": "node", "ref": "music-and-memory"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Which of the eight mechanisms can be isolated in a listening test, and which can only be inferred after the fact?"]
+---
+id: "music-arouses-emotion-in-a-majority-but-not-all-episodes"
+statement: "Juslin reports that music arouses emotion in roughly 55 to 65 percent of listening episodes on average, with wide individual differences in prevalence."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved review states the range and the individual variation directly and cites survey studies for it. Moderate rather than high because the figure is a summary of self-report surveys with acknowledged variation, and because AudioMuse has not retrieved the underlying surveys."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "juslin-brecvema-unified-theory", "note": "Gives the 55 to 65 percent estimate and states that individual differences in overall prevalence are wide."}]
+attribution: [{"actor": "Patrik N. Juslin", "source_id": "juslin-brecvema-unified-theory"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "music-evoked-emotion"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["What do the underlying survey studies count as an emotion episode, and how much of the range is definitional rather than empirical?"]
+---
+id: "no-gold-standard-measure-of-emotional-responding"
+statement: "Mauss and Robinson conclude that experiential, physiological, and behavioural measures of emotional responding carry unique sources of variance, converge only weakly, and cannot be assumed interchangeable, so no gold-standard measure exists."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The review was retrieved in full and states the conclusion in those terms in both its abstract and its discussion, so the attribution is exact. It is graded moderate because it summarises a literature rather than reporting a decisive study, and because a single scholarly source does not reach high under the Phase 12D rule."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "mauss-robinson-measures-of-emotion", "note": "States that measures reflect dimensions rather than discrete states, that response systems carry unique variance limiting convergence, and that there is no gold standard measure."}]
+attribution: [{"actor": "Iris B. Mauss and Michael D. Robinson", "source_id": "mauss-robinson-measures-of-emotion"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "emotion-measurement"}, {"kind": "node", "ref": "autonomic-response-to-music"}, {"kind": "vocabulary", "ref": "emotion-measurement"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "physiological-response-is-not-felt-emotion"
+statement: "A physiological change recorded during listening is evidence of a response on a dimension such as arousal and is not equivalent to, and not a substitute for, a listener's felt emotion."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "Both components are sourced. The measurement review establishes weak convergence between physiological and experiential measures, and the music review separately defines arousal as autonomic activation that can occur without emotion. Stating the consequence as a rule for AudioMuse is the inference, which is why this is graded moderate and typed as synthesis rather than as a fact."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "mauss-robinson-measures-of-emotion", "note": "Reports that physiological and experiential systems carry unique variance and are not interchangeable, and that skin conductance tracks arousal while facial EMG tracks valence."}, {"relation": "supported_by", "source_id": "juslin-brecvema-unified-theory", "note": "Defines arousal as physical activation of the autonomic nervous system and notes it can occur in the absence of emotion."}]
+attribution: []
+derived_from: [{"kind": "claim", "ref": "no-gold-standard-measure-of-emotional-responding"}]
+appears_in: [{"kind": "node", "ref": "autonomic-response-to-music"}, {"kind": "node", "ref": "emotion-measurement"}, {"kind": "node", "ref": "frisson"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "anticipation-and-peak-pleasure-are-anatomically-separable"
+statement: "Zatorre and Salimpoor report an anatomical dissociation in which dorsal striatal activity occurs during the anticipation phase preceding musical chills while nucleus accumbens activity increases with pleasure and is maximal during the chills themselves."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The review was retrieved in full and states the dissociation in these terms. It is graded moderate rather than high because the underlying imaging study was not retrieved directly, because the evidence is correlational, and because the authors themselves qualify the functional roles of the structures involved."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "zatorre-salimpoor-perception-to-pleasure", "note": "Describes caudate activity during the anticipation phase preceding chills and nucleus accumbens activity maximal during the chills."}, {"relation": "qualified_by", "source_id": "zatorre-salimpoor-perception-to-pleasure", "note": "The same review states that the functional roles of these structures are not attributable to any one dimension and are altered by factors not all yet identified."}]
+attribution: [{"actor": "Robert J. Zatorre and Valorie N. Salimpoor", "source_id": "zatorre-salimpoor-perception-to-pleasure"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-reward"}, {"kind": "node", "ref": "frisson"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Does the dissociation persist when the listener already knows exactly what is coming?"]
+---
+id: "auditory-cortex-and-accumbens-interaction-scales-with-reward"
+statement: "Zatorre and Salimpoor report that auditory cortical regions showed increased functional interaction with the nucleus accumbens when musical sequences carried high rather than low reward value."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved review states the finding and its interpretation as greater cross-talk between pattern-analysis and value-assignment systems. Moderate rather than high because the evidence is correlational neuroimaging reported in review rather than retrieved primary data, and one scholarly source does not reach high."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "zatorre-salimpoor-perception-to-pleasure", "note": "Reports robustly increased functional interactions between auditory cortices and the nucleus accumbens for high-reward-value musical sequences."}]
+attribution: [{"actor": "Robert J. Zatorre and Valorie N. Salimpoor", "source_id": "zatorre-salimpoor-perception-to-pleasure"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-reward"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "musical-reward-is-not-universal-across-cultures-and-individuals"
+statement: "Zatorre and Salimpoor state that the rewarding nature of aesthetic stimuli is not entirely universal, differing significantly across cultures and between individuals within cultures."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The review was retrieved in full and makes the statement in its own voice, so the attribution is exact. It is graded moderate because it is a summary judgement offered by the authors rather than a result they measured, and because AudioMuse has not retrieved the cross-cultural work behind it."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "zatorre-salimpoor-perception-to-pleasure", "note": "States that the rewarding nature of aesthetic stimuli is not entirely universal and differs across cultures and between individuals within cultures."}, {"relation": "supported_by", "source_id": "mcpherson-amazonian-interval-fusion", "note": "Provides an empirical instance of the same pattern, with aesthetic response tracking the musical system a listener has been exposed to while a perceptual regularity did not vary."}]
+attribution: [{"actor": "Robert J. Zatorre and Valorie N. Salimpoor", "source_id": "zatorre-salimpoor-perception-to-pleasure"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-reward"}, {"kind": "node", "ref": "musical-enculturation"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "information-content-and-entropy-are-distinct-quantities"
+statement: "Information content measures how unexpected an event is in a given context, while entropy measures the uncertainty of the prediction before that event is heard, so a passage can be highly uncertain and then deliver something unsurprising."
+claim_type: "technical_fact"
+confidence: "moderate"
+confidence_basis: "The distinction is definitional in information theory and is stated explicitly in the retrieved review, which computes both from the same predictive model. Moderate rather than high because a single scholarly source carries it here and AudioMuse has not retrieved a mathematics reference, though nothing about the distinction is contested."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "pearce-statistical-learning-enculturation", "note": "Defines information content as how unexpected the model finds an event in context and entropy as the uncertainty of the prediction before the next event is heard."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "predictive-processing-music"}, {"kind": "node", "ref": "musical-expectation"}, {"kind": "vocabulary", "ref": "information-content"}, {"kind": "vocabulary", "ref": "entropy"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "inverted-u-between-predictability-and-pleasure-is-unsettled"
+statement: "Whether pleasure follows an inverted-U function of predictability in music is not settled: Pearce reports that the proposal has received empirical support in some studies and not in others, and suggests his own reviewed result may reflect only one side of such a curve."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved review states the mixed support and the one-sided-curve caveat in its own words, so what Pearce says is secure. The claim is graded moderate and marked unresolved because it reports an open question in the literature rather than a settled position, and confidence high is unavailable to an unresolved claim."
+dispute_status: "unresolved"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "pearce-statistical-learning-enculturation", "note": "States that theoretical proposals of an inverted U-shaped relationship between predictability and pleasure have received empirical support in some but not all studies."}, {"relation": "qualified_by", "source_id": "witek-syncopation-groove-pleasure", "note": "Reports an inverted U for syncopation, movement, and pleasure specifically, which bounds the general proposal to one demonstrated domain rather than confirming it."}]
+attribution: [{"actor": "Marcus T. Pearce", "source_id": "pearce-statistical-learning-enculturation"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "predictive-processing-music"}, {"kind": "node", "ref": "musical-expectation"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Which studies found the inverted U and which did not, and do they differ systematically in stimulus type, listener population, or the way predictability was manipulated?", "Does the syncopation result generalize to predictability manipulated by means other than rhythmic complexity?"]
+---
+id: "syncopation-relates-to-movement-and-pleasure-as-an-inverted-u"
+statement: "Witek and colleagues report that medium degrees of syncopation elicited the most desire to move and the most pleasure, with both low and high syncopation rated lower, and propose that high syncopation may prevent successful entrainment."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and reports the inverted U and the proposed explanation directly. Moderate rather than high because it is a single study using rated responses, and because the authors state that the relationship between those ratings and overt body movement remains unknown."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "witek-syncopation-groove-pleasure", "note": "Reports the inverted U for wanting-to-move and pleasure, the ordering of low, medium, and high syncopation, and the entrainment-failure explanation for the high condition."}, {"relation": "qualified_by", "source_id": "witek-syncopation-groove-pleasure", "note": "The same paper states that the relationship between the recorded ratings and overt body movement remains unknown."}]
+attribution: [{"actor": "Maria A. G. Witek and colleagues", "source_id": "witek-syncopation-groove-pleasure"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "groove"}, {"kind": "node", "ref": "temporal-displacement"}, {"kind": "vocabulary", "ref": "groove"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Where does the peak of the curve sit for genres and tempi outside those tested?"]
+---
+id: "neural-entrainment-terminology-is-contested"
+statement: "Weineck, Wen, and Henry state that they use entrainment in the broad sense without assuming how neural synchronization arises, and acknowledge an unresolved debate between phase-locked coupling to a neural oscillator and convolution of a stimulus with the responses it evokes."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and states the position and the debate explicitly, so the attribution is exact. It is marked unresolved and graded moderate because the underlying methodological question is open in the field and AudioMuse has retrieved only one side's framing of it."
+dispute_status: "unresolved"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "weineck-neural-synchronization-spectral-flux", "note": "States the broad-sense usage and names the two competing accounts of how neural synchronization to a rhythm arises."}]
+attribution: [{"actor": "Kristin Weineck, Olivia Xin Wen and Molly J. Henry", "source_id": "weineck-neural-synchronization-spectral-flux"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "rhythmic-entrainment"}, {"kind": "vocabulary", "ref": "entrainment"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["What evidence would distinguish oscillatory entrainment from repeated evoked responses in music listening specifically?"]
+---
+id: "spectral-flux-predicted-neural-synchronization-better-than-envelope"
+statement: "Weineck, Wen, and Henry report that neural synchronization measured with EEG was strongest to the spectral flux of music rather than to its amplitude envelope, and strongest at stimulation tempi between 1 and 2 Hz."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved paper reports both results under two independent analysis approaches, which strengthens the finding within the study. It remains moderate because it is one study with one corpus and one participant sample, and generalization beyond the tested tempo range is untested."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "weineck-neural-synchronization-spectral-flux", "note": "Reports spectral flux as the strongest driver of neural synchronization under both analysis approaches, and the 1 to 2 Hz tempo effect."}]
+attribution: [{"actor": "Kristin Weineck, Olivia Xin Wen and Molly J. Henry", "source_id": "weineck-neural-synchronization-spectral-flux"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "rhythmic-entrainment"}, {"kind": "node", "ref": "audio-feature-extraction"}, {"kind": "vocabulary", "ref": "spectral-flux"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "beat-inducing-rhythms-engage-motor-regions"
+statement: "Grahn and Brett report that rhythms with integer-ratio interval relationships and regular perceptual accents were reproduced more accurately and elicited higher activity in the basal ganglia and supplementary motor area, and conclude that those regions may mediate beat perception as well as movement production."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and states the behavioural result, the imaging result, and the conclusion. Moderate rather than high because the imaging evidence is correlational, the conclusion is offered as a possibility by the authors, and the stimuli were constructed rhythmic sequences rather than music."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "grahn-brett-beat-perception-motor", "note": "Reports improved reproduction and higher basal ganglia and SMA activity for the beat-inducing rhythm type, and states the mediating-beat-perception conclusion."}]
+attribution: [{"actor": "Jessica A. Grahn and Matthew Brett", "source_id": "grahn-brett-beat-perception-motor"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "rhythmic-entrainment"}, {"kind": "vocabulary", "ref": "beat-perception"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "perceptual-accent-arises-from-temporal-spacing-alone"
+statement: "Grahn and Brett record that perceptual accents can arise from temporal structure alone with pitch and loudness held constant, so that an onset not closely followed by another onset is perceived as accented, as is the final onset of a run of two or three."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved paper states the accent rules explicitly while introducing the stimulus design, attributing them in turn to earlier work. Moderate rather than high because the paper reports them as established background rather than testing them, and AudioMuse has not retrieved the primary studies they cite."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "grahn-brett-beat-perception-motor", "note": "States that onsets not closely followed by other onsets are perceived as accented, and that the final onset of two or three in a row is accented, with pitch and volume held constant."}]
+attribution: [{"actor": "Jessica A. Grahn and Matthew Brett", "source_id": "grahn-brett-beat-perception-motor"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "silence-as-musical-material"}, {"kind": "node", "ref": "temporal-discontinuity"}, {"kind": "node", "ref": "gating"}, {"kind": "vocabulary", "ref": "perceptual-accent"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Do the same accent rules hold for the irregular fragment spacings that chopping and granular scheduling produce?"]
+---
+id: "familiarity-and-autobiographical-salience-are-separable"
+statement: "Janata reports that medial prefrontal cortex responded parametrically to both familiarity and autobiographical salience during music listening, with salience producing effects beyond what familiarity alone predicted."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and reports the separable effects directly. Moderate rather than high because it is one imaging study, and because the author states that the postscan memory survey was probably more susceptible to false memory and distortion than immediate collection would have been."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "janata-music-evoked-autobiographical-memory", "note": "Reports parametric medial prefrontal response to autobiographical salience with independent effects beyond familiarity."}, {"relation": "qualified_by", "source_id": "janata-music-evoked-autobiographical-memory", "note": "The author records that the postscan memory survey was probably more susceptible to false memories and distortions than immediate collection."}]
+attribution: [{"actor": "Petr Janata", "source_id": "janata-music-evoked-autobiographical-memory"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "music-and-memory"}, {"kind": "vocabulary", "ref": "autobiographical-salience"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "timbre-descriptors-relate-to-distinct-affective-dimensions"
+statement: "McAdams, Douglas, and Vempala report that valence, energy arousal, and tension arousal ratings of isolated instrument tones related to different combinations of audio descriptors, with brightness relating to both arousal dimensions and attack sharpness relating to valence and to tension in opposite directions."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and reports the descriptor relationships for each dimension separately. Moderate rather than high because the stimuli were isolated tones rather than music, which the authors themselves name as a limitation, and because it is a single study of an orchestral corpus."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "mcadams-affective-qualities-instrument-sounds", "note": "Reports lower spectral slope and sharper attack with earlier decay for positive valence, brighter sounds with gentler attacks for tension arousal, and brighter sounds with higher spectral centroids for energy arousal."}, {"relation": "qualified_by", "source_id": "mcadams-affective-qualities-instrument-sounds", "note": "The authors state that isolated tones were used and that the relationships should be validated in a musical context."}]
+attribution: [{"actor": "Stephen McAdams, Chelsea Douglas and Naresh N. Vempala", "source_id": "mcadams-affective-qualities-instrument-sounds"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "affective-timbre"}, {"kind": "node", "ref": "amplitude-envelope"}, {"kind": "vocabulary", "ref": "affective-timbre"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Do the descriptor relationships survive in dense electronic material, and where do distortion and saturation sit given that the corpus contained neither?"]
+---
+id: "auditory-looming-bias-survives-constant-intensity"
+statement: "Ignatiadis and colleagues report an auditory looming bias, with faster and more accurate responses to approaching than receding sources, produced by manipulating spatial spectral cues while overall intensity was held constant."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and reports both the behavioural asymmetry and the constant-intensity manipulation that distinguishes it from earlier rising-intensity demonstrations. Moderate rather than high because the authors record substantial reservations about their connectivity method and their source localization."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "ignatiadis-auditory-looming-bias", "note": "Reports higher accuracy and faster reaction times for looming trials with stimuli that maintained overall intensity while manipulating spatial spectral cues."}, {"relation": "qualified_by", "source_id": "ignatiadis-auditory-looming-bias", "note": "The authors state reservations about the connectivity analysis and note that source localization used template rather than individual anatomy."}]
+attribution: [{"actor": "Kosmas Ignatiadis and colleagues", "source_id": "ignatiadis-auditory-looming-bias"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "auditory-looming"}, {"kind": "vocabulary", "ref": "auditory-looming"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Does a musical approach gesture engage the same bias as a spatially simulated approach?"]
+---
+id: "frisson-terminology-lacks-consensus"
+statement: "Harrison and Loui state that the term chills lacks operative consensus in the research literature, that authors disagree over whether piloerection is definitional, and that the direction of causation between musical features and the response has generally been assumed rather than tested."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The review was retrieved in full and makes each of these points in its own voice, including the specific example that more frisson during sad music does not rule out both being elicited concurrently. It is marked unresolved because the terminological question it reports remains open in the field."
+dispute_status: "unresolved"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "harrison-loui-frisson-model", "note": "Records the absence of operative consensus on chills, the disagreement over piloerection, and the assumed rather than tested direction of causation."}]
+attribution: [{"actor": "Luke Harrison and Psyche Loui", "source_id": "harrison-loui-frisson-model"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "frisson"}, {"kind": "vocabulary", "ref": "frisson"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Is there a definition of the response that would let independent studies be compared, and would it include piloerection as a requirement?"]
+---
+id: "music-emotion-recognition-targets-perceived-emotion"
+statement: "Yang and Chen record that music information retrieval research separates expressed, perceived, and felt emotion, and tends to target perceived emotion because it is less influenced by the situational factors of listening."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The survey was retrieved in full and makes the three-way distinction and the field's preference explicit in a dedicated footnote and in its problem statement. Moderate rather than high because it describes the state of a field at the time of writing rather than an invariant, and the field has moved since."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "yang-chen-music-emotion-recognition-review", "note": "Distinguishes expressed, perceived, and felt emotion and states that MIR researchers tend to focus on perceived emotion."}]
+attribution: [{"actor": "Yi-Hsuan Yang and Homer H. Chen", "source_id": "yang-chen-music-emotion-recognition-review"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "music-emotion-recognition"}, {"kind": "vocabulary", "ref": "perceived-emotion"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "machine-emotion-labels-are-predictions-not-measurements"
+statement: "A music emotion recognition system outputs a prediction of how annotators would have labelled a track, and provides no evidence that any listener experienced anything."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "Each component is sourced: the survey establishes that ground truth is averaged subjective annotation of perceived emotion, and the measurement review establishes that no measure of emotional responding is a gold standard or interchangeable with another. Stating the consequence as a boundary on what such a system may be said to do is AudioMuse's inference, so it is typed as synthesis and graded moderate."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "yang-chen-music-emotion-recognition-review", "note": "Describes ground truth as collected by subjective test and often averaged, describes the subjectivity that makes evaluation difficult, and states that what creates a specific emotional response is far from well understood."}, {"relation": "supported_by", "source_id": "mauss-robinson-measures-of-emotion", "note": "Establishes that no measure of emotional responding is a gold standard and that measures are not interchangeable, which bounds what a model trained on one of them can claim."}]
+attribution: []
+derived_from: [{"kind": "claim", "ref": "music-emotion-recognition-targets-perceived-emotion"}]
+appears_in: [{"kind": "node", "ref": "music-emotion-recognition"}, {"kind": "node", "ref": "audio-feature-extraction"}, {"kind": "vocabulary", "ref": "music-emotion-recognition"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []

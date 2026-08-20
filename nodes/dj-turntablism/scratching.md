@@ -23,6 +23,10 @@ relationships:
     type: influences
   - target: rhythm
     type: contributes_to
+  - target: temporal-dsp
+    type: used_in
+  - target: gating
+    type: used_in
 sources:
   - session-01-what-is-sound
   - session-02-what-is-music

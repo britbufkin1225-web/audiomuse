@@ -54,9 +54,9 @@ definition: "The perceived rhythmic feel created by small timing, velocity, and 
 digital_relationship: "Depends on how a sequencer treats microtiming: snapping every event to the grid can remove it, while preserved timing offsets keep it."
 best_use: "Programming patterns that feel performed, and deciding how strictly to quantize a take."
 technologies: ["sequencers", "DAWs", "drum machines", "samplers"]
-node_refs: ["rhythm"]
+node_refs: ["rhythm", "groove", "rhythmic-entrainment"]
 session_refs: ["session-02-what-is-music"]
-related_terms: ["rhythm", "swing", "quantization-timing", "beat"]
+related_terms: ["rhythm", "swing", "quantization-timing", "beat", "syncopation", "temporal-displacement", "entrainment"]
 tags: ["rhythm-time", "perception"]
 ---
 id: "swing"
@@ -66,9 +66,9 @@ definition: "A deliberate change of subdivision timing that makes consecutive su
 digital_relationship: "Exposed by drum machines and DAWs as a swing or shuffle amount that displaces subdivisions from the strict grid."
 best_use: "Adding rhythmic feel to programmed patterns without performing them by hand."
 technologies: ["drum machines", "DAWs", "sequencers"]
-node_refs: ["rhythm"]
+node_refs: ["rhythm", "temporal-displacement"]
 session_refs: ["session-02-what-is-music"]
-related_terms: ["groove", "rhythm", "tempo", "quantization-timing"]
+related_terms: ["groove", "rhythm", "tempo", "quantization-timing", "temporal-displacement"]
 tags: ["rhythm-time", "timing"]
 ---
 id: "quantization-timing"

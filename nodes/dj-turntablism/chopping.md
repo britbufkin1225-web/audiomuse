@@ -18,6 +18,10 @@ relationships:
     type: used_in
   - target: rhythm
     type: contributes_to
+  - target: temporal-dsp
+    type: used_in
+  - target: temporal-discontinuity
+    type: produces
 sources:
   - session-03-history-of-electronic-music
   - walker-dj-screw-biography

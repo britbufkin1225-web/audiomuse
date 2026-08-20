@@ -1,0 +1,130 @@
+---
+id: "exact-repetition-can-transform-speech-into-song"
+statement: "Deutsch, Henthorn, and Lapidis report that a spoken phrase repeated without any alteration to the signal came to be heard as sung rather than spoken, and that listeners who heard ten presentations repeated the phrase back as song while listeners who heard one repeated it back as speech."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The paper was retrieved in full and reports both the rating result and the repeat-back result. Moderate rather than high because it is a single study, its participants all had at least five years of musical training, and the effect concerns speech material rather than music."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "deutsch-speech-to-song-illusion", "note": "Reports that judgements moved from speech to song across ten identical presentations, and that repeat-back renditions were sung after ten presentations and spoken after one."}]
+attribution: [{"actor": "Diana Deutsch, Trevor Henthorn and Rachael Lapidis", "source_id": "deutsch-speech-to-song-illusion"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "repetition"}, {"kind": "node", "ref": "temporal-dsp"}, {"kind": "vocabulary", "ref": "speech-to-song-illusion"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Does the same transformation occur for musical rather than spoken material, and at the much shorter repeat periods that stutter and micro-looping use?"]
+---
+id: "speech-to-song-transformation-requires-exact-repetition"
+statement: "Deutsch, Henthorn, and Lapidis report that the speech-to-song transformation did not occur when the intervening presentations were transposed slightly or when the syllables were presented in jumbled orderings, so exactness of repetition is part of the condition rather than incidental to it."
+claim_type: "attributed_claim"
+confidence: "moderate"
+confidence_basis: "The retrieved paper reports the two control conditions and their negative results directly, which is what makes the exactness condition citable rather than inferred. Moderate for the same reasons as the parent finding: one study, a musically trained sample, and speech material."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "deutsch-speech-to-song-illusion", "note": "States that judgements did not move from speech to song when intervening phrases were transposed slightly or the syllables were jumbled."}]
+attribution: [{"actor": "Diana Deutsch, Trevor Henthorn and Rachael Lapidis", "source_id": "deutsch-speech-to-song-illusion"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "repetition"}, {"kind": "node", "ref": "micro-looping"}, {"kind": "node", "ref": "stutter"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: []
+---
+id: "temporal-operations-share-event-boundaries-as-their-target"
+statement: "Gating, chopping, stuttering, micro-looping, retriggering, dropout, silence insertion, temporal displacement, and granular fragmentation are usefully treated as one family, because each acts on where events begin, how long they last, and where the next one arrives rather than on spectral content."
+claim_type: "interpretation"
+confidence: "moderate"
+confidence_basis: "This is a frame AudioMuse adopts rather than a result any source reports. It is grounded in sourced material — a modulation-rate continuum that all the operations traverse, a temporal-accent mechanism they all exploit, and a session record treating composition as expectation management — but a competent reader could organize the same operations by technology or by era without contradicting any source, which is why it is typed as an interpretation and not raised above moderate."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "Supplies the modulation-rate continuum shared by every operation in the family whose rate can be swept."}, {"relation": "supported_by", "source_id": "session-02-what-is-music", "note": "Establishes the repetition-to-expectation mechanism that gives event boundaries their musical consequence."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "temporal-dsp"}]
+appears_in: [{"kind": "node", "ref": "temporal-dsp"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Is there an operation in ordinary production practice that this family fails to accommodate?"]
+---
+id: "stutter-rate-crosses-perceptual-category-boundaries"
+statement: "AudioMuse proposes that shortening the repeat period of a musical stutter carries the result across perceptual category boundaries, from discrete repetition to rhythm, then to flutter and roughness, and then to a pitch determined by the repeat rate rather than by the source."
+claim_type: "hypothesis"
+confidence: "low"
+confidence_basis: "The rate boundaries come from a retrieved technical reference, but that reference measured amplitude-modulated tones rather than looped recorded material. Extending the continuum from a modulated sine tone to an arbitrary musical fragment is an untested extrapolation, so the claim is proposed rather than asserted and is graded low rather than moderate."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "Supplies the boundaries the hypothesis extends: tracking of individual variations below about 10 Hz, roughness between roughly 20 and 300 Hz, and resolution of sidebands above that band."}, {"relation": "qualified_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "Those figures are given for amplitude-modulated tones at stated carrier frequencies, which bounds the extrapolation to looped recorded material."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "stutter"}, {"kind": "node", "ref": "micro-looping"}]
+appears_in: [{"kind": "node", "ref": "stutter"}, {"kind": "node", "ref": "micro-looping"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Where do listeners actually place the boundaries for recorded material, and how much does source content move them?", "Does loop-point treatment, hard splice against crossfade, shift the boundaries measurably?"]
+---
+id: "micro-loop-period-generates-its-own-periodicity"
+statement: "AudioMuse proposes that a sufficiently short loop generates a periodicity at the loop rate, including harmonics of that rate produced by the discontinuity at the loop point, so that the perceived pitch of a very short loop is a property of the operation rather than of the material."
+claim_type: "hypothesis"
+confidence: "low"
+confidence_basis: "The reasoning is elementary — a loop of period T repeats at 1 over T, and a hard splice is a periodic discontinuity — and the session record establishes that frequency follows from the rate at which cycles pass. What is not evidenced is the perceptual half: no retrieved source measures the pitch listeners hear from short loops of recorded material. Low rather than moderate for that reason."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "session-01-what-is-sound", "note": "Establishes that frequency is set by the rate at which cycles pass, which is what makes a loop period a frequency."}, {"relation": "qualified_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "Bounds the region in which periodic envelope variation is heard as roughness rather than as separate events or as resolved tones."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "micro-looping"}]
+appears_in: [{"kind": "node", "ref": "micro-looping"}, {"kind": "node", "ref": "granular-fragmentation"}, {"kind": "vocabulary", "ref": "micro-looping"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Does the perceived pitch track the loop rate exactly, or is it pulled by pitch content in the source?", "How much does crossfading the loop point suppress the harmonics of the loop rate?"]
+---
+id: "removing-material-creates-perceptual-accent"
+statement: "Removing or withholding material accents what remains around it, because an onset not closely followed by another onset is perceived as accented, so a gate, a chop, or an inserted silence can produce emphasis without any change in level."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "The accent mechanism is sourced from a retrieved study that established it with pitch and loudness held constant. What AudioMuse adds is the inverse reading — that operations which remove material therefore create accents — which no source states and which is the reason this is typed as synthesis and held at moderate."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "grahn-brett-beat-perception-motor", "note": "States that an onset not closely followed by another onset is perceived as accented, with pitch and volume held constant."}]
+attribution: []
+derived_from: [{"kind": "claim", "ref": "perceptual-accent-arises-from-temporal-spacing-alone"}, {"kind": "node", "ref": "silence-as-musical-material"}]
+appears_in: [{"kind": "node", "ref": "silence-as-musical-material"}, {"kind": "node", "ref": "gating"}, {"kind": "node", "ref": "temporal-dsp"}, {"kind": "vocabulary", "ref": "silence-insertion"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Does the accent effect hold at the irregular spacings that non-metrical chopping produces?"]
+---
+id: "dropout-strength-depends-on-the-prediction-it-breaks"
+statement: "AudioMuse proposes that the perceptual force of a dropout depends on the strength of the expectation it interrupts rather than on its own duration, so the same silence placed in an established groove and in an unpatterned passage are different events."
+claim_type: "hypothesis"
+confidence: "low"
+confidence_basis: "The expectation half is sourced: a session record establishes that a repeated pattern builds an expectation that can be interrupted, and a retrieved review describes emotion induced by confirmation, delay, or violation of style-based expectations. The specific proportionality between prediction strength and perceptual force is proposed and untested, which caps this at low."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "session-02-what-is-music", "note": "Establishes that once a pattern repeats a listener forms an expectation which can be fulfilled, delayed, modified, interrupted, or violated."}, {"relation": "supported_by", "source_id": "juslin-brecvema-unified-theory", "note": "Describes musical expectancy as emotion induced when a feature violates, delays, or confirms expectations formed from previous experience of a style."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "temporal-discontinuity"}]
+appears_in: [{"kind": "node", "ref": "temporal-discontinuity"}, {"kind": "node", "ref": "silence-as-musical-material"}, {"kind": "vocabulary", "ref": "dropout"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Can a listening design vary expectation strength while holding the dropout itself constant?", "Does an omission at a strong metrical position differ measurably from one at a weak position?"]
+---
+id: "compressor-release-becomes-a-rhythmic-modulation"
+statement: "AudioMuse proposes that a compressor's release time functions as a rhythmic parameter, because gain recovery after each reduction produces a periodic level contour at the rate of the material triggering it, placing the resulting pumping in the same modulation-rate territory as any other periodic envelope variation."
+claim_type: "hypothesis"
+confidence: "low"
+confidence_basis: "The signal-level reasoning is straightforward and the modulation-rate framing is sourced from a retrieved technical reference that locates fluctuation strength near 4 Hz. What is entirely unsourced is any listener response to compression settings, so the affective and groove-related half of the proposal rests on nothing retrieved and the claim is graded low."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "head-acoustics-psychoacoustic-analyses", "note": "Places the maximum of fluctuation strength near a 4 Hz modulation rate, which is the region a beat-rate pumping cycle occupies at common dance tempi."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "dynamic-range-compression"}]
+appears_in: [{"kind": "node", "ref": "dynamic-range-compression"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Is there a measurable difference in rated groove between release times that align with the tempo and release times that do not?", "What retrievable research exists on listener response to compression parameters at all?"]
+---
+id: "sustained-rate-reduction-moves-several-affective-variables-together"
+statement: "Because changing playback rate scales duration and frequency together, sustained slowing simultaneously lowers register, lengthens envelope timing, and redistributes spectral energy, so any affective consequence of slowed playback cannot be attributed to a single one of those changes."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "The coupling is an existing AudioMuse technical claim, and the affective relevance of register, envelope, and spectral distribution as separate variables is sourced from a retrieved study of instrument tones. Combining them into a statement about slowed playback specifically is AudioMuse's inference, and the underlying study used isolated orchestral tones rather than slowed recordings, so this is graded moderate."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "mcadams-affective-qualities-instrument-sounds", "note": "Reports that register, envelope timing, and spectral distribution relate to affective ratings through different descriptor combinations, which is what makes their simultaneous movement non-separable."}, {"relation": "qualified_by", "source_id": "mcadams-affective-qualities-instrument-sounds", "note": "The authors state that isolated tones were used and the relationships should be validated in musical context, which bounds the transfer to slowed recordings."}]
+attribution: []
+derived_from: [{"kind": "claim", "ref": "playback-rate-couples-time-and-pitch"}, {"kind": "node", "ref": "slowed-playback"}]
+appears_in: [{"kind": "node", "ref": "affective-timbre"}, {"kind": "node", "ref": "slowed-playback"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Could a listening design decouple register from envelope timing in slowed material, given that mechanical rate change cannot?"]
+---
+id: "performed-and-programmed-temporal-operations-are-different-stimuli"
+statement: "A temporal operation performed by hand and the same operation programmed in software are different stimuli rather than the same idea at different precisions, because the performed version carries a distribution of timing offsets and the programmed version is exact."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "Two sourced components support it: a retrieved study in which exact repetition produced a perceptual transformation that slight transposition prevented, and the existing AudioMuse node prose recording that a chop performed against a moving record carries the performer's timing while a software slice does not. Whether the difference is perceptually consequential in music has not been tested, which keeps this at moderate."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "deutsch-speech-to-song-illusion", "note": "Demonstrates a case where exactness of repetition was necessary for a perceptual effect, and slight alteration removed it."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "chopping"}, {"kind": "node", "ref": "temporal-displacement"}]
+appears_in: [{"kind": "node", "ref": "temporal-dsp"}, {"kind": "node", "ref": "temporal-displacement"}, {"kind": "document", "ref": "docs/affective-mechanism-stack.md"}]
+open_questions: ["Is there a measurable difference in listener response between a performed and an edited version of the same chop pattern?"]

@@ -1,0 +1,216 @@
+---
+id: "temporal-dsp"
+term: "Temporal DSP"
+domain: "dsp"
+definition: "The family of signal operations that restructure material in time rather than in frequency, including gating, chopping, stuttering, looping, retriggering, dropout, displacement, and granular fragmentation."
+digital_relationship: "Native to samplers and DAWs, where any point in a file is instantly addressable; the mechanical ancestors are the crossfader, the tape splice, and two copies of one record."
+best_use: "Naming the layer between waveform manipulation and musical expectation, rather than listing the operations individually."
+technologies: ["sampler", "DAW", "DJ mixer", "step sequencer", "granular processor"]
+node_refs: ["temporal-dsp", "digital-signal-processing", "amplitude-envelope"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["gating", "chopping", "stutter", "micro-looping", "retriggering", "temporal-discontinuity"]
+tags: ["dsp", "time-domain", "structure"]
+---
+id: "gating"
+term: "Gating"
+domain: "dsp"
+definition: "Opening and closing a signal path according to a separate control signal, so that material present in the source is heard only during the open intervals."
+digital_relationship: "Implemented as a threshold detector, an envelope follower, an LFO, or a step pattern; the crossfader performs the same operation by hand."
+best_use: "Describing amplitude switched on and off on a schedule, as distinct from level being reduced continuously."
+technologies: ["noise gate", "trance gate", "DJ crossfader", "sidechain compressor", "DAW clip gain"]
+node_refs: ["gating", "amplitude-envelope", "temporal-discontinuity"]
+session_refs: []
+related_terms: ["gate-rate", "duty-cycle", "temporal-dsp", "dropout", "silence-insertion"]
+tags: ["dsp", "time-domain", "technique"]
+---
+id: "gate-rate"
+term: "Gate Rate"
+domain: "dsp"
+definition: "How often a gate opens per unit time, which determines whether the result is heard as phrasing, as rhythm, or as timbral modulation."
+digital_relationship: "Usually set as a musical division in a DAW, which hides the fact that it is a frequency and can be driven into the audio range."
+best_use: "Reasoning about a gate as a modulation frequency rather than as a note value."
+technologies: ["LFO", "step sequencer", "trance gate", "tremolo"]
+node_refs: ["gating", "roughness"]
+session_refs: []
+related_terms: ["gating", "duty-cycle", "modulation-rate", "stutter"]
+tags: ["dsp", "parameter", "time-domain"]
+---
+id: "duty-cycle"
+term: "Duty Cycle"
+domain: "dsp"
+definition: "The proportion of each gate period during which the signal is open, which determines how much of the source survives and whether the result reads as continuous material with holes or as separate events."
+digital_relationship: "Exposed directly as gate width or pulse width in synthesizers and step gates; on a crossfader it is the fraction of the cycle the fader spends open."
+best_use: "Separating how often a gate opens from how long it stays open, which are independent perceptual variables."
+technologies: ["pulse width control", "step gate", "DJ crossfader", "trance gate"]
+node_refs: ["gating", "silence-as-musical-material"]
+session_refs: []
+related_terms: ["gating", "gate-rate", "onset-density"]
+tags: ["dsp", "parameter", "time-domain"]
+---
+id: "stutter"
+term: "Stutter"
+domain: "dsp"
+definition: "Rapid repetition of a short fragment at a period set independently of the source material, so that the repeat rate rather than the fragment content becomes the dominant perceptual variable."
+digital_relationship: "Produced by a beat-repeat effect, a re-triggered sampler, or a buffer loop, where the repeat period can be set exactly and swept continuously."
+best_use: "Naming fast repetition whose rate is the point, as distinct from a musical repeat of a phrase."
+technologies: ["beat repeat", "buffer effect", "sampler", "DJ loop roll"]
+node_refs: ["stutter", "repetition", "micro-looping"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["micro-looping", "retriggering", "gating", "repetition", "modulation-rate"]
+tags: ["dsp", "time-domain", "technique"]
+---
+id: "micro-looping"
+term: "Micro-Looping"
+domain: "dsp"
+definition: "Looping of a segment short enough that the loop period itself becomes a perceptual variable, carrying material from rhythm through flutter and buzz toward perceived pitch as the period shortens."
+digital_relationship: "Trivial once audio is randomly addressable; the loop rate is a frequency, and a hard loop point generates broadband content at every repetition."
+best_use: "Describing the continuum between rhythmic repetition and pitched periodicity as one variable rather than two domains."
+technologies: ["sampler loop points", "buffer effect", "granular processor", "DAW loop region"]
+node_refs: ["micro-looping", "roughness", "pitch"]
+session_refs: ["session-01-what-is-sound"]
+related_terms: ["stutter", "granular-fragmentation", "modulation-rate", "repetition"]
+tags: ["dsp", "time-domain", "spectral"]
+---
+id: "retriggering"
+term: "Retriggering"
+domain: "dsp"
+definition: "Restarting a sample or event before it completes, truncating its envelope and replacing it with a new attack, which raises onset density and changes apparent identity without editing the source."
+digital_relationship: "A voice-allocation and envelope decision in a sampler; on turntables the equivalent is re-striking a cued record by hand."
+best_use: "Naming what happens to the tail of a sound, not only what happens to its start."
+technologies: ["sampler", "drum machine", "MPC-style pads", "MIDI note repeat"]
+node_refs: ["retriggering", "sampling", "amplitude-envelope"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["stutter", "chopping", "onset-density", "temporal-dsp"]
+tags: ["dsp", "sampling", "time-domain"]
+---
+id: "temporal-discontinuity"
+term: "Temporal Discontinuity"
+domain: "dsp"
+definition: "An abrupt break in signal continuity that functions at once as a spectral event, a grouping boundary, and a failure of prediction."
+digital_relationship: "Produced by any hard cut in the digital domain, where an instantaneous amplitude step is broadband and audible as a click unless a short fade is applied."
+best_use: "Explaining why a cut does three things at once instead of only removing audio."
+technologies: ["DAW editing", "sampler slicing", "DJ crossfader", "gate"]
+node_refs: ["temporal-discontinuity", "musical-expectation", "amplitude-envelope"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["dropout", "silence-insertion", "gating", "chopping"]
+tags: ["dsp", "time-domain", "structure"]
+---
+id: "dropout"
+term: "Dropout"
+domain: "dsp"
+definition: "Sudden removal of expected material, whose effect depends on the strength of the prediction it breaks rather than on its own duration."
+digital_relationship: "A mute, a gate closure, or an arrangement decision; identical in signal terms to silence, and completely different in perceptual terms because of what preceded it."
+best_use: "Describing an absence that arrives, as opposed to material that was never there."
+technologies: ["DAW mute automation", "DJ mixer kill switch", "gate", "arrangement"]
+node_refs: ["temporal-discontinuity", "silence-as-musical-material", "musical-expectation"]
+session_refs: []
+related_terms: ["silence-insertion", "gating", "temporal-discontinuity", "expectancy"]
+tags: ["dsp", "structure", "time-domain"]
+---
+id: "silence-insertion"
+term: "Silence Insertion"
+domain: "dsp"
+definition: "Deliberate placement of an interval containing nothing, treated as a positioned element that creates accent, boundary, and contrast rather than as leftover space."
+digital_relationship: "Sample-accurate in a DAW, which makes the length of a silence a precise compositional parameter for the first time in the history of the practice."
+best_use: "Treating a gap as something placed, with a length that was chosen."
+technologies: ["DAW arrangement", "sampler", "step sequencer rests"]
+node_refs: ["silence-as-musical-material", "temporal-discontinuity"]
+session_refs: []
+related_terms: ["dropout", "temporal-discontinuity", "onset-density"]
+tags: ["dsp", "structure", "time-domain"]
+---
+id: "granular-fragmentation"
+term: "Granular Fragmentation"
+domain: "dsp"
+definition: "Decomposition of a signal into very short windowed segments that can be repositioned, repeated, overlapped, and randomized independently of the source's own structure."
+digital_relationship: "Requires random access and windowing; the grain schedule is generated rather than found, which is what separates it from slicing."
+best_use: "Naming processing whose unit is shorter than an event, where grain scheduling rather than content determines the result."
+technologies: ["granular synthesizer", "granular delay", "time-stretch algorithms", "DAW warping"]
+node_refs: ["granular-fragmentation", "time-stretching", "timbre"]
+session_refs: ["session-03-history-of-electronic-music"]
+related_terms: ["grain", "grain-density", "micro-looping", "time-stretching"]
+tags: ["dsp", "synthesis", "time-domain"]
+---
+id: "grain"
+term: "Grain"
+domain: "dsp"
+definition: "A single short windowed segment of audio used as the unit of granular processing, short enough that its window shape substantially determines its spectrum."
+digital_relationship: "Defined by a length and a window function; at very short lengths the window rather than the source dominates what is heard."
+best_use: "Reasoning about why a very short fragment does not sound like a short version of its source."
+technologies: ["granular synthesizer", "windowing functions", "phase vocoder frames"]
+node_refs: ["granular-fragmentation"]
+session_refs: []
+related_terms: ["granular-fragmentation", "grain-density", "micro-looping"]
+tags: ["dsp", "synthesis"]
+---
+id: "grain-density"
+term: "Grain Density"
+domain: "dsp"
+definition: "The rate at which grains are scheduled, which determines whether the result is heard as a sequence of small events, as texture, or as a pitch at the grain rate."
+digital_relationship: "A generator parameter with no counterpart in the source material; regular scheduling produces periodicity and jittered scheduling suppresses it."
+best_use: "Explaining how one control moves granular output between rhythm, noise, and tone."
+technologies: ["granular synthesizer", "granular delay", "particle processors"]
+node_refs: ["granular-fragmentation", "roughness"]
+session_refs: []
+related_terms: ["grain", "granular-fragmentation", "modulation-rate", "onset-density"]
+tags: ["dsp", "parameter", "synthesis"]
+---
+id: "onset-density"
+term: "Onset Density"
+domain: "rhythm-time"
+definition: "The number of perceptual event starts per unit time, which temporal operations change directly and which determines how busy a passage is independently of its level."
+digital_relationship: "Computable from an onset detection function, and manipulable by any operation that adds, removes, or subdivides events."
+best_use: "Describing busyness as a countable property rather than as an impression."
+technologies: ["onset detection", "sampler", "step sequencer", "DAW editing"]
+node_refs: ["retriggering", "gating", "rhythm"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["inter-onset-interval", "duty-cycle", "retriggering", "grain-density"]
+tags: ["rhythm-time", "measurement"]
+---
+id: "inter-onset-interval"
+term: "Inter-Onset Interval"
+domain: "rhythm-time"
+definition: "The time between the starts of two successive events, which is the quantity a listener uses to infer pulse and the quantity temporal displacement alters."
+digital_relationship: "Directly measurable from detected onsets and directly editable in any sequencer, which makes it the natural unit for describing timing deviation."
+best_use: "Stating a timing relationship as a duration between starts rather than as a note value."
+technologies: ["onset detection", "MIDI timing", "DAW grid", "tapping tasks"]
+node_refs: ["temporal-displacement", "rhythm", "rhythmic-entrainment"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["onset-density", "temporal-displacement", "swing"]
+tags: ["rhythm-time", "measurement"]
+---
+id: "temporal-displacement"
+term: "Temporal Displacement"
+domain: "rhythm-time"
+definition: "Placement of an event earlier or later than the position a listener predicts, at scales from microtiming to phrase-level anticipation, which changes felt rhythm without changing which events occur."
+digital_relationship: "Expressed as an offset from a grid in a sequencer, where the grid is explicit; in performance the reference is the pulse a listener has inferred, which is not."
+best_use: "Naming the variable that swing, push, drag, and syncopation are all instances of."
+technologies: ["DAW quantize strength", "groove templates", "MPC swing", "turntable"]
+node_refs: ["temporal-displacement", "groove", "musical-expectation"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["swing", "syncopation", "groove", "inter-onset-interval"]
+tags: ["rhythm-time", "structure"]
+---
+id: "syncopation"
+term: "Syncopation"
+domain: "rhythm-time"
+definition: "Systematic placement of accents away from the positions an inferred metre predicts, which contradicts the metre without displacing it."
+digital_relationship: "Trivially programmable, and measurable by published syncopation indices computed from a pattern against a metrical hierarchy."
+best_use: "Describing contradiction of an inferred metre, as distinct from any deviation from a grid."
+technologies: ["step sequencer", "drum machine", "DAW piano roll"]
+node_refs: ["temporal-displacement", "groove", "rhythmic-entrainment"]
+session_refs: ["session-02-what-is-music"]
+related_terms: ["temporal-displacement", "groove", "swing", "expectancy"]
+tags: ["rhythm-time", "structure"]
+---
+id: "modulation-rate"
+term: "Modulation Rate"
+domain: "psychoacoustics"
+definition: "The frequency at which a signal property varies periodically, which determines the perceptual category of the result: pulsation at low rates, roughness in a middle band, and resolved sidebands above it."
+digital_relationship: "The rate of any LFO, gate, stutter, or loop, which means a musical repeat and a timbral modulation are the same parameter at different settings."
+best_use: "Reasoning about repeat rate and modulation depth as one continuum rather than as separate techniques."
+technologies: ["LFO", "tremolo", "gate", "beat repeat", "granular scheduling"]
+node_refs: ["roughness", "amplitude-envelope", "micro-looping"]
+session_refs: []
+related_terms: ["roughness", "fluctuation-strength", "gate-rate", "grain-density"]
+tags: ["psychoacoustics", "parameter", "time-domain"]

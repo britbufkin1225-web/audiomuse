@@ -1,16 +1,18 @@
 # Session Coverage
 
 Sessions represented: 3
-Nodes covered: 22 of 43
+Nodes covered: 26 of 78
 
 ## Session → Nodes
 
-### Session 1: What Is Sound? (`session-01-what-is-sound`) — 15 nodes
+### Session 1: What Is Sound? (`session-01-what-is-sound`) — 17 nodes
 
+- `amplitude-envelope` — Amplitude Envelope
 - `beatmatching` — Beatmatching
 - `digital-signal-processing` — Digital Signal Processing
 - `djing` — DJing
 - `frequency` — Frequency
+- `perceived-space` — Perceived Space
 - `phase` — Phase
 - `pitch` — Pitch
 - `psychoacoustics` — Psychoacoustics
@@ -23,13 +25,14 @@ Nodes covered: 22 of 43
 - `turntable` — Turntable
 - `vibration` — Vibration
 
-### AudioMuse — Session 2: What Is Music? (`session-02-what-is-music`) — 18 nodes
+### AudioMuse — Session 2: What Is Music? (`session-02-what-is-music`) — 20 nodes
 
 - `beatmatching` — Beatmatching
 - `digital-signal-processing` — Digital Signal Processing
 - `djing` — DJing
 - `frequency` — Frequency
 - `midi` — MIDI
+- `musical-expectation` — Musical Expectation
 - `phase` — Phase
 - `pitch` — Pitch
 - `psychoacoustics` — Psychoacoustics
@@ -41,6 +44,7 @@ Nodes covered: 22 of 43
 - `sequencing` — Sequencing
 - `sound` — Sound
 - `synthesis` — Synthesis
+- `temporal-displacement` — Temporal Displacement
 - `timbre` — Timbre
 - `turntablism` — Turntablism
 
@@ -60,6 +64,42 @@ Nodes covered: 22 of 43
 - `turntablism` — Turntablism
 
 ## Node → Sessions
+
+### Affective Psychoacoustics (`affective-psychoacoustics`) — 0 sessions
+
+- None
+
+### Affective Timbre (`affective-timbre`) — 0 sessions
+
+- None
+
+### Amplitude Envelope (`amplitude-envelope`) — 1 sessions
+
+- `session-01-what-is-sound` — Session 1: What Is Sound?
+
+### Audio Feature Extraction (`audio-feature-extraction`) — 0 sessions
+
+- None
+
+### Auditory Looming (`auditory-looming`) — 0 sessions
+
+- None
+
+### Auditory Pathway (`auditory-pathway`) — 0 sessions
+
+- None
+
+### Auditory Reward (`auditory-reward`) — 0 sessions
+
+- None
+
+### Auditory Transduction (`auditory-transduction`) — 0 sessions
+
+- None
+
+### Autonomic Response to Music (`autonomic-response-to-music`) — 0 sessions
+
+- None
 
 ### Beatmatching (`beatmatching`) — 2 sessions
 
@@ -102,10 +142,38 @@ Nodes covered: 22 of 43
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
 
+### Dynamic Range Compression (`dynamic-range-compression`) — 0 sessions
+
+- None
+
+### Emotion Measurement (`emotion-measurement`) — 0 sessions
+
+- None
+
 ### Frequency (`frequency`) — 2 sessions
 
 - `session-01-what-is-sound` — Session 1: What Is Sound?
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
+
+### Frisson (`frisson`) — 0 sessions
+
+- None
+
+### Gating (`gating`) — 0 sessions
+
+- None
+
+### Granular Fragmentation (`granular-fragmentation`) — 0 sessions
+
+- None
+
+### Groove (`groove`) — 0 sessions
+
+- None
+
+### Harmonicity (`harmonicity`) — 0 sessions
+
+- None
 
 ### Houston Musical Cartography (`houston-musical-cartography`) — 0 sessions
 
@@ -119,12 +187,20 @@ Nodes covered: 22 of 43
 
 - None
 
+### Micro-Looping (`micro-looping`) — 0 sessions
+
+- None
+
 ### MIDI (`midi`) — 2 sessions
 
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
 
 ### Mike Dean (`mike-dean`) — 0 sessions
+
+- None
+
+### Music and Memory (`music-and-memory`) — 0 sessions
 
 - None
 
@@ -136,9 +212,37 @@ Nodes covered: 22 of 43
 
 - None
 
+### Music Emotion Recognition (`music-emotion-recognition`) — 0 sessions
+
+- None
+
+### Music-Evoked Emotion (`music-evoked-emotion`) — 0 sessions
+
+- None
+
+### Musical Consonance (`musical-consonance`) — 0 sessions
+
+- None
+
+### Musical Dissonance (`musical-dissonance`) — 0 sessions
+
+- None
+
+### Musical Enculturation (`musical-enculturation`) — 0 sessions
+
+- None
+
+### Musical Expectation (`musical-expectation`) — 1 sessions
+
+- `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
+
 ### Pen and Pixel (`pen-and-pixel`) — 0 sessions
 
 - None
+
+### Perceived Space (`perceived-space`) — 1 sessions
+
+- `session-01-what-is-sound` — Session 1: What Is Sound?
 
 ### Phase (`phase`) — 2 sessions
 
@@ -149,6 +253,10 @@ Nodes covered: 22 of 43
 
 - `session-01-what-is-sound` — Session 1: What Is Sound?
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
+
+### Predictive Processing in Music (`predictive-processing-music`) — 0 sessions
+
+- None
 
 ### Psychoacoustics (`psychoacoustics`) — 2 sessions
 
@@ -173,10 +281,22 @@ Nodes covered: 22 of 43
 - `session-01-what-is-sound` — Session 1: What Is Sound?
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 
+### Retriggering (`retriggering`) — 0 sessions
+
+- None
+
 ### Rhythm (`rhythm`) — 2 sessions
 
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
+
+### Rhythmic Entrainment (`rhythmic-entrainment`) — 0 sessions
+
+- None
+
+### Roughness (`roughness`) — 0 sessions
+
+- None
 
 ### Sampling (`sampling`) — 3 sessions
 
@@ -198,10 +318,18 @@ Nodes covered: 22 of 43
 
 - None
 
+### Sensory Dissonance (`sensory-dissonance`) — 0 sessions
+
+- None
+
 ### Sequencing (`sequencing`) — 2 sessions
 
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
+
+### Silence as Musical Material (`silence-as-musical-material`) — 0 sessions
+
+- None
 
 ### Slowed Playback (`slowed-playback`) — 0 sessions
 
@@ -220,6 +348,10 @@ Nodes covered: 22 of 43
 
 - None
 
+### Stutter (`stutter`) — 0 sessions
+
+- None
+
 ### Swishahouse (`swishahouse`) — 0 sessions
 
 - None
@@ -228,6 +360,18 @@ Nodes covered: 22 of 43
 
 - `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
 - `session-03-history-of-electronic-music` — AudioMuse — History of Electronic Music Timeline
+
+### Temporal Discontinuity (`temporal-discontinuity`) — 0 sessions
+
+- None
+
+### Temporal Displacement (`temporal-displacement`) — 1 sessions
+
+- `session-02-what-is-music` — AudioMuse — Session 2: What Is Music?
+
+### Temporal DSP (`temporal-dsp`) — 0 sessions
+
+- None
 
 ### Third Coast (`third-coast`) — 0 sessions
 

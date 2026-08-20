@@ -3,16 +3,396 @@
   "version": 1,
   "authority": "derived-read-only",
   "overview": {
-    "node_count": 43,
-    "relationship_count": 109,
+    "node_count": 78,
+    "relationship_count": 220,
     "relationship_type_count": 11,
-    "source_count": 33,
+    "source_count": 51,
     "session_count": 3,
-    "vocabulary_count": 88,
-    "experiment_count": 3,
+    "vocabulary_count": 165,
+    "experiment_count": 10,
     "experiment_run_count": 2
   },
   "nodes": [
+    {
+      "id": "affective-psychoacoustics",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "juslin-brecvema-unified-theory",
+          "mcadams-affective-qualities-instrument-sounds",
+          "mcpherson-amazonian-interval-fusion"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "appraisal",
+          "music-evoked-emotion"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "apparent-space-and-affect",
+          "harmonicity-versus-roughness",
+          "timbre-emotion-separation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "affective-timbre",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "juslin-brecvema-unified-theory",
+          "mcadams-affective-qualities-instrument-sounds"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "affective-timbre",
+          "emotional-contagion",
+          "spectral-centroid",
+          "valence"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "timbre-emotion-separation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "amplitude-envelope",
+      "domain": "acoustics",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-01-what-is-sound"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "mcadams-affective-qualities-instrument-sounds",
+          "session-01-what-is-sound"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 9,
+        "ids": [
+          "affective-timbre",
+          "auditory-scene-analysis",
+          "dynamic-range",
+          "fluctuation-strength",
+          "gating",
+          "modulation-rate",
+          "retriggering",
+          "temporal-discontinuity",
+          "temporal-dsp"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "temporal-gating-and-expectation",
+          "timbre-emotion-separation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 6,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "audio-feature-extraction",
+      "domain": "machine-audio",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "itu-r-bs-1770-loudness",
+          "mcadams-affective-qualities-instrument-sounds",
+          "weineck-neural-synchronization-spectral-flux",
+          "yang-chen-music-emotion-recognition-review"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "audio-descriptor",
+          "music-emotion-recognition",
+          "programme-loudness",
+          "spectral-centroid",
+          "spectral-flux"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "auditory-looming",
+      "domain": "spatial-audio",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "ignatiadis-auditory-looming-bias",
+          "juslin-brecvema-unified-theory"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "auditory-looming",
+          "brain-stem-reflex",
+          "perceived-space"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "apparent-space-and-affect"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "auditory-pathway",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "nidcd-how-do-we-hear",
+          "purves-neuroscience-auditory-system"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "auditory-transduction",
+          "phase-locking",
+          "tonotopy"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "auditory-reward",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "juslin-brecvema-unified-theory",
+          "zatorre-salimpoor-perception-to-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "prediction-error"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "auditory-transduction",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "nidcd-how-do-we-hear",
+          "purves-neuroscience-auditory-system",
+          "session-01-what-is-sound"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "auditory-transduction",
+          "phase-locking",
+          "tonotopy"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "autonomic-response-to-music",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "harrison-loui-frisson-model",
+          "juslin-brecvema-unified-theory",
+          "mauss-robinson-measures-of-emotion"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "arousal",
+          "autonomic-response",
+          "emotion-measurement",
+          "frisson",
+          "piloerection"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 2
+    },
     {
       "id": "beatmatching",
       "domain": "dj-turntablism",
@@ -51,8 +431,8 @@
         "ids": []
       },
       "inbound_relationships": 1,
-      "outbound_relationships": 1,
-      "relationship_type_diversity": 2
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
     },
     {
       "id": "cassette-duplication",
@@ -202,18 +582,20 @@
         ]
       },
       "experiments": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "chopped-temporal-reconstruction"
+        ]
       },
       "completed_experiment_runs": {
-        "state": "unlinked",
+        "state": "partial",
         "count": 0,
         "ids": []
       },
       "inbound_relationships": 0,
-      "outbound_relationships": 3,
-      "relationship_type_diversity": 2
+      "outbound_relationships": 5,
+      "relationship_type_diversity": 3
     },
     {
       "id": "digital-signal-processing",
@@ -238,10 +620,11 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 3,
+        "count": 4,
         "ids": [
           "digital-signal-processing",
           "filter",
+          "temporal-dsp",
           "time-stretching"
         ]
       },
@@ -257,8 +640,8 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 4,
-      "outbound_relationships": 5,
+      "inbound_relationships": 6,
+      "outbound_relationships": 6,
       "relationship_type_diversity": 4
     },
     {
@@ -391,6 +774,92 @@
       "relationship_type_diversity": 3
     },
     {
+      "id": "dynamic-range-compression",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "mcadams-affective-qualities-instrument-sounds",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "dynamic-range",
+          "fluctuation-strength"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "emotion-measurement",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "itu-r-bs-1770-loudness",
+          "juslin-brecvema-unified-theory",
+          "mauss-robinson-measures-of-emotion",
+          "yang-chen-music-emotion-recognition-review"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 7,
+        "ids": [
+          "arousal",
+          "audio-descriptor",
+          "autonomic-response",
+          "emotion-measurement",
+          "felt-emotion",
+          "programme-loudness",
+          "valence"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "apparent-space-and-affect"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "frequency",
       "domain": "acoustics",
       "sessions": {
@@ -412,10 +881,11 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 2,
+        "count": 3,
         "ids": [
           "frequency",
-          "fundamental-frequency"
+          "fundamental-frequency",
+          "tonotopy"
         ]
       },
       "experiments": {
@@ -435,6 +905,214 @@
       "inbound_relationships": 5,
       "outbound_relationships": 6,
       "relationship_type_diversity": 4
+    },
+    {
+      "id": "frisson",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "harrison-loui-frisson-model",
+          "zatorre-salimpoor-perception-to-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "frisson",
+          "piloerection"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "gating",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "head-acoustics-psychoacoustic-analyses",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "duty-cycle",
+          "gate-rate",
+          "gating",
+          "onset-density",
+          "perceptual-accent"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "temporal-gating-and-expectation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 5,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "granular-fragmentation",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "session-03-history-of-electronic-music",
+          "smith-spectral-audio-signal-processing"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grain",
+          "grain-density",
+          "granular-fragmentation"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 4
+    },
+    {
+      "id": "groove",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "session-02-what-is-music",
+          "witek-syncopation-groove-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 6,
+        "ids": [
+          "beat-perception",
+          "entrainment",
+          "groove",
+          "sensorimotor-synchronization",
+          "syncopation",
+          "temporal-displacement"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 3,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "harmonicity",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "mcpherson-amazonian-interval-fusion",
+          "session-01-what-is-sound"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "auditory-scene-analysis",
+          "consonance",
+          "harmonicity",
+          "musical-consonance",
+          "spectral-fusion"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "harmonicity-versus-roughness"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 2
     },
     {
       "id": "houston-musical-cartography",
@@ -552,6 +1230,49 @@
       "relationship_type_diversity": 4
     },
     {
+      "id": "micro-looping",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "deutsch-speech-to-song-illusion",
+          "head-acoustics-psychoacoustic-analyses",
+          "session-01-what-is-sound"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "micro-looping",
+          "modulation-rate",
+          "speech-to-song-illusion",
+          "stutter"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "stutter-rate-continuum"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 3,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 3
+    },
+    {
       "id": "midi",
       "domain": "digital-audio",
       "sessions": {
@@ -624,6 +1345,48 @@
       "inbound_relationships": 0,
       "outbound_relationships": 2,
       "relationship_type_diversity": 1
+    },
+    {
+      "id": "music-and-memory",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "harrison-loui-frisson-model",
+          "janata-music-evoked-autobiographical-memory",
+          "juslin-brecvema-unified-theory"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "autobiographical-salience",
+          "episodic-memory",
+          "evaluative-conditioning",
+          "familiarity",
+          "music-and-memory"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
     },
     {
       "id": "music-archiving",
@@ -706,6 +1469,278 @@
       "relationship_type_diversity": 4
     },
     {
+      "id": "music-emotion-recognition",
+      "domain": "machine-audio",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "mauss-robinson-measures-of-emotion",
+          "yang-chen-music-emotion-recognition-review"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "expressed-emotion",
+          "music-emotion-recognition",
+          "perceived-emotion"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "music-evoked-emotion",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "juslin-brecvema-unified-theory",
+          "mauss-robinson-measures-of-emotion",
+          "zatorre-salimpoor-perception-to-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 13,
+        "ids": [
+          "aesthetic-judgment",
+          "affect",
+          "appraisal",
+          "brain-stem-reflex",
+          "emotional-contagion",
+          "episodic-memory",
+          "evaluative-conditioning",
+          "felt-emotion",
+          "mood",
+          "music-and-memory",
+          "music-evoked-emotion",
+          "perceived-emotion",
+          "salience"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "apparent-space-and-affect"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 14,
+      "outbound_relationships": 0,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "musical-consonance",
+      "domain": "music-theory",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "mcpherson-amazonian-interval-fusion",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "consonance",
+          "enculturation",
+          "harmonicity",
+          "musical-consonance",
+          "spectral-fusion"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "harmonicity-versus-roughness"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 5,
+      "outbound_relationships": 1,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "musical-dissonance",
+      "domain": "music-theory",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "mcpherson-amazonian-interval-fusion",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "dissonance",
+          "musical-dissonance",
+          "sensory-dissonance"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "expectation-violation-endings",
+          "harmonicity-versus-roughness"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "musical-enculturation",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "juslin-brecvema-unified-theory",
+          "mcpherson-amazonian-interval-fusion",
+          "pearce-statistical-learning-enculturation"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "enculturation",
+          "familiarity",
+          "statistical-learning"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "musical-expectation",
+      "domain": "music-theory",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "juslin-brecvema-unified-theory",
+          "pearce-statistical-learning-enculturation",
+          "session-02-what-is-music",
+          "witek-syncopation-groove-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 10,
+        "ids": [
+          "dropout",
+          "entropy",
+          "expectancy",
+          "information-content",
+          "musical-dissonance",
+          "probabilistic-prediction",
+          "surprise",
+          "temporal-discontinuity",
+          "temporal-displacement",
+          "uncertainty"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "chopped-temporal-reconstruction",
+          "expectation-violation-endings",
+          "temporal-gating-and-expectation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 11,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "pen-and-pixel",
       "domain": "history-culture",
       "sessions": {
@@ -743,6 +1778,50 @@
       "relationship_type_diversity": 1
     },
     {
+      "id": "perceived-space",
+      "domain": "spatial-audio",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-01-what-is-sound"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "purves-neuroscience-auditory-system",
+          "session-01-what-is-sound"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "auditory-looming",
+          "direct-to-reverberant-ratio",
+          "early-reflections",
+          "perceived-space"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "apparent-space-and-affect"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 3
+    },
+    {
       "id": "phase",
       "domain": "acoustics",
       "sessions": {
@@ -764,9 +1843,10 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 1,
+        "count": 2,
         "ids": [
-          "phase"
+          "phase",
+          "phase-locking"
         ]
       },
       "experiments": {
@@ -808,19 +1888,22 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 4,
+        "count": 6,
         "ids": [
           "detuning",
           "fundamental-frequency",
+          "harmonicity",
+          "micro-looping",
           "pitch-shifting",
           "slowed-playback"
         ]
       },
       "experiments": {
         "state": "covered",
-        "count": 1,
+        "count": 2,
         "ids": [
-          "near-frequency-beating"
+          "near-frequency-beating",
+          "stutter-rate-continuum"
         ]
       },
       "completed_experiment_runs": {
@@ -828,9 +1911,56 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 5,
+      "inbound_relationships": 9,
       "outbound_relationships": 1,
-      "relationship_type_diversity": 4
+      "relationship_type_diversity": 5
+    },
+    {
+      "id": "predictive-processing-music",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "pearce-statistical-learning-enculturation",
+          "witek-syncopation-groove-pleasure",
+          "zatorre-salimpoor-perception-to-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 8,
+        "ids": [
+          "entropy",
+          "expectancy",
+          "information-content",
+          "prediction-error",
+          "probabilistic-prediction",
+          "statistical-learning",
+          "surprise",
+          "uncertainty"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "expectation-violation-endings"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 1
     },
     {
       "id": "psychoacoustics",
@@ -845,8 +1975,10 @@
       },
       "sources": {
         "state": "covered",
-        "count": 3,
+        "count": 5,
         "ids": [
+          "juslin-brecvema-unified-theory",
+          "mauss-robinson-measures-of-emotion",
           "session-01-vocabulary-atlas",
           "session-01-what-is-sound",
           "session-02-what-is-music"
@@ -854,8 +1986,10 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 1,
+        "count": 3,
         "ids": [
+          "auditory-scene-analysis",
+          "critical-band",
           "psychoacoustics"
         ]
       },
@@ -872,7 +2006,7 @@
         "ids": []
       },
       "inbound_relationships": 0,
-      "outbound_relationships": 5,
+      "outbound_relationships": 8,
       "relationship_type_diversity": 1
     },
     {
@@ -951,7 +2085,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 3,
+      "inbound_relationships": 4,
       "outbound_relationships": 6,
       "relationship_type_diversity": 5
     },
@@ -967,8 +2101,9 @@
       },
       "sources": {
         "state": "covered",
-        "count": 3,
+        "count": 4,
         "ids": [
+          "deutsch-speech-to-song-illusion",
           "session-02-what-is-music",
           "session-03-history-of-electronic-music",
           "uh-news-dj-screw-exhibit"
@@ -976,26 +2111,30 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 3,
+        "count": 5,
         "ids": [
           "phrase-repetition",
           "repetition",
+          "speech-to-song-illusion",
+          "stutter",
           "word-repetition"
         ]
       },
       "experiments": {
-        "state": "unlinked",
-        "count": 0,
-        "ids": []
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "stutter-rate-continuum"
+        ]
       },
       "completed_experiment_runs": {
-        "state": "unlinked",
+        "state": "partial",
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 0,
-      "outbound_relationships": 2,
-      "relationship_type_diversity": 2
+      "inbound_relationships": 2,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 3
     },
     {
       "id": "resonance",
@@ -1041,6 +2180,47 @@
       "relationship_type_diversity": 2
     },
     {
+      "id": "retriggering",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "head-acoustics-psychoacoustic-analyses",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "onset-density",
+          "retriggering"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "chopped-temporal-reconstruction"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 4
+    },
+    {
       "id": "rhythm",
       "domain": "rhythm-time",
       "sessions": {
@@ -1061,13 +2241,16 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 11,
+        "count": 14,
         "ids": [
           "beat",
+          "beat-perception",
           "beatgrid",
           "beatmatching",
           "chopping",
           "groove",
+          "inter-onset-interval",
+          "onset-density",
           "pulse",
           "quantization-timing",
           "repetition",
@@ -1086,9 +2269,103 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 7,
-      "outbound_relationships": 3,
-      "relationship_type_diversity": 4
+      "inbound_relationships": 13,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 5
+    },
+    {
+      "id": "rhythmic-entrainment",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "juslin-brecvema-unified-theory",
+          "weineck-neural-synchronization-spectral-flux",
+          "witek-syncopation-groove-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 8,
+        "ids": [
+          "beat-perception",
+          "entrainment",
+          "familiarity",
+          "groove",
+          "inter-onset-interval",
+          "sensorimotor-synchronization",
+          "spectral-flux",
+          "syncopation"
+        ]
+      },
+      "experiments": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "completed_experiment_runs": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 2
+    },
+    {
+      "id": "roughness",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "mcpherson-amazonian-interval-fusion"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 8,
+        "ids": [
+          "critical-band",
+          "fluctuation-strength",
+          "gate-rate",
+          "grain-density",
+          "micro-looping",
+          "modulation-rate",
+          "roughness",
+          "sensory-dissonance"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "harmonicity-versus-roughness",
+          "stutter-rate-continuum",
+          "timbre-emotion-separation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 4,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 3
     },
     {
       "id": "sampling",
@@ -1114,11 +2391,12 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 5,
+        "count": 6,
         "ids": [
           "bit-depth",
           "breakbeat",
           "resampling",
+          "retriggering",
           "sample",
           "sample-rate"
         ]
@@ -1133,9 +2411,9 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 9,
-      "outbound_relationships": 4,
-      "relationship_type_diversity": 6
+      "inbound_relationships": 10,
+      "outbound_relationships": 6,
+      "relationship_type_diversity": 7
     },
     {
       "id": "scratching",
@@ -1177,7 +2455,7 @@
         "ids": []
       },
       "inbound_relationships": 0,
-      "outbound_relationships": 4,
+      "outbound_relationships": 6,
       "relationship_type_diversity": 4
     },
     {
@@ -1265,6 +2543,50 @@
       "relationship_type_diversity": 2
     },
     {
+      "id": "sensory-dissonance",
+      "domain": "psychoacoustics",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "head-acoustics-psychoacoustic-analyses",
+          "mcpherson-amazonian-interval-fusion"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "critical-band",
+          "dissonance",
+          "musical-dissonance",
+          "roughness",
+          "sensory-dissonance"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "harmonicity-versus-roughness",
+          "timbre-emotion-separation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 1,
+      "outbound_relationships": 2,
+      "relationship_type_diversity": 1
+    },
+    {
       "id": "sequencing",
       "domain": "rhythm-time",
       "sessions": {
@@ -1306,6 +2628,51 @@
       "relationship_type_diversity": 3
     },
     {
+      "id": "silence-as-musical-material",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "juslin-brecvema-unified-theory",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "dropout",
+          "duty-cycle",
+          "perceptual-accent",
+          "silence-insertion"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "chopped-temporal-reconstruction",
+          "expectation-violation-endings",
+          "temporal-gating-and-expectation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 2,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 2
+    },
+    {
       "id": "slowed-playback",
       "domain": "dj-turntablism",
       "sessions": {
@@ -1343,7 +2710,7 @@
         "ids": []
       },
       "inbound_relationships": 0,
-      "outbound_relationships": 4,
+      "outbound_relationships": 5,
       "relationship_type_diversity": 2
     },
     {
@@ -1385,7 +2752,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 6,
+      "inbound_relationships": 9,
       "outbound_relationships": 3,
       "relationship_type_diversity": 6
     },
@@ -1462,6 +2829,47 @@
       "inbound_relationships": 0,
       "outbound_relationships": 1,
       "relationship_type_diversity": 1
+    },
+    {
+      "id": "stutter",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "deutsch-speech-to-song-illusion",
+          "head-acoustics-psychoacoustic-analyses",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "stutter"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "chopped-temporal-reconstruction",
+          "stutter-rate-continuum"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 3
     },
     {
       "id": "swishahouse",
@@ -1544,6 +2952,144 @@
       "relationship_type_diversity": 3
     },
     {
+      "id": "temporal-discontinuity",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "juslin-brecvema-unified-theory",
+          "session-02-what-is-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 6,
+        "ids": [
+          "brain-stem-reflex",
+          "dropout",
+          "gating",
+          "salience",
+          "silence-insertion",
+          "temporal-discontinuity"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "chopped-temporal-reconstruction",
+          "expectation-violation-endings",
+          "temporal-gating-and-expectation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 3,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 3
+    },
+    {
+      "id": "temporal-displacement",
+      "domain": "rhythm-time",
+      "sessions": {
+        "state": "covered",
+        "count": 1,
+        "ids": [
+          "session-02-what-is-music"
+        ]
+      },
+      "sources": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "grahn-brett-beat-perception-motor",
+          "session-02-what-is-music",
+          "witek-syncopation-groove-pleasure"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 5,
+        "ids": [
+          "inter-onset-interval",
+          "perceptual-accent",
+          "swing",
+          "syncopation",
+          "temporal-displacement"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "chopped-temporal-reconstruction",
+          "expectation-violation-endings"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 0,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 1
+    },
+    {
+      "id": "temporal-dsp",
+      "domain": "dsp",
+      "sessions": {
+        "state": "unlinked",
+        "count": 0,
+        "ids": []
+      },
+      "sources": {
+        "state": "covered",
+        "count": 4,
+        "ids": [
+          "deutsch-speech-to-song-illusion",
+          "grahn-brett-beat-perception-motor",
+          "head-acoustics-psychoacoustic-analyses",
+          "session-03-history-of-electronic-music"
+        ]
+      },
+      "vocabulary": {
+        "state": "covered",
+        "count": 2,
+        "ids": [
+          "speech-to-song-illusion",
+          "temporal-dsp"
+        ]
+      },
+      "experiments": {
+        "state": "covered",
+        "count": 3,
+        "ids": [
+          "chopped-temporal-reconstruction",
+          "stutter-rate-continuum",
+          "temporal-gating-and-expectation"
+        ]
+      },
+      "completed_experiment_runs": {
+        "state": "partial",
+        "count": 0,
+        "ids": []
+      },
+      "inbound_relationships": 10,
+      "outbound_relationships": 4,
+      "relationship_type_diversity": 4
+    },
+    {
       "id": "third-coast",
       "domain": "history-culture",
       "sessions": {
@@ -1603,9 +3149,12 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 4,
+        "count": 7,
         "ids": [
           "adsr-envelope",
+          "affective-timbre",
+          "granular-fragmentation",
+          "roughness",
           "slowed-playback",
           "synthesizer",
           "timbre"
@@ -1613,8 +3162,9 @@
       },
       "experiments": {
         "state": "covered",
-        "count": 1,
+        "count": 2,
         "ids": [
+          "timbre-emotion-separation",
           "waveform-timbre-comparison"
         ]
       },
@@ -1623,7 +3173,7 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 8,
+      "inbound_relationships": 15,
       "outbound_relationships": 0,
       "relationship_type_diversity": 6
     },
@@ -1645,9 +3195,10 @@
       },
       "vocabulary": {
         "state": "covered",
-        "count": 4,
+        "count": 5,
         "ids": [
           "chopped-and-slowed",
+          "granular-fragmentation",
           "pitch-shifting",
           "resampling",
           "time-stretching"
@@ -1663,9 +3214,9 @@
         "count": 0,
         "ids": []
       },
-      "inbound_relationships": 1,
-      "outbound_relationships": 2,
-      "relationship_type_diversity": 3
+      "inbound_relationships": 2,
+      "outbound_relationships": 3,
+      "relationship_type_diversity": 4
     },
     {
       "id": "turntable",
@@ -1801,10 +3352,10 @@
   "domains": [
     {
       "id": "acoustics",
-      "node_count": 5,
+      "node_count": 6,
       "vocabulary_count": 19,
-      "experiment_count": 3,
-      "source_count": 3
+      "experiment_count": 5,
+      "source_count": 5
     },
     {
       "id": "audio-hardware",
@@ -1824,15 +3375,15 @@
       "id": "dj-turntablism",
       "node_count": 10,
       "vocabulary_count": 17,
-      "experiment_count": 0,
+      "experiment_count": 1,
       "source_count": 8
     },
     {
       "id": "dsp",
-      "node_count": 2,
-      "vocabulary_count": 5,
-      "experiment_count": 1,
-      "source_count": 4
+      "node_count": 10,
+      "vocabulary_count": 18,
+      "experiment_count": 5,
+      "source_count": 9
     },
     {
       "id": "history-culture",
@@ -1843,31 +3394,31 @@
     },
     {
       "id": "machine-audio",
-      "node_count": 0,
-      "vocabulary_count": 0,
+      "node_count": 2,
+      "vocabulary_count": 4,
       "experiment_count": 0,
-      "source_count": 0
+      "source_count": 5
     },
     {
       "id": "mixing-mastering",
       "node_count": 0,
-      "vocabulary_count": 0,
+      "vocabulary_count": 2,
       "experiment_count": 0,
       "source_count": 0
     },
     {
       "id": "music-theory",
-      "node_count": 0,
-      "vocabulary_count": 0,
-      "experiment_count": 0,
-      "source_count": 0
+      "node_count": 3,
+      "vocabulary_count": 3,
+      "experiment_count": 4,
+      "source_count": 6
     },
     {
       "id": "psychoacoustics",
-      "node_count": 3,
-      "vocabulary_count": 9,
-      "experiment_count": 2,
-      "source_count": 3
+      "node_count": 18,
+      "vocabulary_count": 52,
+      "experiment_count": 7,
+      "source_count": 17
     },
     {
       "id": "recording",
@@ -1878,10 +3429,10 @@
     },
     {
       "id": "rhythm-time",
-      "node_count": 3,
-      "vocabulary_count": 10,
-      "experiment_count": 0,
-      "source_count": 3
+      "node_count": 7,
+      "vocabulary_count": 18,
+      "experiment_count": 4,
+      "source_count": 8
     },
     {
       "id": "sound-design",
@@ -1892,10 +3443,10 @@
     },
     {
       "id": "spatial-audio",
-      "node_count": 0,
-      "vocabulary_count": 0,
-      "experiment_count": 0,
-      "source_count": 0
+      "node_count": 2,
+      "vocabulary_count": 4,
+      "experiment_count": 1,
+      "source_count": 4
     },
     {
       "id": "synthesis",
@@ -1908,21 +3459,21 @@
   "sessions": [
     {
       "id": "session-01-what-is-sound",
-      "mapped_node_count": 15,
-      "vocabulary_count": 43,
-      "experiment_count": 3
+      "mapped_node_count": 17,
+      "vocabulary_count": 51,
+      "experiment_count": 7
     },
     {
       "id": "session-02-what-is-music",
-      "mapped_node_count": 18,
-      "vocabulary_count": 33,
-      "experiment_count": 3
+      "mapped_node_count": 20,
+      "vocabulary_count": 43,
+      "experiment_count": 8
     },
     {
       "id": "session-03-history-of-electronic-music",
       "mapped_node_count": 12,
-      "vocabulary_count": 13,
-      "experiment_count": 0
+      "vocabulary_count": 16,
+      "experiment_count": 1
     }
   ],
   "research_gap_candidates": [
@@ -1938,29 +3489,11 @@
     {
       "candidate_type": "domain_representation",
       "subject_type": "domain",
-      "subject_id": "machine-audio",
-      "evidence": {
-        "node_count": 0
-      },
-      "reason": "The canonical domain machine-audio currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
       "subject_id": "mixing-mastering",
       "evidence": {
         "node_count": 0
       },
       "reason": "The canonical domain mixing-mastering currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
-      "subject_id": "music-theory",
-      "evidence": {
-        "node_count": 0
-      },
-      "reason": "The canonical domain music-theory currently contains at most one node; representation is sparse, not defective."
     },
     {
       "candidate_type": "domain_representation",
@@ -1974,20 +3507,61 @@
     {
       "candidate_type": "domain_representation",
       "subject_type": "domain",
-      "subject_id": "spatial-audio",
-      "evidence": {
-        "node_count": 0
-      },
-      "reason": "The canonical domain spatial-audio currently contains at most one node; representation is sparse, not defective."
-    },
-    {
-      "candidate_type": "domain_representation",
-      "subject_type": "domain",
       "subject_id": "synthesis",
       "evidence": {
         "node_count": 1
       },
       "reason": "The canonical domain synthesis currently contains at most one node; representation is sparse, not defective."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "audio-feature-extraction",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical audio-feature-extraction node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "auditory-pathway",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical auditory-pathway node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "auditory-reward",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical auditory-reward node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "auditory-transduction",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical auditory-transduction node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "autonomic-response-to-music",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical autonomic-response-to-music node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -2032,16 +3606,6 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
-      "subject_id": "chopping",
-      "evidence": {
-        "practical_application_count": 2,
-        "experiment_count": 0
-      },
-      "reason": "The canonical chopping node declares practical applications but no experiment definition explicitly references it."
-    },
-    {
-      "candidate_type": "practical_evidence",
-      "subject_type": "node",
       "subject_id": "digital-vinyl-system",
       "evidence": {
         "practical_application_count": 3,
@@ -2068,6 +3632,46 @@
         "experiment_count": 0
       },
       "reason": "The canonical djing node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "dynamic-range-compression",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical dynamic-range-compression node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "frisson",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical frisson node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "granular-fragmentation",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical granular-fragmentation node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "groove",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical groove node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -2122,6 +3726,16 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
+      "subject_id": "music-and-memory",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical music-and-memory node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
       "subject_id": "music-archiving",
       "evidence": {
         "practical_application_count": 2,
@@ -2138,6 +3752,26 @@
         "experiment_count": 0
       },
       "reason": "The canonical music-distribution node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "music-emotion-recognition",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical music-emotion-recognition node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "musical-enculturation",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical musical-enculturation node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -2172,22 +3806,22 @@
     {
       "candidate_type": "practical_evidence",
       "subject_type": "node",
-      "subject_id": "repetition",
-      "evidence": {
-        "practical_application_count": 2,
-        "experiment_count": 0
-      },
-      "reason": "The canonical repetition node declares practical applications but no experiment definition explicitly references it."
-    },
-    {
-      "candidate_type": "practical_evidence",
-      "subject_type": "node",
       "subject_id": "rhythm",
       "evidence": {
         "practical_application_count": 3,
         "experiment_count": 0
       },
       "reason": "The canonical rhythm node declares practical applications but no experiment definition explicitly references it."
+    },
+    {
+      "candidate_type": "practical_evidence",
+      "subject_type": "node",
+      "subject_id": "rhythmic-entrainment",
+      "evidence": {
+        "practical_application_count": 2,
+        "experiment_count": 0
+      },
+      "reason": "The canonical rhythmic-entrainment node declares practical applications but no experiment definition explicitly references it."
     },
     {
       "candidate_type": "practical_evidence",
@@ -2365,6 +3999,78 @@
     {
       "candidate_type": "session_coverage",
       "subject_type": "node",
+      "subject_id": "affective-psychoacoustics",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical affective-psychoacoustics node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "affective-timbre",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical affective-timbre node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "audio-feature-extraction",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical audio-feature-extraction node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "auditory-looming",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical auditory-looming node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "auditory-pathway",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical auditory-pathway node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "auditory-reward",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical auditory-reward node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "auditory-transduction",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical auditory-transduction node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "autonomic-response-to-music",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical autonomic-response-to-music node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
       "subject_id": "cassette-duplication",
       "evidence": {
         "session_count": 0
@@ -2410,6 +4116,69 @@
     {
       "candidate_type": "session_coverage",
       "subject_type": "node",
+      "subject_id": "dynamic-range-compression",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical dynamic-range-compression node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "emotion-measurement",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical emotion-measurement node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "frisson",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical frisson node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "gating",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical gating node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "granular-fragmentation",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical granular-fragmentation node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "groove",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical groove node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "harmonicity",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical harmonicity node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
       "subject_id": "houston-musical-cartography",
       "evidence": {
         "session_count": 0
@@ -2437,11 +4206,29 @@
     {
       "candidate_type": "session_coverage",
       "subject_type": "node",
+      "subject_id": "micro-looping",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical micro-looping node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
       "subject_id": "mike-dean",
       "evidence": {
         "session_count": 0
       },
       "reason": "The canonical mike-dean node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "music-and-memory",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical music-and-memory node currently maps to no chronological sessions."
     },
     {
       "candidate_type": "session_coverage",
@@ -2464,6 +4251,51 @@
     {
       "candidate_type": "session_coverage",
       "subject_type": "node",
+      "subject_id": "music-emotion-recognition",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical music-emotion-recognition node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "music-evoked-emotion",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical music-evoked-emotion node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "musical-consonance",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical musical-consonance node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "musical-dissonance",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical musical-dissonance node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "musical-enculturation",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical musical-enculturation node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
       "subject_id": "pen-and-pixel",
       "evidence": {
         "session_count": 0
@@ -2473,11 +4305,47 @@
     {
       "candidate_type": "session_coverage",
       "subject_type": "node",
+      "subject_id": "predictive-processing-music",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical predictive-processing-music node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
       "subject_id": "rap-a-lot-records",
       "evidence": {
         "session_count": 0
       },
       "reason": "The canonical rap-a-lot-records node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "retriggering",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical retriggering node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "rhythmic-entrainment",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical rhythmic-entrainment node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "roughness",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical roughness node currently maps to no chronological sessions."
     },
     {
       "candidate_type": "session_coverage",
@@ -2496,6 +4364,24 @@
         "session_count": 0
       },
       "reason": "The canonical screwed-up-click node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "sensory-dissonance",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical sensory-dissonance node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "silence-as-musical-material",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical silence-as-musical-material node currently maps to no chronological sessions."
     },
     {
       "candidate_type": "session_coverage",
@@ -2527,11 +4413,38 @@
     {
       "candidate_type": "session_coverage",
       "subject_type": "node",
+      "subject_id": "stutter",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical stutter node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
       "subject_id": "swishahouse",
       "evidence": {
         "session_count": 0
       },
       "reason": "The canonical swishahouse node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "temporal-discontinuity",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical temporal-discontinuity node currently maps to no chronological sessions."
+    },
+    {
+      "candidate_type": "session_coverage",
+      "subject_type": "node",
+      "subject_id": "temporal-dsp",
+      "evidence": {
+        "session_count": 0
+      },
+      "reason": "The canonical temporal-dsp node currently maps to no chronological sessions."
     },
     {
       "candidate_type": "session_coverage",

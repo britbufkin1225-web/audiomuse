@@ -1,10 +1,11 @@
 # Nodes by Domain
 
-Canonical nodes: 43
-Domains represented: 9
+Canonical nodes: 78
+Domains represented: 12
 
-## Acoustics — 5 nodes
+## Acoustics — 6 nodes
 
+- **Amplitude Envelope** (`amplitude-envelope`)
 - **Frequency** (`frequency`)
 - **Phase** (`phase`)
 - **Resonance** (`resonance`)
@@ -29,9 +30,17 @@ Domains represented: 9
 - **Turntable** (`turntable`)
 - **Turntablism** (`turntablism`)
 
-## Dsp — 2 nodes
+## Dsp — 10 nodes
 
 - **Digital Signal Processing** (`digital-signal-processing`)
+- **Dynamic Range Compression** (`dynamic-range-compression`)
+- **Gating** (`gating`)
+- **Granular Fragmentation** (`granular-fragmentation`)
+- **Micro-Looping** (`micro-looping`)
+- **Retriggering** (`retriggering`)
+- **Stutter** (`stutter`)
+- **Temporal Discontinuity** (`temporal-discontinuity`)
+- **Temporal DSP** (`temporal-dsp`)
 - **Time Stretching** (`time-stretching`)
 
 ## History Culture — 13 nodes
@@ -50,10 +59,36 @@ Domains represented: 9
 - **Swishahouse** (`swishahouse`)
 - **Third Coast** (`third-coast`)
 
-## Psychoacoustics — 3 nodes
+## Machine Audio — 2 nodes
 
+- **Audio Feature Extraction** (`audio-feature-extraction`)
+- **Music Emotion Recognition** (`music-emotion-recognition`)
+
+## Music Theory — 3 nodes
+
+- **Musical Consonance** (`musical-consonance`)
+- **Musical Dissonance** (`musical-dissonance`)
+- **Musical Expectation** (`musical-expectation`)
+
+## Psychoacoustics — 18 nodes
+
+- **Affective Psychoacoustics** (`affective-psychoacoustics`)
+- **Affective Timbre** (`affective-timbre`)
+- **Auditory Pathway** (`auditory-pathway`)
+- **Auditory Reward** (`auditory-reward`)
+- **Auditory Transduction** (`auditory-transduction`)
+- **Autonomic Response to Music** (`autonomic-response-to-music`)
+- **Emotion Measurement** (`emotion-measurement`)
+- **Frisson** (`frisson`)
+- **Harmonicity** (`harmonicity`)
+- **Music and Memory** (`music-and-memory`)
+- **Music-Evoked Emotion** (`music-evoked-emotion`)
+- **Musical Enculturation** (`musical-enculturation`)
 - **Pitch** (`pitch`)
+- **Predictive Processing in Music** (`predictive-processing-music`)
 - **Psychoacoustics** (`psychoacoustics`)
+- **Roughness** (`roughness`)
+- **Sensory Dissonance** (`sensory-dissonance`)
 - **Timbre** (`timbre`)
 
 ## Recording — 4 nodes
@@ -63,11 +98,20 @@ Domains represented: 9
 - **Mike Dean** (`mike-dean`)
 - **Recording** (`recording`)
 
-## Rhythm Time — 3 nodes
+## Rhythm Time — 7 nodes
 
+- **Groove** (`groove`)
 - **Repetition** (`repetition`)
 - **Rhythm** (`rhythm`)
+- **Rhythmic Entrainment** (`rhythmic-entrainment`)
 - **Sequencing** (`sequencing`)
+- **Silence as Musical Material** (`silence-as-musical-material`)
+- **Temporal Displacement** (`temporal-displacement`)
+
+## Spatial Audio — 2 nodes
+
+- **Auditory Looming** (`auditory-looming`)
+- **Perceived Space** (`perceived-space`)
 
 ## Synthesis — 1 nodes
 
