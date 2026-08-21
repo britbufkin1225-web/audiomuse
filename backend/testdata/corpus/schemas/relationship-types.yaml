@@ -1,0 +1,19 @@
+schema: audiomuse-relationship-types
+version: 1
+description: Fixture subset of the canonical relationship vocabulary.
+relationship_types:
+  - id: produces
+    name: Produces
+    directionality: directed
+    meaning: The source can generate or bring about the target as an output.
+    inverse: produced_by
+  - id: characterized_by
+    name: Characterized by
+    directionality: directed
+    meaning: The target is a defining characteristic of the source.
+    inverse: characterizes
+  - id: processes
+    name: Processes
+    directionality: directed
+    meaning: The source transforms the target representation.
+    inverse: processed_by

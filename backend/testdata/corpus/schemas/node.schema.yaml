@@ -1,0 +1,3 @@
+# Root marker for the fixture corpus. See testdata/corpus/README.md.
+schema: audiomuse-node
+version: 2

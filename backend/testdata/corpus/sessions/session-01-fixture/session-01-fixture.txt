@@ -1,0 +1,3 @@
+# Fixture Session 1
+
+Synthetic session text used only by backend tests.
