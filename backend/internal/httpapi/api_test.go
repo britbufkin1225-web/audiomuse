@@ -269,6 +269,8 @@ func TestInvalidQueryParameters(t *testing.T) {
 		"/api/v1/nodes?limit=abc",
 		"/api/v1/nodes?limit=-1",
 		"/api/v1/nodes?offset=-1",
+		"/api/v1/nodes?limit=1&limit=2",
+		"/api/v1/nodes?q=alpha&q=beta",
 		"/api/v1/nodes?unknown=1",
 		"/api/v1/nodes?q=" + strings.Repeat("z", service.MaxQueryChars+1),
 		"/api/v1/sessions?domain=acoustics",

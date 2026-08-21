@@ -114,10 +114,15 @@ func rejectUnknownParams(w http.ResponseWriter, r *http.Request, logger *slog.Lo
 	for _, name := range known {
 		allowed[name] = true
 	}
-	for name := range r.URL.Query() {
+	for name, values := range r.URL.Query() {
 		if !allowed[name] {
 			writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
 				"Unsupported query parameter: "+sanitizeParamName(name)+". Supported: "+strings.Join(known, ", ")+".")
+			return false
+		}
+		if len(values) != 1 {
+			writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+				"Query parameter "+sanitizeParamName(name)+" must be supplied exactly once.")
 			return false
 		}
 	}

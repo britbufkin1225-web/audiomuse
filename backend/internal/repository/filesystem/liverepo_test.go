@@ -2,6 +2,7 @@ package filesystem_test
 
 import (
 	"context"
+	"crypto/sha256"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -70,9 +71,9 @@ func TestLiveRepositoryLoadsCleanly(t *testing.T) {
 }
 
 // TestLiveRepositoryIsNotMutated asserts the read-only guarantee directly rather than by
-// inspection: every canonical file's size and modification time must be unchanged by a
-// full load. This does not depend on git, so it also catches a write that happened to
-// reproduce identical content.
+// inspection: every canonical file's size, modification time, and content digest must be
+// unchanged by a full load. This does not depend on git, and the digest catches a same-size
+// rewrite even if its timestamp is preserved or the filesystem clock is coarse.
 func TestLiveRepositoryIsNotMutated(t *testing.T) {
 	root := liveRepoRoot(t)
 
@@ -107,9 +108,10 @@ func TestLiveRepositoryIsNotMutated(t *testing.T) {
 type fileState struct {
 	size    int64
 	modTime int64
+	digest  [sha256.Size]byte
 }
 
-// snapshot records the size and modification time of every canonical record file.
+// snapshot records metadata and a content digest for every canonical record file.
 func snapshot(t testing.TB, root string) map[string]fileState {
 	t.Helper()
 	out := map[string]fileState{}
@@ -126,11 +128,17 @@ func snapshot(t testing.TB, root string) map[string]fileState {
 			if err != nil {
 				return err
 			}
+			content, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
 			rel, err := filepath.Rel(root, path)
 			if err != nil {
 				return err
 			}
-			out[filepath.ToSlash(rel)] = fileState{size: info.Size(), modTime: info.ModTime().UnixNano()}
+			out[filepath.ToSlash(rel)] = fileState{
+				size: info.Size(), modTime: info.ModTime().UnixNano(), digest: sha256.Sum256(content),
+			}
 			return nil
 		})
 		if err != nil {
