@@ -1,51 +1,143 @@
 <p align="center">
   <img src="assets/readme/audiomuse-readme-hero.png" alt="AudioMuse — A Resonant Atlas of Sound, Music & Signal" width="100%">
 </p>
+
 # AudioMuse
 
 **A Resonant Atlas of Sound, Music & Signal**
 
-AudioMuse is an expandable, repository-first knowledge atlas for acoustics, music, recording, production, DJing, digital audio, DSP, and machine audio. Sessions preserve chronological exploration; nodes preserve durable conceptual knowledge and connections; vocabulary provides terminology, digital context, and curated cross-references.
+AudioMuse is an expandable, repository-first research and knowledge atlas of sound, music, and signal. It connects acoustic physics, psychoacoustics, music and rhythm, recording, production, digital audio, DSP, DJing and turntablism, sound design, spatial audio, machine audio, and cultural and technological history without collapsing those subjects into one undifferentiated encyclopedia.
 
-## Structure
+Canonical repository artifacts remain authoritative. Sessions preserve the chronology of exploration; nodes preserve durable concepts and typed relationships; sources and claims preserve provenance; experiments connect knowledge to repeatable practice; generated indexes make the whole atlas navigable.
 
-- `sessions/` — chronological exploration records
-- `nodes/` — durable knowledge-graph concepts organized by domain
-- `schemas/` — canonical node, vocabulary, source, and claim metadata contracts
-- `sources/` — provenance registry referenced by stable source IDs
-- `claims/` — checkable statements with typed provenance, graded evidence, dispute status, and a generated index
-- `vocabulary/` — canonical terminology entries, source atlases, and a read-only cross-reference index
-- `research/` — sources and research notes
-- `experiments/` — canonical listening/measurement exercises and a generated cross-reference index
-- `experiment-runs/` — individual planned/performed execution records, evidence, and a generated index
-- `assets/brand/` — canonical AudioMuse identity assets and guidelines
-- `docs/` — project scope, knowledge model, roadmap, research-gap triage, the Houston musical cartography, the claim provenance model, and the affective mechanism stack
-- `indexes/` — generated, read-only navigation and coverage views
+## Core knowledge model
 
-## Current foundation
+```mermaid
+flowchart TD
+    S[Sessions<br/>chronological exploration] --> N[Nodes<br/>durable knowledge]
+    S --> V[Vocabulary]
+    N --> R[Typed relationships]
+    N --> V
+    SRC[Sources<br/>provenance] --> N
+    SRC --> C[Claims<br/>checkable statements]
+    N --> C
+    N --> E[Experiments<br/>repeatable exercises]
+    E --> ER[Experiment runs<br/>execution evidence]
+    N --> I[Generated indexes]
+    V --> I
+    SRC --> I
+    C --> I
+    E --> I
+    ER --> I
+```
 
-- Session 01 — What Is Sound?
-- Session 02 — What Is Music?
-- Session 03 — History of Electronic Music
-- Session 01 Vocabulary Atlas
-- AudioMuse Brand Identity Guidelines
-- A curated 21-node typed relationship graph derived from Sessions 1–3
-- A many-to-many session-to-node map and human-readable graph overview
-- A dependency-free graph integrity validator
-- Deterministic, rebuildable knowledge indexes for graph, session, and provenance inspection
-- A validated 64-entry vocabulary foundation with deterministic A-Z, domain, session, and node views
-- A validated three-experiment practical foundation with listening, visualization, safety, provenance, and repeatability contracts
-- Deterministic, evidence-backed knowledge coverage observations and research-gap candidates, without completeness or quality scoring
-- A human triage of all 22 research-gap candidates and a four-target research-deepening plan for Phase 12
-- Session 2 and 3 vocabulary bridges into rhythm, sequencing, synthesis, and MIDI (Phase 12A, Target 1)
-- A six-node DJ and turntablism domain connecting recorded playback, mechanical vibration, musical time, sampling, and digital vinyl systems (Phase 12B, Target 2)
-- A source-backed Houston and Third Coast foundation — twenty-two nodes, twenty-eight registered external sources, and a chronology with per-claim confidence markers and a dispute register (Phase 12C)
-- A validated claim-provenance architecture separating claim type, evidence strength, evidence relationship, and dispute status, with ten representative records and adversarial validator tests (Phase 12D)
-- A layered affective mechanism model from cochlear encoding through psychoacoustic features, temporal organization, prediction, memory, and culture to bodily response, built on eighteen registered scientific sources (Phase 12E)
-- A temporal-DSP foundation naming gating, chopping, stutter, micro-looping, retriggering, discontinuity, granular fragmentation, and compression as one family acting on event boundaries (Phase 12E)
+Each layer has a distinct job. Vocabulary cross-references are not graph edges; a source relevant to a node is not automatically evidence for every claim on that node; an experiment definition is not evidence that an experiment was performed; and generated indexes never replace canonical authored files.
 
-See `docs/affective-mechanism-stack.md` for the layered sound-to-emotion model and the temporal-DSP layer, `docs/claim-provenance-model.md` for the claim taxonomy, confidence semantics, and annotation migration plan, `docs/houston-musical-cartography.md` for the sourced Houston chronology, `docs/research-gap-triage.md` for the Phase 11 triage decisions and Phase 12 plan, `indexes/README.md` for graph-derived and knowledge-coverage views, `vocabulary/README.md` for vocabulary semantics, `experiments/README.md` for the practical experiment contract, `experiment-runs/README.md` for execution evidence, and `docs/session-node-map.md` for the emerging graph. Canonical repository content remains authoritative; indexes are read-only conveniences, not a database or parallel knowledge store. This is a deliberately small foundation, not a complete encyclopedia.
+## Repository map
 
-## Project posture
+| Path | Purpose | Authority |
+| --- | --- | --- |
+| [`sessions/`](sessions/README.md) | Chronological research sessions | canonical |
+| [`nodes/`](nodes/README.md) | Durable concepts and typed graph relationships | canonical |
+| [`vocabulary/`](vocabulary/README.md) | Terminology, practical context, and curated cross-references | canonical; `index.md` is generated |
+| [`sources/`](sources/README.md) | Stable provenance registry | canonical |
+| [`claims/`](claims/README.md) | Explicit, checkable statements and their evidence | canonical; `index.md` is generated |
+| [`experiments/`](experiments/README.md) | Reusable listening, visualization, and measurement exercises | canonical; `index.md` is generated |
+| [`experiment-runs/`](experiment-runs/README.md) | Planned or performed execution and evidence records | canonical; `index.md` is generated |
+| [`schemas/`](schemas/) | Metadata and bounded-vocabulary contracts | canonical |
+| [`research/`](research/sources/README.md) | Bibliographies and source-specific research notes | supporting provenance |
+| [`docs/`](docs/) | Architecture, scope, roadmaps, and domain syntheses | documentation |
+| [`indexes/`](indexes/README.md) | Rebuildable navigation and coverage views | generated/read-only |
+| [`tools/`](tools/) | Deterministic builders, validators, and integrity tests | tooling |
+| [`assets/`](assets/) | Brand and presentation materials | assets |
 
-AudioMuse is intentionally small and expandable. It is not intended to become a large software platform. Repository content, linked concepts, research notes, experiments, and focused builds are the primary system.
+## Current knowledge areas
+
+The repository currently contains three foundational sessions—what sound is, what music is, and the history of electronic music—and an expanding graph built from session material and registered external research.
+
+### Foundations and musical organization
+
+- acoustics, vibration, frequency, phase, resonance, envelopes, and sound;
+- psychoacoustics, pitch, timbre, consonance, dissonance, and auditory perception;
+- rhythm, groove, repetition, sequencing, synthesis, MIDI, and digital sampling;
+- recording, dynamic-range processing, digital signal processing, and spatial perception.
+
+### DJing, turntablism, and temporal DSP
+
+- DJing, turntables, beatmatching, scratching, turntablism, and digital vinyl systems;
+- slowed playback, chopping, chopped-and-screwed practice, and chopped-and-slowed lineage;
+- gating, stutter, retriggering, micro-looping, discontinuity, time-stretching, granular fragmentation, and compression as related operations on musical time and event boundaries.
+
+### Houston and the Third Coast
+
+- Houston hip-hop historical cartography and cultural infrastructure;
+- DJ Screw, Screw tapes, the Screwed Up Click, Rap-A-Lot, Swishahouse, and related institutions and circulation networks;
+- a sourced chronology that preserves attribution, uncertainty, and disputes rather than flattening them into a single story.
+
+### Affective audio and machine analysis
+
+- auditory transduction, roughness, harmonicity, sensory dissonance, expectation, memory, reward, enculturation, and bodily response;
+- a layered account of music-evoked emotion spanning cochlear encoding, psychoacoustic features, temporal organization, predictive processing, memory, and culture;
+- audio feature extraction and music-emotion recognition, with explicit limits on what signal descriptors can establish about listener experience.
+
+These are current foundations, not claims of complete domain coverage. Coverage views identify review candidates; they do not score truth, quality, or completeness.
+
+## Provenance and confidence
+
+AudioMuse keeps epistemic dimensions separate. A claim record identifies:
+
+- **claim type** — such as `established_fact`, `technical_fact`, `historical_claim`, `attributed_claim`, `oral_history`, `interpretation`, `audiomuse_synthesis`, or `hypothesis`;
+- **confidence** — the strength of repository evidence, never a numerical truth score;
+- **evidence relationship** — whether a registered source supports, contradicts, or qualifies the claim;
+- **dispute status** — whether registered sources conflict;
+- **appearance and derivation** — where a claim is made and, for repository synthesis, which prior claims it derives from.
+
+This lets the repository distinguish established evidence, reported or attributed material, interpretation, AudioMuse synthesis, hypothesis, and unresolved dispute. Confidence describes the evidence held by the repository—not certainty, authority, or a model's feeling. See the [claim provenance model](docs/claim-provenance-model.md) for the full contract.
+
+## Validation and generated views
+
+The repository uses dependency-free PowerShell tooling. From the repository root, the compact integrity sequence is:
+
+```powershell
+pwsh -NoProfile -File tools/validate-graph.ps1
+pwsh -NoProfile -File tools/validate-knowledge-index.ps1
+pwsh -NoProfile -File tools/validate-knowledge-coverage.ps1
+pwsh -NoProfile -File tools/validate-vocabulary.ps1
+pwsh -NoProfile -File tools/validate-experiments.ps1
+pwsh -NoProfile -File tools/validate-experiment-runs.ps1
+pwsh -NoProfile -File tools/validate-claims.ps1
+pwsh -NoProfile -File tools/test-reference-integrity.ps1
+```
+
+Builders named `tools/build-*.ps1` regenerate the corresponding checked-in indexes. Validators reconcile those projections with canonical files and fail when generated output is stale. The [index guide](indexes/README.md) documents the generated views and their boundaries.
+
+## Current status
+
+AudioMuse now has:
+
+- foundational sound, music, and electronic-music sessions;
+- a validated typed knowledge graph and deterministic navigation indexes;
+- terminology and cross-layer vocabulary views;
+- reusable experiment definitions separated from run evidence;
+- first-class source registration, claim provenance, evidence confidence, and dispute handling;
+- established DJ/turntablism and Houston/Third Coast research foundations;
+- an affective psychoacoustics and temporal-DSP mechanism stack.
+
+Detailed phase history and future direction live in the [roadmap](docs/roadmap.md), not in this entry point.
+
+## Research philosophy
+
+AudioMuse aims to explain deeply, connect disciplines, distinguish evidence from interpretation, preserve provenance, and let future topics join an expandable atlas rather than become isolated notes. It prefers an explicit gap to an unsupported sentence and a bounded relationship to an attractive but untraceable association.
+
+## What AudioMuse is not
+
+AudioMuse is not complete, a replacement for primary literature, a traditional course, a generic music blog, a large software platform, or an autonomously generated source of truth. Generated indexes are disposable views over canonical repository content—not a graph database or a second knowledge store.
+
+## Start here
+
+- **Understand the architecture:** [knowledge model](docs/knowledge-model.md), [project scope](docs/project-scope.md), and [session-to-node map](docs/session-node-map.md)
+- **Explore the graph:** [generated index guide](indexes/README.md) and [knowledge coverage](indexes/knowledge-coverage.md)
+- **Understand provenance:** [claim provenance model](docs/claim-provenance-model.md), [claims guide](claims/README.md), and [sources guide](sources/README.md)
+- **Explore research domains:** [Houston musical cartography](docs/houston-musical-cartography.md) and [affective mechanism stack](docs/affective-mechanism-stack.md)
+- **Run experiments:** [experiment definitions](experiments/README.md) and [experiment-run evidence](experiment-runs/README.md)
+- **Follow project direction:** [roadmap](docs/roadmap.md) and [research-gap triage](docs/research-gap-triage.md)
