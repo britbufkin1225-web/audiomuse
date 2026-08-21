@@ -22,3 +22,9 @@ build/
 *.log
 .env
 .env.*
+
+# Go
+/backend/audiomuse-api
+/backend/audiomuse-api.exe
+*.test
+*.test.exe

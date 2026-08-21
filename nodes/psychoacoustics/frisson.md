@@ -7,7 +7,7 @@ session_origin: []
 definition: A transient peak response during listening, variously reported as chills, shivers, tingling, or piloerection, accompanied by autonomic changes, and used in research as a marker of intense response without being identical to any named emotion.
 core_concepts:
   - a marker used because it is time-locked and reportable
-  - autonomic correlates: heart rate, skin conductance, respiration, piloerection
+  - "autonomic correlates: heart rate, skin conductance, respiration, piloerection"
   - triggers reported around dynamic leaps, unexpected harmony, and modulation
   - terminology unsettled across the literature
   - direction of causation between musical feature and response generally assumed, not tested

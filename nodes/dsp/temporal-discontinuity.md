@@ -6,7 +6,7 @@ status: foundation
 session_origin: []
 definition: An abrupt break in the continuity of a signal — a cut, a dropout, an omission, a splice — which functions simultaneously as a spectral event, a grouping boundary, and a failure of prediction.
 core_concepts:
-  - a discontinuity is three events at once: spectral, structural, and predictive
+  - "a discontinuity is three events at once: spectral, structural, and predictive"
   - an abrupt cut has broadband content the source did not contain
   - a break is a grouping boundary, so it segments what surrounds it
   - an omission at a predicted position is not the same as ordinary quiet

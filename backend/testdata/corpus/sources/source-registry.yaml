@@ -1,0 +1,27 @@
+schema: audiomuse-source-registry
+version: 1
+sources:
+  - id: session-01-fixture
+    type: session
+    title: "Fixture Session 1: Test Corpus"
+    locator: sessions/session-01-fixture/session-01-fixture.txt
+    relationship: origin
+    evidence_class: session_record
+    retrieval: full_text
+  - id: session-02-unused
+    type: session
+    title: "Fixture Session 2: Registered But Uncited"
+    locator: sessions/session-02-unused/session-02-unused.txt
+    relationship: origin
+  - id: fixture-reference-work
+    type: book
+    title: A Fixture Reference Work
+    author: Fixture Author
+    year: 1999
+    locator: research/sources/fixture-reference-work.md
+    relationship: supporting
+  - id: fixture-uncited-source
+    type: article
+    title: A Registered Source No Node Cites
+    locator: research/sources/fixture-uncited-source.md
+    relationship: reference
