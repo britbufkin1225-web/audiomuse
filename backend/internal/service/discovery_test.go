@@ -412,10 +412,43 @@ func TestSearchBounds(t *testing.T) {
 		t.Errorf("negative offset = %d, want 0", negative.Page.Offset)
 	}
 
-	// An over-long query is bounded rather than being allowed to grow the work per document.
-	long := mustSearch(t, k, service.SearchQuery{Q: strings.Repeat("a", service.MaxQueryChars*4)})
-	if len(long.Query) > service.MaxQueryChars {
-		t.Errorf("echoed query length = %d, want at most %d", len(long.Query), service.MaxQueryChars)
+	// A direct service caller gets the same strict ceiling as an HTTP caller. Silent truncation
+	// could turn a valid prefix plus an ignored suffix into a different query.
+	_, err := k.Search(service.SearchQuery{Q: strings.Repeat("a", service.MaxQueryChars+1)})
+	if !errors.Is(err, service.ErrSearchQueryTooLong) {
+		t.Errorf("over-long query error = %v, want ErrSearchQueryTooLong", err)
+	}
+}
+
+// TestSearchDoesNotMatchAcrossCanonicalBoundaries guards both kinds of synthetic text the
+// shared field projection could otherwise create: the separator between fields and the
+// separator between values in a list-valued field. The cross-layer route and the older native
+// lists must agree that matching occurs inside canonical values only.
+func TestSearchDoesNotMatchAcrossCanonicalBoundaries(t *testing.T) {
+	k := evidenceIndex(t)
+
+	for _, query := range []string{
+		"alpha\nalpha",     // node id -> title
+		"go test\nfixture", // vocabulary technologies -> tags
+	} {
+		results, err := k.Search(service.SearchQuery{Q: query, Limit: 200})
+		if err != nil {
+			t.Fatalf("cross-layer q=%q: %v", query, err)
+		}
+		if results.Page.Total != 0 {
+			t.Errorf("cross-layer q=%q matched synthetic boundary text: %v", query, searchRefs(results))
+		}
+	}
+
+	if got := k.ListNodes(service.NodeQuery{Q: "alpha\nalpha"}).Page.Total; got != 0 {
+		t.Errorf("node list matched %d records across an id/title boundary", got)
+	}
+	vocabulary, err := k.ListVocabulary(service.VocabularyQuery{Q: "go test\nfixture"})
+	if err != nil {
+		t.Fatalf("vocabulary list boundary query: %v", err)
+	}
+	if vocabulary.Page.Total != 0 {
+		t.Errorf("vocabulary list matched %d records across list values/fields", vocabulary.Page.Total)
 	}
 }
 
@@ -494,7 +527,7 @@ func TestSearchTreatsQueriesAsPlainText(t *testing.T) {
 		"http://example.com", "https://example.com/x?y=z",
 		"'; DROP TABLE nodes; --", "1999", "0", "-1", "3.14",
 		"café", "共鳴", "Ω", "🎵", "  ", "%20", "&&", "$(whoami)",
-		strings.Repeat("alpha ", 60),
+		strings.Repeat("alpha ", 20),
 	}
 	for _, query := range queries {
 		results, err := k.Search(service.SearchQuery{Q: query, Limit: 200})

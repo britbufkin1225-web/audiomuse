@@ -96,7 +96,7 @@ func (k *Knowledge) ListNodes(q NodeQuery) NodeList {
 		if q.Session != "" && !containsExact(node.SessionOrigin, q.Session) {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.searchText[node.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.searchText[node.ID], needle) {
 			continue
 		}
 		matched = append(matched, summarise(node, len(k.inboundByID[node.ID])))
@@ -137,8 +137,9 @@ func (k *Knowledge) ListSessions(q SessionQuery) SessionList {
 	matched := make([]domain.Session, 0, len(k.sessions))
 	for _, session := range k.sessions {
 		if needle != "" {
-			haystack := strings.ToLower(session.ID + "\n" + session.Title)
-			if !strings.Contains(haystack, needle) {
+			if !searchFieldsMatch([]searchField{
+				lexicalField("id", session.ID), lexicalField("title", session.Title),
+			}, needle) {
 				continue
 			}
 		}

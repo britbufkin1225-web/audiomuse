@@ -28,7 +28,7 @@ type Knowledge struct {
 	nodes       []domain.Node
 	nodesByID   map[string]domain.Node
 	inboundByID map[string][]domain.InboundRelationship
-	searchText  map[string]string
+	searchText  map[string][]searchField
 
 	sessions          []domain.Session
 	sessionsByID      map[string]domain.Session
@@ -38,10 +38,10 @@ type Knowledge struct {
 	// are now a served projection in their own right.
 	sources          []domain.Source
 	sourcesByID      map[string]domain.Source
-	sourceSearchText map[string]string
+	sourceSearchText map[string][]searchField
 	claims           []domain.Claim
 	claimsByID       map[string]domain.Claim
-	claimSearchText  map[string]string
+	claimSearchText  map[string][]searchField
 	vocabularies     domain.Vocabularies
 
 	// Derived reverse views over the evidence layer. Each is documented at buildEvidence.
@@ -59,10 +59,10 @@ type Knowledge struct {
 	// buildPractice and buildGraph.
 	vocabulary           []domain.VocabularyEntry
 	vocabularyByID       map[string]domain.VocabularyEntry
-	vocabularySearchText map[string]string
+	vocabularySearchText map[string][]searchField
 	experiments          []domain.Experiment
 	experimentsByID      map[string]domain.Experiment
-	experimentSearchText map[string]string
+	experimentSearchText map[string][]searchField
 	runs                 []domain.ExperimentRun
 	runsByID             map[string]domain.ExperimentRun
 
@@ -107,24 +107,24 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 		nodes:             corpus.Nodes,
 		nodesByID:         make(map[string]domain.Node, len(corpus.Nodes)),
 		inboundByID:       make(map[string][]domain.InboundRelationship, len(corpus.Nodes)),
-		searchText:        make(map[string]string, len(corpus.Nodes)),
+		searchText:        make(map[string][]searchField, len(corpus.Nodes)),
 		sessions:          corpus.Sessions,
 		sessionsByID:      make(map[string]domain.Session, len(corpus.Sessions)),
 		relationshipTypes: corpus.RelationshipTypes,
 		sources:           corpus.Sources,
 		sourcesByID:       make(map[string]domain.Source, len(corpus.Sources)),
-		sourceSearchText:  make(map[string]string, len(corpus.Sources)),
+		sourceSearchText:  make(map[string][]searchField, len(corpus.Sources)),
 		claims:            corpus.Claims,
 		claimsByID:        make(map[string]domain.Claim, len(corpus.Claims)),
-		claimSearchText:   make(map[string]string, len(corpus.Claims)),
+		claimSearchText:   make(map[string][]searchField, len(corpus.Claims)),
 		vocabularies:      corpus.Vocabularies,
 
 		vocabulary:           corpus.Vocabulary,
 		vocabularyByID:       make(map[string]domain.VocabularyEntry, len(corpus.Vocabulary)),
-		vocabularySearchText: make(map[string]string, len(corpus.Vocabulary)),
+		vocabularySearchText: make(map[string][]searchField, len(corpus.Vocabulary)),
 		experiments:          corpus.Experiments,
 		experimentsByID:      make(map[string]domain.Experiment, len(corpus.Experiments)),
-		experimentSearchText: make(map[string]string, len(corpus.Experiments)),
+		experimentSearchText: make(map[string][]searchField, len(corpus.Experiments)),
 		runs:                 corpus.ExperimentRuns,
 		runsByID:             make(map[string]domain.ExperimentRun, len(corpus.ExperimentRuns)),
 	}

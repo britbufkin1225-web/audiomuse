@@ -61,6 +61,11 @@ func (s *Server) writeSearchError(w http.ResponseWriter, r *http.Request, err er
 			"Parameter q is required and must not be empty.")
 		return
 	}
+	if errors.Is(err, service.ErrSearchQueryTooLong) {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter q exceeds the maximum length.")
+		return
+	}
 	// An unsupported type arrives as an InvalidFilterError and is rendered by the Phase 1B
 	// mapping, which lists the permitted values and never echoes the caller's own.
 	writeFilterError(w, r, s.logger, err)

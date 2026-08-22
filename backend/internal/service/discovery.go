@@ -33,6 +33,11 @@ import (
 // looked like a successful search.
 var ErrEmptySearchQuery = errors.New("search query must not be empty")
 
+// ErrSearchQueryTooLong reports a direct service request beyond the same ceiling enforced by
+// HTTP. Refusing it prevents a valid prefix plus an ignored suffix from silently becoming a
+// different query.
+var ErrSearchQueryTooLong = errors.New("search query exceeds maximum length")
+
 // SearchQuery is a bounded, deterministic cross-layer discovery request.
 //
 // Q is required. Type is an optional filter naming exactly one searchable class and is
@@ -64,11 +69,11 @@ type SearchResults struct {
 // searchField is one named, searchable, lower-cased projection of a canonical field.
 //
 // Name is the canonical field name from the record's own schema and is what a matched-field
-// list reports. List-valued fields are joined with a newline, which no single canonical value
-// contains, so a query can never match by spanning two unrelated list entries.
+// list reports. List-valued fields retain separate values, so a query cannot match by spanning
+// two canonical entries.
 type searchField struct {
-	name  string
-	value string
+	name   string
+	values []string
 }
 
 // searchDocument is one canonical record as the discovery layer sees it.
@@ -91,21 +96,14 @@ type searchDocument struct {
 	fields     []searchField
 }
 
-// lexicalField builds one searchable field from one or more canonical values.
+// lexicalField builds one searchable field from one or more canonical values. Values remain
+// separate so a query cannot manufacture a match by spanning a separator between list items.
 func lexicalField(name string, values ...string) searchField {
-	return searchField{name: name, value: strings.ToLower(strings.Join(values, "\n"))}
-}
-
-// corpus renders the document as the single joined haystack the per-layer list endpoints
-// search. It is the reason those endpoints and this one cannot drift: both read the same field
-// set from the same builder, so a field added to discovery is added to the layer list too, and
-// neither can quietly acquire a field the other does not have.
-func (d searchDocument) corpus() string {
-	parts := make([]string, 0, len(d.fields))
-	for _, field := range d.fields {
-		parts = append(parts, field.value)
+	lowered := make([]string, len(values))
+	for i, value := range values {
+		lowered[i] = strings.ToLower(value)
 	}
-	return strings.Join(parts, "\n")
+	return searchField{name: name, values: lowered}
 }
 
 // matchedFields returns the canonical names of every field the needle appears in, in the
@@ -114,11 +112,29 @@ func (d searchDocument) corpus() string {
 func (d searchDocument) matchedFields(needle string) []string {
 	var out []string
 	for _, field := range d.fields {
-		if strings.Contains(field.value, needle) {
+		if field.matches(needle) {
 			out = append(out, field.name)
 		}
 	}
 	return out
+}
+
+func (f searchField) matches(needle string) bool {
+	for _, value := range f.values {
+		if strings.Contains(value, needle) {
+			return true
+		}
+	}
+	return false
+}
+
+func searchFieldsMatch(fields []searchField, needle string) bool {
+	for _, field := range fields {
+		if field.matches(needle) {
+			return true
+		}
+	}
+	return false
 }
 
 // classify assigns the categorical precedence class of a hit. See the match-kind block in
@@ -278,22 +294,20 @@ func (k *Knowledge) buildSearch() {
 	}
 	k.searchDocs = docs
 
-	// The per-layer corpora are derived from the same documents rather than assembled a second
-	// time. ListSessions is the one exception: its haystack is the session ID and title, which
-	// it composes inline from the two fields it already holds.
+	// The per-layer field projections are derived from the same documents rather than assembled
+	// a second time. ListSessions is the one exception: it tests its ID and title directly.
 	for _, doc := range docs {
-		joined := doc.corpus()
 		switch doc.entityType {
 		case domain.SearchNode:
-			k.searchText[doc.id] = joined
+			k.searchText[doc.id] = doc.fields
 		case domain.SearchClaim:
-			k.claimSearchText[doc.id] = joined
+			k.claimSearchText[doc.id] = doc.fields
 		case domain.SearchSource:
-			k.sourceSearchText[doc.id] = joined
+			k.sourceSearchText[doc.id] = doc.fields
 		case domain.SearchVocabulary:
-			k.vocabularySearchText[doc.id] = joined
+			k.vocabularySearchText[doc.id] = doc.fields
 		case domain.SearchExperiment:
-			k.experimentSearchText[doc.id] = joined
+			k.experimentSearchText[doc.id] = doc.fields
 		}
 	}
 }
@@ -313,11 +327,13 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 		return SearchResults{}, &InvalidFilterError{Param: "type", Allowed: domain.SearchEntityTypeNames()}
 	}
 
-	// boundedNeedle is the same normalisation every other AudioMuse list applies, so a term
-	// that finds a record through /api/v1/nodes finds it through /api/v1/search too. The HTTP
-	// layer refuses an over-long q outright; the truncation here is the service-level bound a
-	// direct Go caller inherits.
-	needle := boundedNeedle(q.Q)
+	// Apply the same strict ceiling as HTTP so direct callers cannot have a suffix silently
+	// discarded and receive the results of a different query.
+	trimmed := strings.TrimSpace(q.Q)
+	if len(trimmed) > MaxQueryChars {
+		return SearchResults{}, ErrSearchQueryTooLong
+	}
+	needle := strings.ToLower(trimmed)
 	if needle == "" {
 		return SearchResults{}, ErrEmptySearchQuery
 	}

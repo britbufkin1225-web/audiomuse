@@ -2,7 +2,6 @@ package service
 
 import (
 	"sort"
-	"strings"
 
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
 )
@@ -169,7 +168,7 @@ func (k *Knowledge) ListVocabulary(q VocabularyQuery) (VocabularyList, error) {
 		if q.Tag != "" && !containsExact(entry.Tags, q.Tag) {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.vocabularySearchText[entry.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.vocabularySearchText[entry.ID], needle) {
 			continue
 		}
 		matched = append(matched, domain.VocabularySummary{
@@ -243,7 +242,7 @@ func (k *Knowledge) ListExperiments(q ExperimentQuery) (ExperimentList, error) {
 		if q.SourceID != "" && !containsExact(experiment.SourceRefs, q.SourceID) {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.experimentSearchText[experiment.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.experimentSearchText[experiment.ID], needle) {
 			continue
 		}
 		matched = append(matched, domain.ExperimentSummary{

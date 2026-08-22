@@ -415,8 +415,9 @@ six searchable classes at once and reports which class each hit came from.
 `q` must be non-empty after trimming. An absent, empty or whitespace-only `q` is refused with
 `400 invalid_query` rather than returning everything: each layer already has its own list endpoint,
 and an empty search would be a second, slower whole-corpus dump that a caller who mistyped a
-parameter name could not tell from a successful query. An unknown or duplicated query parameter is
-refused exactly as it is on every other route.
+parameter name could not tell from a successful query. Values longer than 128 characters are
+refused rather than truncated. An unknown or duplicated query parameter is refused exactly as it is
+on every other route.
 
 #### Searchable classes and fields
 
@@ -434,8 +435,10 @@ not know the thing, so the field set is documented rather than left implicit:
 
 These are the Phase 1A to 1D field sets unchanged. The backend defines them once, and each layer's own
 `q` parameter reads the same definition, so a term that finds a record through `/api/v1/nodes` finds
-it through `/api/v1/search` too. Each exclusion is the earlier layer's: source `notes` is prose about
-retrieval and external locators; the cross-reference lists on a node, an entry or a definition are
+it through `/api/v1/search` too. Matching occurs within one canonical scalar or list value; separator
+text between fields or list entries is never searchable. Each exclusion is the earlier layer's:
+source `notes` is prose about retrieval and external locators; the cross-reference lists on a node,
+an entry or a definition are
 another record's identity, not this one's; an experiment's `procedure` and `setup` describe what a
 performer should do, so a hit there would return a definition that *mentions* a term in an
 instruction rather than one that is *about* it. A class with no natural summary field returns a

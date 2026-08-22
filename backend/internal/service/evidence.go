@@ -230,7 +230,7 @@ func (k *Knowledge) ListSources(q SourceQuery) (SourceList, error) {
 		if bySession != nil && !bySession[source.ID] {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.sourceSearchText[source.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.sourceSearchText[source.ID], needle) {
 			continue
 		}
 		source = cloneSource(source)
@@ -331,7 +331,7 @@ func (k *Knowledge) ListClaims(q ClaimQuery) (ClaimList, error) {
 		if bySession != nil && !bySession[claim.ID] {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.claimSearchText[claim.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.claimSearchText[claim.ID], needle) {
 			continue
 		}
 		matched = append(matched, domain.ClaimSummary{
