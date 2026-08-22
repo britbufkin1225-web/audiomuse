@@ -94,7 +94,6 @@ func TestVocabularyFilters(t *testing.T) {
 		{"unknown node id", service.VocabularyQuery{NodeID: "no-such-node"}, []string{}},
 		// Canonical identity is case-sensitive; only lexical search is tolerant.
 		{"node filter case drift", service.VocabularyQuery{NodeID: "Alpha"}, []string{}},
-		{"domain filter case drift", service.VocabularyQuery{Domain: "DSP"}, []string{}},
 	}
 
 	for _, tc := range cases {
@@ -104,6 +103,36 @@ func TestVocabularyFilters(t *testing.T) {
 				t.Errorf("ids = %v, want %v", got, tc.want)
 			}
 		})
+	}
+}
+
+// TestVocabularyBoundedFilterRejectsCaseDrift separates the two kinds of vocabulary filter.
+//
+// Domain is bounded by the canonical node-domain enum, so a value outside it — including one
+// that differs only in casing — is refused rather than answered with an empty list. An empty
+// list would mean "no entry is in that domain", which asserts something about the corpus that
+// was never asked; the caller named a domain the corpus has no concept of. NodeID is a
+// canonical identifier and is deliberately not validated this way, because an unknown ID does
+// mean "no entry stands in that relation". TestVocabularyFilters covers that half.
+func TestVocabularyBoundedFilterRejectsCaseDrift(t *testing.T) {
+	k := evidenceIndex(t)
+
+	if _, err := k.ListVocabulary(service.VocabularyQuery{Domain: "DSP"}); err == nil {
+		t.Fatal("case-drifted domain was accepted, want rejection")
+	} else {
+		var invalid *service.InvalidFilterError
+		if !errors.As(err, &invalid) {
+			t.Fatalf("err = %v, want *service.InvalidFilterError", err)
+		}
+		if invalid.Param != "domain" {
+			t.Errorf("param = %q, want %q", invalid.Param, "domain")
+		}
+	}
+
+	// The rejection is the enum contract, not a rejection of every unmatched value: a
+	// canonically cased domain the fixture corpus happens not to use still answers empty.
+	if _, err := k.ListVocabulary(service.VocabularyQuery{Domain: "invented-domain"}); err == nil {
+		t.Error("unknown domain was accepted, want rejection")
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/httpapi"
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/repository/filesystem"
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/service"
@@ -256,6 +257,114 @@ func TestLiveRepositoryProjectsThePracticeLayer(t *testing.T) {
 		len(corpus.Experiments), len(corpus.ExperimentRuns), statuses, observations, measurements)
 }
 
+// TestLiveCorpusKeepsThePracticeLayerOutOfTheGraph is the cross-phase semantic lock, checked
+// against the real corpus rather than the fixture.
+//
+// The fixture carries seven practice records; the canonical corpus carries an order of
+// magnitude more, across 78 nodes and 48 claims whose reference shapes were authored by hand
+// rather than constructed to exercise a code path. If loading the practice layer could pull a
+// vocabulary entry or an experiment run into the traversal adjacency, the corpus is where it
+// would happen first — some real claim naming a real vocabulary entry in appears_in.
+//
+// The assertion is over the whole adjacency: every entity reachable from every root, at the
+// maximum documented depth, must be one of the four addressable classes, and no ID belonging
+// to the practice layer may appear on either end of a relationship.
+func TestLiveCorpusKeepsThePracticeLayerOutOfTheGraph(t *testing.T) {
+	root := liveRepoRoot(t)
+
+	repo, err := filesystem.New(root)
+	if err != nil {
+		t.Fatalf("open canonical repository: %v", err)
+	}
+	corpus, _, err := repo.Load(context.Background())
+	if err != nil {
+		t.Fatalf("load canonical repository: %v", err)
+	}
+	knowledge, err := service.New(context.Background(), repo)
+	if err != nil {
+		t.Fatalf("build index: %v", err)
+	}
+
+	practice := map[string]string{}
+	for _, entry := range corpus.Vocabulary {
+		practice[entry.ID] = "vocabulary entry"
+	}
+	for _, experiment := range corpus.Experiments {
+		practice[experiment.ID] = "experiment"
+	}
+	for _, run := range corpus.ExperimentRuns {
+		practice[run.ID] = "experiment run"
+	}
+	if len(practice) == 0 {
+		t.Fatal("no practice records loaded; this test would prove nothing")
+	}
+
+	// A canonical ID may legitimately be shared between a node and a vocabulary entry naming
+	// the same concept, so an ID collision is not by itself a leak. Only IDs unique to the
+	// practice layer can be used as evidence here.
+	for _, node := range corpus.Nodes {
+		delete(practice, node.ID)
+	}
+	for _, session := range corpus.Sessions {
+		delete(practice, session.ID)
+	}
+	for _, claim := range corpus.Claims {
+		delete(practice, claim.ID)
+	}
+	for _, source := range corpus.Sources {
+		delete(practice, source.ID)
+	}
+	if len(practice) == 0 {
+		t.Fatal("every practice ID is also a graph record ID; this test can no longer discriminate")
+	}
+
+	roots := make([][2]string, 0, len(corpus.Nodes)+len(corpus.Sessions)+len(corpus.Claims)+len(corpus.Sources))
+	for _, node := range corpus.Nodes {
+		roots = append(roots, [2]string{"node", node.ID})
+	}
+	for _, session := range corpus.Sessions {
+		roots = append(roots, [2]string{"session", session.ID})
+	}
+	for _, claim := range corpus.Claims {
+		roots = append(roots, [2]string{"claim", claim.ID})
+	}
+	for _, source := range corpus.Sources {
+		roots = append(roots, [2]string{"source", source.ID})
+	}
+
+	entitiesSeen := 0
+	for _, r := range roots {
+		entityType, id := r[0], r[1]
+		result, err := knowledge.Traverse(entityType, id, service.TraversalQuery{Depth: 3})
+		if err != nil {
+			t.Fatalf("traverse %s/%s: %v", entityType, id, err)
+		}
+		entitiesSeen += len(result.Entities)
+		for _, e := range result.Entities {
+			if kind, ok := practice[e.ID]; ok {
+				t.Errorf("%s %q surfaced as a traversal entity from %s/%s", kind, e.ID, entityType, id)
+			}
+			if !domain.ValidEntityType(string(e.Type)) {
+				t.Errorf("entity %q from %s/%s has non-canonical type %q", e.ID, entityType, id, e.Type)
+			}
+		}
+		for _, edge := range result.Relationships {
+			if kind, ok := practice[edge.From.ID]; ok {
+				t.Errorf("%s %q appeared as an edge source from %s/%s", kind, edge.From.ID, entityType, id)
+			}
+			if kind, ok := practice[edge.To.ID]; ok {
+				t.Errorf("%s %q appeared as an edge target from %s/%s", kind, edge.To.ID, entityType, id)
+			}
+		}
+	}
+
+	if entitiesSeen == 0 {
+		t.Fatal("traversal returned no entities across the whole corpus")
+	}
+	t.Logf("canonical graph isolation: %d roots walked at depth 3, %d entity results, "+
+		"%d practice-only IDs none of which appeared", len(roots), entitiesSeen, len(practice))
+}
+
 // TestLiveRepositoryIsNotMutatedByAPIRequests extends the read-only proof past startup.
 //
 // TestLiveRepositoryIsNotMutated covers the load. This covers what a running process does after
@@ -285,6 +394,11 @@ func TestLiveRepositoryIsNotMutatedByAPIRequests(t *testing.T) {
 		"/api/v1/sources",
 		"/api/v1/claims",
 		"/api/v1/graph",
+		// The traversal routes are exercised here too: they walk the whole adjacency and are
+		// the most expansive read the API offers, so if any read surface were to touch the
+		// corpus it would be this one.
+		"/api/v1/graph/entities/node/frequency/relationships",
+		"/api/v1/graph/entities/node/frequency/traverse?depth=3",
 		"/api/v1/vocabulary",
 		"/api/v1/vocabulary?q=resonance",
 		"/api/v1/experiments",

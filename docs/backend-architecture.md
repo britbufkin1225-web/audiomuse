@@ -8,13 +8,33 @@ stays authoritative. Direct filesystem browsing has become limiting as the corpu
 relationship graph, the provenance registry, and the cross-layer reference structure are all real
 data that no text editor can traverse.
 
-Backend Phase 1A drew a computational boundary, Phase 1B extended it through the evidence
-layer, and Phase 1C connected the two into a bounded traversal layer over the relationships
-they already resolve:
+The backend draws a computational boundary across that corpus:
 
 ```text
 CANONICAL KNOWLEDGE   →   SOFTWARE THAT INSPECTS THAT KNOWLEDGE
 ```
+
+One repository load feeds one immutable projection, through one chain:
+
+```text
+repository  →  typed filesystem projection  →  validation  →  immutable service  →  read-only API
+```
+
+There is one adapter, one `service.Knowledge` constructor and one index. Everything below is a
+view over that single load, not a store of its own:
+
+| Read surface | What it serves |
+| --- | --- |
+| nodes / sessions / graph | the typed concept graph and the sessions that developed it |
+| sources / claims / provenance | the registry and the checkable statements that cite it |
+| bounded traversal | the knowledge and evidence layers walked as one graph, depth-capped |
+| vocabulary | canonical terms, with reverse reads to the records that reference them |
+| experiments | reusable exercise definitions, with derived run tallies |
+| experiment runs | what was actually performed, kept apart from the definitions |
+
+The first three are the graph. The last three sit beside it: they are read surfaces adjacent to
+the graph rather than part of it, and the distinction is enforced rather than merely documented —
+see "Why the practice layer did not extend graph traversal" below.
 
 The architectural rule is narrow and load-bearing:
 
@@ -64,7 +84,12 @@ httpapi  →  service  →  repository (interface)  →  repository/filesystem  
   a mutation path cannot be added without changing the contract deliberately.
 - `internal/repository/filesystem` — the only package that touches the corpus. Read calls only.
 - `internal/service` — builds the immutable in-memory index once at startup and answers queries,
-  including the bounded breadth-first traversal over the relationship adjacency.
+  including the bounded breadth-first traversal over the relationship adjacency. One `New` builds
+  every layer: `buildGraph`, `buildEvidence`, `buildTraversal` and `buildPractice` run in sequence
+  over the same parsed corpus. They are independent by construction — `buildTraversal` reads nodes,
+  claims and relationship types; `buildPractice` reads vocabulary, experiments, runs and claims —
+  and neither reads the other's derived state, which is what keeps the practice layer out of the
+  traversal adjacency structurally rather than by convention.
 - `internal/httpapi` — routing, query parsing, bounds, JSON envelopes, method lock.
 
 ## Rationale
@@ -238,10 +263,19 @@ stops. There is no related-term adjacency index, no vertex is created for a voca
 `buildGraph` still reads node relationships and nothing else. Resolving a reference and building an
 edge are different acts, and only the second is a claim about the knowledge graph.
 
-**Why the practice layer did not extend graph traversal.** Phase 1D adds read surfaces adjacent to
-the graph, not new graph semantics. Which entity types are traversable, and under which typed
-relations, is a graph-contract decision; making vocabulary entries and experiments traversable
+**Why the practice layer did not extend graph traversal.** The practice layer adds read surfaces
+adjacent to the graph, not new graph semantics. Which entity types are traversable, and under which
+typed relations, is a graph-contract decision; making vocabulary entries and experiments traversable
 merely because the API now serves them would settle that decision by accident.
+
+The two are easy to conflate because the backend does resolve the references that cross between
+them: a claim's `appears_in: vocabulary` and `derived_from: experiment_run` are validated against
+loaded records, and an unresolvable one is fatal. Resolution is not membership. `referenceEntity`
+maps only session, node and claim kinds to an `EntityRef` and returns nothing for the rest, and
+`domain.EntityTypes` is a closed set of four, so a practice record has no representable identity in
+the traversal graph at all — the isolation is a property of the types, not a filter that could be
+forgotten. It is checked directly against the canonical corpus, by walking every entity as a
+traversal root at maximum depth and asserting no practice ID appears in any result.
 
 **Why an experiment definition and its runs are served apart.** `experiment-runs/README.md` keeps
 them in separate directories so mutable result history cannot change a canonical definition. The

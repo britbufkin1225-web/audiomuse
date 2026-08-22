@@ -257,6 +257,14 @@ and does not affect node degree. It is served as a plain ID list on the entry, n
 serves `experiment_ids` and `claim_ids`; those are reverse reads of references authored on the
 experiment and claim records, and they are edges no more than `related_terms` is.
 
+The same holds for the traversal routes, and it is the rule that keeps the two layers apart. The
+backend resolves claim `appears_in: vocabulary` and `derived_from: experiment_run` references, and
+an unresolvable one is fatal — but resolving a reference is not the same act as building an edge.
+The traversal graph addresses four record classes, session, node, claim and source, and no
+vocabulary entry, experiment or experiment run is ever a traversal entity, an edge endpoint, or a
+filterable relationship name. Whether any practice reference should become a typed graph relation
+is a graph-contract question, and reading the practice layer does not answer it.
+
 **An experiment definition is not evidence of execution.** A definition's `observations` and
 `measurements` are prose instructions about what a performer should record. A run's are typed
 objects. The two never share a shape, so no client can mistake one for the other. The `runs` tally
@@ -296,9 +304,10 @@ served under different names.
 ### Graph traversal
 
 `/api/v1/graph` serves the node-to-node projection. The two entity routes above serve the
-whole corpus as one bounded graph, so a caller can move from a session to a concept to a
-checkable statement to the source that stands behind it without reassembling four
-projections by hand.
+knowledge and evidence layers as one bounded graph, so a caller can move from a session to a
+concept to a checkable statement to the source that stands behind it without reassembling four
+projections by hand. The practice layer is served alongside it and is not part of it; see
+"Practice-layer representation" above.
 
 **Entities.** Four addressable classes, and identity is the pair `(type, id)`:
 
@@ -585,12 +594,18 @@ unchanged corpus and the results compared. Unit tests run against `testdata/corp
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
 expectation.
 
-Five tests run against the real repository on purpose: one asserts it loads with no fatal issues,
-one asserts the evidence layer parses and resolves, one asserts the practice layer does, and two
-snapshot the size, modification time and content digest of every canonical file — one across a
-load, one across a full index build plus one request to every read surface and a rejected request
-on each mutating method. All five skip if the canonical repository is not found above the working
-directory.
+Six tests run against the real repository on purpose: one asserts it loads with no fatal issues,
+one asserts the evidence layer parses and resolves, one asserts the practice layer does, one walks
+every canonical entity as a traversal root at maximum depth and asserts no practice record appears
+anywhere in the result, and two snapshot the size, modification time and content digest of every
+canonical file — one across a load, one across a full index build plus one request to every read
+surface and a rejected request on each mutating method. All six skip if the canonical repository
+is not found above the working directory.
+
+A cross-phase suite covers the combined backend specifically: that every phase's routes coexist on
+one router without shadowing, that mutation and duplicate-parameter rejection hold on all of them,
+that the practice layer stays out of the traversal graph, and that the shared index is
+deterministic and hands out defensive copies across every layer at once.
 
 ## Known limitations
 
@@ -603,8 +618,11 @@ directory.
   repository validator treats it as a reference list and every current node leaves it empty, so
   resolving it would be the backend inventing a contract rather than reading one.
 - Vocabulary entries, experiments and experiment runs are read surfaces adjacent to the graph,
-  not part of it. None of them becomes a vertex or an edge, and `GET /api/v1/graph` is unchanged.
-  Making them traversable would be a separate graph-contract decision.
+  not part of it. None of them becomes a vertex, an edge, a traversal entity, an edge endpoint or
+  a filterable relationship name; `GET /api/v1/graph` and both traversal routes are unchanged by
+  the practice layer being loaded. Claim `appears_in: vocabulary` and `derived_from:
+  experiment_run` references do resolve, and resolving them is deliberately not the same as
+  making them traversable — that would be a separate graph-contract decision.
 - `appears_in: session` is a canonical reference kind no current claim record uses, so
   `?session_id=` on either evidence endpoint answers correctly and returns nothing against
   today's corpus.
@@ -627,4 +645,4 @@ hardening, graph visualization, semantic retrieval, and MLLM experimentation.
 Traversal over the practice layer is deferred deliberately, not incidentally. Vocabulary entries,
 experiments and experiment runs are read surfaces adjacent to the graph, and their cross-references
 are not canonical graph relationships; promoting them to traversal edges would assert a claim about
-the corpus that the corpus does not make. See "Practice layer is not the graph" below.
+the corpus that the corpus does not make. See "Practice-layer representation" above.
