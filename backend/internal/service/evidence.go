@@ -112,8 +112,6 @@ func (k *Knowledge) buildEvidence() {
 	// Claims are already in canonical ID order, so every list appended here is built in
 	// that order and needs deduplication rather than sorting.
 	for _, claim := range k.claims {
-		k.claimSearchText[claim.ID] = strings.ToLower(claim.ID + "\n" + claim.Statement)
-
 		citedSources := map[string]bool{}
 		for _, e := range claim.Evidence {
 			k.sourceClaims[e.SourceID] = append(k.sourceClaims[e.SourceID],

@@ -114,6 +114,12 @@ type Diagnostics struct {
 	Warnings                     []domain.ValidationIssue `json:"warnings"`
 	Counts                       DiagnosticsCounts        `json:"counts"`
 	Corpus                       DiagnosticsCorpus        `json:"corpus"`
+
+	// Search is the size of the cross-layer discovery projection, reported so an operator can
+	// confirm which layers the running process actually made discoverable. It is a count of
+	// search documents, not of matches, and it holds no query, no history and no analytics: a
+	// search request exists only for the life of that request.
+	Search SearchCounts `json:"search"`
 }
 
 // DiagnosticsCounts summarises the report.
@@ -164,5 +170,6 @@ func (k *Knowledge) Diagnostics() Diagnostics {
 			Experiments:    len(k.experiments),
 			ExperimentRuns: len(k.runs),
 		},
+		Search: k.SearchDiagnostics(),
 	}
 }

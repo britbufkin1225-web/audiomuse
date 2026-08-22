@@ -37,6 +37,9 @@ func TestEveryPhaseRouteCoexistsOnOneHandler(t *testing.T) {
 		{"1D", "/api/v1/experiments/fixture-listening-exercise"},
 		{"1D", "/api/v1/experiment-runs"},
 		{"1D", "/api/v1/experiment-runs/fixture-listening-exercise-planned-a"},
+		{"1E", "/api/v1/search?q=fixture"},
+		{"1E", "/api/v1/search?q=fixture&type=vocabulary"},
+		{"1E", "/api/v1/search?q=alpha&limit=5&offset=1"},
 		{"shared", "/api/v1/project"},
 		{"shared", "/api/v1/diagnostics"},
 		{"shared", "/health"},
@@ -103,6 +106,7 @@ func TestMutationIsRejectedOnEveryPhaseRoute(t *testing.T) {
 		"/api/v1/vocabulary",
 		"/api/v1/experiments",
 		"/api/v1/experiment-runs",
+		"/api/v1/search?q=fixture",
 	}
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete}
 
@@ -132,6 +136,8 @@ func TestDuplicateQueryParametersAreRejectedAcrossPhases(t *testing.T) {
 		"/api/v1/vocabulary?domain=acoustics&domain=dsp",
 		"/api/v1/experiments?status=planned&status=validated",
 		"/api/v1/experiment-runs?performed=true&performed=false",
+		"/api/v1/search?q=alpha&q=beta",
+		"/api/v1/search?q=alpha&type=node&type=claim",
 	}
 
 	for _, target := range targets {
