@@ -56,6 +56,13 @@ type Knowledge struct {
 	sourceIDsBySessionID map[string][]string
 
 	graph domain.Graph
+
+	// Traversal layer (Phase 1C). adjacency is the relationship index over the four
+	// addressable record classes and relationshipNames is the closed vocabulary its
+	// filters are validated against. Both are built once, in New, from records the two
+	// earlier phases already parsed; see buildTraversal.
+	adjacency         map[domain.EntityRef][]domain.GraphRelationship
+	relationshipNames []string
 }
 
 // New loads the corpus through the repository interface and builds the startup index.
@@ -108,6 +115,7 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 	k.buildInbound()
 	k.buildGraph()
 	k.buildEvidence()
+	k.buildTraversal()
 	return k, nil
 }
 

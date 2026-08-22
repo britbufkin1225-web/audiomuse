@@ -8,8 +8,9 @@ stays authoritative. Direct filesystem browsing has become limiting as the corpu
 relationship graph, the provenance registry, and the cross-layer reference structure are all real
 data that no text editor can traverse.
 
-Backend Phase 1A drew a computational boundary and Phase 1B extended it through the evidence
-layer:
+Backend Phase 1A drew a computational boundary, Phase 1B extended it through the evidence
+layer, and Phase 1C connected the two into a bounded traversal layer over the relationships
+they already resolve:
 
 ```text
 CANONICAL KNOWLEDGE   →   SOFTWARE THAT INSPECTS THAT KNOWLEDGE
@@ -38,6 +39,7 @@ Every field the API serves can be traced back through this chain to a canonical 
 | `claim.evidence[]` (`{relation, source_id, note}`) and `claim.attribution[]` | ordered citation lists | `domain.ClaimEvidence`, `domain.ClaimAttribution` | `claimIDsBySourceID`, `sourceClaims`, `attributedClaimIDs` | `claim.evidence`, `source.claims`, `?source_id=`, `?relation=` |
 | `claim.appears_in[]` and `claim.derived_from[]` (`{kind, ref}`) | kind-qualified reference lists | `domain.ClaimReference` | `claimIDsByNodeID`, `claimIDsBySessionID` | `claim.appears_in`, `?node_id=`, `?session_id=` |
 | `schemas/claim.schema.yaml` and `schemas/source.schema.yaml` bounded enums | vocabulary lists | `domain.Vocabularies` | evidence filter validation set | `project.vocabulary`; `400 invalid_query` |
+| the fields above, read as one graph | canonical field references | `domain.GraphRelationship`, `domain.EntityRef` | `Knowledge.adjacency`, one entry per `(type, id)` | `GET /api/v1/graph/entities/{entity_type}/{id}/relationships`, `.../traverse` |
 | parse + reference resolution outcomes | issue list | `domain.ValidationIssue` | fatal/warning partition | startup log; `GET /api/v1/diagnostics` |
 
 ## Layering
@@ -52,7 +54,8 @@ httpapi  →  service  →  repository (interface)  →  repository/filesystem  
 - `internal/repository` — `KnowledgeRepository`, a read-only interface. It has no write method, so
   a mutation path cannot be added without changing the contract deliberately.
 - `internal/repository/filesystem` — the only package that touches the corpus. Read calls only.
-- `internal/service` — builds the immutable in-memory index once at startup and answers queries.
+- `internal/service` — builds the immutable in-memory index once at startup and answers queries,
+  including the bounded breadth-first traversal over the relationship adjacency.
 - `internal/httpapi` — routing, query parsing, bounds, JSON envelopes, method lock.
 
 ## Rationale
@@ -132,6 +135,93 @@ entry and a session. `GET /api/v1/sources?session_id=` therefore means "sources 
 appears in that session", which is the evidence-layer question. Deriving it instead from node
 `session_origin` would have merged the topical and evidential relations back together.
 
+**Why Phase 1C exposes traversal as a bounded read model rather than a graph database.** The
+relationships were already resolved: Phase 1A resolves node edges and session origin, Phase 1B
+resolves claim evidence, attribution, appearance and derivation. What was missing was the ability to
+follow more than one of them per request. Building that as an adjacency index over the records
+already in the startup index costs one pass at load and adds no new authority; introducing SQLite,
+Neo4j or a persisted graph store would introduce a second copy of the truth, a migration story, and
+the reconciliation problem the repository-first rule exists to avoid. The corpus is 78 nodes, 48
+claims and 51 sources; a depth-3 traversal of it completes in memory in well under a second.
+
+**Why traversal edges are explicit-only, again.** The Phase 1A rule that no edge may be manufactured
+from keyword overlap or embedding proximity does not weaken because an edge crosses a layer
+boundary. Every Phase 1C edge names the canonical field it was read from in its `origin`, so "why
+does this edge exist" is answerable from the edge itself. No edge is derived from a shared word, a
+similar title, overlapping prose, co-occurrence or any similarity measure, and there is no automatic
+edge discovery of any kind.
+
+**Why every authored edge is emitted with a reverse, and why the reverse is labelled.** A traversal
+that could only follow authored direction would leave every source unable to reach the claims that
+cite it, which is the question the provenance layer is most often asked. The reverse of a node edge
+uses that relationship type's own `inverse` from `schemas/relationship-types.yaml`; the reverse of an
+evidence relation is the same verb in the active voice; the cross-layer reverses restate the field
+they come from. None is invented. Each carries `"derived": true`, because `docs/knowledge-model.md`
+states that AudioMuse stores each claim once in its clearest direction and that inverse labels are
+descriptive metadata rather than storable edges — a reverse edge presenting itself as authored would
+misrepresent the corpus.
+
+**Why the four entity classes stay distinct instead of becoming generic nodes.** A node named
+"Room Mode", a claim that standing-wave behaviour produces location-dependent pressure peaks, and
+the reference work that supports it are three different kinds of thing, and the difference is the
+entire point of the knowledge and provenance models. Collapsing them into one graph-node type would
+make a traversal cheaper to render and would destroy the distinction that claim confidence,
+provenance inspection, contradiction analysis and source-quality analysis all depend on. Identity is
+therefore the pair `(type, id)`, which also keeps a registry entry of `type: session`
+distinguishable from the session projected from it.
+
+**Why topical and evidential source edges have different names.** `sourced_from` comes from a node's
+`sources:` list and means the source is relevant to the concept. `supported_by` comes from a claim's
+`evidence` and means the source materially supports that statement. They are the same distinction
+`GET /api/v1/sources/{id}` keeps between `node_ids` and `claims`, carried into the graph. The
+evidence relation itself is preserved rather than flattened into a generic evidence edge, so a
+source that contradicts a claim can never look like one that supports it.
+
+**Why there is no direct source-to-session edge.** Phase 1B answers `?session_id=` on the source
+list through claims, because there is no canonical edge between a registry entry and a session. A
+traversal reaches the same fact by walking session, claim, source, which is two hops and reports
+itself as two hops. Emitting it additionally as one direct edge would make the same relation
+countable twice and would make `depth` mean something other than hops.
+
+**Why breadth-first.** Depth then means shortest hop distance, which is what a caller exploring
+outward from a concept expects and what makes the `distance` field a fact about the graph rather
+than an artefact of the walk. A depth-first traversal would report an entity at whatever distance it
+happened to be reached first. Breadth-first also degrades honestly under the result bounds: what a
+truncated response loses is the far edge of the neighbourhood, not an arbitrary branch.
+
+**Why depth and fan-out are both bounded, and bounded in code.** Depth alone is not a bound — one
+hub entity can have hundreds of neighbours, so a depth-2 request over a large corpus can cost far
+more than a depth-3 request over a sparse one. Depth is capped at 3 because that is the length of
+the epistemic path the model is built around, session to node to claim to source; a fourth hop buys
+reach that is no longer explainable as one question. The entity and edge caps are service constants
+rather than configuration because they are API safety invariants: a caller who could raise them
+could ask one request to serialise the corpus, and an operator who could lower them would change
+what the documented contract means. A truncated result always reports `partial` and its reason;
+silently dropping results while claiming completeness would be a wrong answer rather than a small
+one.
+
+**Why cycles are expected rather than prevented.** Every authored edge has a reverse, so any related
+pair is already a two-cycle, and claim derivation can close longer loops. The traversal keeps a
+visited set and expands each entity exactly once at its shortest distance, so a cyclic corpus
+terminates. Cycles are a property of a knowledge graph, not a defect to be validated away.
+
+**Why a generic graph-query language is deferred.** A `MATCH ... WHERE ... RETURN` surface, or a
+JSON body describing arbitrary traversal steps, is a program the caller supplies and the server
+executes, which means unbounded cost, an evaluator to secure, and a query semantics to specify and
+version. The current need is to follow known relationships safely, and two bounded GET routes answer
+that. A bounded surface can be widened later on evidence of a real query a client cannot compose; a
+query engine cannot be narrowed once clients depend on it.
+
+**Why traversal has no paging.** Paging a graph requires a stable cursor over a result whose shape
+the caller cannot see before requesting it, and a page boundary through a neighbourhood is not a
+meaningful unit. A caller narrows with `depth`, `relationship` or `target_type` instead, and a
+result that hit a bound says so.
+
+**Why filters are applied during expansion.** A filter applied to the finished result would let
+`depth` count hops along edges that were then discarded, so a depth-2 request could return entities
+that are not two matching hops away. Filtering while expanding makes a filtered traversal the
+traversal of the filtered subgraph, which is the only reading of `depth` that stays true.
+
 **Why mutating methods are rejected at the edge.** Read-only is asserted by a middleware that runs
 before routing, not by the absence of write handlers. That makes the guarantee test-coverable and
 makes an accidental future write route unreachable rather than merely unwritten.
@@ -156,6 +246,12 @@ cycle, an appearance document that is an unsafe path or an external locator, an 
 under `indexes/`, and an unreadable or vocabulary-less `schemas/claim.schema.yaml` or
 `schemas/source.schema.yaml`.
 
+Phase 1C additionally validates the executable inverse contract in
+`schemas/relationship-types.yaml`: every forward and inverse label must be non-empty canonical
+`snake_case`, a directed predicate may not be self-inverse, and labels must be unique across the
+forward/inverse namespace. Violations are fatal because an ambiguous inverse would make traversal
+semantics and the `derived` provenance marker untrustworthy.
+
 **Warning** — the projection is correct but the corpus has a gap, so startup succeeds and reports:
 a registered source whose repository-relative locator does not exist, a registered session with no
 `sessions/<id>/` directory, a session no node cites, a registered source that neither a node nor a
@@ -168,7 +264,7 @@ reported for human decision.
 `runtime_projection`, while `repository_semantic_validation` is `external_precondition`. Its
 `valid` status must not be interpreted as an in-process execution of the PowerShell semantic rules.
 
-## Known limitations (through Phase 1B)
+## Known limitations (through Phase 1C)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, ranking model, or
@@ -187,11 +283,19 @@ reported for human decision.
 - `appears_in: session` is a canonical reference kind that no current claim record uses, so
   `GET /api/v1/claims?session_id=` and `GET /api/v1/sources?session_id=` answer correctly and
   return nothing against today's corpus.
-- Graph traversal across the evidence layer is not implemented. Phase 1B resolves the
-  session/node/claim/source relations deterministically; walking them is a later decision.
+- Graph traversal is deliberately bounded: depth 1 to 3, 500 entities and 2000 relationships per
+  request, two GET routes, no query language, no caller-supplied traversal program, no paging and
+  no mutation. The adjacency is derived at startup and never persisted.
+- The traversal graph addresses only the four record classes the backend parses. A claim
+  `appears_in: vocabulary`, `appears_in: document` or `derived_from: experiment_run` reference is
+  carried through unresolved and produces no graph entity and no edge.
+- A registered session and its registry entry are addressed as two entities that share an ID, and
+  no edge is emitted between them: they are one canonical record seen through two projections.
 
 ## Future work
 
-Deferred, not implemented: vocabulary and experiment-run parsing, evidence-layer graph traversal,
-richer diagnostics, search hardening, graph visualization, semantic retrieval, and MLLM
-experimentation.
+Deferred, not implemented: vocabulary and experiment-run parsing, richer diagnostics, search
+hardening, graph visualization, semantic retrieval, and MLLM experimentation. The Phase 1C contract
+is shaped to be useful to a future read-only graph inspector, provenance-path view or
+claim-confidence overlay without any of them being implemented here, and without the backend being
+distorted around a hypothetical frontend.

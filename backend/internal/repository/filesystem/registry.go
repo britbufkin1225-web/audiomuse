@@ -3,6 +3,7 @@ package filesystem
 import (
 	"fmt"
 	"io/fs"
+	"regexp"
 	"sort"
 
 	"gopkg.in/yaml.v3"
@@ -27,6 +28,8 @@ type relationshipTypesFile struct {
 	Version           int                       `yaml:"version"`
 	RelationshipTypes []domain.RelationshipType `yaml:"relationship_types"`
 }
+
+var relationshipLabelPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$`)
 
 // loadSources reads the canonical provenance registry.
 //
@@ -133,7 +136,55 @@ func (r *Repository) loadRelationshipTypes(report *domain.ValidationReport) []do
 		})
 		return nil
 	}
-	types := append([]domain.RelationshipType(nil), file.RelationshipTypes...)
+	// Phase 1C reads inverse as an executable traversal label, so it needs stronger
+	// guarantees than the Phase 1A forward-only graph did. Keep the forward and inverse
+	// namespaces disjoint and unique: otherwise one response label could mean two
+	// different predicates, or an authored edge could collide with a generated reverse
+	// edge and lose its derived provenance marker during graph deduplication.
+	seenNames := make(map[string]bool, len(file.RelationshipTypes)*2)
+	types := make([]domain.RelationshipType, 0, len(file.RelationshipTypes))
+	for _, relationshipType := range file.RelationshipTypes {
+		invalid := false
+		for _, value := range []struct{ field, label string }{
+			{"id", relationshipType.ID},
+			{"inverse", relationshipType.Inverse},
+		} {
+			if !relationshipLabelPattern.MatchString(value.label) {
+				report.Add(domain.ValidationIssue{
+					Severity: domain.SeverityFatal, Code: domain.CodeMalformedRecord,
+					Ref: relationshipType.ID, Path: relationshipTypesPath,
+					Message: fmt.Sprintf("relationship type %s %q is not canonical snake_case", value.field, value.label),
+				})
+				invalid = true
+			}
+		}
+		if relationshipType.ID == relationshipType.Inverse && relationshipType.ID != "" {
+			report.Add(domain.ValidationIssue{
+				Severity: domain.SeverityFatal, Code: domain.CodeMalformedRecord,
+				Ref: relationshipType.ID, Path: relationshipTypesPath,
+				Message: "directed relationship type must not declare itself as its inverse",
+			})
+			invalid = true
+		}
+		for _, name := range []string{relationshipType.ID, relationshipType.Inverse} {
+			if name == "" {
+				continue
+			}
+			if seenNames[name] {
+				report.Add(domain.ValidationIssue{
+					Severity: domain.SeverityFatal, Code: domain.CodeMalformedRecord,
+					Ref: relationshipType.ID, Path: relationshipTypesPath,
+					Message: fmt.Sprintf("relationship label %q is declared more than once", name),
+				})
+				invalid = true
+			} else {
+				seenNames[name] = true
+			}
+		}
+		if !invalid {
+			types = append(types, relationshipType)
+		}
+	}
 	sort.Slice(types, func(i, j int) bool { return types[i].ID < types[j].ID })
 	return types
 }
