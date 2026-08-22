@@ -246,6 +246,12 @@ cycle, an appearance document that is an unsafe path or an external locator, an 
 under `indexes/`, and an unreadable or vocabulary-less `schemas/claim.schema.yaml` or
 `schemas/source.schema.yaml`.
 
+Phase 1C additionally validates the executable inverse contract in
+`schemas/relationship-types.yaml`: every forward and inverse label must be non-empty canonical
+`snake_case`, a directed predicate may not be self-inverse, and labels must be unique across the
+forward/inverse namespace. Violations are fatal because an ambiguous inverse would make traversal
+semantics and the `derived` provenance marker untrustworthy.
+
 **Warning** — the projection is correct but the corpus has a gap, so startup succeeds and reports:
 a registered source whose repository-relative locator does not exist, a registered session with no
 `sessions/<id>/` directory, a session no node cites, a registered source that neither a node nor a

@@ -400,6 +400,11 @@ or reference entry; a claim with no appearance site; a claim derivation cycle; a
 document that is an unsafe path, an external locator, or a generated projection under `indexes/`;
 and an unreadable or vocabulary-less claim or source contract.
 
+The traversal layer also requires every node relationship type and inverse label to be non-empty
+canonical `snake_case`, distinct from itself, and unique across the complete forward/inverse label
+namespace. A missing, malformed, duplicate, or colliding inverse is fatal because reverse traversal
+could otherwise omit an edge, merge two predicates, or lose the authored-versus-derived marker.
+
 Warnings are served on `/api/v1/diagnostics` and do not stop startup: a registered locator that does
 not exist, a registered session with no directory, a session no node cites, a registered source that
 neither a node nor a claim cites, and a claim appearance document that is safe and canonical but has

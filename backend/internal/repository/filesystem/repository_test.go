@@ -256,6 +256,43 @@ func TestFatalDefects(t *testing.T) {
 			wantErr: domain.CodeInvalidRelationType,
 		},
 		{
+			name: "relationship type missing inverse",
+			mutate: func(c fstest.MapFS) {
+				testsupport.Write(c, "schemas/relationship-types.yaml",
+					"schema: audiomuse-relationship-types\nversion: 1\nrelationship_types:\n"+
+						"  - id: produces\n    directionality: directed\n")
+			},
+			wantErr: domain.CodeMalformedRecord,
+		},
+		{
+			name: "relationship type uses malformed inverse",
+			mutate: func(c fstest.MapFS) {
+				testsupport.Write(c, "schemas/relationship-types.yaml",
+					"schema: audiomuse-relationship-types\nversion: 1\nrelationship_types:\n"+
+						"  - id: produces\n    inverse: Produced By\n    directionality: directed\n")
+			},
+			wantErr: domain.CodeMalformedRecord,
+		},
+		{
+			name: "relationship type is accidentally self inverse",
+			mutate: func(c fstest.MapFS) {
+				testsupport.Write(c, "schemas/relationship-types.yaml",
+					"schema: audiomuse-relationship-types\nversion: 1\nrelationship_types:\n"+
+						"  - id: influences\n    inverse: influences\n    directionality: directed\n")
+			},
+			wantErr: domain.CodeMalformedRecord,
+		},
+		{
+			name: "relationship inverse collides with authored label",
+			mutate: func(c fstest.MapFS) {
+				testsupport.Write(c, "schemas/relationship-types.yaml",
+					"schema: audiomuse-relationship-types\nversion: 1\nrelationship_types:\n"+
+						"  - id: produces\n    inverse: produced_by\n    directionality: directed\n"+
+						"  - id: produced_by\n    inverse: has_producer\n    directionality: directed\n")
+			},
+			wantErr: domain.CodeMalformedRecord,
+		},
+		{
 			name: "self link",
 			mutate: func(c fstest.MapFS) {
 				rels := "\n  - target: delta\n    type: produces"
