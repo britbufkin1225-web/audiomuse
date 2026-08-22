@@ -1,0 +1,32 @@
+# Fixture copy of the canonical source contract. Only the bounded enums are read by the
+# backend; the values below mirror schemas/source.schema.yaml exactly so a fixture test
+# exercises the real vocabulary. See testdata/corpus/README.md.
+schema: audiomuse-source
+version: 1
+required: [id, type, title, locator, relationship]
+properties:
+  id:
+    type: string
+  type:
+    type: string
+    enum: [session, book, paper, article, manual, standard, website, recording, measurement, dataset, video, interview, other]
+  title:
+    type: string
+  author:
+    type: [string, "null"]
+  year:
+    type: [integer, "null"]
+  locator:
+    type: string
+  relationship:
+    type: string
+    enum: [origin, supporting, historical, experimental, reference, contrasting]
+  evidence_class:
+    type: [string, "null"]
+    enum: [institutional_archive, reference_entry, scholarly_work, technical_reference, journalism, participant_account, session_record, project_document]
+  retrieval:
+    type: [string, "null"]
+    enum: [full_text, partial_text, citation_only]
+  notes:
+    type: [string, "null"]
+additional_properties: false

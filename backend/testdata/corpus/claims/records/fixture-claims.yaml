@@ -1,0 +1,52 @@
+---
+id: "alpha-carries-energy"
+statement: "The alpha fixture concept carries energy through a medium without transporting the medium itself."
+claim_type: "technical_fact"
+confidence: "high"
+confidence_basis: "Two fixture sources support the statement independently, one of them a registered institutional archive whose text was retrieved in full."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "fixture-reference-work", "note": "States the energy transport property directly."}, {"relation": "supported_by", "source_id": "fixture-archive-record", "note": "Records the same property in a retrieved archive page."}]
+attribution: []
+derived_from: []
+appears_in: [{"kind": "node", "ref": "alpha"}, {"kind": "vocabulary", "ref": "fixture-term"}, {"kind": "document", "ref": "research/sources/fixture-reference-work.md"}]
+open_questions: []
+---
+id: "beta-was-observed-in-1999"
+statement: "The beta fixture phenomenon is recorded as having been observed during 1999."
+claim_type: "historical_claim"
+confidence: "moderate"
+confidence_basis: "The archive record places the observation in 1999 while the reference work places it a year earlier, so the year is supported but not settled."
+dispute_status: "disputed"
+temporal_precision: "year"
+evidence: [{"relation": "supported_by", "source_id": "fixture-archive-record", "note": "Dates the observation to 1999."}, {"relation": "contradicted_by", "source_id": "fixture-reference-work", "note": "Dates the same observation to 1998."}]
+attribution: [{"actor": "Fixture Archivist", "source_id": "fixture-attribution-source"}]
+derived_from: []
+appears_in: [{"kind": "node", "ref": "beta"}, {"kind": "session", "ref": "session-01-fixture"}]
+open_questions: []
+---
+id: "gamma-follows-from-alpha-and-beta"
+statement: "The gamma fixture transformation is a consequence of the alpha energy property rather than an independent effect."
+claim_type: "audiomuse_synthesis"
+confidence: "moderate"
+confidence_basis: "Each component is sourced and the combination is not; joining them into one statement is the fixture corpus's own inference."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "supported_by", "source_id": "fixture-archive-record", "note": "Supplies the transformation half of the combination."}, {"relation": "qualified_by", "source_id": "fixture-reference-work", "note": "Bounds the combination to the fixture medium."}]
+attribution: []
+derived_from: [{"kind": "claim", "ref": "alpha-carries-energy"}, {"kind": "node", "ref": "alpha"}]
+appears_in: [{"kind": "node", "ref": "gamma"}]
+open_questions: ["Would a second archive record settle the boundary condition?"]
+---
+id: "alpha-may-extend-to-gamma"
+statement: "The alpha energy property may extend to the gamma fixture representation without further qualification."
+claim_type: "hypothesis"
+confidence: "low"
+confidence_basis: "Only one fixture source bears on the extension and it bounds rather than supports it, so the proposal is graded low and is not asserted."
+dispute_status: "undisputed"
+temporal_precision: "not_temporal"
+evidence: [{"relation": "qualified_by", "source_id": "fixture-reference-work", "note": "Limits the property to the medium it was measured in."}]
+attribution: []
+derived_from: [{"kind": "node", "ref": "gamma"}]
+appears_in: [{"kind": "node", "ref": "gamma"}, {"kind": "document", "ref": "research/sources/fixture-reference-work.md"}]
+open_questions: ["What measurement would extend the property to the gamma representation?"]

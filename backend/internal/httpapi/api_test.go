@@ -256,7 +256,9 @@ func TestHeadIsAllowed(t *testing.T) {
 }
 
 func TestUnknownRouteReturnsJSONNotFound(t *testing.T) {
-	rec := do(t, newHandler(t), http.MethodGet, "/api/v1/claims")
+	// Phase 1B implemented /api/v1/claims, which this test previously used as its unrouted
+	// placeholder. Experiments remain a canonical layer the backend does not serve.
+	rec := do(t, newHandler(t), http.MethodGet, "/api/v1/experiments")
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", rec.Code)
 	}

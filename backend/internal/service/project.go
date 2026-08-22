@@ -14,6 +14,7 @@ type Counts struct {
 	Nodes             int `json:"nodes"`
 	Sessions          int `json:"sessions"`
 	Sources           int `json:"sources"`
+	Claims            int `json:"claims"`
 	Edges             int `json:"edges"`
 	RelationshipTypes int `json:"relationship_types"`
 	Domains           int `json:"domains"`
@@ -36,6 +37,12 @@ type ProjectSummary struct {
 	Validation     string   `json:"validation"`
 	WarningCount   int      `json:"warning_count"`
 	CanonicalLayer []string `json:"canonical_layers_served"`
+
+	// Vocabulary is the bounded value set read from schemas/claim.schema.yaml and
+	// schemas/source.schema.yaml. It is served here so a client can discover exactly which
+	// filter values the evidence endpoints accept without hard-coding a copy of the
+	// contract, and without discovering them by trial and error against 400 responses.
+	Vocabulary domain.Vocabularies `json:"vocabulary"`
 }
 
 // RepoInfo names the corpus without revealing where it lives.
@@ -54,7 +61,8 @@ func (k *Knowledge) Project() ProjectSummary {
 		Counts: Counts{
 			Nodes:             len(k.nodes),
 			Sessions:          len(k.sessions),
-			Sources:           k.sourceCount,
+			Sources:           len(k.sources),
+			Claims:            len(k.claims),
 			Edges:             k.graph.Metadata.EdgeCount,
 			RelationshipTypes: len(k.relationshipTypes),
 			Domains:           len(k.Domains()),
@@ -63,7 +71,8 @@ func (k *Knowledge) Project() ProjectSummary {
 		Statuses:       k.Statuses(),
 		Validation:     k.report.Status(),
 		WarningCount:   len(k.report.Warnings()),
-		CanonicalLayer: []string{"nodes", "sessions", "sources", "relationship-types"},
+		CanonicalLayer: []string{"nodes", "sessions", "sources", "claims", "relationship-types"},
+		Vocabulary:     k.Vocabularies(),
 	}
 }
 

@@ -281,7 +281,7 @@ func TestProjectSummaryDoesNotLeakAPath(t *testing.T) {
 	if got, want := project.Counts.Sessions, 2; got != want {
 		t.Errorf("sessions = %d, want %d", got, want)
 	}
-	if got, want := project.Counts.Sources, 4; got != want {
+	if got, want := project.Counts.Sources, 6; got != want {
 		t.Errorf("sources = %d, want %d", got, want)
 	}
 	if got, want := project.Domains, []string{"acoustics", "dsp"}; !reflect.DeepEqual(got, want) {

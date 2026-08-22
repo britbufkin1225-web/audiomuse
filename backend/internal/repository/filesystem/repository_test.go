@@ -43,8 +43,11 @@ func TestLoadValidFixtureCorpus(t *testing.T) {
 	if got, want := len(corpus.Nodes), 3; got != want {
 		t.Fatalf("nodes = %d, want %d", got, want)
 	}
-	if got, want := len(corpus.Sources), 4; got != want {
+	if got, want := len(corpus.Sources), 6; got != want {
 		t.Errorf("sources = %d, want %d", got, want)
+	}
+	if got, want := len(corpus.Claims), 4; got != want {
+		t.Errorf("claims = %d, want %d", got, want)
 	}
 	if got, want := len(corpus.Sessions), 2; got != want {
 		t.Errorf("sessions = %d, want %d", got, want)

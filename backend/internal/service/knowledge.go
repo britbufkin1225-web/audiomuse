@@ -34,7 +34,26 @@ type Knowledge struct {
 	sessions          []domain.Session
 	sessionsByID      map[string]domain.Session
 	relationshipTypes []domain.RelationshipType
-	sourceCount       int
+
+	// Evidence layer (Phase 1B). Sources were counted but not indexed in Phase 1A; they
+	// are now a served projection in their own right.
+	sources          []domain.Source
+	sourcesByID      map[string]domain.Source
+	sourceSearchText map[string]string
+	claims           []domain.Claim
+	claimsByID       map[string]domain.Claim
+	claimSearchText  map[string]string
+	vocabularies     domain.Vocabularies
+
+	// Derived reverse views over the evidence layer. Each is documented at buildEvidence.
+	claimIDsBySourceID   map[string][]string
+	claimIDsByNodeID     map[string][]string
+	claimIDsBySessionID  map[string][]string
+	sourceClaims         map[string][]domain.SourceClaimRef
+	attributedClaimIDs   map[string][]string
+	nodeIDsBySourceID    map[string][]string
+	sessionIDsBySourceID map[string][]string
+	sourceIDsBySessionID map[string][]string
 
 	graph domain.Graph
 }
@@ -62,7 +81,13 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 		sessions:          corpus.Sessions,
 		sessionsByID:      make(map[string]domain.Session, len(corpus.Sessions)),
 		relationshipTypes: corpus.RelationshipTypes,
-		sourceCount:       len(corpus.Sources),
+		sources:           corpus.Sources,
+		sourcesByID:       make(map[string]domain.Source, len(corpus.Sources)),
+		sourceSearchText:  make(map[string]string, len(corpus.Sources)),
+		claims:            corpus.Claims,
+		claimsByID:        make(map[string]domain.Claim, len(corpus.Claims)),
+		claimSearchText:   make(map[string]string, len(corpus.Claims)),
+		vocabularies:      corpus.Vocabularies,
 	}
 
 	for _, node := range corpus.Nodes {
@@ -72,10 +97,32 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 	for _, session := range corpus.Sessions {
 		k.sessionsByID[session.ID] = session
 	}
+	for _, source := range corpus.Sources {
+		k.sourcesByID[source.ID] = source
+		k.sourceSearchText[source.ID] = searchCorpusForSource(source)
+	}
+	for _, claim := range corpus.Claims {
+		k.claimsByID[claim.ID] = claim
+	}
 
 	k.buildInbound()
 	k.buildGraph()
+	k.buildEvidence()
 	return k, nil
+}
+
+// searchCorpusForSource assembles the lexical search corpus for one registry entry.
+//
+// Only the entry's own identifying fields contribute — id, title and author — so a match is
+// always explainable by pointing at the registry line. Notes are excluded deliberately: they
+// are free prose about retrieval and external locators, and searching them would make a hit
+// mean something different from a hit on any other AudioMuse list.
+func searchCorpusForSource(source domain.Source) string {
+	parts := []string{source.ID, source.Title}
+	if source.Author != nil {
+		parts = append(parts, *source.Author)
+	}
+	return strings.ToLower(strings.Join(parts, "\n"))
 }
 
 // searchCorpusFor assembles the lexical search corpus for one node.

@@ -39,6 +39,24 @@ const (
 	CodeUncitedSource       = "uncited_source"
 )
 
+// Evidence-layer validation issue codes, added in Phase 1B.
+//
+// They are separate constants rather than reuses of the node codes above so a diagnostics
+// consumer can tell an evidence-integrity failure from a graph-integrity failure without
+// parsing prose. Where a Phase 1A code already means exactly the right thing — a malformed
+// record, a duplicate ID, a missing or unknown field, an unsafe path — it is reused rather
+// than duplicated under an evidence-specific name.
+const (
+	CodeInvalidVocabulary    = "invalid_vocabulary_value"
+	CodeUnresolvedClaim      = "unresolved_claim_reference"
+	CodeClaimDerivationCycle = "claim_derivation_cycle"
+	CodeDuplicateEvidence    = "duplicate_evidence_reference"
+	CodeGeneratedAppearance  = "generated_appearance_site"
+	CodeMissingAppearance    = "missing_appearance_site"
+	CodeUnresolvedDocument   = "unresolved_document_reference"
+	CodeUnresolvedContract   = "unresolved_contract_reference"
+)
+
 // ValidationIssue is one finding. Ref is the canonical ID the finding is about; Path is the
 // repository-relative file it was read from. Neither carries an absolute filesystem path,
 // so an issue is safe to serve over the diagnostics endpoint as-is.

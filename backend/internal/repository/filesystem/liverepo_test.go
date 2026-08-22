@@ -150,3 +150,43 @@ func snapshot(t testing.TB, root string) map[string]fileState {
 	}
 	return out
 }
+
+// TestLiveRepositoryProjectsTheEvidenceLayer is the Phase 1B repository regression check:
+// the real claim records must parse, their vocabularies must come from the canonical
+// contracts, and every evidence reference must resolve with no fatal issue.
+func TestLiveRepositoryProjectsTheEvidenceLayer(t *testing.T) {
+	root := liveRepoRoot(t)
+
+	repo, err := filesystem.New(root)
+	if err != nil {
+		t.Fatalf("open canonical repository: %v", err)
+	}
+	corpus, report, err := repo.Load(context.Background())
+	if err != nil {
+		t.Fatalf("load canonical repository: %v", err)
+	}
+	if report.HasFatal() {
+		t.Fatalf("canonical evidence layer reported fatal issues: %v", report.Fatal())
+	}
+
+	if len(corpus.Claims) == 0 {
+		t.Fatal("no canonical claims were loaded")
+	}
+	if len(corpus.Vocabularies.Claim.ClaimTypes) == 0 || len(corpus.Vocabularies.Source.Types) == 0 {
+		t.Fatal("canonical contract vocabularies were not read")
+	}
+
+	evidence, attribution, appearances := 0, 0, 0
+	confidences := map[string]int{}
+	for _, claim := range corpus.Claims {
+		evidence += len(claim.Evidence)
+		attribution += len(claim.Attribution)
+		appearances += len(claim.AppearsIn)
+		confidences[claim.Confidence]++
+	}
+	if evidence == 0 || appearances == 0 {
+		t.Fatal("canonical claims carry no evidence or appearance sites")
+	}
+	t.Logf("canonical evidence layer: claims=%d evidence=%d attribution=%d appearances=%d confidence=%v",
+		len(corpus.Claims), evidence, attribution, appearances, confidences)
+}

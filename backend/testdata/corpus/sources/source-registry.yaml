@@ -25,3 +25,18 @@ sources:
     title: A Registered Source No Node Cites
     locator: research/sources/fixture-uncited-source.md
     relationship: reference
+  - id: fixture-archive-record
+    type: website
+    title: A Fixture Institutional Archive Record
+    author: Fixture Archive
+    locator: research/sources/fixture-archive-record.md
+    relationship: reference
+    evidence_class: institutional_archive
+    retrieval: full_text
+  - id: fixture-attribution-source
+    type: interview
+    title: A Fixture Participant Account
+    locator: research/sources/fixture-attribution-source.md
+    relationship: historical
+    evidence_class: participant_account
+    retrieval: citation_only
