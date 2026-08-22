@@ -112,8 +112,6 @@ func (k *Knowledge) buildEvidence() {
 	// Claims are already in canonical ID order, so every list appended here is built in
 	// that order and needs deduplication rather than sorting.
 	for _, claim := range k.claims {
-		k.claimSearchText[claim.ID] = strings.ToLower(claim.ID + "\n" + claim.Statement)
-
 		citedSources := map[string]bool{}
 		for _, e := range claim.Evidence {
 			k.sourceClaims[e.SourceID] = append(k.sourceClaims[e.SourceID],
@@ -232,7 +230,7 @@ func (k *Knowledge) ListSources(q SourceQuery) (SourceList, error) {
 		if bySession != nil && !bySession[source.ID] {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.sourceSearchText[source.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.sourceSearchText[source.ID], needle) {
 			continue
 		}
 		source = cloneSource(source)
@@ -333,7 +331,7 @@ func (k *Knowledge) ListClaims(q ClaimQuery) (ClaimList, error) {
 		if bySession != nil && !bySession[claim.ID] {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.claimSearchText[claim.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.claimSearchText[claim.ID], needle) {
 			continue
 		}
 		matched = append(matched, domain.ClaimSummary{

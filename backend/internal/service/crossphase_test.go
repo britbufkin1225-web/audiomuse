@@ -362,3 +362,51 @@ func TestCombinedIndexHandsOutDefensiveCopies(t *testing.T) {
 		}
 	})
 }
+
+// TestDiscoveryDoesNotEnrolRecordsInTheGraph is the Phase 1E half of the practice-layer rule.
+//
+// Phase 1E makes vocabulary entries and experiment definitions findable through one
+// cross-layer search surface. Discoverability and graph membership are different contracts,
+// and conflating them is the specific mistake this phase was most able to make: it would be
+// easy to reason that a record good enough to return from a search is a record good enough to
+// traverse. This asserts the separation on the records a caller has just found — each is still
+// refused as a traversal root, still absent from the graph, and still not an edge endpoint.
+func TestDiscoveryDoesNotEnrolRecordsInTheGraph(t *testing.T) {
+	k := evidenceIndex(t)
+	before := k.Graph()
+
+	found := map[domain.SearchEntityType][]string{}
+	for _, result := range mustSearch(t, k, service.SearchQuery{Q: universalNeedle, Limit: 200}).Results {
+		found[result.EntityType] = append(found[result.EntityType], result.ID)
+	}
+
+	for _, entityType := range []domain.SearchEntityType{domain.SearchVocabulary, domain.SearchExperiment} {
+		if len(found[entityType]) == 0 {
+			t.Fatalf("no %s results, so this test would pass vacuously", entityType)
+		}
+		for _, id := range found[entityType] {
+			if _, err := k.Traverse(string(entityType), id, service.TraversalQuery{Depth: 1}); err == nil {
+				t.Errorf("discoverable %s %q was accepted as a traversal root", entityType, id)
+			}
+			if _, err := k.EntityRelationshipsFor(string(entityType), id, service.TraversalQuery{}); err == nil {
+				t.Errorf("discoverable %s %q was accepted as a relationship root", entityType, id)
+			}
+			for _, vertex := range before.Nodes {
+				if vertex.ID == id {
+					t.Errorf("discoverable %s %q appeared as a graph vertex", entityType, id)
+				}
+			}
+			for _, edge := range before.Edges {
+				if edge.Source == id || edge.Target == id {
+					t.Errorf("discoverable %s %q appeared as a graph edge endpoint", entityType, id)
+				}
+			}
+		}
+	}
+
+	// The graph is unchanged by searching. The index is immutable, so this can only fail if
+	// the discovery projection acquired a side effect on a shared structure.
+	if after := k.Graph(); !reflect.DeepEqual(before, after) {
+		t.Error("the graph projection changed across search requests")
+	}
+}

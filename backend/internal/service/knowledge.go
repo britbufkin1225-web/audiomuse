@@ -12,7 +12,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/repository"
@@ -29,7 +28,7 @@ type Knowledge struct {
 	nodes       []domain.Node
 	nodesByID   map[string]domain.Node
 	inboundByID map[string][]domain.InboundRelationship
-	searchText  map[string]string
+	searchText  map[string][]searchField
 
 	sessions          []domain.Session
 	sessionsByID      map[string]domain.Session
@@ -39,10 +38,10 @@ type Knowledge struct {
 	// are now a served projection in their own right.
 	sources          []domain.Source
 	sourcesByID      map[string]domain.Source
-	sourceSearchText map[string]string
+	sourceSearchText map[string][]searchField
 	claims           []domain.Claim
 	claimsByID       map[string]domain.Claim
-	claimSearchText  map[string]string
+	claimSearchText  map[string][]searchField
 	vocabularies     domain.Vocabularies
 
 	// Derived reverse views over the evidence layer. Each is documented at buildEvidence.
@@ -60,10 +59,10 @@ type Knowledge struct {
 	// buildPractice and buildGraph.
 	vocabulary           []domain.VocabularyEntry
 	vocabularyByID       map[string]domain.VocabularyEntry
-	vocabularySearchText map[string]string
+	vocabularySearchText map[string][]searchField
 	experiments          []domain.Experiment
 	experimentsByID      map[string]domain.Experiment
-	experimentSearchText map[string]string
+	experimentSearchText map[string][]searchField
 	runs                 []domain.ExperimentRun
 	runsByID             map[string]domain.ExperimentRun
 
@@ -81,6 +80,12 @@ type Knowledge struct {
 	// earlier phases already parsed; see buildTraversal.
 	adjacency         map[domain.EntityRef][]domain.GraphRelationship
 	relationshipNames []string
+
+	// Discovery layer (Phase 1E). searchDocs is the cross-layer lexical projection: one
+	// document per searchable canonical record, built once from records the earlier phases
+	// already parsed. It is also where every per-layer search corpus above is defined, so the
+	// two cannot drift apart; see buildSearch.
+	searchDocs []searchDocument
 }
 
 // New loads the corpus through the repository interface and builds the startup index.
@@ -102,38 +107,36 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 		nodes:             corpus.Nodes,
 		nodesByID:         make(map[string]domain.Node, len(corpus.Nodes)),
 		inboundByID:       make(map[string][]domain.InboundRelationship, len(corpus.Nodes)),
-		searchText:        make(map[string]string, len(corpus.Nodes)),
+		searchText:        make(map[string][]searchField, len(corpus.Nodes)),
 		sessions:          corpus.Sessions,
 		sessionsByID:      make(map[string]domain.Session, len(corpus.Sessions)),
 		relationshipTypes: corpus.RelationshipTypes,
 		sources:           corpus.Sources,
 		sourcesByID:       make(map[string]domain.Source, len(corpus.Sources)),
-		sourceSearchText:  make(map[string]string, len(corpus.Sources)),
+		sourceSearchText:  make(map[string][]searchField, len(corpus.Sources)),
 		claims:            corpus.Claims,
 		claimsByID:        make(map[string]domain.Claim, len(corpus.Claims)),
-		claimSearchText:   make(map[string]string, len(corpus.Claims)),
+		claimSearchText:   make(map[string][]searchField, len(corpus.Claims)),
 		vocabularies:      corpus.Vocabularies,
 
 		vocabulary:           corpus.Vocabulary,
 		vocabularyByID:       make(map[string]domain.VocabularyEntry, len(corpus.Vocabulary)),
-		vocabularySearchText: make(map[string]string, len(corpus.Vocabulary)),
+		vocabularySearchText: make(map[string][]searchField, len(corpus.Vocabulary)),
 		experiments:          corpus.Experiments,
 		experimentsByID:      make(map[string]domain.Experiment, len(corpus.Experiments)),
-		experimentSearchText: make(map[string]string, len(corpus.Experiments)),
+		experimentSearchText: make(map[string][]searchField, len(corpus.Experiments)),
 		runs:                 corpus.ExperimentRuns,
 		runsByID:             make(map[string]domain.ExperimentRun, len(corpus.ExperimentRuns)),
 	}
 
 	for _, node := range corpus.Nodes {
 		k.nodesByID[node.ID] = node
-		k.searchText[node.ID] = searchCorpusFor(node)
 	}
 	for _, session := range corpus.Sessions {
 		k.sessionsByID[session.ID] = session
 	}
 	for _, source := range corpus.Sources {
 		k.sourcesByID[source.ID] = source
-		k.sourceSearchText[source.ID] = searchCorpusForSource(source)
 	}
 	for _, claim := range corpus.Claims {
 		k.claimsByID[claim.ID] = claim
@@ -148,39 +151,15 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 		k.runsByID[run.ID] = run
 	}
 
+	// buildSearch runs first: it defines the searchable field set of every layer and populates
+	// the per-layer lexical corpora the list projections read.
+	k.buildSearch()
 	k.buildInbound()
 	k.buildGraph()
 	k.buildEvidence()
 	k.buildTraversal()
 	k.buildPractice()
 	return k, nil
-}
-
-// searchCorpusForSource assembles the lexical search corpus for one registry entry.
-//
-// Only the entry's own identifying fields contribute — id, title and author — so a match is
-// always explainable by pointing at the registry line. Notes are excluded deliberately: they
-// are free prose about retrieval and external locators, and searching them would make a hit
-// mean something different from a hit on any other AudioMuse list.
-func searchCorpusForSource(source domain.Source) string {
-	parts := []string{source.ID, source.Title}
-	if source.Author != nil {
-		parts = append(parts, *source.Author)
-	}
-	return strings.ToLower(strings.Join(parts, "\n"))
-}
-
-// searchCorpusFor assembles the lexical search corpus for one node.
-//
-// The searchable fields are the node's canonical identity and description fields: id,
-// title, domain, status, definition and core_concepts. Nothing outside the node's own front
-// matter contributes, so a match is always explainable by pointing at the record. The node
-// schema has no aliases or tags field, so neither is searched.
-func searchCorpusFor(node domain.Node) string {
-	parts := make([]string, 0, 5+len(node.CoreConcepts))
-	parts = append(parts, node.ID, node.Title, node.Domain, node.Status, node.Definition)
-	parts = append(parts, node.CoreConcepts...)
-	return strings.ToLower(strings.Join(parts, "\n"))
 }
 
 // buildInbound derives the reverse adjacency of the authored edges.

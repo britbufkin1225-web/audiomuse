@@ -2,7 +2,6 @@ package service
 
 import (
 	"sort"
-	"strings"
 
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
 )
@@ -111,13 +110,6 @@ func (k *Knowledge) buildPractice() {
 	k.experimentIDsByVocab = map[string][]string{}
 	k.claimIDsByVocab = map[string][]string{}
 
-	for _, entry := range k.vocabulary {
-		k.vocabularySearchText[entry.ID] = searchCorpusForVocabulary(entry)
-	}
-	for _, experiment := range k.experiments {
-		k.experimentSearchText[experiment.ID] = searchCorpusForExperiment(experiment)
-	}
-
 	// Experiments and runs are already in canonical ID order, so every list appended here is
 	// built in that order and needs no later sort.
 	for _, experiment := range k.experiments {
@@ -150,34 +142,6 @@ func (k *Knowledge) buildPractice() {
 	}
 }
 
-// searchCorpusForVocabulary assembles the lexical search corpus for one vocabulary entry.
-//
-// The searchable fields are the entry's own identity and description fields: id, term, domain,
-// definition, digital_relationship, best_use, technologies and tags. Its cross-reference lists
-// are excluded, because a hit on node_refs or related_terms would be a match against another
-// record's identity and would mean something different from every other hit in the same list.
-func searchCorpusForVocabulary(entry domain.VocabularyEntry) string {
-	parts := make([]string, 0, 6+len(entry.Technologies)+len(entry.Tags))
-	parts = append(parts, entry.ID, entry.Term, entry.Domain, entry.Definition,
-		entry.DigitalRelationship, entry.BestUse)
-	parts = append(parts, entry.Technologies...)
-	parts = append(parts, entry.Tags...)
-	return strings.ToLower(strings.Join(parts, "\n"))
-}
-
-// searchCorpusForExperiment assembles the lexical search corpus for one experiment definition.
-//
-// Identity and purpose only: id, title, status, type, difficulty and purpose. The procedure,
-// setup and expected-behaviour prose is deliberately not searched. Those fields describe what a
-// performer should do, and a text hit inside them would return an experiment that mentions a
-// term in an instruction rather than one that is about it.
-func searchCorpusForExperiment(experiment domain.Experiment) string {
-	return strings.ToLower(strings.Join([]string{
-		experiment.ID, experiment.Title, experiment.Status,
-		experiment.Type, experiment.Difficulty, experiment.Purpose,
-	}, "\n"))
-}
-
 // ListVocabulary filters, searches and pages the canonical vocabulary entries.
 //
 // Multiple filters compose with AND. Results keep canonical ID order, matching every other
@@ -204,7 +168,7 @@ func (k *Knowledge) ListVocabulary(q VocabularyQuery) (VocabularyList, error) {
 		if q.Tag != "" && !containsExact(entry.Tags, q.Tag) {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.vocabularySearchText[entry.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.vocabularySearchText[entry.ID], needle) {
 			continue
 		}
 		matched = append(matched, domain.VocabularySummary{
@@ -278,7 +242,7 @@ func (k *Knowledge) ListExperiments(q ExperimentQuery) (ExperimentList, error) {
 		if q.SourceID != "" && !containsExact(experiment.SourceRefs, q.SourceID) {
 			continue
 		}
-		if needle != "" && !strings.Contains(k.experimentSearchText[experiment.ID], needle) {
+		if needle != "" && !searchFieldsMatch(k.experimentSearchText[experiment.ID], needle) {
 			continue
 		}
 		matched = append(matched, domain.ExperimentSummary{

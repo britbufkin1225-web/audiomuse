@@ -404,6 +404,11 @@ func TestLiveRepositoryIsNotMutatedByAPIRequests(t *testing.T) {
 		"/api/v1/experiments",
 		"/api/v1/experiment-runs",
 		"/api/v1/experiment-runs?performed=false",
+		// The discovery route scans every search document in the projection, so it is the
+		// broadest single read after traversal and the one most worth proving inert.
+		"/api/v1/search?q=resonance",
+		"/api/v1/search?q=e&limit=200",
+		"/api/v1/search?q=resonance&type=vocabulary",
 	}
 	for _, target := range targets {
 		rec := httptest.NewRecorder()

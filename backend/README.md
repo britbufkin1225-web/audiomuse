@@ -1,8 +1,9 @@
 # AudioMuse Backend — Read-Only Knowledge API
 
 A deterministic read-only HTTP projection of the canonical AudioMuse repository: nodes, sessions,
-the typed relationship graph, the sources, claims and provenance that stand behind them, and the
-vocabulary, experiments and experiment runs that put them into practice.
+the typed relationship graph, the sources, claims and provenance that stand behind them, the
+vocabulary, experiments and experiment runs that put them into practice, and one lexical search
+surface spanning all of them.
 
 **The repository remains the source of truth.** This service reads the corpus once at
 startup, validates what it read, indexes it in memory, and serves JSON. It performs no
@@ -21,7 +22,7 @@ backend/
 │   ├── domain/                 typed AudioMuse records; no I/O, no HTTP
 │   ├── repository/             KnowledgeRepository — a read-only interface with no write method
 │   │   └── filesystem/         the only package that touches the corpus
-│   ├── service/                immutable startup index, filtering, search, graph, evidence, traversal and practice projections
+│   ├── service/                immutable startup index, filtering, graph, evidence, traversal, practice and cross-layer discovery projections
 │   ├── httpapi/                routing, query bounds, JSON envelopes, method lock
 │   └── testsupport/            fixture corpus loading for tests
 ├── testdata/corpus/            synthetic fixture corpus (not canonical knowledge)
@@ -146,6 +147,7 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/experiments/{id}` | one definition with the tally and IDs of its runs |
 | GET | `/api/v1/experiment-runs` | run records with their lifecycle state and evidence counts |
 | GET | `/api/v1/experiment-runs/{id}` | one full run |
+| GET | `/api/v1/search` | one lexical query across every searchable canonical layer |
 | GET | `/api/v1/graph` | the full read-only graph projection |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
@@ -398,6 +400,130 @@ This is a bounded read model, not a graph database. There is no query language, 
 no persistence and no caller-supplied traversal program; the deliberate non-goals are listed
 under Known limitations.
 
+### Cross-layer search
+
+`GET /api/v1/search` answers the question a reader has *before* they know which layer holds the
+answer. Every other route requires the caller to pick a record class first; this one searches all
+six searchable classes at once and reports which class each hit came from.
+
+| Parameter | Meaning |
+| --- | --- |
+| `q` | **required.** Lexical substring search, case-insensitive, over the fields listed below |
+| `type` | optional; restrict results to exactly one searchable class |
+| `limit`, `offset` | page size and start; default 50, clamped to 200 |
+
+`q` must be non-empty after trimming. An absent, empty or whitespace-only `q` is refused with
+`400 invalid_query` rather than returning everything: each layer already has its own list endpoint,
+and an empty search would be a second, slower whole-corpus dump that a caller who mistyped a
+parameter name could not tell from a successful query. Values longer than 128 characters are
+refused rather than truncated. An unknown or duplicated query parameter is refused exactly as it is
+on every other route.
+
+#### Searchable classes and fields
+
+Absence of a result means the text is not in one of these fields. It does not mean the corpus does
+not know the thing, so the field set is documented rather than left implicit:
+
+| Entity | Searchable fields | Display title | Summary |
+| --- | --- | --- | --- |
+| `session` | `id`, `title` | `title` | none |
+| `node` | `id`, `title`, `domain`, `status`, `definition`, `core_concepts` | `title` | `definition` |
+| `claim` | `id`, `statement` | `statement` | none |
+| `source` | `id`, `title`, `author` | `title` | none |
+| `vocabulary` | `id`, `term`, `domain`, `definition`, `digital_relationship`, `best_use`, `technologies`, `tags` | `term` | `definition` |
+| `experiment` | `id`, `title`, `status`, `type`, `difficulty`, `purpose` | `title` | `purpose` |
+
+These are the Phase 1A to 1D field sets unchanged. The backend defines them once, and each layer's own
+`q` parameter reads the same definition, so a term that finds a record through `/api/v1/nodes` finds
+it through `/api/v1/search` too. Matching occurs within one canonical scalar or list value; separator
+text between fields or list entries is never searchable. Each exclusion is the earlier layer's:
+source `notes` is prose about retrieval and external locators; the cross-reference lists on a node,
+an entry or a definition are
+another record's identity, not this one's; an experiment's `procedure` and `setup` describe what a
+performer should do, so a hit there would return a definition that *mentions* a term in an
+instruction rather than one that is *about* it. A class with no natural summary field returns a
+smaller result rather than a fabricated one, and no summary is ever synthesised.
+
+#### Experiment runs are deliberately absent
+
+There is no `experiment_run` search class, and `?type=experiment_run` is refused with
+`400 invalid_query` rather than answered with an empty set, so a caller can never read "no results"
+as "no run mentions this".
+
+A run's prose is its observations, measurements and interpretation. Those are evidence-bearing
+records, and a generic free-text hit inside them would quietly mean "this run observed that" — an
+evidence assertion a discovery surface has no standing to make. Runs stay addressable through
+`/api/v1/experiment-runs`, where the caller states which definition and which lifecycle state they
+are asking about, and through `/api/v1/experiment-runs/{id}` by exact ID.
+
+#### Result shape
+
+```json
+{
+  "entity_type": "vocabulary",
+  "id": "resonance",
+  "title": "Resonance",
+  "summary": "...",
+  "match_kind": "title_exact",
+  "matched_fields": ["term", "definition"]
+}
+```
+
+`matched_fields` names every canonical field the query actually matched, in the record's own field
+order. It is the evidence for the hit: a client can answer "why did this appear" without a second
+request, which matters more here than anywhere else in the API because a cross-layer result set is
+the one place a reader cannot see the surrounding record. Nothing is highlighted, no source text is
+rewritten, and no semantic category is inferred.
+
+A result carries only its own record's fields. A claim hit never presents its source's title, an
+experiment hit never presents its runs, and a vocabulary hit never presents the node it
+cross-references. **A unified search surface is not a unified ontology** — it is one entry point
+into six models that stay distinct. To follow a hit into its context, read the record itself:
+
+| `entity_type` | Route |
+| --- | --- |
+| `session` | `/api/v1/sessions/{id}` |
+| `node` | `/api/v1/nodes/{id}` |
+| `claim` | `/api/v1/claims/{id}` |
+| `source` | `/api/v1/sources/{id}` |
+| `vocabulary` | `/api/v1/vocabulary/{id}` |
+| `experiment` | `/api/v1/experiments/{id}` |
+
+#### Ordering
+
+Results are ordered by four mutually exclusive **categorical match classes**, then by the canonical
+class order above, then by canonical ID:
+
+| `match_kind` | Meaning |
+| --- | --- |
+| `id_exact` | the query is exactly the record's canonical ID |
+| `title_exact` | the query is exactly the record's display field |
+| `title_substring` | the query appears inside the record's display field |
+| `field_substring` | the query appears only in some other searchable field |
+
+This is **not a relevance score**, and it is deliberately not rendered as a number. There is no
+weighting, no field boosting, no term frequency and no ranking model; it is a fixed hand-written
+precedence, and calling it anything else would dress a priority list as information retrieval. The
+class order and canonical ID break every tie, so the ordering is total: the same corpus and the same
+query always return byte-identical results. Two record classes may share an ID — a session and its
+registry entry do — so a hit is identified by `entity_type` **and** `id`, never by `id` alone.
+
+#### Lexical search, not semantic retrieval
+
+Matching is case-insensitive substring matching and nothing else. There is no stemming, no fuzzy or
+Levenshtein matching, no BM25 or TF-IDF, no synonyms, no query rewriting, no embeddings and no
+vector similarity. This is the point of the phase rather than a shortfall of it: deterministic
+retrieval can be pinned by tests, so the contract is fixed *before* anything smarter is built on top
+of it. Semantic retrieval is a later phase with its own contract.
+
+The query is treated as plain text throughout. It is never compiled as a regular expression,
+expanded as a glob, joined to a filesystem path, or handed to any interpreter, and no query is
+stored: there is no search history, no query log and no analytics. A request exists only for the
+life of that request.
+
+A search that matches nothing is `200` with an empty `results` array. "The corpus contains no such
+text" is an answer, not a `404`.
+
 ### Errors
 
 ```json
@@ -442,6 +568,18 @@ Invoke-RestMethod http://127.0.0.1:8788/api/v1/sessions
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8788/api/v1/graph
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&type=vocabulary"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&limit=5&offset=5"
 ```
 
 ```powershell
@@ -588,8 +726,8 @@ inconsistencies are reported for a human to decide about.
 single-record experiment and run parsers, the filesystem adapter and every validation defect
 including the whole run lifecycle contract, the service index, filtering, search, paging, the graph
 projection and every evidence and practice reverse index, the traversal adjacency, depth semantics,
-cycle termination, deduplication and truncation bounds, and the HTTP routes including 404, 400 and
-405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
+cycle termination, deduplication and truncation bounds, the cross-layer discovery projection, and
+the HTTP routes including 404, 400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
 unchanged corpus and the results compared. Unit tests run against `testdata/corpus/`, a
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
 expectation.
@@ -599,20 +737,41 @@ one asserts the evidence layer parses and resolves, one asserts the practice lay
 every canonical entity as a traversal root at maximum depth and asserts no practice record appears
 anywhere in the result, and two snapshot the size, modification time and content digest of every
 canonical file — one across a load, one across a full index build plus one request to every read
-surface and a rejected request on each mutating method. All six skip if the canonical repository
+surface, including three searches, and a rejected request on each mutating method. All six skip if the canonical repository
 is not found above the working directory.
+
+Search is covered at both layers: class coverage, case insensitivity, exact-ID and match-class
+precedence, matched-field correctness, class filtering, empty and rejected queries, paging and
+clamped bounds, defensive copying, and determinism across two indexes built from one corpus. Two
+assertions are guardrails rather than feature tests. One searches a run's own observation text and
+requires it to match nothing, so a future change that starts indexing observations fails loudly.
+The other cross-checks every layer's own `q` against `/api/v1/search` for the same term and requires
+the same records, which is what keeps the two from drifting apart. Adversarial queries — regex,
+glob, path, URL, SQL, shell and template shapes, Unicode, and oversized input — are asserted to be
+treated as literal text.
 
 A cross-phase suite covers the combined backend specifically: that every phase's routes coexist on
 one router without shadowing, that mutation and duplicate-parameter rejection hold on all of them,
-that the practice layer stays out of the traversal graph, and that the shared index is
+that the practice layer stays out of the traversal graph, that a record just found through search is
+still refused as a traversal root and still absent from the graph, and that the shared index is
 deterministic and hands out defensive copies across every layer at once.
 
 ## Known limitations
 
 - Repository changes require a process restart. There is no watcher, no background sync and
   no filesystem polling, so a running process always serves one consistent snapshot.
-- Search is lexical substring matching with no ranking. There is no semantic retrieval and
-  no embedding.
+- Search is lexical substring matching. `/api/v1/search` orders by a fixed categorical match
+  precedence, not by a relevance score; the per-layer `q` parameters do not reorder at all. There
+  is no stemming, no fuzzy matching, no semantic retrieval and no embedding.
+- Search matches only the fields documented under "Cross-layer search". A record whose relevant
+  text lives in an excluded field — source `notes`, an experiment's `procedure`, a node's markdown
+  body — is not discoverable by that text.
+- `q` accepts a single term and is matched literally. There is no phrase, boolean, wildcard or
+  field-scoped query syntax, and `type` accepts one class rather than a set.
+- Experiment runs are not searchable at all, by design. See "Experiment runs are deliberately
+  absent"; they remain addressable through their own structured routes.
+- No query is stored. There is no search history, no query log, no analytics and no
+  personalisation, so nothing improves with use.
 - No persistence and no database; the startup index is the only state.
 - Node `experiments:` is the one canonical reference field still carried unresolved. No
   repository validator treats it as a reference list and every current node leaves it empty, so
@@ -639,8 +798,13 @@ deterministic and hands out defensive copies across every layer at once.
 
 ## Future work
 
-Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, search
-hardening, graph visualization, semantic retrieval, and MLLM experimentation.
+Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, query
+syntax beyond a single literal term, graph visualization, semantic retrieval, and MLLM
+experimentation.
+
+Semantic retrieval is deferred deliberately. The deterministic lexical surface exists first so that
+the discovery contract — what is searchable, what a hit means, and what order results arrive in —
+is fixed and test-covered before anything harder to reason about is layered on top of it.
 
 Traversal over the practice layer is deferred deliberately, not incidentally. Vocabulary entries,
 experiments and experiment runs are read surfaces adjacent to the graph, and their cross-references
