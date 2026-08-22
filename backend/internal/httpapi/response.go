@@ -17,6 +17,7 @@ const (
 	CodeSessionNotFound = "session_not_found"
 	CodeSourceNotFound  = "source_not_found"
 	CodeClaimNotFound   = "claim_not_found"
+	CodeEntityNotFound  = "entity_not_found"
 	CodeInvalidQuery    = "invalid_query"
 	CodeMethodNotAllow  = "method_not_allowed"
 	CodeInternal        = "internal_error"

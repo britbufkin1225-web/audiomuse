@@ -20,7 +20,7 @@ backend/
 │   ├── domain/                 typed AudioMuse records; no I/O, no HTTP
 │   ├── repository/             KnowledgeRepository — a read-only interface with no write method
 │   │   └── filesystem/         the only package that touches the corpus
-│   ├── service/                immutable startup index, filtering, search, graph and evidence projections
+│   ├── service/                immutable startup index, filtering, search, graph, evidence and traversal projections
 │   ├── httpapi/                routing, query bounds, JSON envelopes, method lock
 │   └── testsupport/            fixture corpus loading for tests
 ├── testdata/corpus/            synthetic fixture corpus (not canonical knowledge)
@@ -130,6 +130,8 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/claims` | claim summaries carrying all four provenance axes |
 | GET | `/api/v1/claims/{id}` | one full claim with its evidence context |
 | GET | `/api/v1/graph` | the full read-only graph projection |
+| GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
+| GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
 | GET | `/api/v1/diagnostics` | sanitized validation warnings |
 
 ### Node query parameters
@@ -203,6 +205,102 @@ On a source detail, `claims` is evidential — the claims citing it, each with i
 `node_ids` is topical, the nodes whose `sources:` list names it. They are different relations and are
 served under different names.
 
+### Graph traversal
+
+`/api/v1/graph` serves the node-to-node projection. The two entity routes above serve the
+whole corpus as one bounded graph, so a caller can move from a session to a concept to a
+checkable statement to the source that stands behind it without reassembling four
+projections by hand.
+
+**Entities.** Four addressable classes, and identity is the pair `(type, id)`:
+
+| Type | Canonical record |
+| --- | --- |
+| `session` | a registry entry of `type: session`, plus `sessions/<id>/` presence |
+| `node` | `nodes/<domain>/<id>.md` |
+| `claim` | one record in `claims/records/*.yaml` |
+| `source` | one entry in `sources/source-registry.yaml` |
+
+The classes stay distinct. A node is a concept, a claim is one checkable statement about
+concepts, and a source is where the evidence lives; flattening them into generic graph nodes
+would erase exactly the distinctions the knowledge and provenance models exist to make.
+Vocabulary entries, experiments and experiment runs are canonical layers the backend does not
+parse, so they are not addressable and no edge points at them.
+
+A registered session is also a registry entry, so `session/session-01-what-is-sound` and
+`source/session-01-what-is-sound` are two projections of one canonical record and are
+addressed separately. No edge is emitted between them: they are the same record seen twice,
+not two related things.
+
+**Relationships.** Every edge is read from one canonical field, named in the edge's `origin`.
+Nothing is inferred from shared keywords, similar titles, prose overlap or any similarity
+measure. Each authored edge is emitted with its documented reverse, and a reverse edge is
+marked `"derived": true` so it can never be mistaken for something a record declared.
+
+| Canonical field | Forward edge | Reverse edge |
+| --- | --- | --- |
+| `node.relationships` | `node --<type>--> node` | the type's own `inverse` from `schemas/relationship-types.yaml` |
+| `node.session_origin` | `node --originates_in--> session` | `session --contributed_to--> node` |
+| `node.sources` | `node --sourced_from--> source` | `source --source_for--> node` |
+| `claim.evidence` | `claim --supported_by\|contradicted_by\|qualified_by--> source` | `source --supports\|contradicts\|qualifies--> claim` |
+| `claim.attribution` | `claim --attributed_to--> source` | `source --attribution_for--> claim` |
+| `claim.appears_in` | `claim --appears_in--> node\|session` | `--appearance_site_of--> claim` |
+| `claim.derived_from` | `claim --derived_from--> claim\|node` | `--basis_for--> claim` |
+
+The evidence relation is carried through rather than flattened to a generic evidence edge: a
+source that contradicts a claim must not look like one that supports it. Topical and
+evidential source relations keep the separate names `sourced_from` and `supported_by` for the
+same reason.
+
+There is no direct source-to-session edge. `GET /api/v1/sources?session_id=` answers that
+question through claims, and a traversal reaches it by actually walking the two hops, which
+is what keeps `depth` meaning hops.
+
+**An example path.** From a session outward to the evidence behind a concept it introduced:
+
+```text
+session  --contributed_to-->      node
+node     --appearance_site_of--> claim
+claim    --qualified_by-->       source
+```
+
+**Query parameters.** Both routes accept `relationship` and `target_type`; `traverse` also
+accepts `depth`.
+
+| Parameter | Meaning |
+| --- | --- |
+| `depth` | hops from the root. Default 1, minimum 1, maximum 3. `traverse` only |
+| `relationship` | follow only edges with this relationship name |
+| `target_type` | follow only edges pointing at this entity class |
+
+Filters are applied while expanding, not to the finished result, so a filtered traversal is
+the traversal of the filtered subgraph and `depth` still counts hops along matching edges.
+
+**Bounds.** Traversal is breadth-first, so `distance` on each entity is its shortest hop
+distance from the root. Cycles are normal — every authored edge has a reverse, so any pair of
+related nodes is already a two-cycle — and an entity is expanded exactly once, at its shortest
+distance. Beyond `depth`, one request is capped at 500 entities and 2000 relationships. Those
+are service constants, not configuration: they are API safety invariants rather than
+deployment choices. When a cap truncates a result the response says so with `"partial": true`
+and a `truncation_reason` of `entity_limit_reached` or `edge_limit_reached`. Nothing is ever
+dropped silently.
+
+Ordering is fixed. Entities sort by distance, then entity class in model order
+(session, node, claim, source), then ID; relationships sort by source entity, then
+relationship name, then target class and ID. Two identical requests against an unchanged
+corpus return byte-identical bodies.
+
+**Errors.** An entity class outside the four is `400 invalid_query`, as is a depth outside
+`1..3`, a non-integer depth, or a filter value outside the closed vocabulary. An ID that
+resolves to no record is `404 entity_not_found`. An entity that exists but has no
+relationships is `200` with empty lists — "this record has no edges" and "this record does not
+exist" are different facts and are answered differently. A relationship name that is part of
+the model but unused by the current corpus is a legitimate empty result, not an error.
+
+This is a bounded read model, not a graph database. There is no query language, no mutation,
+no persistence and no caller-supplied traversal program; the deliberate non-goals are listed
+under Known limitations.
+
 ### Errors
 
 ```json
@@ -210,7 +308,7 @@ served under different names.
 ```
 
 Codes: `not_found`, `node_not_found`, `session_not_found`, `source_not_found`, `claim_not_found`,
-`invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
+`entity_not_found`, `invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
 logged locally and never serialised into a response.
 
 ### Read-only enforcement
@@ -272,6 +370,18 @@ Invoke-RestMethod http://127.0.0.1:8788/api/v1/claims/screwed-up-records-1996-st
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/claims?source_id=tsha-dj-screw&relation=contradicted_by"
 ```
 
+```powershell
+Invoke-RestMethod http://127.0.0.1:8788/api/v1/graph/entities/node/amplitude-envelope/relationships
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/graph/entities/session/session-01-what-is-sound/traverse?depth=2"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/graph/entities/node/amplitude-envelope/traverse?depth=2&target_type=claim"
+```
+
 ## Validation
 
 Startup separates two different failures. Fatal issues abort the process because the
@@ -311,7 +421,8 @@ inconsistencies are reported for a human to decide about.
 
 `go test ./...` covers the front-matter parser, the claim record stream parser, the filesystem
 adapter and every validation defect, the service index, filtering, search, paging, the graph
-projection and every evidence reverse index, and the HTTP routes including 404, 400 and 405
+projection and every evidence reverse index, the traversal adjacency, depth semantics, cycle
+termination, deduplication and truncation bounds, and the HTTP routes including 404, 400 and 405
 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
 unchanged corpus and the results compared. Unit tests run against `testdata/corpus/`, a
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
@@ -336,12 +447,18 @@ All three skip if the canonical repository is not found above the working direct
 - `appears_in: session` is a canonical reference kind no current claim record uses, so
   `?session_id=` on either evidence endpoint answers correctly and returns nothing against
   today's corpus.
-- There is no graph traversal across the evidence layer; the relations resolve, walking them
-  is a later decision.
+- Graph traversal is bounded on purpose. There is no query language, no caller-supplied
+  traversal program, and no `POST` traversal body; depth is capped at 3 and one request is
+  capped at 500 entities and 2000 relationships. Anything beyond that is a repository query
+  a client composes from several bounded requests.
+- Traversal has no paging. A truncated result reports `partial` and its reason instead, so a
+  caller narrows with `depth`, `relationship` or `target_type` rather than walking pages
+  through a graph whose shape they cannot yet see.
+- The graph is derived, never stored. There is no graph database, no persisted adjacency and
+  no edge mutation of any kind.
 - No frontend, no graph visualization, and no LLM integration.
 
 ## Future work
 
-Deferred, not implemented: vocabulary and experiment-run parsing, evidence-layer graph traversal,
-richer diagnostics, search hardening, graph visualization, semantic retrieval, and MLLM
-experimentation.
+Deferred, not implemented: vocabulary and experiment-run parsing, richer diagnostics, search
+hardening, graph visualization, semantic retrieval, and MLLM experimentation.

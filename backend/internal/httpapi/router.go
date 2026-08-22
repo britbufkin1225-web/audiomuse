@@ -49,6 +49,8 @@ func NewServer(knowledge *service.Knowledge, logger *slog.Logger) http.Handler {
 	mux.HandleFunc("GET "+APIBase+"/claims", s.handleClaims)
 	mux.HandleFunc("GET "+APIBase+"/claims/{id}", s.handleClaimByID)
 	mux.HandleFunc("GET "+APIBase+"/graph", s.handleGraph)
+	mux.HandleFunc("GET "+APIBase+"/graph/entities/{entity_type}/{id}/relationships", s.handleEntityRelationships)
+	mux.HandleFunc("GET "+APIBase+"/graph/entities/{entity_type}/{id}/traverse", s.handleEntityTraverse)
 	mux.HandleFunc("GET "+APIBase+"/diagnostics", s.handleDiagnostics)
 	mux.HandleFunc("/", s.handleNotFound)
 
