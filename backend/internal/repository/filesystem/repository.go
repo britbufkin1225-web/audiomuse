@@ -97,25 +97,33 @@ func (r *Repository) Load(ctx context.Context) (*repository.Corpus, *domain.Vali
 	}
 	report := &domain.ValidationReport{}
 
+	// Contract vocabularies are read first because both the registry check and every claim
+	// record are validated against them.
+	vocabularies := r.loadVocabularies(report)
 	sources := r.loadSources(report)
+	checkSourceVocabulary(sources, vocabularies.Source, report)
 	relationshipTypes := r.loadRelationshipTypes(report)
 	sessions := r.buildSessions(sources, report)
 	nodes := r.loadNodes(report)
+	claims := r.loadClaims(vocabularies.Claim, report)
 
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err
 	}
 
 	resolveReferences(nodes, sources, sessions, relationshipTypes, report)
+	r.resolveClaimReferences(claims, nodes, sources, sessions, report)
 	sessions = attachSessionNodes(nodes, sessions)
-	reportUncited(nodes, sources, sessions, report)
+	reportUncited(nodes, sources, sessions, claims, report)
 
 	report.Sort()
 	return &repository.Corpus{
 		Nodes:             nodes,
 		Sources:           sources,
 		Sessions:          sessions,
+		Claims:            claims,
 		RelationshipTypes: relationshipTypes,
+		Vocabularies:      vocabularies,
 	}, report, nil
 }
 
@@ -220,10 +228,15 @@ func attachSessionNodes(nodes []domain.Node, sessions []domain.Session) []domain
 // reportUncited records corpus gaps: registered records that nothing cites. These are
 // warnings. A source may legitimately be registered ahead of the node that will use it,
 // and the backend has no authority to decide otherwise.
+//
+// Phase 1B widened what counts as a citation to include claim evidence and attribution.
+// Once the backend can see that twelve claims depend on a source, continuing to report it
+// as uncited because no node lists it topically would be a false warning.
 func reportUncited(
 	nodes []domain.Node,
 	sources []domain.Source,
 	sessions []domain.Session,
+	claims []domain.Claim,
 	report *domain.ValidationReport,
 ) {
 	citedSources := make(map[string]bool)
@@ -232,11 +245,20 @@ func reportUncited(
 			citedSources[id] = true
 		}
 	}
+	for _, claim := range claims {
+		for _, e := range claim.Evidence {
+			citedSources[e.SourceID] = true
+		}
+		for _, a := range claim.Attribution {
+			citedSources[a.SourceID] = true
+		}
+	}
 	for _, source := range sources {
 		if !citedSources[source.ID] {
 			report.Add(domain.ValidationIssue{
 				Severity: domain.SeverityWarning, Code: domain.CodeUncitedSource, Ref: source.ID,
-				Path: sourceRegistryPath, Message: "registered source is not cited by any node",
+				Path:    sourceRegistryPath,
+				Message: "registered source is not cited by any node or claim",
 			})
 		}
 	}

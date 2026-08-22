@@ -1,0 +1,68 @@
+# Fixture copy of the canonical claim contract. The backend reads only the bounded
+# vocabularies below; they mirror schemas/claim.schema.yaml exactly so a fixture test
+# exercises the real vocabulary rather than a convenient subset. The semantic rules block
+# is omitted because the backend deliberately does not reimplement it; tools/validate-
+# claims.ps1 remains the canonical authority for those. See testdata/corpus/README.md.
+schema: audiomuse-claim
+version: 1
+
+claim_types:
+  - established_fact
+  - technical_fact
+  - historical_claim
+  - attributed_claim
+  - oral_history
+  - interpretation
+  - audiomuse_synthesis
+  - hypothesis
+  - experiment_observation
+
+confidence_levels:
+  - high
+  - moderate
+  - low
+  - unknown
+
+dispute_statuses:
+  - undisputed
+  - disputed
+  - unresolved
+
+temporal_precisions:
+  - exact_date
+  - month
+  - year
+  - range
+  - era
+  - not_temporal
+
+evidence_relations:
+  - supported_by
+  - contradicted_by
+  - qualified_by
+
+derived_from_kinds:
+  - claim
+  - node
+  - experiment_run
+
+appears_in_kinds:
+  - node
+  - vocabulary
+  - session
+  - document
+
+required:
+  - id
+  - statement
+  - claim_type
+  - confidence
+  - confidence_basis
+  - dispute_status
+  - temporal_precision
+  - evidence
+  - attribution
+  - derived_from
+  - appears_in
+  - open_questions
+additional_properties: false

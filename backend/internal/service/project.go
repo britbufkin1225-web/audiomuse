@@ -14,6 +14,7 @@ type Counts struct {
 	Nodes             int `json:"nodes"`
 	Sessions          int `json:"sessions"`
 	Sources           int `json:"sources"`
+	Claims            int `json:"claims"`
 	Edges             int `json:"edges"`
 	RelationshipTypes int `json:"relationship_types"`
 	Domains           int `json:"domains"`
@@ -36,6 +37,12 @@ type ProjectSummary struct {
 	Validation     string   `json:"validation"`
 	WarningCount   int      `json:"warning_count"`
 	CanonicalLayer []string `json:"canonical_layers_served"`
+
+	// Vocabulary is the bounded value set read from schemas/claim.schema.yaml and
+	// schemas/source.schema.yaml. It is served here so a client can discover exactly which
+	// filter values the evidence endpoints accept without hard-coding a copy of the
+	// contract, and without discovering them by trial and error against 400 responses.
+	Vocabulary domain.Vocabularies `json:"vocabulary"`
 }
 
 // RepoInfo names the corpus without revealing where it lives.
@@ -54,7 +61,8 @@ func (k *Knowledge) Project() ProjectSummary {
 		Counts: Counts{
 			Nodes:             len(k.nodes),
 			Sessions:          len(k.sessions),
-			Sources:           k.sourceCount,
+			Sources:           len(k.sources),
+			Claims:            len(k.claims),
 			Edges:             k.graph.Metadata.EdgeCount,
 			RelationshipTypes: len(k.relationshipTypes),
 			Domains:           len(k.Domains()),
@@ -63,7 +71,8 @@ func (k *Knowledge) Project() ProjectSummary {
 		Statuses:       k.Statuses(),
 		Validation:     k.report.Status(),
 		WarningCount:   len(k.report.Warnings()),
-		CanonicalLayer: []string{"nodes", "sessions", "sources", "relationship-types"},
+		CanonicalLayer: []string{"nodes", "sessions", "sources", "claims", "relationship-types"},
+		Vocabulary:     k.Vocabularies(),
 	}
 }
 
@@ -73,10 +82,12 @@ func (k *Knowledge) Project() ProjectSummary {
 // Issue Path values are repository-relative and Ref values are canonical IDs, so nothing in
 // this projection discloses the operator's filesystem layout.
 type Diagnostics struct {
-	Mode     string                   `json:"mode"`
-	Status   string                   `json:"status"`
-	Warnings []domain.ValidationIssue `json:"warnings"`
-	Counts   DiagnosticsCounts        `json:"counts"`
+	Mode                         string                   `json:"mode"`
+	Status                       string                   `json:"status"`
+	ValidationScope              string                   `json:"validation_scope"`
+	RepositorySemanticValidation string                   `json:"repository_semantic_validation"`
+	Warnings                     []domain.ValidationIssue `json:"warnings"`
+	Counts                       DiagnosticsCounts        `json:"counts"`
 }
 
 // DiagnosticsCounts summarises the report.
@@ -92,9 +103,11 @@ func (k *Knowledge) Diagnostics() Diagnostics {
 		warnings = []domain.ValidationIssue{}
 	}
 	return Diagnostics{
-		Mode:     ModeReadOnly,
-		Status:   k.report.Status(),
-		Warnings: warnings,
+		Mode:                         ModeReadOnly,
+		Status:                       k.report.Status(),
+		ValidationScope:              "runtime_projection",
+		RepositorySemanticValidation: "external_precondition",
+		Warnings:                     warnings,
 		Counts: DiagnosticsCounts{
 			Fatal:   len(k.report.Fatal()),
 			Warning: len(warnings),

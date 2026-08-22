@@ -95,3 +95,33 @@ func ValidNode(id, title, domainName, status, relationships, sources string) str
 		"future_questions: []\n" +
 		"---\n\n# " + title + "\n\nBody.\n"
 }
+
+// ValidClaim renders a schema-complete fixture claim record with the supplied field values,
+// so a defect test only has to state the one thing it is changing. Collection arguments are
+// YAML flow sequences, matching the form claims/README.md describes for canonical records.
+func ValidClaim(id, claimType, confidence, disputeStatus, evidence, attribution, derivedFrom, appearsIn string) string {
+	return "---\n" +
+		"id: \"" + id + "\"\n" +
+		"statement: \"Synthetic fixture statement for " + id + ".\"\n" +
+		"claim_type: \"" + claimType + "\"\n" +
+		"confidence: \"" + confidence + "\"\n" +
+		"confidence_basis: \"Synthetic fixture basis for " + id + ".\"\n" +
+		"dispute_status: \"" + disputeStatus + "\"\n" +
+		"temporal_precision: \"not_temporal\"\n" +
+		"evidence: " + evidence + "\n" +
+		"attribution: " + attribution + "\n" +
+		"derived_from: " + derivedFrom + "\n" +
+		"appears_in: " + appearsIn + "\n" +
+		"open_questions: []\n"
+}
+
+// SupportedBy renders one evidence entry supporting a claim, for tests that only care that
+// a source is cited at all.
+func SupportedBy(sourceID string) string {
+	return `[{"relation": "supported_by", "source_id": "` + sourceID + `", "note": "Fixture support note."}]`
+}
+
+// AppearsInNode renders a single node appearance site.
+func AppearsInNode(nodeID string) string {
+	return `[{"kind": "node", "ref": "` + nodeID + `"}]`
+}

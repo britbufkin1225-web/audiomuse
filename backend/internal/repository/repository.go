@@ -41,13 +41,21 @@ type KnowledgeRepository interface {
 	Describe() Descriptor
 }
 
-// Corpus is one consistent snapshot of the canonical records Phase 1A reads.
+// Corpus is one consistent snapshot of the canonical records the backend reads.
 //
-// Claims, experiments, experiment runs and vocabulary are canonical repository layers that
-// Phase 1A deliberately does not parse; see docs/backend-architecture.md.
+// Phase 1B added Claims and Vocabularies, the AudioMuse evidence layer. Experiments,
+// experiment runs and vocabulary entries remain canonical repository layers the backend
+// deliberately does not parse; see docs/backend-architecture.md.
+//
+// Vocabularies carries the bounded value sets read from schemas/claim.schema.yaml and
+// schemas/source.schema.yaml. They travel with the corpus rather than being compiled into
+// the service because they are canonical contract data, and the service validates every
+// evidence filter against them.
 type Corpus struct {
 	Nodes             []domain.Node
 	Sources           []domain.Source
 	Sessions          []domain.Session
+	Claims            []domain.Claim
 	RelationshipTypes []domain.RelationshipType
+	Vocabularies      domain.Vocabularies
 }
