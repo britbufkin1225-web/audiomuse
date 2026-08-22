@@ -186,9 +186,17 @@ type SourceVocabulary struct {
 }
 
 // Vocabularies is the canonical contract vocabulary the backend read at startup.
+//
+// Phase 1D added the experiment and experiment-run contracts. They live here rather than in
+// a second bag because a client discovers every accepted filter value from one place, and
+// because the loader's rule is uniform across layers: a bounded value the API serves is read
+// from the schema that declares it, never compiled into Go.
 type Vocabularies struct {
-	Claim  ClaimVocabulary  `json:"claim"`
-	Source SourceVocabulary `json:"source"`
+	Claim             ClaimVocabulary         `json:"claim"`
+	Source            SourceVocabulary        `json:"source"`
+	VocabularyDomains []string                `json:"vocabulary_domains"`
+	Experiment        ExperimentVocabulary    `json:"experiment"`
+	ExperimentRun     ExperimentRunVocabulary `json:"experiment_run"`
 }
 
 // Claim reference kinds and evidence relations that the backend resolves by name.

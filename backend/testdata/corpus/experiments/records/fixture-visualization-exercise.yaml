@@ -1,0 +1,23 @@
+id: "fixture-visualization-exercise"
+title: "Fixture Visualization Exercise"
+status: "established"
+type: "visualization"
+difficulty: "intermediate"
+purpose: "Exercise the experiment projection with a definition that has no runs at all."
+node_refs: ["gamma"]
+vocabulary_refs: ["fixture-companion"]
+session_refs: []
+source_refs: []
+required_equipment: []
+optional_equipment: ["fixture display"]
+safety: []
+setup: []
+procedure: ["Read the projection and compare it with the previous run."]
+observations: []
+measurements: []
+expected_behavior: ["An experiment with no runs should report a zero tally rather than omitting one."]
+interpretation: []
+limitations: []
+repeatability: []
+related_experiments: []
+project_connections: []

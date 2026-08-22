@@ -8,13 +8,33 @@ stays authoritative. Direct filesystem browsing has become limiting as the corpu
 relationship graph, the provenance registry, and the cross-layer reference structure are all real
 data that no text editor can traverse.
 
-Backend Phase 1A drew a computational boundary, Phase 1B extended it through the evidence
-layer, and Phase 1C connected the two into a bounded traversal layer over the relationships
-they already resolve:
+The backend draws a computational boundary across that corpus:
 
 ```text
 CANONICAL KNOWLEDGE   →   SOFTWARE THAT INSPECTS THAT KNOWLEDGE
 ```
+
+One repository load feeds one immutable projection, through one chain:
+
+```text
+repository  →  typed filesystem projection  →  validation  →  immutable service  →  read-only API
+```
+
+There is one adapter, one `service.Knowledge` constructor and one index. Everything below is a
+view over that single load, not a store of its own:
+
+| Read surface | What it serves |
+| --- | --- |
+| nodes / sessions / graph | the typed concept graph and the sessions that developed it |
+| sources / claims / provenance | the registry and the checkable statements that cite it |
+| bounded traversal | the knowledge and evidence layers walked as one graph, depth-capped |
+| vocabulary | canonical terms, with reverse reads to the records that reference them |
+| experiments | reusable exercise definitions, with derived run tallies |
+| experiment runs | what was actually performed, kept apart from the definitions |
+
+The first three are the graph. The last three sit beside it: they are read surfaces adjacent to
+the graph rather than part of it, and the distinction is enforced rather than merely documented —
+see "Why the practice layer did not extend graph traversal" below.
 
 The architectural rule is narrow and load-bearing:
 
@@ -40,6 +60,15 @@ Every field the API serves can be traced back through this chain to a canonical 
 | `claim.appears_in[]` and `claim.derived_from[]` (`{kind, ref}`) | kind-qualified reference lists | `domain.ClaimReference` | `claimIDsByNodeID`, `claimIDsBySessionID` | `claim.appears_in`, `?node_id=`, `?session_id=` |
 | `schemas/claim.schema.yaml` and `schemas/source.schema.yaml` bounded enums | vocabulary lists | `domain.Vocabularies` | evidence filter validation set | `project.vocabulary`; `400 invalid_query` |
 | the fields above, read as one graph | canonical field references | `domain.GraphRelationship`, `domain.EntityRef` | `Knowledge.adjacency`, one entry per `(type, id)` | `GET /api/v1/graph/entities/{entity_type}/{id}/relationships`, `.../traverse` |
+| `vocabulary/entries/*.yaml` YAML document streams (`schemas/vocabulary.schema.yaml`) | one mapping per entry | `domain.VocabularyEntry` | `vocabularyByID`, sorted `vocabulary` | `GET /api/v1/vocabulary`, `GET /api/v1/vocabulary/{id}` |
+| vocabulary `domain`, reusing the enum in `schemas/node.schema.yaml` | bounded vocabulary | `domain.Vocabularies.VocabularyDomains` | startup and filter validation set | `?domain=`; `400 invalid_query` |
+| `vocabulary.related_terms[]` | curated navigation ID list | `[]string` on the entry | none; deliberately not indexed as adjacency | `entry.related_terms` — never a graph edge |
+| `experiments/records/*.yaml`, one record per file (`schemas/experiment.schema.yaml`) | one mapping per definition | `domain.Experiment` | `experimentsByID`, sorted `experiments` | `GET /api/v1/experiments`, `GET /api/v1/experiments/{id}` |
+| `experiment-runs/records/*.yaml`, one record per file (`schemas/experiment-run.schema.yaml`) | one mapping per run | `domain.ExperimentRun` | `runsByID`, sorted `runs` | `GET /api/v1/experiment-runs`, `GET /api/v1/experiment-runs/{id}` |
+| `run.observations[]` and `run.measurements[]` | two separately shaped object lists | `domain.RunObservation`, `domain.RunMeasurement` | per-run counts, never summed | `run.observations`, `run.measurements` |
+| `run.status` across every run of one definition | lifecycle tally | `domain.ExperimentRunCounts` | `runCountsByExperiment` | `experiment.runs`; `project.experiment_runs` |
+| `experiment.vocabulary_refs[]` and `claim.appears_in[kind: vocabulary]` | reverse reads | `[]string` | `experimentIDsByVocab`, `claimIDsByVocab` | `vocabulary/{id}.experiment_ids`, `.claim_ids` |
+| `schemas/experiment.schema.yaml` and `schemas/experiment-run.schema.yaml` bounded enums | vocabulary lists | `domain.ExperimentVocabulary`, `domain.ExperimentRunVocabulary` | practice filter validation set | `project.vocabulary`; `400 invalid_query` |
 | parse + reference resolution outcomes | issue list | `domain.ValidationIssue` | fatal/warning partition | startup log; `GET /api/v1/diagnostics` |
 
 ## Layering
@@ -55,7 +84,12 @@ httpapi  →  service  →  repository (interface)  →  repository/filesystem  
   a mutation path cannot be added without changing the contract deliberately.
 - `internal/repository/filesystem` — the only package that touches the corpus. Read calls only.
 - `internal/service` — builds the immutable in-memory index once at startup and answers queries,
-  including the bounded breadth-first traversal over the relationship adjacency.
+  including the bounded breadth-first traversal over the relationship adjacency. One `New` builds
+  every layer: `buildGraph`, `buildEvidence`, `buildTraversal` and `buildPractice` run in sequence
+  over the same parsed corpus. They are independent by construction — `buildTraversal` reads nodes,
+  claims and relationship types; `buildPractice` reads vocabulary, experiments, runs and claims —
+  and neither reads the other's derived state, which is what keeps the practice layer out of the
+  traversal adjacency structurally rather than by convention.
 - `internal/httpapi` — routing, query parsing, bounds, JSON envelopes, method lock.
 
 ## Rationale
@@ -222,6 +256,61 @@ result that hit a bound says so.
 that are not two matching hops away. Filtering while expanding makes a filtered traversal the
 traversal of the filtered subgraph, which is the only reading of `depth` that stays true.
 
+**Why vocabulary cross-references are not graph edges.** `vocabulary/README.md` states the rule
+outright: `related_terms` is human navigation, implies no equivalence, creates no edge, and must
+not affect node degree. The backend resolves those references so a dangling one is caught, and then
+stops. There is no related-term adjacency index, no vertex is created for a vocabulary entry, and
+`buildGraph` still reads node relationships and nothing else. Resolving a reference and building an
+edge are different acts, and only the second is a claim about the knowledge graph.
+
+**Why the practice layer did not extend graph traversal.** The practice layer adds read surfaces
+adjacent to the graph, not new graph semantics. Which entity types are traversable, and under which
+typed relations, is a graph-contract decision; making vocabulary entries and experiments traversable
+merely because the API now serves them would settle that decision by accident.
+
+The two are easy to conflate because the backend does resolve the references that cross between
+them: a claim's `appears_in: vocabulary` and `derived_from: experiment_run` are validated against
+loaded records, and an unresolvable one is fatal. Resolution is not membership. `referenceEntity`
+maps only session, node and claim kinds to an `EntityRef` and returns nothing for the rest, and
+`domain.EntityTypes` is a closed set of four, so a practice record has no representable identity in
+the traversal graph at all — the isolation is a property of the types, not a filter that could be
+forgotten. It is checked directly against the canonical corpus, by walking every entity as a
+traversal root at maximum depth and asserting no practice ID appears in any result.
+
+**Why an experiment definition and its runs are served apart.** `experiment-runs/README.md` keeps
+them in separate directories so mutable result history cannot change a canonical definition. The
+projection mirrors that: `GET /api/v1/experiments/{id}` names its runs by ID and reports a
+per-status tally, but does not embed them. Embedding would make results read as part of the
+specification, which is the merge the directory split exists to prevent.
+
+**Why every run status is counted separately.** A single "runs" number would let three planned runs
+read as three performed experiments. `domain.ExperimentRunCounts` reports `planned`, `completed`,
+`incomplete` and `invalid` alongside the total, and each run also carries a derived `performed`
+boolean, so the distinction survives into a client that only reads the summary.
+
+**Why measurement values are carried as the authored token.** A measurement is evidence, and
+`72.50` is a claim about precision. Decoding it to a float64 and re-encoding would serve `72.5`,
+silently weakening what was recorded. `domain.CanonicalNumber` keeps the authored token and
+validates it against the JSON number grammar, which every canonical record already satisfies
+because the repository validators parse each value with `ConvertFrom-Json`.
+
+**Why the run lifecycle rules are enforced in the backend at all.** Everywhere else, canonical
+semantic rules stay with the PowerShell validators. The lifecycle rules are enforced here for the
+same reason those are not: the projection depends on them. The API serves a derived `performed`
+flag and derived per-status counts, so a record claiming `planned` while carrying measurements
+would make those derived values assert evidence the repository withholds. Vocabulary `domain`
+membership is also enforced because it bounds a served filter, using the same node-schema enum as
+`tools/validate-vocabulary.ps1`. Calendar validity and the future-date bound stay with
+`tools/validate-experiment-runs.ps1`. The future-date rule
+additionally depends on the wall clock, and a projection whose validity changed with the time of
+day would not be deterministic.
+
+**Why generated indexes are never read.** `vocabulary/index.md`, `experiments/index.md`,
+`experiment-runs/index.md` and everything under `indexes/` are rebuildable views of canonical
+records. The backend derives its own lookup structures from the records instead, so a disagreement
+between the two is a real signal. Reading the projection the backend would be compared against
+would destroy that signal.
+
 **Why mutating methods are rejected at the edge.** Read-only is asserted by a middleware that runs
 before routing, not by the absence of write handlers. That makes the guarantee test-coverable and
 makes an accidental future write route unreachable rather than merely unwritten.
@@ -252,6 +341,28 @@ Phase 1C additionally validates the executable inverse contract in
 forward/inverse namespace. Violations are fatal because an ambiguous inverse would make traversal
 semantics and the `derived` provenance marker untrustworthy.
 
+Phase 1D adds, again at the same severity: a duplicate, blank or non-canonical vocabulary,
+experiment or run ID; a vocabulary term reused in any casing; a record or nested control-setting,
+observation or measurement item whose key set does not equal the contract's; an empty required
+field or an empty value inside any list; a value repeated within one list; a vocabulary entry or
+experiment that references itself; an experiment `status`, `type` or `difficulty`, a run `status`,
+or a measurement `calibration` outside its schema enum, including case drift; an unresolved
+`node_refs`, `session_refs`, `source_refs`, `vocabulary_refs`, `related_terms`,
+`related_experiments` or run `experiment_id`; a `run_date` that is not ISO `YYYY-MM-DD`; a
+measurement value that is not a JSON number; an experiment or run file holding more than one
+record; a violation of the run lifecycle contract; and an unreadable or enum-less
+`schemas/experiment.schema.yaml` or `schemas/experiment-run.schema.yaml`.
+
+Phase 1D also upgrades two Phase 1B checks. Claim `appears_in: vocabulary` and
+`derived_from: experiment_run` were shape-checked and carried through unresolved because the
+backend did not read those layers. It reads them now, so both resolve, and a reference naming
+nothing is fatal.
+
+The run lifecycle contract, enforced at load: a planned run may not carry a `run_date`, an
+observation, a measurement, an interpretation, or a procedure deviation; a performed run must carry
+a `run_date`; a completed run must carry at least one observation or measurement; an invalid run
+may not carry interpretation.
+
 **Warning** — the projection is correct but the corpus has a gap, so startup succeeds and reports:
 a registered source whose repository-relative locator does not exist, a registered session with no
 `sessions/<id>/` directory, a session no node cites, a registered source that neither a node nor a
@@ -264,7 +375,7 @@ reported for human decision.
 `runtime_projection`, while `repository_semantic_validation` is `external_precondition`. Its
 `valid` status must not be interpreted as an in-process execution of the PowerShell semantic rules.
 
-## Known limitations (through Phase 1C)
+## Known limitations (through Phase 1D)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, ranking model, or
@@ -273,11 +384,14 @@ reported for human decision.
 - No file watcher, background worker, or scheduled ingestion.
 - No frontend and no graph visualization.
 - No LLM or AI integration of any kind.
-- Experiments, experiment runs, and vocabulary entries are canonical layers the backend still does
-  not parse. Node `experiments:` references and claim `appears_in: vocabulary` and
-  `derived_from: experiment_run` references are therefore checked for identifier shape only and
-  carried through unresolved. Claiming to have validated a reference against a layer that was never
-  loaded would be worse than saying so.
+- Node `experiments:` is the one canonical reference field still carried unresolved. No repository
+  validator treats it as a reference list and every current node leaves it empty, so resolving it
+  would mean inventing a contract rather than reading one.
+- Vocabulary entries, experiments, and experiment runs are read surfaces adjacent to the graph.
+  None becomes a vertex or an edge, and `GET /api/v1/graph` is unchanged for an unchanged corpus.
+- `/api/v1/experiment-runs` has no lexical search. A run has no authored prose identity, and
+  searching its observation statements would make a text hit mean "this run observed that", which
+  is an evidence assertion a list projection has no business making.
 - The semantic confidence, dispute, attribution and origin-term rules in
   `schemas/claim.schema.yaml` are enforced by `tools/validate-claims.ps1`, not by the backend.
 - `appears_in: session` is a canonical reference kind that no current claim record uses, so
@@ -286,15 +400,24 @@ reported for human decision.
 - Graph traversal is deliberately bounded: depth 1 to 3, 500 entities and 2000 relationships per
   request, two GET routes, no query language, no caller-supplied traversal program, no paging and
   no mutation. The adjacency is derived at startup and never persisted.
-- The traversal graph addresses only the four record classes the backend parses. A claim
-  `appears_in: vocabulary`, `appears_in: document` or `derived_from: experiment_run` reference is
-  carried through unresolved and produces no graph entity and no edge.
+- The traversal graph addresses only four record classes: session, node, claim and source. Phase 1D
+  parses the practice layer and resolves claim `appears_in: vocabulary` and
+  `derived_from: experiment_run` references, but resolution is not membership: neither reference
+  produces a graph entity or an edge, and `appears_in: document` remains unresolved as before. A
+  vocabulary entry, experiment or experiment run is never a traversal entity.
+- Graph traversal across the practice layer is not implemented. Its references resolve
+  deterministically; whether any of them is a typed graph relation is a graph-contract decision
+  that has not been made.
+- An experiment run connects to a claim only where a claim record says so through
+  `derived_from: {kind: experiment_run}`. No such record exists today, the backend never
+  synthesises the link from an observation, and such a reference would not become a traversal edge
+  if one did.
 - A registered session and its registry entry are addressed as two entities that share an ID, and
   no edge is emitted between them: they are one canonical record seen through two projections.
 
 ## Future work
 
-Deferred, not implemented: vocabulary and experiment-run parsing, richer diagnostics, search
+Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, search
 hardening, graph visualization, semantic retrieval, and MLLM experimentation. The Phase 1C contract
 is shaped to be useful to a future read-only graph inspector, provenance-path view or
 claim-confidence overlay without any of them being implemented here, and without the backend being

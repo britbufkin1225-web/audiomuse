@@ -57,6 +57,25 @@ const (
 	CodeUnresolvedContract   = "unresolved_contract_reference"
 )
 
+// Practice-layer validation issue codes, added in Phase 1D for vocabulary entries,
+// experiment definitions and experiment runs.
+//
+// They are separate constants for the reason the evidence codes are: a diagnostics consumer
+// must be able to tell a broken experiment-run lifecycle from a broken graph edge without
+// reading prose. Where an existing code already means exactly the right thing — malformed
+// record, duplicate ID, missing or unknown field, invalid ID, invalid vocabulary value,
+// unresolved node, session or source reference — it is reused rather than duplicated.
+const (
+	CodeDuplicateTerm        = "duplicate_vocabulary_term"
+	CodeSelfReference        = "self_reference"
+	CodeUnresolvedVocabulary = "unresolved_vocabulary_reference"
+	CodeUnresolvedExperiment = "unresolved_experiment_reference"
+	CodeUnresolvedRun        = "unresolved_experiment_run_reference"
+	CodeDuplicateReference   = "duplicate_reference"
+	CodeRunLifecycleConflict = "run_lifecycle_conflict"
+	CodeInvalidRunDate       = "invalid_run_date"
+)
+
 // ValidationIssue is one finding. Ref is the canonical ID the finding is about; Path is the
 // repository-relative file it was read from. Neither carries an absolute filesystem path,
 // so an issue is safe to serve over the diagnostics endpoint as-is.

@@ -1,10 +1,7 @@
 package filesystem
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"sort"
 	"strings"
@@ -102,36 +99,16 @@ func (r *Repository) loadClaims(vocab domain.ClaimVocabulary, report *domain.Val
 
 // parseClaimStream decodes every YAML document in one claim record file.
 //
-// A file is a stream rather than a list because claims/README.md defines it that way. A
-// document that fails to parse is reported and skipped; the rest of the stream is still
-// read, so one broken record does not hide every record after it.
+// A file is a stream rather than a list because claims/README.md defines it that way. The
+// stream-walking, key-set and item-shape mechanics are shared with the other canonical layers
+// and live in records.go.
 func parseClaimStream(raw []byte, relPath string, vocab domain.ClaimVocabulary, report *domain.ValidationReport) []domain.Claim {
-	decoder := yaml.NewDecoder(bytes.NewReader(raw))
 	out := make([]domain.Claim, 0)
-	index := 0
-	for {
-		var doc yaml.Node
-		err := decoder.Decode(&doc)
-		if errors.Is(err, io.EOF) {
-			break
-		}
-		if err != nil {
-			report.Add(domain.ValidationIssue{
-				Severity: domain.SeverityFatal, Code: domain.CodeMalformedRecord,
-				Path:    relPath,
-				Message: fmt.Sprintf("claim record %d is not valid YAML: %s", index+1, err.Error()),
-			})
-			break
-		}
-		index++
-		// A stream may end with a trailing separator, which yields an empty document.
-		if doc.Kind == yaml.DocumentNode && len(doc.Content) == 0 {
-			continue
-		}
-		if claim, ok := parseClaim(&doc, relPath, index, vocab, report); ok {
+	forEachDocument(raw, relPath, "claim record", report, func(doc *yaml.Node, index int) {
+		if claim, ok := parseClaim(doc, relPath, index, vocab, report); ok {
 			out = append(out, claim)
 		}
-	}
+	})
 	return out
 }
 
@@ -149,29 +126,9 @@ func parseClaim(doc *yaml.Node, relPath string, index int, vocab domain.ClaimVoc
 		return domain.Claim{}, false
 	}
 
-	mapping, err := documentMapping(doc)
-	if err != nil {
-		return fatal(domain.CodeMalformedRecord, err.Error(), "")
-	}
-	keys, err := mappingKeys(mapping)
-	if err != nil {
-		return fatal(domain.CodeMalformedRecord, err.Error(), "")
-	}
-	present := make(map[string]bool, len(keys))
-	for _, k := range keys {
-		present[k] = true
-	}
-	allowed := make(map[string]bool, len(claimRequiredFields))
-	for _, f := range claimRequiredFields {
-		allowed[f] = true
-		if !present[f] {
-			return fatal(domain.CodeMissingField, "missing required field "+f, "")
-		}
-	}
-	for _, k := range keys {
-		if !allowed[k] {
-			return fatal(domain.CodeUnknownField, "unknown top-level field "+k, "")
-		}
+	mapping, shapeErr := checkedMapping(doc, claimRequiredFields)
+	if shapeErr != nil {
+		return fatal(shapeErr.code, shapeErr.message, "")
 	}
 
 	if err := checkObjectListShape(mapping, "evidence", evidenceItemFields); err != nil {
@@ -219,45 +176,6 @@ func parseClaim(doc *yaml.Node, relPath string, index int, vocab domain.ClaimVoc
 	checkClaimVocabulary(claim, vocab, report)
 	checkClaimShape(claim, report)
 	return claim, true
-}
-
-// checkObjectListShape enforces one array-of-objects field's item contract: every item must
-// be a mapping whose key set is exactly the declared one.
-func checkObjectListShape(mapping *yaml.Node, field string, want []string) error {
-	for i := 0; i+1 < len(mapping.Content); i += 2 {
-		if mapping.Content[i].Value != field {
-			continue
-		}
-		seq := mapping.Content[i+1]
-		if seq.Kind == yaml.ScalarNode && seq.Tag == "!!null" {
-			return nil
-		}
-		if seq.Kind != yaml.SequenceNode {
-			return fmt.Errorf("%s must be a list", field)
-		}
-		expected := strings.Join(want, ", ")
-		for _, item := range seq.Content {
-			if item.Kind != yaml.MappingNode {
-				return fmt.Errorf("each %s entry must be a mapping with %s", field, expected)
-			}
-			keys, err := mappingKeys(item)
-			if err != nil {
-				return fmt.Errorf("%s entry: %w", field, err)
-			}
-			sorted := append([]string(nil), keys...)
-			sort.Strings(sorted)
-			if len(sorted) != len(want) {
-				return fmt.Errorf("%s entry must declare exactly %s", field, expected)
-			}
-			for i, key := range sorted {
-				if key != want[i] {
-					return fmt.Errorf("%s entry must declare exactly %s", field, expected)
-				}
-			}
-		}
-		return nil
-	}
-	return nil
 }
 
 // normaliseClaimSlices replaces nil slices with empty ones so the JSON projection renders
@@ -399,11 +317,12 @@ func checkReferenceList(claim domain.Claim, field string, refs []domain.ClaimRef
 
 // resolveClaimReferences checks every cross-record reference a claim declares.
 //
-// Only the layers this backend parses are resolved: sources, claims, nodes and sessions.
-// Vocabulary entries and experiment runs are canonical layers the backend still does not
-// read, so their references are shape-checked and carried through unresolved, exactly as
-// Phase 1A carries node experiments: references. Claiming to have validated a reference
-// against a layer that was never loaded would be worse than saying so.
+// Phase 1B could resolve only sources, claims, nodes and sessions, and carried
+// appears_in: vocabulary and derived_from: experiment_run through as shape-checked but
+// unresolved, because the backend did not read those layers. Phase 1D reads them, so both are
+// now resolved against the loaded records — the same rule tools/validate-claims.ps1 applies.
+// A reference that cannot be resolved is fatal rather than downgraded: an appearance site that
+// names nothing is not an appearance site.
 //
 // The semantic confidence and dispute rules in schemas/claim.schema.yaml are deliberately
 // not reimplemented here. tools/validate-claims.ps1 is the canonical authority for them and
@@ -415,6 +334,8 @@ func (r *Repository) resolveClaimReferences(
 	nodes []domain.Node,
 	sources []domain.Source,
 	sessions []domain.Session,
+	vocabulary []domain.VocabularyEntry,
+	runs []domain.ExperimentRun,
 	report *domain.ValidationReport,
 ) {
 	claimIDs := make(map[string]bool, len(claims))
@@ -433,6 +354,8 @@ func (r *Repository) resolveClaimReferences(
 	for _, s := range sessions {
 		sessionIDs[s.ID] = true
 	}
+	vocabularyIDs := idSet(vocabulary, func(v domain.VocabularyEntry) string { return v.ID })
+	runIDs := idSet(runs, func(run domain.ExperimentRun) string { return run.ID })
 
 	for _, claim := range claims {
 		fatal := func(code, msg string) {
@@ -469,7 +392,10 @@ func (r *Repository) resolveClaimReferences(
 						fmt.Sprintf("derived_from node %q does not resolve to a canonical node", ref.Ref))
 				}
 			case domain.ClaimKindExperimentRun:
-				checkUnparsedRef(claim, "derived_from experiment_run", ref.Ref, fatal)
+				if !runIDs[ref.Ref] {
+					fatal(domain.CodeUnresolvedRun,
+						fmt.Sprintf("derived_from experiment_run %q does not resolve to a canonical experiment run", ref.Ref))
+				}
 			}
 		}
 
@@ -486,7 +412,10 @@ func (r *Repository) resolveClaimReferences(
 						fmt.Sprintf("appears_in session %q is not a source registered as type: session", ref.Ref))
 				}
 			case domain.ClaimKindVocabulary:
-				checkUnparsedRef(claim, "appears_in vocabulary", ref.Ref, fatal)
+				if !vocabularyIDs[ref.Ref] {
+					fatal(domain.CodeUnresolvedVocabulary,
+						fmt.Sprintf("appears_in vocabulary %q does not resolve to a canonical vocabulary entry", ref.Ref))
+				}
 			case domain.ClaimKindDocument:
 				r.checkDocumentAppearance(claim, ref.Ref, report)
 			}
@@ -494,17 +423,6 @@ func (r *Repository) resolveClaimReferences(
 	}
 
 	reportDerivationCycles(claims, report)
-}
-
-// checkUnparsedRef bounds a reference into a canonical layer the backend does not parse.
-//
-// The target cannot be resolved, so the only honest check is that the reference is a
-// canonical identifier at all. A malformed one is fatal because it could never resolve
-// under any later phase either.
-func checkUnparsedRef(claim domain.Claim, field, ref string, fatal func(code, msg string)) {
-	if !canonicalIDPattern.MatchString(ref) {
-		fatal(domain.CodeInvalidID, fmt.Sprintf("%s %q is not a canonical identifier", field, ref))
-	}
 }
 
 // checkDocumentAppearance validates a repository-relative document appearance site.

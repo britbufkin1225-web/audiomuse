@@ -21,6 +21,13 @@ const (
 	CodeInvalidQuery    = "invalid_query"
 	CodeMethodNotAllow  = "method_not_allowed"
 	CodeInternal        = "internal_error"
+
+	// Practice-layer codes, added in Phase 1D. Each names the layer that was searched, so a
+	// client can tell a missing vocabulary entry from a missing experiment without parsing
+	// the request path back out of its own call.
+	CodeVocabularyNotFound    = "vocabulary_not_found"
+	CodeExperimentNotFound    = "experiment_not_found"
+	CodeExperimentRunNotFound = "experiment_run_not_found"
 )
 
 // errorBody is the stable error envelope.

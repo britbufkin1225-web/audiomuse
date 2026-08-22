@@ -259,9 +259,10 @@ func TestHeadIsAllowed(t *testing.T) {
 }
 
 func TestUnknownRouteReturnsJSONNotFound(t *testing.T) {
-	// Phase 1B implemented /api/v1/claims, which this test previously used as its unrouted
-	// placeholder. Experiments remain a canonical layer the backend does not serve.
-	rec := do(t, newHandler(t), http.MethodGet, "/api/v1/experiments")
+	// This test has twice had to move on as a placeholder route became real: Phase 1B
+	// implemented /api/v1/claims and Phase 1D implemented /api/v1/experiments. The path below
+	// names no canonical AudioMuse layer at all, so it is not a route in waiting.
+	rec := do(t, newHandler(t), http.MethodGet, "/api/v1/not-a-canonical-layer")
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", rec.Code)
 	}

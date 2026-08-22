@@ -249,10 +249,16 @@ func (k *Knowledge) buildTraversal() {
 		}
 
 		// claim.appears_in and claim.derived_from: resolved by kind. Only the kinds naming
-		// an addressable entity class produce an edge. vocabulary, document and
-		// experiment_run references are carried through unresolved by Phase 1B because
-		// those layers are not parsed, and inventing a graph entity for them would assert
-		// a resolution that never happened.
+		// an addressable entity class produce an edge — session, node and claim.
+		//
+		// A vocabulary or experiment_run reference produces none, and this is not because
+		// the backend cannot resolve it: since Phase 1D it does, and a reference naming
+		// nothing is fatal at load. Resolution and graph membership are separate facts.
+		// Knowing which vocabulary entry a claim appears in does not make that entry a
+		// vertex of the knowledge graph, and emitting it as one would settle a
+		// graph-contract question by side effect of having parsed another layer. A
+		// document reference stays unresolved as well, for the older reason: no layer
+		// addresses it.
 		for _, r := range claim.AppearsIn {
 			if target, ok := referenceEntity(r); ok {
 				pair(ref, domain.RelAppearsIn, target,
@@ -281,8 +287,12 @@ func (k *Knowledge) buildTraversal() {
 
 // referenceEntity resolves one kind-qualified claim reference to an addressable entity.
 //
-// A kind naming a layer the backend does not load resolves to nothing. There is
-// deliberately no default case that guesses a type from the shape of the ref.
+// The switch is exhaustive over domain.EntityTypes minus source, which claim references
+// never name directly, and the default returns nothing. A kind outside that set resolves to
+// nothing whether or not some other layer loads it: vocabulary and experiment_run records
+// are parsed and their references validated, and they still resolve to no entity here,
+// because this function answers "is this a graph vertex", not "does this ref exist". There
+// is deliberately no default case that guesses a type from the shape of the ref.
 func referenceEntity(ref domain.ClaimReference) (domain.EntityRef, bool) {
 	switch ref.Kind {
 	case domain.ClaimKindNode:

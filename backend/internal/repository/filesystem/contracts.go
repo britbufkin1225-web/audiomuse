@@ -11,8 +11,11 @@ import (
 )
 
 const (
-	claimSchemaPath  = "schemas/claim.schema.yaml"
-	sourceSchemaPath = "schemas/source.schema.yaml"
+	claimSchemaPath         = "schemas/claim.schema.yaml"
+	sourceSchemaPath        = "schemas/source.schema.yaml"
+	experimentSchemaPath    = "schemas/experiment.schema.yaml"
+	experimentRunSchemaPath = "schemas/experiment-run.schema.yaml"
+	nodeSchemaPath          = "schemas/node.schema.yaml"
 )
 
 // claimSchemaFile is the subset of schemas/claim.schema.yaml the backend reads.
@@ -41,7 +44,29 @@ type sourceSchemaFile struct {
 }
 
 type schemaProperty struct {
-	Enum []string `yaml:"enum"`
+	Enum  []string    `yaml:"enum"`
+	Items schemaItems `yaml:"items"`
+}
+
+// schemaItems is the nested item contract of an array property. Only the bounded enums on item
+// properties are read; the rest of the item shape is enforced by checkObjectListShape against
+// the record itself.
+type schemaItems struct {
+	Properties map[string]schemaProperty `yaml:"properties"`
+}
+
+// experimentSchemaFile and experimentRunSchemaFile are the subsets of the two practice
+// contracts the backend reads: the enum list on each bounded property.
+type experimentSchemaFile struct {
+	Schema     string                    `yaml:"schema"`
+	Version    int                       `yaml:"version"`
+	Properties map[string]schemaProperty `yaml:"properties"`
+}
+
+type experimentRunSchemaFile struct {
+	Schema     string                    `yaml:"schema"`
+	Version    int                       `yaml:"version"`
+	Properties map[string]schemaProperty `yaml:"properties"`
 }
 
 // loadVocabularies reads the two canonical contract files that bound the evidence layer.
@@ -54,8 +79,81 @@ type schemaProperty struct {
 // that does not exist.
 func (r *Repository) loadVocabularies(report *domain.ValidationReport) domain.Vocabularies {
 	return domain.Vocabularies{
-		Claim:  r.loadClaimVocabulary(report),
-		Source: r.loadSourceVocabulary(report),
+		Claim:             r.loadClaimVocabulary(report),
+		Source:            r.loadSourceVocabulary(report),
+		VocabularyDomains: r.loadVocabularyDomains(report),
+		Experiment:        r.loadExperimentVocabulary(report),
+		ExperimentRun:     r.loadExperimentRunVocabulary(report),
+	}
+}
+
+// loadVocabularyDomains reads the domain vocabulary that schemas/vocabulary.schema.yaml
+// explicitly reuses from schemas/node.schema.yaml. The PowerShell vocabulary validator uses
+// this same enum, so reading it here prevents the projection from accepting a domain the
+// canonical repository rejects.
+func (r *Repository) loadVocabularyDomains(report *domain.ValidationReport) []string {
+	var file sourceSchemaFile
+	if !r.decodeContract(nodeSchemaPath, &file, report) {
+		return nil
+	}
+	domains := file.Properties["domain"].Enum
+	requireEnums(nodeSchemaPath, map[string][]string{"domain": domains}, report)
+	return domains
+}
+
+// loadExperimentVocabulary reads the bounded status, type and difficulty enums from
+// schemas/experiment.schema.yaml.
+//
+// All three are API filters, so an unreadable or enum-less contract is fatal for the reason the
+// claim contract is: serving an unbounded filter over a bounded field would let a caller believe
+// they had filtered by a value the repository does not define.
+func (r *Repository) loadExperimentVocabulary(report *domain.ValidationReport) domain.ExperimentVocabulary {
+	var file experimentSchemaFile
+	if !r.decodeContract(experimentSchemaPath, &file, report) {
+		return domain.ExperimentVocabulary{}
+	}
+	vocab := domain.ExperimentVocabulary{
+		Statuses:     file.Properties["status"].Enum,
+		Types:        file.Properties["type"].Enum,
+		Difficulties: file.Properties["difficulty"].Enum,
+	}
+	requireEnums(experimentSchemaPath, map[string][]string{
+		"status":     vocab.Statuses,
+		"type":       vocab.Types,
+		"difficulty": vocab.Difficulties,
+	}, report)
+	return vocab
+}
+
+// loadExperimentRunVocabulary reads the bounded status enum and the nested measurement
+// calibration enum from schemas/experiment-run.schema.yaml.
+func (r *Repository) loadExperimentRunVocabulary(report *domain.ValidationReport) domain.ExperimentRunVocabulary {
+	var file experimentRunSchemaFile
+	if !r.decodeContract(experimentRunSchemaPath, &file, report) {
+		return domain.ExperimentRunVocabulary{}
+	}
+	vocab := domain.ExperimentRunVocabulary{
+		Statuses:     file.Properties["status"].Enum,
+		Calibrations: file.Properties["measurements"].Items.Properties["calibration"].Enum,
+	}
+	requireEnums(experimentRunSchemaPath, map[string][]string{
+		"status":                   vocab.Statuses,
+		"measurements.calibration": vocab.Calibrations,
+	}, report)
+	return vocab
+}
+
+// requireEnums reports a contract that declares no values for a property the backend depends on.
+// Names are visited in sorted order so a report built by iterating a map is identical across runs.
+func requireEnums(path string, enums map[string][]string, report *domain.ValidationReport) {
+	for _, name := range sortedKeys(enums) {
+		if len(enums[name]) == 0 {
+			report.Add(domain.ValidationIssue{
+				Severity: domain.SeverityFatal, Code: domain.CodeMalformedRecord,
+				Path:    path,
+				Message: "contract declares no enum for property " + name,
+			})
+		}
 	}
 }
 

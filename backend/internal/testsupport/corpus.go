@@ -125,3 +125,94 @@ func SupportedBy(sourceID string) string {
 func AppearsInNode(nodeID string) string {
 	return `[{"kind": "node", "ref": "` + nodeID + `"}]`
 }
+
+// quoted renders one canonical scalar field line in the JSON-compatible YAML form the practice
+// contracts use.
+func quoted(key, value string) string {
+	return key + `: "` + value + "\"\n"
+}
+
+// raw renders one field line whose value is already a YAML flow value: a list, a null, or a
+// quoted scalar the caller composed itself.
+func raw(key, value string) string {
+	return key + ": " + value + "\n"
+}
+
+// ValidVocabularyEntry renders a schema-complete fixture vocabulary entry, so a defect test only
+// has to state the one field it is changing. Collection arguments are YAML flow sequences,
+// matching the form vocabulary/README.md describes for canonical records.
+func ValidVocabularyEntry(id, term, domainName, nodeRefs, sessionRefs, relatedTerms, tags string) string {
+	return "---\n" +
+		quoted("id", id) +
+		quoted("term", term) +
+		quoted("domain", domainName) +
+		quoted("definition", "Synthetic fixture definition for "+id+".") +
+		quoted("digital_relationship", "Synthetic fixture digital relationship for "+id+".") +
+		quoted("best_use", "Synthetic fixture use for "+id+".") +
+		raw("technologies", "[]") +
+		raw("node_refs", nodeRefs) +
+		raw("session_refs", sessionRefs) +
+		raw("related_terms", relatedTerms) +
+		raw("tags", tags)
+}
+
+// ValidExperiment renders a schema-complete fixture experiment definition.
+//
+// Experiment records are one per file rather than a stream, matching experiments/records/.
+func ValidExperiment(id, status, expType, difficulty, nodeRefs, vocabularyRefs, sessionRefs, sourceRefs, relatedExperiments string) string {
+	out := quoted("id", id) +
+		quoted("title", "Fixture "+id) +
+		quoted("status", status) +
+		quoted("type", expType) +
+		quoted("difficulty", difficulty) +
+		quoted("purpose", "Synthetic fixture purpose for "+id+".") +
+		raw("node_refs", nodeRefs) +
+		raw("vocabulary_refs", vocabularyRefs) +
+		raw("session_refs", sessionRefs) +
+		raw("source_refs", sourceRefs)
+	for _, field := range []string{
+		"required_equipment", "optional_equipment", "safety", "setup", "procedure",
+		"observations", "measurements", "expected_behavior", "interpretation",
+		"limitations", "repeatability",
+	} {
+		out += raw(field, "[]")
+	}
+	return out + raw("related_experiments", relatedExperiments) + raw("project_connections", "[]")
+}
+
+// ValidExperimentRun renders a schema-complete fixture experiment-run record.
+//
+// runDate is written verbatim, so a test passes either null or a quoted ISO date and can
+// therefore construct the planned/performed conflicts the lifecycle rules exist to reject.
+func ValidExperimentRun(id, experimentID, runDate, status, observations, measurements, interpretation, sourceRefs string) string {
+	return quoted("id", id) +
+		quoted("experiment_id", experimentID) +
+		raw("run_date", runDate) +
+		quoted("status", status) +
+		raw("environment_notes", "[]") +
+		raw("equipment", "[]") +
+		raw("software", "[]") +
+		raw("procedure_deviations", "[]") +
+		raw("control_settings", "[]") +
+		raw("observations", observations) +
+		raw("measurements", measurements) +
+		raw("limitations", "[]") +
+		raw("safety_notes", "[]") +
+		raw("interpretation", interpretation) +
+		raw("follow_up_questions", "[]") +
+		raw("source_refs", sourceRefs)
+}
+
+// FixtureObservation renders one run observation, for tests that only care that qualitative
+// evidence is present at all.
+func FixtureObservation(statement string) string {
+	return `[{"statement": "` + statement + `", "context": "Fixture observation context."}]`
+}
+
+// FixtureMeasurement renders one fully specified run measurement, for tests that need
+// quantitative evidence rather than an observation.
+func FixtureMeasurement(quantity, value, unit, calibration, limitations string) string {
+	return `[{"quantity": "` + quantity + `", "value": ` + value + `, "unit": "` + unit +
+		`", "method": "Fixture method.", "tool": "Fixture tool.", "calibration": "` + calibration +
+		`", "uncertainty": null, "limitations": ` + limitations + `}]`
+}

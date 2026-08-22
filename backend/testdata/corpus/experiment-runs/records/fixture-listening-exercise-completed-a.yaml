@@ -1,0 +1,16 @@
+id: "fixture-listening-exercise-completed-a"
+experiment_id: "fixture-listening-exercise"
+run_date: "1999-04-01"
+status: "completed"
+environment_notes: ["Synthetic fixture environment."]
+equipment: ["fixture harness"]
+software: ["go test"]
+procedure_deviations: []
+control_settings: [{"quantity": "nominal frequency", "value": 440, "unit": "Hz", "context": "Dialled into the fixture oscillator before the run."}, {"quantity": "listening position", "value": "position B", "unit": null, "context": "Chosen before the run and not changed."}]
+observations: [{"statement": "The fixture tone was described as steady.", "context": "Noted by the fixture operator during the first pass."}]
+measurements: [{"quantity": "fixture level", "value": 72.50, "unit": "dB", "method": "single reading from the fixture meter", "tool": "fixture meter", "calibration": "unknown", "uncertainty": null, "limitations": ["The fixture meter has no calibration record."]}]
+limitations: ["Nothing in this record was physically measured; the corpus is synthetic."]
+safety_notes: []
+interpretation: ["A completed run carries evidence, which a planned run must not."]
+follow_up_questions: ["Would a second fixture run reproduce the reading?"]
+source_refs: ["fixture-archive-record"]

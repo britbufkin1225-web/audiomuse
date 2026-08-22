@@ -1,0 +1,23 @@
+id: "fixture-listening-exercise"
+title: "Fixture Listening Exercise"
+status: "proof"
+type: "listening"
+difficulty: "introductory"
+purpose: "Exercise the experiment projection with a definition that has both a planned and a completed run."
+node_refs: ["alpha", "beta"]
+vocabulary_refs: ["fixture-term"]
+session_refs: ["session-01-fixture"]
+source_refs: ["fixture-reference-work"]
+required_equipment: ["fixture harness"]
+optional_equipment: []
+safety: ["This exercise is synthetic and is never performed."]
+setup: ["Load the fixture corpus."]
+procedure: ["Run the backend test suite."]
+observations: ["Record whether the fixture list ordering held."]
+measurements: ["Record the number of records loaded, with the method used to count them."]
+expected_behavior: ["The projection should be identical on every run."]
+interpretation: ["A stable projection means ordering does not depend on traversal or map iteration."]
+limitations: ["The fixture corpus is not canonical AudioMuse knowledge."]
+repeatability: ["Record the Go version and the fixture corpus revision."]
+related_experiments: ["fixture-visualization-exercise"]
+project_connections: ["backend regression testing"]

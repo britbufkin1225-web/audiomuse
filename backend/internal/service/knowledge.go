@@ -55,6 +55,24 @@ type Knowledge struct {
 	sessionIDsBySourceID map[string][]string
 	sourceIDsBySessionID map[string][]string
 
+	// Practice layer (Phase 1D): the canonical vocabulary, experiment definitions and
+	// experiment runs. These are read surfaces adjacent to the graph, not part of it; see
+	// buildPractice and buildGraph.
+	vocabulary           []domain.VocabularyEntry
+	vocabularyByID       map[string]domain.VocabularyEntry
+	vocabularySearchText map[string]string
+	experiments          []domain.Experiment
+	experimentsByID      map[string]domain.Experiment
+	experimentSearchText map[string]string
+	runs                 []domain.ExperimentRun
+	runsByID             map[string]domain.ExperimentRun
+
+	// Derived reverse views over the practice layer. Each is documented at buildPractice.
+	runIDsByExperiment    map[string][]string
+	runCountsByExperiment map[string]domain.ExperimentRunCounts
+	experimentIDsByVocab  map[string][]string
+	claimIDsByVocab       map[string][]string
+
 	graph domain.Graph
 
 	// Traversal layer (Phase 1C). adjacency is the relationship index over the four
@@ -95,6 +113,15 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 		claimsByID:        make(map[string]domain.Claim, len(corpus.Claims)),
 		claimSearchText:   make(map[string]string, len(corpus.Claims)),
 		vocabularies:      corpus.Vocabularies,
+
+		vocabulary:           corpus.Vocabulary,
+		vocabularyByID:       make(map[string]domain.VocabularyEntry, len(corpus.Vocabulary)),
+		vocabularySearchText: make(map[string]string, len(corpus.Vocabulary)),
+		experiments:          corpus.Experiments,
+		experimentsByID:      make(map[string]domain.Experiment, len(corpus.Experiments)),
+		experimentSearchText: make(map[string]string, len(corpus.Experiments)),
+		runs:                 corpus.ExperimentRuns,
+		runsByID:             make(map[string]domain.ExperimentRun, len(corpus.ExperimentRuns)),
 	}
 
 	for _, node := range corpus.Nodes {
@@ -111,11 +138,21 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 	for _, claim := range corpus.Claims {
 		k.claimsByID[claim.ID] = claim
 	}
+	for _, entry := range corpus.Vocabulary {
+		k.vocabularyByID[entry.ID] = entry
+	}
+	for _, experiment := range corpus.Experiments {
+		k.experimentsByID[experiment.ID] = experiment
+	}
+	for _, run := range corpus.ExperimentRuns {
+		k.runsByID[run.ID] = run
+	}
 
 	k.buildInbound()
 	k.buildGraph()
 	k.buildEvidence()
 	k.buildTraversal()
+	k.buildPractice()
 	return k, nil
 }
 

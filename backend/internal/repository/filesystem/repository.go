@@ -106,13 +106,19 @@ func (r *Repository) Load(ctx context.Context) (*repository.Corpus, *domain.Vali
 	sessions := r.buildSessions(sources, report)
 	nodes := r.loadNodes(report)
 	claims := r.loadClaims(vocabularies.Claim, report)
+	vocabulary := r.loadVocabulary(report)
+	checkVocabularyDomains(vocabulary, vocabularies.VocabularyDomains, report)
+	experiments := r.loadExperiments(vocabularies.Experiment, report)
+	runs := r.loadExperimentRuns(vocabularies.ExperimentRun, report)
 
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err
 	}
 
 	resolveReferences(nodes, sources, sessions, relationshipTypes, report)
-	r.resolveClaimReferences(claims, nodes, sources, sessions, report)
+	resolveVocabularyReferences(vocabulary, nodes, sessions, report)
+	resolveExperimentReferences(experiments, runs, vocabulary, nodes, sources, sessions, report)
+	r.resolveClaimReferences(claims, nodes, sources, sessions, vocabulary, runs, report)
 	sessions = attachSessionNodes(nodes, sessions)
 	reportUncited(nodes, sources, sessions, claims, report)
 
@@ -122,6 +128,9 @@ func (r *Repository) Load(ctx context.Context) (*repository.Corpus, *domain.Vali
 		Sources:           sources,
 		Sessions:          sessions,
 		Claims:            claims,
+		Vocabulary:        vocabulary,
+		Experiments:       experiments,
+		ExperimentRuns:    runs,
 		RelationshipTypes: relationshipTypes,
 		Vocabularies:      vocabularies,
 	}, report, nil

@@ -488,9 +488,13 @@ func TestVocabulariesAreDefensivelyCopied(t *testing.T) {
 		t.Fatal("claim vocabulary is empty")
 	}
 	vocab.Claim.ConfidenceLevels[0] = "tampered"
+	vocab.VocabularyDomains[0] = "tampered"
 
 	if got := k.Vocabularies().Claim.ConfidenceLevels[0]; got != "high" {
 		t.Errorf("confidence_levels[0] = %q after a caller mutated its copy, want %q", got, "high")
+	}
+	if got := k.Vocabularies().VocabularyDomains[0]; got != "acoustics" {
+		t.Errorf("vocabulary_domains[0] = %q after a caller mutated its copy, want %q", got, "acoustics")
 	}
 }
 
