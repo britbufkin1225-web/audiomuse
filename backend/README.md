@@ -295,6 +295,10 @@ not exist, a registered session with no directory, a session no node cites, a re
 neither a node nor a claim cites, and a claim appearance document that is safe and canonical but has
 not been written yet.
 
+The diagnostics response labels this result as `validation_scope: runtime_projection` and labels
+full repository semantic validation as an `external_precondition`. A running server therefore does
+not imply that the PowerShell semantic validator was run by the process itself.
+
 The semantic rules in `schemas/claim.schema.yaml` — what confidence a claim may carry given its
 evidence, when an attribution is required, how dispute status must match the cited relations — stay
 with `tools/validate-claims.ps1`, which is their canonical authority and gates every commit. The

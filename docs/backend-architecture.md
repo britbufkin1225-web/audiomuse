@@ -164,6 +164,10 @@ claim cites, and a claim appearance document that is safe and canonical but does
 The backend never repairs a record and never writes to the corpus. Canonical inconsistencies are
 reported for human decision.
 
+`/api/v1/diagnostics` makes this boundary machine-readable: `validation_scope` is
+`runtime_projection`, while `repository_semantic_validation` is `external_precondition`. Its
+`valid` status must not be interpreted as an in-process execution of the PowerShell semantic rules.
+
 ## Known limitations (through Phase 1B)
 
 - Corpus changes require a process restart.

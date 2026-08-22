@@ -494,6 +494,77 @@ func TestVocabulariesAreDefensivelyCopied(t *testing.T) {
 	}
 }
 
+func TestEvidenceDetailsAreDefensivelyCopied(t *testing.T) {
+	k := evidenceIndex(t)
+
+	claim, err := k.ClaimByID("beta-was-observed-in-1999")
+	if err != nil {
+		t.Fatalf("claim lookup: %v", err)
+	}
+	claim.Evidence[0].Note = "tampered"
+	claim.Attribution[0].Actor = "tampered"
+	claim.AppearsIn[0].Ref = "tampered"
+	pristine, err := k.ClaimByID("beta-was-observed-in-1999")
+	if err != nil {
+		t.Fatalf("second claim lookup: %v", err)
+	}
+	if pristine.Evidence[0].Note == "tampered" || pristine.Attribution[0].Actor == "tampered" ||
+		pristine.AppearsIn[0].Ref == "tampered" {
+		t.Fatal("mutating a claim detail response changed the immutable index")
+	}
+	questioned, err := k.ClaimByID("gamma-follows-from-alpha-and-beta")
+	if err != nil {
+		t.Fatalf("questioned claim lookup: %v", err)
+	}
+	questioned.OpenQuestions[0] = "tampered"
+	pristineQuestioned, err := k.ClaimByID("gamma-follows-from-alpha-and-beta")
+	if err != nil {
+		t.Fatalf("second questioned claim lookup: %v", err)
+	}
+	if pristineQuestioned.OpenQuestions[0] == "tampered" {
+		t.Fatal("mutating claim open questions changed the immutable index")
+	}
+	empty, err := k.ClaimByID("alpha-carries-energy")
+	if err != nil {
+		t.Fatalf("empty-slice claim lookup: %v", err)
+	}
+	if empty.Attribution == nil || empty.DerivedFrom == nil || empty.OpenQuestions == nil {
+		t.Fatal("defensive copies must preserve canonical empty arrays as non-nil slices")
+	}
+
+	source, err := k.SourceByID("fixture-reference-work")
+	if err != nil {
+		t.Fatalf("source lookup: %v", err)
+	}
+	*source.Author = "tampered"
+	pristineSource, err := k.SourceByID("fixture-reference-work")
+	if err != nil {
+		t.Fatalf("second source lookup: %v", err)
+	}
+	if *pristineSource.Author == "tampered" {
+		t.Fatal("mutating a source detail response changed the immutable index")
+	}
+
+	listed := mustListSources(t, k, service.SourceQuery{})
+	var listedAuthor *string
+	for i := range listed.Sources {
+		if listed.Sources[i].ID == "fixture-reference-work" {
+			listedAuthor = listed.Sources[i].Author
+			break
+		}
+	}
+	if listedAuthor == nil {
+		t.Fatal("fixture-reference-work list summary has no author")
+	}
+	*listedAuthor = "tampered"
+	listedAgain := mustListSources(t, k, service.SourceQuery{})
+	for _, summary := range listedAgain.Sources {
+		if summary.ID == "fixture-reference-work" && *summary.Author == "tampered" {
+			t.Fatal("mutating a source list response changed the immutable index")
+		}
+	}
+}
+
 func TestProjectReportsTheEvidenceLayer(t *testing.T) {
 	project := evidenceIndex(t).Project()
 

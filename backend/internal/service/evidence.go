@@ -235,6 +235,7 @@ func (k *Knowledge) ListSources(q SourceQuery) (SourceList, error) {
 		if needle != "" && !strings.Contains(k.sourceSearchText[source.ID], needle) {
 			continue
 		}
+		source = cloneSource(source)
 		matched = append(matched, domain.SourceSummary{
 			ID:            source.ID,
 			Type:          source.Type,
@@ -264,7 +265,7 @@ func (k *Knowledge) SourceByID(id string) (domain.SourceDetail, error) {
 		claims = []domain.SourceClaimRef{}
 	}
 	return domain.SourceDetail{
-		Source:             source,
+		Source:             cloneSource(source),
 		Claims:             claims,
 		AttributedClaimIDs: copyIDs(k.attributedClaimIDs[id]),
 		NodeIDs:            copyIDs(k.nodeIDsBySourceID[id]),
@@ -359,11 +360,44 @@ func (k *Knowledge) ClaimByID(id string) (domain.ClaimDetail, error) {
 		return domain.ClaimDetail{}, ErrNotFound
 	}
 	return domain.ClaimDetail{
-		Claim:      claim,
+		Claim:      cloneClaim(claim),
 		SourceIDs:  k.sourceIDsForClaim(id),
 		NodeIDs:    appearanceRefs(claim, domain.ClaimKindNode),
 		SessionIDs: appearanceRefs(claim, domain.ClaimKindSession),
 	}, nil
+}
+
+// cloneClaim prevents callers from reaching the index through the canonical record's
+// nested slices. The HTTP handlers only encode these values, but Knowledge is also a
+// package API and its immutability guarantee must hold for every caller.
+func cloneClaim(claim domain.Claim) domain.Claim {
+	claim.Evidence = append(make([]domain.ClaimEvidence, 0, len(claim.Evidence)), claim.Evidence...)
+	claim.Attribution = append(make([]domain.ClaimAttribution, 0, len(claim.Attribution)), claim.Attribution...)
+	claim.DerivedFrom = append(make([]domain.ClaimReference, 0, len(claim.DerivedFrom)), claim.DerivedFrom...)
+	claim.AppearsIn = append(make([]domain.ClaimReference, 0, len(claim.AppearsIn)), claim.AppearsIn...)
+	claim.OpenQuestions = copyIDs(claim.OpenQuestions)
+	return claim
+}
+
+// cloneSource copies optional scalar pointers for the same reason cloneClaim copies
+// slices: mutating a detail response must not mutate the immutable startup snapshot.
+func cloneSource(source domain.Source) domain.Source {
+	copyString := func(value *string) *string {
+		if value == nil {
+			return nil
+		}
+		copied := *value
+		return &copied
+	}
+	if source.Year != nil {
+		year := *source.Year
+		source.Year = &year
+	}
+	source.Author = copyString(source.Author)
+	source.EvidenceClass = copyString(source.EvidenceClass)
+	source.Retrieval = copyString(source.Retrieval)
+	source.Notes = copyString(source.Notes)
+	return source
 }
 
 // Vocabularies returns the canonical contract vocabularies the index was built against.

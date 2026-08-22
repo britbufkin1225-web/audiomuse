@@ -82,10 +82,12 @@ func (k *Knowledge) Project() ProjectSummary {
 // Issue Path values are repository-relative and Ref values are canonical IDs, so nothing in
 // this projection discloses the operator's filesystem layout.
 type Diagnostics struct {
-	Mode     string                   `json:"mode"`
-	Status   string                   `json:"status"`
-	Warnings []domain.ValidationIssue `json:"warnings"`
-	Counts   DiagnosticsCounts        `json:"counts"`
+	Mode                         string                   `json:"mode"`
+	Status                       string                   `json:"status"`
+	ValidationScope              string                   `json:"validation_scope"`
+	RepositorySemanticValidation string                   `json:"repository_semantic_validation"`
+	Warnings                     []domain.ValidationIssue `json:"warnings"`
+	Counts                       DiagnosticsCounts        `json:"counts"`
 }
 
 // DiagnosticsCounts summarises the report.
@@ -101,9 +103,11 @@ func (k *Knowledge) Diagnostics() Diagnostics {
 		warnings = []domain.ValidationIssue{}
 	}
 	return Diagnostics{
-		Mode:     ModeReadOnly,
-		Status:   k.report.Status(),
-		Warnings: warnings,
+		Mode:                         ModeReadOnly,
+		Status:                       k.report.Status(),
+		ValidationScope:              "runtime_projection",
+		RepositorySemanticValidation: "external_precondition",
+		Warnings:                     warnings,
 		Counts: DiagnosticsCounts{
 			Fatal:   len(k.report.Fatal()),
 			Warning: len(warnings),

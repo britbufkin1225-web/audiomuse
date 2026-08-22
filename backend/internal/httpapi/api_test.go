@@ -213,6 +213,9 @@ func TestDiagnostics(t *testing.T) {
 	if body.Counts.Warning == 0 {
 		t.Error("want the fixture corpus warnings")
 	}
+	if body.ValidationScope != "runtime_projection" || body.RepositorySemanticValidation != "external_precondition" {
+		t.Errorf("diagnostics validation boundary = %q/%q", body.ValidationScope, body.RepositorySemanticValidation)
+	}
 }
 
 // TestMutatingMethodsAreRejected is the read-only guarantee, asserted at the edge.
