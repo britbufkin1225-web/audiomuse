@@ -1,7 +1,8 @@
 # AudioMuse Backend — Read-Only Knowledge API
 
 A deterministic read-only HTTP projection of the canonical AudioMuse repository: nodes, sessions,
-the typed relationship graph, and the sources, claims and provenance that stand behind them.
+the typed relationship graph, the sources, claims and provenance that stand behind them, and the
+vocabulary, experiments and experiment runs that put them into practice.
 
 **The repository remains the source of truth.** This service reads the corpus once at
 startup, validates what it read, indexes it in memory, and serves JSON. It performs no
@@ -20,7 +21,7 @@ backend/
 │   ├── domain/                 typed AudioMuse records; no I/O, no HTTP
 │   ├── repository/             KnowledgeRepository — a read-only interface with no write method
 │   │   └── filesystem/         the only package that touches the corpus
-│   ├── service/                immutable startup index, filtering, search, graph, evidence and traversal projections
+│   ├── service/                immutable startup index, filtering, search, graph, evidence, traversal and practice projections
 │   ├── httpapi/                routing, query bounds, JSON envelopes, method lock
 │   └── testsupport/            fixture corpus loading for tests
 ├── testdata/corpus/            synthetic fixture corpus (not canonical knowledge)
@@ -92,10 +93,15 @@ Precedence is flag, then environment, then discovery. The root must contain `nod
 from the working directory to the filesystem root and never inspects a sibling tree.
 
 Those four are the discovery markers and are deliberately kept minimal and stable.
-`schemas/claim.schema.yaml` and `schemas/source.schema.yaml` are not markers but are still
-required: the loader reads their bounded vocabularies, and an unreadable one is reported as a fatal
-validation issue rather than as a bad root. `claims/records/` is optional — a corpus with no claim
-records loads and serves an empty claim layer.
+`schemas/claim.schema.yaml`, `schemas/source.schema.yaml`, `schemas/experiment.schema.yaml` and
+`schemas/experiment-run.schema.yaml` are not markers but are still required: the loader reads their
+bounded vocabularies, and an unreadable one is reported as a fatal validation issue rather than as a
+bad root. `schemas/vocabulary.schema.yaml` declares no enums and is not read.
+
+`claims/records/`, `vocabulary/entries/`, `experiments/records/` and `experiment-runs/records/` are
+each optional — a corpus predating one of those layers loads and serves it empty. A reference *into*
+an absent layer still fails, because a claim that appears in a vocabulary entry which does not exist
+is a broken record whether the layer is missing or the entry is.
 
 The default address binds loopback: a knowledge corpus should not become reachable from the
 network by accident.
@@ -103,11 +109,14 @@ network by accident.
 ### Startup output
 
 ```text
-level=INFO msg="AudioMuse API" mode=read-only repository=... nodes=78 sessions=3
-  sources=51 edges=220 validation=WARN warnings=1 listen=127.0.0.1:8788
+level=INFO msg="AudioMuse API" mode=read-only repository=... nodes=78 sessions=3 sources=51
+  claims=48 vocabulary=165 experiments=10 experiment_runs=2 edges=220
+  validation=WARN warnings=1 listen=127.0.0.1:8788
 ```
 
-The corpus summary on `/api/v1/project` reports the claim count alongside the rest.
+`/api/v1/project` reports the same counts plus the run tally split by lifecycle state, and
+`/api/v1/diagnostics` reports the loaded corpus size so an operator can confirm which layers the
+running process actually projected.
 
 `validation` is `PASS`, `WARN` or `FAIL`. A `FAIL` aborts startup and prints every fatal
 issue. The absolute repository path appears here, in the operator's terminal, and in no HTTP
@@ -129,6 +138,12 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/sources/{id}` | one registry entry with everything that cites it |
 | GET | `/api/v1/claims` | claim summaries carrying all four provenance axes |
 | GET | `/api/v1/claims/{id}` | one full claim with its evidence context |
+| GET | `/api/v1/vocabulary` | vocabulary entries, filtered, searched and paged |
+| GET | `/api/v1/vocabulary/{id}` | one entry with the experiments and claims that refer to it |
+| GET | `/api/v1/experiments` | experiment definitions with their derived run tally |
+| GET | `/api/v1/experiments/{id}` | one definition with the tally and IDs of its runs |
+| GET | `/api/v1/experiment-runs` | run records with their lifecycle state and evidence counts |
+| GET | `/api/v1/experiment-runs/{id}` | one full run |
 | GET | `/api/v1/graph` | the full read-only graph projection |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
@@ -189,6 +204,77 @@ response names the accepted values. An identifier filter such as `node_id` is no
 existence: an unknown ID means "no record stands in that relation", which is a legitimate empty
 result rather than an error. `GET /api/v1/project` publishes both vocabularies under `vocabulary`,
 so a client never has to discover them by trial and error.
+
+### Vocabulary query parameters
+
+| Parameter | Meaning |
+| --- | --- |
+| `q` | lexical substring search, case-insensitive, over id, term, domain, definition, digital_relationship, best_use, technologies and tags |
+| `domain` | exact canonical domain, from the same enum nodes use |
+| `node_id` | entries whose `node_refs` names that node |
+| `session_id` | entries whose `session_refs` names that registered session |
+| `tag` | exact canonical tag |
+| `limit`, `offset` | page size and start; default 50, clamped to 200 |
+
+### Experiment query parameters
+
+| Parameter | Meaning |
+| --- | --- |
+| `q` | lexical substring search, case-insensitive, over id, title, status, type, difficulty and purpose |
+| `status` | exact status from `schemas/experiment.schema.yaml` |
+| `type` | exact type from `schemas/experiment.schema.yaml` |
+| `difficulty` | exact difficulty from `schemas/experiment.schema.yaml` |
+| `node_id` | definitions whose `node_refs` names that node |
+| `vocabulary_id` | definitions whose `vocabulary_refs` names that entry |
+| `session_id` | definitions whose `session_refs` names that registered session |
+| `source_id` | definitions whose `source_refs` names that registered source |
+| `limit`, `offset` | page size and start; default 50, clamped to 200 |
+
+### Experiment run query parameters
+
+| Parameter | Meaning |
+| --- | --- |
+| `experiment_id` | runs of that definition |
+| `status` | exact lifecycle state from `schemas/experiment-run.schema.yaml` |
+| `performed` | exactly `true` or `false`; the planned/executed split derived from status |
+| `source_id` | runs whose `source_refs` names that registered source |
+| `limit`, `offset` | page size and start; default 50, clamped to 200 |
+
+There is no `q` on `/api/v1/experiment-runs`. A run has no authored prose identity, and searching
+its observation statements would make a text hit mean "this run observed that" — an evidence
+assertion a list projection has no business making. Runs are addressed by definition and state.
+
+### Practice-layer representation
+
+Four canonical distinctions are preserved in the types and visible in the JSON:
+
+**Vocabulary cross-references are not graph edges.** `related_terms` is curated human navigation,
+exactly as `vocabulary/README.md` states: it does not imply equivalence, does not create an edge,
+and does not affect node degree. It is served as a plain ID list on the entry, never merged into
+`node_refs`, and never projected into `GET /api/v1/graph`. `GET /api/v1/vocabulary/{id}` also
+serves `experiment_ids` and `claim_ids`; those are reverse reads of references authored on the
+experiment and claim records, and they are edges no more than `related_terms` is.
+
+**An experiment definition is not evidence of execution.** A definition's `observations` and
+`measurements` are prose instructions about what a performer should record. A run's are typed
+objects. The two never share a shape, so no client can mistake one for the other. The `runs` tally
+and `run_ids` on a definition are derived from canonical run records at startup; they are never
+written back, and `experiments/index.md` is not their source.
+
+**A planned run is not a completed run.** The `runs` tally reports every lifecycle state
+separately — `planned`, `completed`, `incomplete`, `invalid` — and never folds them into a single
+"done" count. Each run also carries a derived `performed` boolean and, for a planned run, a
+`run_date` of `null`, because a run that has not happened has no date.
+
+**An observation is not a measurement.** An observation carries a statement and the context it was
+noticed in, and nothing else — it cannot carry a value, because nothing was measured. A
+measurement carries quantity, value, unit, method, tool, calibration, uncertainty and limitations,
+and every one of them is served. Numeric values are served as the token the record was authored
+with, so a measurement recorded as `72.50` is served as `72.50` and not as `72.5`: the trailing
+figure is a precision claim, and re-encoding it would quietly weaken recorded evidence.
+
+An experiment run is not a claim. The two layers connect only where a claim record explicitly says
+so, through `derived_from: {kind: experiment_run}`, and the backend never synthesises that link.
 
 ### Provenance representation
 
@@ -308,7 +394,8 @@ under Known limitations.
 ```
 
 Codes: `not_found`, `node_not_found`, `session_not_found`, `source_not_found`, `claim_not_found`,
-`entity_not_found`, `invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
+`entity_not_found`, `vocabulary_not_found`, `experiment_not_found`, `experiment_run_not_found`,
+`invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
 logged locally and never serialised into a response.
 
 ### Read-only enforcement
@@ -382,6 +469,34 @@ Invoke-RestMethod "http://127.0.0.1:8788/api/v1/graph/entities/session/session-0
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/graph/entities/node/amplitude-envelope/traverse?depth=2&target_type=claim"
 ```
 
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/vocabulary?q=resonance"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/vocabulary?domain=psychoacoustics&limit=5"
+```
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8788/api/v1/vocabulary/frequency
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/experiments?type=hybrid"
+```
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8788/api/v1/experiments/near-frequency-beating
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/experiment-runs?experiment_id=near-frequency-beating"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/experiment-runs?performed=false"
+```
+
 ## Validation
 
 Startup separates two different failures. Fatal issues abort the process because the
@@ -405,6 +520,30 @@ canonical `snake_case`, distinct from itself, and unique across the complete for
 namespace. A missing, malformed, duplicate, or colliding inverse is fatal because reverse traversal
 could otherwise omit an edge, merge two predicates, or lose the authored-versus-derived marker.
 
+The practice layer adds, again at the same severity: a duplicate, blank or non-canonical
+vocabulary, experiment or run ID; a vocabulary term reused in any casing; a record or nested
+control-setting, observation or measurement object whose key set does not equal the contract's; an
+empty required field or an empty value inside any list; a value repeated within one list; a
+vocabulary entry or experiment that references itself; an experiment status, type or difficulty, a
+run status, or a measurement calibration outside its schema enum, including case drift; an
+unresolved `node_refs`, `session_refs`, `source_refs`, `vocabulary_refs`, `related_terms`,
+`related_experiments` or run `experiment_id`; a `run_date` that is not ISO `YYYY-MM-DD`; a
+measurement value that is not a JSON number; an experiment or run file holding more than one
+record; and an unreadable or enum-less experiment or experiment-run contract.
+
+Phase 1D also upgrades two Phase 1B checks. Claim `appears_in: vocabulary` and
+`derived_from: experiment_run` references were shape-checked and carried through unresolved,
+because the backend did not read those layers. It reads them now, so both resolve, and a reference
+that names nothing is fatal.
+
+The run lifecycle rules are enforced at load and are the one place the backend deliberately
+re-implements canonical semantics: a planned run may not carry a date, evidence, interpretation or
+procedure deviations; a performed run must carry a date; a completed run must carry at least one
+observation or measurement; an invalid run may not carry interpretation. The reason is the general
+rule, not an exception to it — the API serves a derived `performed` flag and derived per-status run
+counts, so a record that claimed `planned` while carrying measurements would make those derived
+values assert evidence the repository says does not exist.
+
 Warnings are served on `/api/v1/diagnostics` and do not stop startup: a registered locator that does
 not exist, a registered session with no directory, a session no node cites, a registered source that
 neither a node nor a claim cites, and a claim appearance document that is safe and canonical but has
@@ -419,24 +558,37 @@ evidence, when an attribution is required, how dispute status must match the cit
 with `tools/validate-claims.ps1`, which is their canonical authority and gates every commit. The
 backend checks what its own projection depends on and does not become a second, drifting copy.
 
+The same boundary governs the practice layer. Vocabulary `domain` is prose in
+`schemas/vocabulary.schema.yaml` — "reuses a domain from `schemas/node.schema.yaml`" — and is
+enforced by `tools/validate-vocabulary.ps1`, so the backend serves it as an exact-match filter and
+does not re-derive the enum. Calendar validity and the "a run cannot be recorded before it is
+performed" rule stay with `tools/validate-experiment-runs.ps1`; the future-date bound in particular
+depends on the wall clock, and a projection whose validity changed with the time of day would not
+be the deterministic one this service promises. Generated indexes under `vocabulary/`,
+`experiments/`, `experiment-runs/` and `indexes/` are never read: they are rebuildable views, and
+reading them would destroy their value as an independent cross-check.
+
 The backend never repairs a record and never writes to the corpus. Canonical
 inconsistencies are reported for a human to decide about.
 
 ## Tests
 
-`go test ./...` covers the front-matter parser, the claim record stream parser, the filesystem
-adapter and every validation defect, the service index, filtering, search, paging, the graph
-projection and every evidence reverse index, the traversal adjacency, depth semantics, cycle
-termination, deduplication and truncation bounds, and the HTTP routes including 404, 400 and 405
-behaviour. Determinism is tested directly: the loader and the index are each built twice from an
+`go test ./...` covers the front-matter parser, the claim and vocabulary record stream parsers, the
+single-record experiment and run parsers, the filesystem adapter and every validation defect
+including the whole run lifecycle contract, the service index, filtering, search, paging, the graph
+projection and every evidence and practice reverse index, the traversal adjacency, depth semantics,
+cycle termination, deduplication and truncation bounds, and the HTTP routes including 404, 400 and
+405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
 unchanged corpus and the results compared. Unit tests run against `testdata/corpus/`, a
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
 expectation.
 
-Three tests run against the real repository on purpose: one asserts it loads with no fatal issues,
-one asserts the evidence layer parses and resolves, and one snapshots the size, modification time
-and content digest of every canonical file before and after a load to assert nothing was written.
-All three skip if the canonical repository is not found above the working directory.
+Five tests run against the real repository on purpose: one asserts it loads with no fatal issues,
+one asserts the evidence layer parses and resolves, one asserts the practice layer does, and two
+snapshot the size, modification time and content digest of every canonical file — one across a
+load, one across a full index build plus one request to every read surface and a rejected request
+on each mutating method. All five skip if the canonical repository is not found above the working
+directory.
 
 ## Known limitations
 
@@ -445,10 +597,12 @@ All three skip if the canonical repository is not found above the working direct
 - Search is lexical substring matching with no ranking. There is no semantic retrieval and
   no embedding.
 - No persistence and no database; the startup index is the only state.
-- Experiments, experiment runs and vocabulary entries are canonical layers the backend does
-  not parse. Node `experiments:` references and claim `appears_in: vocabulary` and
-  `derived_from: experiment_run` references are checked for identifier shape only and are
-  carried through unresolved.
+- Node `experiments:` is the one canonical reference field still carried unresolved. No
+  repository validator treats it as a reference list and every current node leaves it empty, so
+  resolving it would be the backend inventing a contract rather than reading one.
+- Vocabulary entries, experiments and experiment runs are read surfaces adjacent to the graph,
+  not part of it. None of them becomes a vertex or an edge, and `GET /api/v1/graph` is unchanged.
+  Making them traversable would be a separate graph-contract decision.
 - `appears_in: session` is a canonical reference kind no current claim record uses, so
   `?session_id=` on either evidence endpoint answers correctly and returns nothing against
   today's corpus.
@@ -465,5 +619,10 @@ All three skip if the canonical repository is not found above the working direct
 
 ## Future work
 
-Deferred, not implemented: vocabulary and experiment-run parsing, richer diagnostics, search
+Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, search
 hardening, graph visualization, semantic retrieval, and MLLM experimentation.
+
+Traversal over the practice layer is deferred deliberately, not incidentally. Vocabulary entries,
+experiments and experiment runs are read surfaces adjacent to the graph, and their cross-references
+are not canonical graph relationships; promoting them to traversal edges would assert a claim about
+the corpus that the corpus does not make. See "Practice layer is not the graph" below.

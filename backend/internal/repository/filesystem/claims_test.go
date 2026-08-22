@@ -527,13 +527,17 @@ func TestClaimFatalDefects(t *testing.T) {
 			wantErr: domain.CodeGeneratedAppearance,
 		},
 		{
-			name: "vocabulary reference is not a canonical identifier",
+			// Phase 1B could only shape-check this reference and reported a non-canonical
+			// spelling as invalid_id. Phase 1D reads the vocabulary layer, so the reference is
+			// now resolved and a value that names no entry is an unresolved reference, which is
+			// the stronger and more accurate finding.
+			name: "vocabulary appearance reference does not resolve",
 			mutate: func(c fstest.MapFS) {
 				writeClaims(c, testsupport.ValidClaim("delta-claim", "technical_fact", "moderate", "undisputed",
 					testsupport.SupportedBy("fixture-reference-work"), "[]", "[]",
 					`[{"kind": "vocabulary", "ref": "Not A Term"}]`))
 			},
-			wantErr: domain.CodeInvalidID,
+			wantErr: domain.CodeUnresolvedVocabulary,
 		},
 		{
 			name: "registry declares a source type outside the contract",

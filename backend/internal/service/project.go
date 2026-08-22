@@ -10,11 +10,19 @@ const (
 )
 
 // Counts is the corpus size summary.
+//
+// ExperimentRuns is the total across every lifecycle state. It is deliberately not the count
+// of runs that produced evidence: the per-state split lives on ExperimentRunTotals, because a
+// single number here would let "three runs exist" be read as "three experiments were carried
+// out and observed".
 type Counts struct {
 	Nodes             int `json:"nodes"`
 	Sessions          int `json:"sessions"`
 	Sources           int `json:"sources"`
 	Claims            int `json:"claims"`
+	Vocabulary        int `json:"vocabulary"`
+	Experiments       int `json:"experiments"`
+	ExperimentRuns    int `json:"experiment_runs"`
 	Edges             int `json:"edges"`
 	RelationshipTypes int `json:"relationship_types"`
 	Domains           int `json:"domains"`
@@ -37,6 +45,15 @@ type ProjectSummary struct {
 	Validation     string   `json:"validation"`
 	WarningCount   int      `json:"warning_count"`
 	CanonicalLayer []string `json:"canonical_layers_served"`
+
+	// VocabularyDomains is the domain set present in the vocabulary layer. It is reported
+	// beside Domains, which is the node layer's, rather than merged into it: the two layers
+	// draw from the same canonical enum but need not use the same members of it.
+	VocabularyDomains []string `json:"vocabulary_domains"`
+
+	// ExperimentRuns is the corpus-wide run tally broken out by lifecycle state, so a client
+	// can see at a glance how much of the experiment layer is planned rather than performed.
+	ExperimentRuns domain.ExperimentRunCounts `json:"experiment_runs"`
 
 	// Vocabulary is the bounded value set read from schemas/claim.schema.yaml and
 	// schemas/source.schema.yaml. It is served here so a client can discover exactly which
@@ -63,16 +80,24 @@ func (k *Knowledge) Project() ProjectSummary {
 			Sessions:          len(k.sessions),
 			Sources:           len(k.sources),
 			Claims:            len(k.claims),
+			Vocabulary:        len(k.vocabulary),
+			Experiments:       len(k.experiments),
+			ExperimentRuns:    len(k.runs),
 			Edges:             k.graph.Metadata.EdgeCount,
 			RelationshipTypes: len(k.relationshipTypes),
 			Domains:           len(k.Domains()),
 		},
-		Domains:        k.Domains(),
-		Statuses:       k.Statuses(),
-		Validation:     k.report.Status(),
-		WarningCount:   len(k.report.Warnings()),
-		CanonicalLayer: []string{"nodes", "sessions", "sources", "claims", "relationship-types"},
-		Vocabulary:     k.Vocabularies(),
+		Domains:      k.Domains(),
+		Statuses:     k.Statuses(),
+		Validation:   k.report.Status(),
+		WarningCount: len(k.report.Warnings()),
+		CanonicalLayer: []string{
+			"nodes", "sessions", "sources", "claims",
+			"vocabulary", "experiments", "experiment-runs", "relationship-types",
+		},
+		VocabularyDomains: k.VocabularyDomains(),
+		ExperimentRuns:    k.ExperimentRunTotals(),
+		Vocabulary:        k.Vocabularies(),
 	}
 }
 
@@ -88,12 +113,30 @@ type Diagnostics struct {
 	RepositorySemanticValidation string                   `json:"repository_semantic_validation"`
 	Warnings                     []domain.ValidationIssue `json:"warnings"`
 	Counts                       DiagnosticsCounts        `json:"counts"`
+	Corpus                       DiagnosticsCorpus        `json:"corpus"`
 }
 
 // DiagnosticsCounts summarises the report.
 type DiagnosticsCounts struct {
 	Fatal   int `json:"fatal"`
 	Warning int `json:"warning"`
+}
+
+// DiagnosticsCorpus is the size of the loaded canonical corpus, reported so an operator can
+// confirm which layers the running process actually projected.
+//
+// These are counts of records read from canonical files. They are not read from the generated
+// Markdown indexes under vocabulary/, experiments/, experiment-runs/ or indexes/, which are
+// rebuildable views rather than knowledge; a mismatch between the two is a signal worth having,
+// which it would not be if the backend read the projection it was being compared against.
+type DiagnosticsCorpus struct {
+	Nodes          int `json:"nodes"`
+	Sessions       int `json:"sessions"`
+	Sources        int `json:"sources"`
+	Claims         int `json:"claims"`
+	Vocabulary     int `json:"vocabulary"`
+	Experiments    int `json:"experiments"`
+	ExperimentRuns int `json:"experiment_runs"`
 }
 
 // Diagnostics returns the sanitized validation warnings from the load that built the index.
@@ -111,6 +154,15 @@ func (k *Knowledge) Diagnostics() Diagnostics {
 		Counts: DiagnosticsCounts{
 			Fatal:   len(k.report.Fatal()),
 			Warning: len(warnings),
+		},
+		Corpus: DiagnosticsCorpus{
+			Nodes:          len(k.nodes),
+			Sessions:       len(k.sessions),
+			Sources:        len(k.sources),
+			Claims:         len(k.claims),
+			Vocabulary:     len(k.vocabulary),
+			Experiments:    len(k.experiments),
+			ExperimentRuns: len(k.runs),
 		},
 	}
 }

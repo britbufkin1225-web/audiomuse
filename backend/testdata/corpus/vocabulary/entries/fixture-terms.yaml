@@ -1,0 +1,36 @@
+---
+id: "fixture-term"
+term: "Fixture Term"
+domain: "acoustics"
+definition: "A synthetic terminology entry used by the backend tests."
+digital_relationship: "Represented in the fixture corpus as a vocabulary record with no counterpart node field."
+best_use: "Exercising vocabulary loading, filtering and reverse-reference derivation."
+technologies: ["fixture harness", "go test"]
+node_refs: ["alpha"]
+session_refs: ["session-01-fixture"]
+related_terms: ["fixture-companion"]
+tags: ["fixture", "acoustics"]
+---
+id: "fixture-companion"
+term: "Fixture Companion"
+domain: "dsp"
+definition: "A second synthetic entry so related-term navigation has somewhere to point."
+digital_relationship: "Carries a different domain from fixture-term so domain filtering has two answers."
+best_use: "Exercising the domain filter and the related-term list."
+technologies: ["fixture harness"]
+node_refs: ["gamma"]
+session_refs: []
+related_terms: ["fixture-term"]
+tags: ["fixture"]
+---
+id: "fixture-orphan-term"
+term: "Fixture Orphan Term"
+domain: "acoustics"
+definition: "A synthetic entry that no experiment and no claim refers to."
+digital_relationship: "Present so the derived reverse views have a proven empty case."
+best_use: "Asserting that experiment_ids and claim_ids are empty rather than absent."
+technologies: []
+node_refs: []
+session_refs: []
+related_terms: []
+tags: ["fixture", "orphan"]

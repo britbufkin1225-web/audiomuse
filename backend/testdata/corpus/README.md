@@ -12,10 +12,23 @@ It is shaped to exercise the loader end to end:
 - one registered source that nothing cites (warning);
 - one registered source whose locator does not exist (warning);
 - four claim records covering all three evidence relations, an attribution-only source
-  citation, a claim-to-claim derivation, and appearance sites of all four canonical kinds.
+  citation, a claim-to-claim derivation, and appearance sites of all four canonical kinds;
+- three vocabulary entries across two domains: one referenced by an experiment and a claim,
+  one that exists so related-term navigation has a target, and one that nothing refers to;
+- two experiment definitions, one with runs and one with none, so the derived run tally has a
+  populated case and a proven zero case;
+- two experiment runs of the same definition, one `planned` with no date and no evidence and
+  one `completed` carrying an observation, a measurement, and both permitted control-value
+  forms. The measurement is authored as `72.50` on purpose: it proves the projection serves
+  the authored token rather than a re-encoded `72.5`.
 
 `schemas/node.schema.yaml` is present only because the loader treats it as a repository root
 marker; the required-field list itself is compiled into the parser from the canonical
-contract. `schemas/claim.schema.yaml` and `schemas/source.schema.yaml` are different: the
+contract. The same is true of `schemas/vocabulary.schema.yaml`, which declares no enums and is
+therefore not copied here at all. `schemas/claim.schema.yaml`, `schemas/source.schema.yaml`,
+`schemas/experiment.schema.yaml` and `schemas/experiment-run.schema.yaml` are different: the
 loader reads their bounded vocabularies at startup, so the enum lists in the fixture copies
 mirror the canonical contracts exactly rather than being convenient subsets.
+
+Nothing here is canonical AudioMuse knowledge, and the run records describe executions that
+never happened. Do not copy their values into `experiment-runs/` at the repository root.
