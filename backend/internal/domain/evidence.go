@@ -192,10 +192,11 @@ type SourceVocabulary struct {
 // because the loader's rule is uniform across layers: a bounded value the API serves is read
 // from the schema that declares it, never compiled into Go.
 type Vocabularies struct {
-	Claim         ClaimVocabulary         `json:"claim"`
-	Source        SourceVocabulary        `json:"source"`
-	Experiment    ExperimentVocabulary    `json:"experiment"`
-	ExperimentRun ExperimentRunVocabulary `json:"experiment_run"`
+	Claim             ClaimVocabulary         `json:"claim"`
+	Source            SourceVocabulary        `json:"source"`
+	VocabularyDomains []string                `json:"vocabulary_domains"`
+	Experiment        ExperimentVocabulary    `json:"experiment"`
+	ExperimentRun     ExperimentRunVocabulary `json:"experiment_run"`
 }
 
 // Claim reference kinds and evidence relations that the backend resolves by name.

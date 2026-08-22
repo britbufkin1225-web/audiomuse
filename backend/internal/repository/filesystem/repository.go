@@ -107,6 +107,7 @@ func (r *Repository) Load(ctx context.Context) (*repository.Corpus, *domain.Vali
 	nodes := r.loadNodes(report)
 	claims := r.loadClaims(vocabularies.Claim, report)
 	vocabulary := r.loadVocabulary(report)
+	checkVocabularyDomains(vocabulary, vocabularies.VocabularyDomains, report)
 	experiments := r.loadExperiments(vocabularies.Experiment, report)
 	runs := r.loadExperimentRuns(vocabularies.ExperimentRun, report)
 

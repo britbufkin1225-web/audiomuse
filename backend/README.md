@@ -96,7 +96,9 @@ Those four are the discovery markers and are deliberately kept minimal and stabl
 `schemas/claim.schema.yaml`, `schemas/source.schema.yaml`, `schemas/experiment.schema.yaml` and
 `schemas/experiment-run.schema.yaml` are not markers but are still required: the loader reads their
 bounded vocabularies, and an unreadable one is reported as a fatal validation issue rather than as a
-bad root. `schemas/vocabulary.schema.yaml` declares no enums and is not read.
+bad root. `schemas/vocabulary.schema.yaml` declares no enums and is not read directly; its domain
+field explicitly reuses the enum in `schemas/node.schema.yaml`, which the loader reads for startup
+record validation and vocabulary-filter validation.
 
 `claims/records/`, `vocabulary/entries/`, `experiments/records/` and `experiment-runs/records/` are
 each optional — a corpus predating one of those layers loads and serves it empty. A reference *into*
@@ -558,10 +560,10 @@ evidence, when an attribution is required, how dispute status must match the cit
 with `tools/validate-claims.ps1`, which is their canonical authority and gates every commit. The
 backend checks what its own projection depends on and does not become a second, drifting copy.
 
-The same boundary governs the practice layer. Vocabulary `domain` is prose in
-`schemas/vocabulary.schema.yaml` — "reuses a domain from `schemas/node.schema.yaml`" — and is
-enforced by `tools/validate-vocabulary.ps1`, so the backend serves it as an exact-match filter and
-does not re-derive the enum. Calendar validity and the "a run cannot be recorded before it is
+The same boundary governs the practice layer. Vocabulary `domain` is declared by reference in
+`schemas/vocabulary.schema.yaml` — "reuses a domain from `schemas/node.schema.yaml`" — so the
+backend reads that node-domain enum for startup validation and exact-match filter validation, just
+as `tools/validate-vocabulary.ps1` does. Calendar validity and the "a run cannot be recorded before it is
 performed" rule stay with `tools/validate-experiment-runs.ps1`; the future-date bound in particular
 depends on the wall clock, and a projection whose validity changed with the time of day would not
 be the deterministic one this service promises. Generated indexes under `vocabulary/`,

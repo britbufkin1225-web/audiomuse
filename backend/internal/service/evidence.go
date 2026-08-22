@@ -419,6 +419,7 @@ func (k *Knowledge) Vocabularies() domain.Vocabularies {
 			EvidenceClasses: copyIDs(v.Source.EvidenceClasses),
 			Retrievals:      copyIDs(v.Source.Retrievals),
 		},
+		VocabularyDomains: copyIDs(v.VocabularyDomains),
 		Experiment: domain.ExperimentVocabulary{
 			Statuses:     copyIDs(v.Experiment.Statuses),
 			Types:        copyIDs(v.Experiment.Types),

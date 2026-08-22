@@ -203,6 +203,19 @@ func checkVocabularyLists(entry domain.VocabularyEntry, report *domain.Validatio
 	}
 }
 
+func checkVocabularyDomains(entries []domain.VocabularyEntry, allowed []string, report *domain.ValidationReport) {
+	domains := newSet(allowed)
+	for _, entry := range entries {
+		if !domains[entry.Domain] {
+			report.Add(domain.ValidationIssue{
+				Severity: domain.SeverityFatal, Code: domain.CodeInvalidVocabulary,
+				Ref: entry.ID, Path: entry.Path,
+				Message: fmt.Sprintf("domain %q is not declared in %s", entry.Domain, nodeSchemaPath),
+			})
+		}
+	}
+}
+
 // resolveVocabularyReferences checks every cross-record reference a vocabulary entry declares.
 //
 // node_refs resolve against canonical nodes and session_refs against sources registered as

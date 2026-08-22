@@ -41,6 +41,7 @@ Every field the API serves can be traced back through this chain to a canonical 
 | `schemas/claim.schema.yaml` and `schemas/source.schema.yaml` bounded enums | vocabulary lists | `domain.Vocabularies` | evidence filter validation set | `project.vocabulary`; `400 invalid_query` |
 | the fields above, read as one graph | canonical field references | `domain.GraphRelationship`, `domain.EntityRef` | `Knowledge.adjacency`, one entry per `(type, id)` | `GET /api/v1/graph/entities/{entity_type}/{id}/relationships`, `.../traverse` |
 | `vocabulary/entries/*.yaml` YAML document streams (`schemas/vocabulary.schema.yaml`) | one mapping per entry | `domain.VocabularyEntry` | `vocabularyByID`, sorted `vocabulary` | `GET /api/v1/vocabulary`, `GET /api/v1/vocabulary/{id}` |
+| vocabulary `domain`, reusing the enum in `schemas/node.schema.yaml` | bounded vocabulary | `domain.Vocabularies.VocabularyDomains` | startup and filter validation set | `?domain=`; `400 invalid_query` |
 | `vocabulary.related_terms[]` | curated navigation ID list | `[]string` on the entry | none; deliberately not indexed as adjacency | `entry.related_terms` — never a graph edge |
 | `experiments/records/*.yaml`, one record per file (`schemas/experiment.schema.yaml`) | one mapping per definition | `domain.Experiment` | `experimentsByID`, sorted `experiments` | `GET /api/v1/experiments`, `GET /api/v1/experiments/{id}` |
 | `experiment-runs/records/*.yaml`, one record per file (`schemas/experiment-run.schema.yaml`) | one mapping per run | `domain.ExperimentRun` | `runsByID`, sorted `runs` | `GET /api/v1/experiment-runs`, `GET /api/v1/experiment-runs/{id}` |
@@ -263,9 +264,10 @@ because the repository validators parse each value with `ConvertFrom-Json`.
 semantic rules stay with the PowerShell validators. The lifecycle rules are enforced here for the
 same reason those are not: the projection depends on them. The API serves a derived `performed`
 flag and derived per-status counts, so a record claiming `planned` while carrying measurements
-would make those derived values assert evidence the repository withholds. Rules the projection does
-not depend on — calendar validity, the future-date bound, vocabulary `domain` membership — stay
-with `tools/validate-experiment-runs.ps1` and `tools/validate-vocabulary.ps1`. The future-date rule
+would make those derived values assert evidence the repository withholds. Vocabulary `domain`
+membership is also enforced because it bounds a served filter, using the same node-schema enum as
+`tools/validate-vocabulary.ps1`. Calendar validity and the future-date bound stay with
+`tools/validate-experiment-runs.ps1`. The future-date rule
 additionally depends on the wall clock, and a projection whose validity changed with the time of
 day would not be deterministic.
 

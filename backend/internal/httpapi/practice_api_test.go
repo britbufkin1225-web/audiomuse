@@ -226,6 +226,7 @@ func TestPracticeInvalidQueries(t *testing.T) {
 		"/api/v1/experiments?type=listening&type=hybrid",
 		"/api/v1/experiment-runs?status=planned&status=completed",
 		// Bounded filter values outside the contract.
+		"/api/v1/vocabulary?domain=invented-domain",
 		"/api/v1/experiments?status=provisional",
 		"/api/v1/experiments?type=measurement",
 		"/api/v1/experiments?difficulty=expert",

@@ -17,6 +17,15 @@ func vocabularyListIDs(list service.VocabularyList) []string {
 	return out
 }
 
+func listVocabulary(t testing.TB, k *service.Knowledge, query service.VocabularyQuery) service.VocabularyList {
+	t.Helper()
+	list, err := k.ListVocabulary(query)
+	if err != nil {
+		t.Fatalf("list vocabulary: %v", err)
+	}
+	return list
+}
+
 func experimentListIDs(list service.ExperimentList) []string {
 	out := make([]string, 0, len(list.Experiments))
 	for _, experiment := range list.Experiments {
@@ -53,7 +62,7 @@ func mustListRuns(t testing.TB, k *service.Knowledge, q service.ExperimentRunQue
 
 func TestVocabularyListIsCanonicallyOrdered(t *testing.T) {
 	k := evidenceIndex(t)
-	list := k.ListVocabulary(service.VocabularyQuery{})
+	list := listVocabulary(t, k, service.VocabularyQuery{})
 
 	want := []string{"fixture-companion", "fixture-orphan-term", "fixture-term"}
 	if got := vocabularyListIDs(list); !reflect.DeepEqual(got, want) {
@@ -90,7 +99,7 @@ func TestVocabularyFilters(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := vocabularyListIDs(k.ListVocabulary(tc.query))
+			got := vocabularyListIDs(listVocabulary(t, k, tc.query))
 			if !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("ids = %v, want %v", got, tc.want)
 			}
@@ -448,7 +457,7 @@ func TestRunSummaryDateIsACopy(t *testing.T) {
 func TestPracticePaging(t *testing.T) {
 	k := evidenceIndex(t)
 
-	first := k.ListVocabulary(service.VocabularyQuery{Limit: 2})
+	first := listVocabulary(t, k, service.VocabularyQuery{Limit: 2})
 	if got, want := vocabularyListIDs(first), []string{"fixture-companion", "fixture-orphan-term"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("page one = %v, want %v", got, want)
 	}
@@ -456,17 +465,17 @@ func TestPracticePaging(t *testing.T) {
 		t.Errorf("page = %+v", first.Page)
 	}
 
-	second := k.ListVocabulary(service.VocabularyQuery{Limit: 2, Offset: 2})
+	second := listVocabulary(t, k, service.VocabularyQuery{Limit: 2, Offset: 2})
 	if got, want := vocabularyListIDs(second), []string{"fixture-term"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("page two = %v, want %v", got, want)
 	}
 
-	past := k.ListVocabulary(service.VocabularyQuery{Offset: 99})
+	past := listVocabulary(t, k, service.VocabularyQuery{Offset: 99})
 	if len(past.Vocabulary) != 0 || past.Page.Total != 3 {
 		t.Errorf("past-the-end page = %+v", past)
 	}
 
-	clamped := k.ListVocabulary(service.VocabularyQuery{Limit: 10000})
+	clamped := listVocabulary(t, k, service.VocabularyQuery{Limit: 10000})
 	if clamped.Page.Limit != service.MaxLimit {
 		t.Errorf("limit = %d, want it clamped to %d", clamped.Page.Limit, service.MaxLimit)
 	}
@@ -477,7 +486,7 @@ func TestPracticePaging(t *testing.T) {
 func TestPracticeProjectionIsDeterministic(t *testing.T) {
 	first, second := evidenceIndex(t), evidenceIndex(t)
 
-	if !reflect.DeepEqual(first.ListVocabulary(service.VocabularyQuery{}), second.ListVocabulary(service.VocabularyQuery{})) {
+	if !reflect.DeepEqual(listVocabulary(t, first, service.VocabularyQuery{}), listVocabulary(t, second, service.VocabularyQuery{})) {
 		t.Error("two indexes produced different vocabulary lists")
 	}
 	if !reflect.DeepEqual(mustListExperiments(t, first, service.ExperimentQuery{}),

@@ -15,6 +15,7 @@ const (
 	sourceSchemaPath        = "schemas/source.schema.yaml"
 	experimentSchemaPath    = "schemas/experiment.schema.yaml"
 	experimentRunSchemaPath = "schemas/experiment-run.schema.yaml"
+	nodeSchemaPath          = "schemas/node.schema.yaml"
 )
 
 // claimSchemaFile is the subset of schemas/claim.schema.yaml the backend reads.
@@ -78,11 +79,26 @@ type experimentRunSchemaFile struct {
 // that does not exist.
 func (r *Repository) loadVocabularies(report *domain.ValidationReport) domain.Vocabularies {
 	return domain.Vocabularies{
-		Claim:         r.loadClaimVocabulary(report),
-		Source:        r.loadSourceVocabulary(report),
-		Experiment:    r.loadExperimentVocabulary(report),
-		ExperimentRun: r.loadExperimentRunVocabulary(report),
+		Claim:             r.loadClaimVocabulary(report),
+		Source:            r.loadSourceVocabulary(report),
+		VocabularyDomains: r.loadVocabularyDomains(report),
+		Experiment:        r.loadExperimentVocabulary(report),
+		ExperimentRun:     r.loadExperimentRunVocabulary(report),
 	}
+}
+
+// loadVocabularyDomains reads the domain vocabulary that schemas/vocabulary.schema.yaml
+// explicitly reuses from schemas/node.schema.yaml. The PowerShell vocabulary validator uses
+// this same enum, so reading it here prevents the projection from accepting a domain the
+// canonical repository rejects.
+func (r *Repository) loadVocabularyDomains(report *domain.ValidationReport) []string {
+	var file sourceSchemaFile
+	if !r.decodeContract(nodeSchemaPath, &file, report) {
+		return nil
+	}
+	domains := file.Properties["domain"].Enum
+	requireEnums(nodeSchemaPath, map[string][]string{"domain": domains}, report)
+	return domains
 }
 
 // loadExperimentVocabulary reads the bounded status, type and difficulty enums from

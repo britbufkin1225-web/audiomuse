@@ -40,7 +40,7 @@ func (s *Server) handleVocabulary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, r, s.logger, http.StatusOK, s.knowledge.ListVocabulary(service.VocabularyQuery{
+	list, err := s.knowledge.ListVocabulary(service.VocabularyQuery{
 		Q:         values["q"],
 		Domain:    values["domain"],
 		NodeID:    values["node_id"],
@@ -48,7 +48,12 @@ func (s *Server) handleVocabulary(w http.ResponseWriter, r *http.Request) {
 		Tag:       values["tag"],
 		Limit:     limit,
 		Offset:    offset,
-	}))
+	})
+	if err != nil {
+		writeFilterError(w, r, s.logger, err)
+		return
+	}
+	writeJSON(w, r, s.logger, http.StatusOK, list)
 }
 
 func (s *Server) handleVocabularyByID(w http.ResponseWriter, r *http.Request) {

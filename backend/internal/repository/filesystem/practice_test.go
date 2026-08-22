@@ -372,6 +372,15 @@ func TestPracticeFatalDefects(t *testing.T) {
 			wantErr: domain.CodeInvalidID,
 		},
 		{
+			name: "vocabulary domain is outside the node domain vocabulary",
+			mutate: func(c fstest.MapFS) {
+				testsupport.Write(c, fixtureVocabularyPath,
+					testsupport.ValidVocabularyEntry("solo-term", "Solo Term", "invented-domain",
+						"[]", "[]", "[]", "[]"))
+			},
+			wantErr: domain.CodeInvalidVocabulary,
+		},
+		{
 			name: "two vocabulary entries share an id",
 			mutate: func(c fstest.MapFS) {
 				testsupport.Write(c, fixtureVocabularyPath,

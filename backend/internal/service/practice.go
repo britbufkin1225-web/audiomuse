@@ -183,7 +183,10 @@ func searchCorpusForExperiment(experiment domain.Experiment) string {
 // Multiple filters compose with AND. Results keep canonical ID order, matching every other
 // AudioMuse list projection; search never reorders by relevance, so two requests against an
 // unchanged corpus return byte-identical bodies.
-func (k *Knowledge) ListVocabulary(q VocabularyQuery) VocabularyList {
+func (k *Knowledge) ListVocabulary(q VocabularyQuery) (VocabularyList, error) {
+	if q.Domain != "" && !contains(k.vocabularies.VocabularyDomains, q.Domain) {
+		return VocabularyList{}, &InvalidFilterError{Param: "domain", Allowed: k.vocabularies.VocabularyDomains}
+	}
 	limit, offset := normalisePaging(q.Limit, q.Offset)
 	needle := boundedNeedle(q.Q)
 
@@ -217,7 +220,7 @@ func (k *Knowledge) ListVocabulary(q VocabularyQuery) VocabularyList {
 	}
 
 	page, meta := paginate(matched, limit, offset)
-	return VocabularyList{Page: meta, Vocabulary: page}
+	return VocabularyList{Page: meta, Vocabulary: page}, nil
 }
 
 // VocabularyByID returns one entry with the derived reverse views of what refers to it.
