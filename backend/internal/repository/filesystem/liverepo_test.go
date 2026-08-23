@@ -409,6 +409,10 @@ func TestLiveRepositoryIsNotMutatedByAPIRequests(t *testing.T) {
 		"/api/v1/search?q=resonance",
 		"/api/v1/search?q=e&limit=200",
 		"/api/v1/search?q=resonance&type=vocabulary",
+		// Context resolution reads the adjacency and every practice reference list on top of
+		// the search scan, so it is the broadest read the API performs in one request.
+		"/api/v1/search?q=resonance&include_context=true",
+		"/api/v1/search?q=e&limit=200&include_context=true",
 	}
 	for _, target := range targets {
 		rec := httptest.NewRecorder()

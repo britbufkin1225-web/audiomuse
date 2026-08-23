@@ -626,12 +626,28 @@ func TestSearchDoesNotFlattenProvenance(t *testing.T) {
 	k := evidenceIndex(t)
 	results := mustSearch(t, k, service.SearchQuery{Q: "fixture", Limit: 200})
 
-	// Every field a result carries is one of its own record's, so the whole surface of the DTO
-	// is four display values plus the matched-field evidence. Asserting the shape here is what
-	// makes a later field addition a deliberate contract decision rather than a slip.
-	if fields := reflect.TypeOf(domain.SearchResult{}).NumField(); fields != 6 {
+	// Every display field a result carries is one of its own record's, so the surface of the DTO
+	// is four display values, the matched-field evidence, and the Phase 1F context object.
+	// Asserting the shape here is what makes a later field addition a deliberate contract
+	// decision rather than a slip.
+	//
+	// Context is the one field that may name another record, and it was added deliberately
+	// against this rule rather than in spite of it: it is a separate sub-object in which every
+	// entity arrives with the relation and the canonical field it was read from, so nothing is
+	// flattened into the hit's own fields. The rest of this test still holds with context
+	// requested, which is what keeps the distinction real: TestContextPreservesResultIdentityAndOrder
+	// asserts that stripping Context off an enriched result yields the plain result exactly, so
+	// every display-field assertion below carries over to a context request unchanged.
+	if fields := reflect.TypeOf(domain.SearchResult{}).NumField(); fields != 7 {
 		t.Errorf("SearchResult has %d fields; a new field must be justified against provenance "+
 			"flattening before this expectation is updated", fields)
+	}
+
+	// A default search carries no context at all, so the Phase 1E result is byte-identical.
+	for _, result := range results.Results {
+		if result.Context != nil {
+			t.Errorf("result %s/%s carries context that was never requested", result.EntityType, result.ID)
+		}
 	}
 
 	for _, result := range results.Results {

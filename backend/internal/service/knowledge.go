@@ -86,6 +86,13 @@ type Knowledge struct {
 	// already parsed. It is also where every per-layer search corpus above is defined, so the
 	// two cannot drift apart; see buildSearch.
 	searchDocs []searchDocument
+
+	// Context layer (Phase 1F). searchContext holds the bounded canonical context of every
+	// searchable record and searchLabels the display label each record is named by, both built
+	// once from the adjacency and the reference lists the earlier phases already resolved. A
+	// context entry is a navigation reference, never a graph edge; see buildSearchContext.
+	searchContext map[searchRef][]domain.ContextRelation
+	searchLabels  map[searchRef]string
 }
 
 // New loads the corpus through the repository interface and builds the startup index.
@@ -159,6 +166,9 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 	k.buildEvidence()
 	k.buildTraversal()
 	k.buildPractice()
+	// buildSearchContext runs last: it reads the adjacency, the discovery documents and the
+	// practice records, so every index it projects from has to exist first.
+	k.buildSearchContext()
 	return k, nil
 }
 

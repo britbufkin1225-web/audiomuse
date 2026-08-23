@@ -40,6 +40,8 @@ func TestEveryPhaseRouteCoexistsOnOneHandler(t *testing.T) {
 		{"1E", "/api/v1/search?q=fixture"},
 		{"1E", "/api/v1/search?q=fixture&type=vocabulary"},
 		{"1E", "/api/v1/search?q=alpha&limit=5&offset=1"},
+		{"1F", "/api/v1/search?q=fixture&include_context=true"},
+		{"1F", "/api/v1/search?q=alpha&type=node&include_context=true"},
 		{"shared", "/api/v1/project"},
 		{"shared", "/api/v1/diagnostics"},
 		{"shared", "/health"},
@@ -138,6 +140,7 @@ func TestDuplicateQueryParametersAreRejectedAcrossPhases(t *testing.T) {
 		"/api/v1/experiment-runs?performed=true&performed=false",
 		"/api/v1/search?q=alpha&q=beta",
 		"/api/v1/search?q=alpha&type=node&type=claim",
+		"/api/v1/search?q=alpha&include_context=true&include_context=true",
 	}
 
 	for _, target := range targets {
