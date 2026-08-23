@@ -10,8 +10,8 @@ import (
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/service"
 )
 
-// The discovery handler: Phase 1E search, the Phase 1F context control and the Phase 1G
-// query-composition control. It stays as thin as
+// The discovery handler: Phase 1E search, the Phase 1F context control, the Phase 1G
+// query-composition control and the Phase 1H scope filter. It stays as thin as
 // every other handler in this package: bound the query string, hand it to the immutable index,
 // map the typed error, serialise. No matching, ordering, paging or relationship-resolution logic
 // lives here — all of it belongs to the service and is tested there directly.
@@ -19,7 +19,7 @@ import (
 // searchParams is the complete accepted query string. rejectUnknownParams refuses anything
 // else, and refuses a parameter supplied twice, so a caller can never be handed a result set
 // that silently dropped a filter they believed was applied.
-var searchParams = []string{"q", "type", "query_mode", "include_context", "limit", "offset"}
+var searchParams = []string{"q", "type", "entity_types", "query_mode", "include_context", "limit", "offset"}
 
 func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	if !rejectUnknownParams(w, r, s.logger, searchParams...) {
@@ -31,9 +31,28 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	// trimmed, refused rather than truncated past the service ceiling, and refused if it
 	// carries a NUL. It is then plain text and nothing else — never a path, a pattern or a
 	// program. See service.Search.
-	values, ok := boundedParams(w, r, s.logger, query, "q", "type", "query_mode")
+	values, ok := boundedParams(w, r, s.logger, query, "q", "type", "query_mode", "entity_types")
 	if !ok {
 		return
+	}
+	// entity_types is the Phase 1H scope filter, and the comma is a wire convention rather than
+	// a service one: the handler splits, the service validates each member and decides what a
+	// class list means. Splitting here is deliberately naive — no empty members are dropped and
+	// nothing is collapsed — so a leading, trailing or doubled comma survives as the blank
+	// member it is and is refused, instead of being quietly repaired into a working filter.
+	//
+	// A present but blank parameter is caught before the split, as query_mode is, because the
+	// message a caller needs there is what the parameter accepts rather than that one of its
+	// members was empty.
+	var entityTypes []string
+	if _, present := query["entity_types"]; present {
+		if values["entity_types"] == "" {
+			writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+				"Parameter entity_types must be a comma-separated list of: "+
+					strings.Join(domain.SearchEntityTypeNames(), ", ")+".")
+			return
+		}
+		entityTypes = strings.Split(values["entity_types"], ",")
 	}
 	// query_mode is the Phase 1G composition control. An absent parameter is the Phase 1E
 	// literal search unchanged, so whitespace in q stays part of the phrase; the service decides
@@ -71,6 +90,7 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	results, err := s.knowledge.Search(service.SearchQuery{
 		Q:              values["q"],
 		Type:           values["type"],
+		EntityTypes:    entityTypes,
 		Mode:           values["query_mode"],
 		IncludeContext: includeContext != nil && *includeContext,
 		Limit:          limit,
@@ -114,7 +134,26 @@ func (s *Server) writeSearchError(w http.ResponseWriter, r *http.Request, err er
 				" distinct whitespace-separated terms when query_mode is all_terms.")
 		return
 	}
-	// An unsupported type arrives as an InvalidFilterError and is rendered by the Phase 1B
-	// mapping, which lists the permitted values and never echoes the caller's own.
+	// The scope errors. Each states the rule rather than echoing the caller's list, for the
+	// reason writeFilterError does not echo a rejected value: the caller already has their own
+	// query string, and it is the one part of a response an attacker would control.
+	if errors.Is(err, service.ErrEmptySearchEntityType) {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter entity_types must not contain an empty value.")
+		return
+	}
+	if errors.Is(err, service.ErrDuplicateSearchEntityType) {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter entity_types must not repeat a value.")
+		return
+	}
+	if errors.Is(err, service.ErrConflictingSearchScope) {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameters type and entity_types must not be combined; supply one or the other.")
+		return
+	}
+	// An unsupported type or entity_types member arrives as an InvalidFilterError and is
+	// rendered by the Phase 1B mapping, which lists the permitted values and never echoes the
+	// caller's own.
 	writeFilterError(w, r, s.logger, err)
 }
