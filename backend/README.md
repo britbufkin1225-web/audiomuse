@@ -411,6 +411,7 @@ six searchable classes at once and reports which class each hit came from.
 | --- | --- |
 | `q` | **required.** Lexical substring search, case-insensitive, over the fields listed below |
 | `type` | optional; restrict results to exactly one searchable class |
+| `entity_types` | optional; restrict results to a comma-separated **set** of searchable classes. Not combinable with `type` |
 | `query_mode` | optional; exactly `literal` or `all_terms`. How `q` is composed into a query. Default `literal` |
 | `include_context` | optional; exactly `true` or `false`. Resolve the canonical context of each returned hit |
 | `limit`, `offset` | page size and start; default 50, clamped to 200 |
@@ -458,6 +459,111 @@ records, and a generic free-text hit inside them would quietly mean "this run ob
 evidence assertion a discovery surface has no standing to make. Runs stay addressable through
 `/api/v1/experiment-runs`, where the caller states which definition and which lifecycle state they
 are asking about, and through `/api/v1/experiment-runs/{id}` by exact ID.
+
+#### Result scope
+
+`entity_types` restricts a search to a **set** of searchable classes, which is the question
+`type` cannot ask: "answer this from the evidence layer only" is two classes, not one.
+
+```text
+?q=acoustic&entity_types=node,claim
+```
+
+| Rule | Behaviour |
+| --- | --- |
+| omitted | every searchable class, exactly as before this parameter existed |
+| one or more classes | results are restricted to those classes |
+| all six classes | identical to omitting the parameter |
+| unknown class | `400 invalid_query`, listing the accepted classes |
+| `experiment_run` | `400 invalid_query`; it is not a searchable class |
+| empty member | `400 invalid_query`; a leading, trailing or doubled comma produces one |
+| whitespace-only member | `400 invalid_query` |
+| repeated class | `400 invalid_query` |
+| supplied with `type` | `400 invalid_query`; supply one or the other |
+
+Members are trimmed, so `node, claim` and `node,claim` are the same request, and are then
+compared **exactly** against the six canonical class names. `Node`, `NODE`, `nodes`, `vocab` and
+`run` are refused rather than folded or guessed at, for the reason `query_mode` refuses `AND`: a
+filter that guesses at a spelling can guess wrong and answer a different question. There are no
+aliases and no plural forms, because the API has no alias convention to follow and inventing one
+here would make this the only place a canonical name is not written as the model spells it.
+
+Nothing malformed is repaired. `?entity_types=node,` is a caller mistake, and answering it with
+a working search would hide the mistake behind a correct-looking response — the same reason an
+unknown query parameter is refused rather than ignored.
+
+**`type` and `entity_types` are alternatives, not layers.** They are two spellings of one
+restriction, and there is no reading of both at once that is not a guess: intersecting them can
+produce an empty set that looks like "the corpus holds nothing of that kind", and honouring
+either one alone would silently discard a filter the caller believes is applied. `type` is
+unchanged and is not deprecated; a single-class search may be written either way, and the two
+return the same records. A response echoes only the filter it was given.
+
+The list needs no length bound of its own: the set is closed at six and repetition is refused,
+so a valid list cannot be longer than the model.
+
+**Scope filters; it does not search.** Restricting classes changes nothing about matching — the
+same searchable fields, the same case-insensitive substring test, the same `match_kind`, the
+same `matched_fields`, the same `term_matches` and the same relative order. A scoped result set
+is exactly the unscoped one with the other classes removed, which is what makes `entity_types`
+safe to add to a request whose results a client has already reasoned about. A record outside the
+scope is skipped as the corpus is walked, and everything after that — ordering, facet counting,
+paging, context resolution — runs over the filtered set, so `page.total` is the size of the full
+**filtered** set and a page boundary can never hide a record the filter kept.
+
+#### Result facets
+
+Every successful search carries a `facets` object describing the class composition of the
+complete result set:
+
+```json
+{
+  "query": "acoustic",
+  "entity_types": ["node", "claim"],
+  "page": { "total": 10, "count": 10, "limit": 50, "offset": 0 },
+  "facets": {
+    "entity_types": {
+      "session": 0,
+      "node": 7,
+      "claim": 3,
+      "source": 0,
+      "vocabulary": 0,
+      "experiment": 0
+    }
+  },
+  "results": []
+}
+```
+
+The `results` array above is abridged; the ten hits it stands for are what the facets count.
+
+| Rule | Behaviour |
+| --- | --- |
+| coverage | every searchable class, always, including classes with no hits |
+| key order | the canonical class order, not alphabetical |
+| scope | the complete filtered result set, **before** paging |
+| sum | equals `page.total` on every page of one search |
+| empty search | the complete structure with every count at `0` |
+| `experiment_run` | absent, because it is not a searchable class |
+
+**Counts are of the whole result set, never of the page.** `?limit=1&offset=1` and `?limit=200`
+report identical facets for the same query and the same filters, because a breakdown that moved
+with the page would describe the one thing the caller can already count for themselves. This is
+what makes the object useful before narrowing: a reader who searches a term and is shown 7 nodes
+and 3 claims can ask for `entity_types=claim` knowing what it will return.
+
+A zero is an answer, and is why every class is always present: "nothing of this kind matched" and
+"this build does not search this kind" are different facts, and an omitted key could not tell
+them apart. Under a scope, the classes outside it are reported as `0` for the same reason.
+
+**Facets are counts, not scores.** Nothing here ranks a class, reorders results, or implies that
+a class with more hits is a better answer. They are the same deterministic retrieval facts the
+result list carries, tallied.
+
+`facets` is additive: it is the one key Phase 1H adds to a search response, and no existing key
+was renamed, removed or reshaped to make room for it. `entity_types` is echoed only when the
+caller supplied it, in the canonical class order rather than the caller's, so — like `query` —
+the response describes the search that ran.
 
 #### Query composition
 
@@ -536,6 +642,16 @@ edge, so a direct `Knowledge.Search` caller inherits the same contract.
   "query": "room resonance",
   "query_mode": "all_terms",
   "page": { "total": 1, "count": 1, "limit": 50, "offset": 0 },
+  "facets": {
+    "entity_types": {
+      "session": 0,
+      "node": 1,
+      "claim": 0,
+      "source": 0,
+      "vocabulary": 0,
+      "experiment": 0
+    }
+  },
   "results": [
     {
       "entity_type": "node",
@@ -572,10 +688,11 @@ match-kind precedence, because every hit carries the one composed class `all_ter
 record satisfies every term, and inventing a tie-break between them would be a relevance judgement.
 The same corpus and the same normalised query always produce the same bytes.
 
-`type`, `limit` and `offset` compose unchanged, and the order of operations is fixed: normalise,
-match, filter by class, order the **complete** match set, page it, and only then resolve context.
-Paging never precedes matching, so `page.total` is always the size of the full composed result set
-rather than of the page.
+`type`, `entity_types`, `limit` and `offset` compose unchanged, and the order of operations is
+fixed: normalise, match, filter by class, order the **complete** match set, count its facets, page
+it, and only then resolve context. Paging never precedes matching, so `page.total` is always the
+size of the full composed result set rather than of the page, and the facets always describe that
+same full set.
 
 #### Result shape
 
@@ -890,6 +1007,14 @@ Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=sampling%20audio&query_
 ```
 
 ```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&entity_types=node,claim"
+```
+
+```powershell
+(Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance").facets.entity_types
+```
+
+```powershell
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&include_context=true"
 ```
 
@@ -1078,6 +1203,24 @@ the same records, which is what keeps the two from drifting apart. Adversarial q
 glob, path, URL, SQL, shell and template shapes, Unicode, and oversized input — are asserted to be
 treated as literal text.
 
+Result scope and facets have their own suite at both layers, written as invariants against the
+unfiltered search rather than as expected record lists: a scoped result set must be the unscoped
+one with other classes removed, in the same order and with the same match evidence. It covers each
+class alone, several classes at once, a scope naming all six being identical to no scope at all,
+canonical scope ordering regardless of how the caller spelled the list, composition with both query
+modes, with `include_context` and with paging, the facet sum equalling `page.total`, facets
+unchanged across every page of one search, the complete zero-valued structure on an empty result
+set, and defensive copying of the echoed scope, the facets and the results. Every malformed
+spelling is asserted separately — empty, leading, trailing and doubled separators, a whitespace-only
+member, a duplicate, a duplicate after trimming, a wrong-case or plural class name, and the two
+class filters supplied together — as is the refusal of a malformed scope on an otherwise valid
+request. Two are guardrails rather than feature tests: one requires `experiment_run` to be refused
+in a class list and absent from the accepted set, so scoping cannot become the route by which runs
+enter discovery; the other walks the closed searchable set and requires every member to be counted
+by the facet structure, so a class added to the model without a facet cannot silently break the sum
+invariant. At the HTTP layer the facet object is pinned as a wire contract: exactly the six class
+keys, in canonical order, present at zero, with no `experiment_run` key.
+
 Context resolution is covered at both layers. The service tests assert the exact resolved set, in
 order, for a representative record of every searchable class — including the canonical
 `claim -> source` provenance in both directions — plus the deterministic empty case for records
@@ -1114,8 +1257,16 @@ every layer at once.
   body — is not discoverable by that text.
 - `q` composes in exactly two ways: one literal phrase, or `query_mode=all_terms` requiring every
   whitespace-separated term inside one record. There is no boolean, wildcard, regex, quoting or
-  field-scoped query syntax, `type` accepts one class rather than a set, and the per-layer `q`
-  parameters remain literal-only — composition exists on `/api/v1/search` alone.
+  field-scoped query syntax, and the per-layer `q` parameters remain literal-only — composition
+  exists on `/api/v1/search` alone.
+- Result scope is a set of whole classes and nothing finer. `entity_types` restricts which of the
+  six searchable classes may be returned; there is no field-scoped filter, no per-class field
+  selection, no negation of a class, and no scope filter on the per-layer list endpoints, which
+  keep their own single-value filters. `type` and `entity_types` may not be combined.
+- Facets describe one axis: the searchable class of each hit. There is no facet over node
+  `domain`, claim confidence, source type, experiment status or any other canonical field, and no
+  caller-supplied facet field, because each would be a decision about which axes of the corpus are
+  worth counting rather than a reading of one the model already fixes.
 - `all_terms` splits on whitespace and nothing else, so punctuation stays part of a term and
   `room,` will not find a record that wrote `room`. It requires 2 to 8 distinct terms; one term is
   refused rather than treated as literal search under another name.
@@ -1167,9 +1318,11 @@ syntax beyond the two documented composition modes, deeper or caller-shaped cont
 visualization, semantic retrieval, and MLLM experimentation.
 
 Deterministic multi-term composition is no longer deferred; `query_mode=all_terms` is the whole of
-what shipped. Richer *syntax* — boolean operators, quoted phrases inside a composed query, negation,
-wildcards, field-scoped terms, multi-class `type` — remains deferred, and each would be its own
-contract rather than an extension of this one.
+what shipped. Multi-class result scope is no longer deferred either; `entity_types` is the whole of
+that one, and it filters rather than searching. Richer *syntax* — boolean operators, quoted phrases
+inside a composed query, negation, wildcards, field-scoped terms — remains deferred, as do facets
+over any axis other than the searchable class, and each would be its own contract rather than an
+extension of this one.
 
 Semantic retrieval is deferred deliberately. The deterministic lexical surface exists first so that
 the discovery contract — what is searchable, what a hit means, and what order results arrive in —

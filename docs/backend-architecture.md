@@ -142,6 +142,24 @@ class, evidence is per-term canonical field names with no counts or snippets, an
 canonical class order and then ID, because every hit satisfies every term equally and any tie-break
 between them would be a relevance score by another name.
 
+**Why result scope is a separate parameter, and why facets are counts of one axis.** A reader who
+searches across six layers at once needs two things the Phase 1E result page cannot give them:
+a way to say "answer this from these layers", and a way to see the shape of the answer before
+paging through it. Phase 1H adds both as projections of the result set that already existed, not
+as retrieval. `entity_types` filters — same fields, same substring test, same match evidence, same
+order, with other classes removed — so a scoped result set is provably the unscoped one minus
+classes, and scope can be added to a request whose results a client has already reasoned about.
+It is a new parameter rather than a widening of `type` because `type` is a single exact value, as
+every other filter on this API is, and re-reading it as a list would give one parameter two
+meanings and would silently turn a request that is refused today into one that succeeds; the two
+are refused together because there is no reading of both at once that is not a guess. Facets are counted over the whole
+filtered set before paging, which is the only version of the number worth serving — a breakdown of
+the current page is something the caller can already count — and they cover exactly one axis, the
+searchable class, because that axis is fixed by the model. A facet over node `domain`, claim
+confidence or source type would be a decision about which axes of the corpus are worth counting,
+and a caller-supplied facet field would make the response a query result rather than a fixed
+projection. They are counts, not scores: nothing about them reorders a result set or rates a class.
+
 **Why Phase 1B extended the Phase 1A machinery instead of adding a subsystem.** Sources, claims,
 and provenance are not an independent content type sitting beside the knowledge graph; they are
 relationships inside it. A claim's evidence points at the same registry a node's `sources:` points
@@ -390,18 +408,28 @@ reported for human decision.
 `runtime_projection`, while `repository_semantic_validation` is `external_precondition`. Its
 `valid` status must not be interpreted as an in-process execution of the PowerShell semantic rules.
 
-## Known limitations (through Phase 1G)
+## Known limitations (through Phase 1H)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, ranking model, or
-  embedding. `/api/v1/search?query_mode=all_terms` composes several literal terms into one
-  record-level request and is bounded to whitespace splitting and 2 to 8 distinct terms: no boolean
-  operators, no quoting, no negation, no wildcards, no regular expressions and no field-scoped
-  terms. Terms must all occur inside one canonical record; two terms held by two records never
-  combine, and search-result context is resolved after matching and can never supply a term.
+  embedding, and neither result scope nor facets adds one. `/api/v1/search?query_mode=all_terms`
+  composes several literal terms into one record-level request and is bounded to whitespace
+  splitting and 2 to 8 distinct terms: no boolean operators, no quoting, no negation, no wildcards,
+  no regular expressions and no field-scoped terms. Terms must all occur inside one canonical
+  record; two terms held by two records never combine, and search-result context is resolved after
+  matching and can never supply a term.
 - Query composition does not widen the search corpus. The searchable field set is unchanged in both
   modes, so node markdown bodies, source notes, experiment procedures and every experiment run stay
   outside discovery.
+- Result scope filters whole classes and nothing finer. `/api/v1/search?entity_types=` restricts
+  which of the six searchable classes may be returned; there is no field-scoped filter, no per-class
+  field selection, no negation, and no scope filter on the per-layer list endpoints. It may not be
+  combined with `type`, and it cannot make an unsearchable class reachable: `experiment_run` is
+  refused in a class list exactly as it is refused as a `type`.
+- Search facets describe one axis, the searchable class of each hit, counted over the complete
+  filtered result set before paging. There is no facet over any other canonical field and no
+  caller-supplied facet field, and a facet count is not a score: nothing in it orders or rates a
+  result set.
 - No persistence, no database, no cache beyond the startup index.
 - No file watcher, background worker, or scheduled ingestion.
 - No frontend and no graph visualization.
@@ -440,10 +468,11 @@ reported for human decision.
 ## Future work
 
 Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, query
-syntax beyond the two documented composition modes, graph visualization, semantic retrieval, and
-MLLM experimentation. Deterministic multi-term composition is no longer deferred — it shipped as
-`query_mode=all_terms` — while richer syntax and semantic retrieval remain separately reviewed
-future phases. The Phase 1C contract
+syntax beyond the two documented composition modes, facets over any axis other than the searchable
+class, graph visualization, semantic retrieval, and MLLM experimentation. Deterministic multi-term
+composition is no longer deferred — it shipped as `query_mode=all_terms` — nor is multi-class
+result scope, which shipped as `entity_types` and filters rather than searching, while richer
+syntax and semantic retrieval remain separately reviewed future phases. The Phase 1C contract
 is shaped to be useful to a future read-only graph inspector, provenance-path view or
 claim-confidence overlay without any of them being implemented here, and without the backend being
 distorted around a hypothetical frontend.

@@ -73,6 +73,109 @@ func SearchEntityRank(t SearchEntityType) int {
 	return len(SearchEntityTypes)
 }
 
+// SearchEntityTypeFacets is the entity-class composition of one complete search result set.
+//
+// It answers the question a result page cannot: "how much of what did this query actually
+// find". A caller reading page one of a fifty-hit set can see that the corpus answered mostly
+// with vocabulary entries and one claim, and can narrow with entity_types instead of paging
+// through a set whose shape they cannot see.
+//
+// It is an explicit struct with one field per searchable class rather than a map, and the
+// reason is the serialised order. Field order here is the canonical class order, so the object
+// reads as the model's own layering rather than as an alphabetisation of it — a map would
+// serialise claim, experiment, node in whatever order Go's key sort produced, which is stable
+// but is not the model. It follows the same shape as the diagnostics counts the service
+// already reports per class. The closed set is held to this struct by a test that walks
+// SearchEntityTypes and requires every member to be counted, since a Go switch is not
+// exhaustive on its own.
+//
+// Every field is always serialised, zero included. A class with no hits is a fact the caller
+// asked for — "nothing of this kind matched" — and omitting it would make an absent class
+// indistinguishable from a class this build does not search.
+//
+// These are counts of records, not scores. Nothing here ranks a class, orders the result set,
+// or implies that a class with more hits is a better answer.
+type SearchEntityTypeFacets struct {
+	Session    int `json:"session"`
+	Node       int `json:"node"`
+	Claim      int `json:"claim"`
+	Source     int `json:"source"`
+	Vocabulary int `json:"vocabulary"`
+	Experiment int `json:"experiment"`
+}
+
+// SearchFacets is the facet envelope of a search response.
+//
+// It is a named object with one member rather than a bare count map at the top level, so a
+// later facet — were one ever contracted — is a new key inside it rather than a reshaping of
+// the response. There is no experiment_run facet, for the reason there is no experiment_run
+// search class: a zero would read as "no run mentioned this" rather than "runs are not
+// searchable". See SearchEntityTypes.
+type SearchFacets struct {
+	EntityTypes SearchEntityTypeFacets `json:"entity_types"`
+}
+
+// NewSearchFacets counts one complete, already filtered and ordered result set.
+//
+// The caller passes the whole match set, never a page: the counts describe what the query
+// found, and a facet that changed with limit and offset would describe the page instead and
+// be useless for deciding how to narrow. The returned value is a copy of plain integers, so
+// nothing here aliases the index or the result slice.
+func NewSearchFacets(results []SearchResult) SearchFacets {
+	var facets SearchFacets
+	for _, result := range results {
+		facets.EntityTypes.add(result.EntityType)
+	}
+	return facets
+}
+
+// add increments the counter for one class. An unknown class increments nothing, which keeps
+// the sum invariant honest rather than silently attributing it to a neighbouring field; the
+// closed set is enforced where documents are built, and a facet test walks SearchEntityTypes
+// to require that every member of the set lands somewhere.
+func (f *SearchEntityTypeFacets) add(t SearchEntityType) {
+	switch t {
+	case SearchSession:
+		f.Session++
+	case SearchNode:
+		f.Node++
+	case SearchClaim:
+		f.Claim++
+	case SearchSource:
+		f.Source++
+	case SearchVocabulary:
+		f.Vocabulary++
+	case SearchExperiment:
+		f.Experiment++
+	}
+}
+
+// Count reports one class's facet by name, so a caller — or a test walking the closed set —
+// need not spell out a field per class.
+func (f SearchEntityTypeFacets) Count(t SearchEntityType) int {
+	switch t {
+	case SearchSession:
+		return f.Session
+	case SearchNode:
+		return f.Node
+	case SearchClaim:
+		return f.Claim
+	case SearchSource:
+		return f.Source
+	case SearchVocabulary:
+		return f.Vocabulary
+	case SearchExperiment:
+		return f.Experiment
+	}
+	return 0
+}
+
+// Total is the sum of every class count, which is the size of the complete filtered result
+// set the facets were built from.
+func (f SearchEntityTypeFacets) Total() int {
+	return f.Session + f.Node + f.Claim + f.Source + f.Vocabulary + f.Experiment
+}
+
 // Match kinds: the categorical precedence classes a result is ordered by.
 //
 // These are not a relevance score and are deliberately not rendered as a number. They are a

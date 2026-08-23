@@ -62,19 +62,59 @@ var ErrTooFewSearchTerms = errors.New("all_terms search requires at least two di
 // ErrTooManySearchTerms reports an all_terms query past MaxSearchTerms distinct terms.
 var ErrTooManySearchTerms = errors.New("all_terms search accepts at most eight distinct terms")
 
+// Scope errors. A malformed class list is refused rather than repaired, for the reason every
+// other malformed filter on this API is: a search whose scope silently differed from the one
+// the caller wrote would return a result set — and now a facet breakdown — that does not mean
+// what they think it means, and unlike a bad query string that is invisible in the response.
+var (
+	// ErrEmptySearchEntityType reports a class list carrying a blank member, which is what a
+	// leading, trailing or doubled separator produces. It is refused rather than skipped: a
+	// caller who wrote one comma too many has a bug, and answering it with a working search
+	// hides the bug behind a correct-looking response.
+	ErrEmptySearchEntityType = errors.New("entity type filter must not contain an empty value")
+
+	// ErrDuplicateSearchEntityType reports a class named twice. A repeated class cannot change
+	// which records match, so accepting it would be harmless and refusing it is still right:
+	// the two spellings a caller might mean — a set and a multiset — differ, and a filter that
+	// quietly collapses one into the other is a filter whose contract is guessed at.
+	ErrDuplicateSearchEntityType = errors.New("entity type filter must not repeat a value")
+
+	// ErrConflictingSearchScope reports the single-class and multi-class filters supplied
+	// together. They are two spellings of one restriction, and there is no reading of both at
+	// once that is not a guess: intersecting them can produce an empty set that looks like "the
+	// corpus holds nothing of that kind", and preferring either one would silently discard a
+	// filter the caller believes is applied. Refusing the combination also changes nothing for
+	// an existing client, because a request naming both was already refused as an unknown
+	// parameter before the class list existed.
+	ErrConflictingSearchScope = errors.New("search accepts either a single type or an entity type list, not both")
+)
+
 // SearchQuery is a bounded, deterministic cross-layer discovery request.
 //
 // Q is required. Type is an optional filter naming exactly one searchable class and is
 // rejected when outside domain.SearchEntityTypes, so a caller cannot filter by a class the
-// contract does not define and read the empty result as "nothing of that kind matched". A
-// single type is accepted rather than a list, because every other filter on every other
-// AudioMuse endpoint is a single exact value and a comma-separated set here would be a second
-// query-string convention.
+// contract does not define and read the empty result as "nothing of that kind matched".
+//
+// EntityTypes is the Phase 1H filter and names a set of classes. It is a separate field rather
+// than a widening of Type because Type is a single exact value, as every other filter on every
+// other AudioMuse endpoint is: re-reading it as a list would give one parameter two meanings and
+// would silently turn a request that is refused today — type naming two classes — into one that
+// succeeds, which is a change to an existing contract rather than an addition to it. The two are
+// alternatives, not layers: supplying both is refused. See ErrConflictingSearchScope.
 type SearchQuery struct {
 	Q      string
 	Type   string
 	Limit  int
 	Offset int
+
+	// EntityTypes restricts results to a set of searchable classes, and is the multi-class
+	// spelling Type deliberately is not. An empty slice means every searchable class, so the
+	// zero SearchQuery is the unfiltered request it has always been. Each member is trimmed and
+	// must name a class in domain.SearchEntityTypes exactly; a blank member, an unknown class,
+	// experiment_run, or a class named twice is refused rather than dropped. It may not be
+	// combined with Type. The list needs no length bound of its own: the set is closed at six
+	// and repetition is refused, so a valid list cannot be longer than the model.
+	EntityTypes []string
 
 	// Mode selects how Q is composed into a query. An empty value is domain.SearchModeLiteral,
 	// so the zero SearchQuery is the Phase 1E request it has always been and no existing caller
@@ -110,13 +150,28 @@ type SearchResults struct {
 
 	Type string `json:"type,omitempty"`
 
+	// EntityTypes echoes the class list that was applied, in the canonical class order rather
+	// than the caller's, so — like Query — the response describes the search that ran. It is
+	// present only when the caller supplied one: an unfiltered search serialises no key, and a
+	// single-class Type search echoes Type as it always did rather than acquiring a second,
+	// competing spelling of the same restriction. The slice is built per response.
+	EntityTypes []string `json:"entity_types,omitempty"`
+
 	// IncludeContext echoes the context control for the same reason Type echoes the class
 	// filter. A query whose every hit happens to reference nothing would otherwise be
 	// indistinguishable from one that never asked for context. It is omitted when false, so a
 	// response to a plain Phase 1E request is unchanged byte for byte.
 	IncludeContext bool `json:"include_context,omitempty"`
 
-	Page    Page                  `json:"page"`
+	Page Page `json:"page"`
+
+	// Facets is the class composition of the complete filtered result set, counted before
+	// paging. It is always present, including on a search that matched nothing, because a
+	// zero-valued breakdown is an answer — "nothing of any kind matched" — and a caller should
+	// not have to tell an empty facet object from an absent one. It is additive: no existing
+	// key changed to make room for it. See domain.SearchFacets.
+	Facets domain.SearchFacets `json:"facets"`
+
 	Results []domain.SearchResult `json:"results"`
 }
 
@@ -388,6 +443,90 @@ func (k *Knowledge) buildSearch() {
 	}
 }
 
+// searchScope is the resolved set of classes one search may return. An empty scope is every
+// searchable class, which is what an unfiltered request has always meant.
+//
+// It is one type for both spellings of the filter — the single Type and the EntityTypes list —
+// so the matching loops carry one admission test rather than two, and the two spellings cannot
+// drift into disagreeing about what "restricted to this class" means.
+type searchScope []domain.SearchEntityType
+
+// has is exact membership. It is separate from admits because an empty scope admits everything
+// and contains nothing, and the duplicate check needs the second question, not the first.
+func (s searchScope) has(t domain.SearchEntityType) bool {
+	for _, allowed := range s {
+		if allowed == t {
+			return true
+		}
+	}
+	return false
+}
+
+// admits reports whether a class may appear in the result set.
+func (s searchScope) admits(t domain.SearchEntityType) bool {
+	return len(s) == 0 || s.has(t)
+}
+
+// names renders the scope for the response echo, in canonical class order. The slice is fresh
+// on every call, so an echoed scope can never alias anything the index holds.
+func (s searchScope) names() []string {
+	out := make([]string, 0, len(s))
+	for _, t := range s {
+		out = append(out, string(t))
+	}
+	return out
+}
+
+// resolveSearchScope validates the two class filters and returns the classes a search may
+// return, or nil for every class.
+//
+// It is a pure function of the request and runs before any matching, so a malformed scope costs
+// one pass over at most a handful of short strings rather than a pass over the projection.
+// Members are trimmed and then compared exactly, which is the comparison every canonical filter
+// on this API already uses: "Node" and "NODE" are refused rather than folded, because a filter
+// that guesses at a caller's spelling is a filter that can guess wrong and answer a different
+// question. Nothing else is normalised — there is no alias table and no plural form, because
+// the API has no alias convention to follow and inventing one here would make the class list
+// the only place a canonical name is not written as the model spells it.
+//
+// The returned scope is in canonical class order rather than the caller's, so two spellings of
+// one scope produce one response.
+func resolveSearchScope(single string, requested []string) (searchScope, error) {
+	if single != "" && len(requested) > 0 {
+		return nil, ErrConflictingSearchScope
+	}
+	if single != "" {
+		// Type is validated by the caller against the same closed set, so by here it names a
+		// class. One class is a scope of one.
+		return searchScope{domain.SearchEntityType(single)}, nil
+	}
+	if len(requested) == 0 {
+		return nil, nil
+	}
+	scope := make(searchScope, 0, len(requested))
+	for _, raw := range requested {
+		value := strings.TrimSpace(raw)
+		if value == "" {
+			return nil, ErrEmptySearchEntityType
+		}
+		if !domain.ValidSearchEntityType(value) {
+			// experiment_run lands here with every other unknown class, which is the point:
+			// discovery has no run class, and a scope that accepted the name would answer with
+			// an empty set a caller could read as "no run mentions this".
+			return nil, &InvalidFilterError{Param: "entity_types", Allowed: domain.SearchEntityTypeNames()}
+		}
+		class := domain.SearchEntityType(value)
+		if scope.has(class) {
+			return nil, ErrDuplicateSearchEntityType
+		}
+		scope = append(scope, class)
+	}
+	sort.SliceStable(scope, func(i, j int) bool {
+		return domain.SearchEntityRank(scope[i]) < domain.SearchEntityRank(scope[j])
+	})
+	return scope, nil
+}
+
 // Search runs one bounded, deterministic cross-layer lexical query.
 //
 // The query is plain text and is treated as nothing else. It is never compiled as a regular
@@ -404,9 +543,25 @@ func (k *Knowledge) buildSearch() {
 //
 // Composition is decided before matching and never after: the whole match set is built, ordered
 // and only then paged, so a page boundary can never hide a record that satisfied the query.
+//
+// The order of operations is fixed and each step is separable: validate the request, match,
+// restrict to the requested classes, order the complete set, count the facets, page, and only
+// then resolve context. Scope restriction happens inside the match loop and changes nothing
+// about matching itself — the same fields, the same substring test, the same match evidence,
+// the same relative order — so a filtered result set is exactly the unfiltered one with other
+// classes removed. Facets are counted from the ordered set before paging, which is what makes
+// them stable across every page of one search.
 func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 	if q.Type != "" && !domain.ValidSearchEntityType(q.Type) {
 		return SearchResults{}, &InvalidFilterError{Param: "type", Allowed: domain.SearchEntityTypeNames()}
+	}
+
+	// Scope is resolved before the query text is even looked at. It is the cheapest validation
+	// on the request and the one most likely to be wrong in a hand-written query string, and
+	// refusing it here means a malformed class list never reaches the projection.
+	scope, err := resolveSearchScope(q.Type, q.EntityTypes)
+	if err != nil {
+		return SearchResults{}, err
 	}
 
 	// An unset mode is the Phase 1E default rather than an error, so the zero SearchQuery keeps
@@ -446,10 +601,23 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 		// describes the query that ran: repeated terms and runs of whitespace are already gone.
 		echo = strings.Join(terms, " ")
 		echoMode = string(domain.SearchModeAllTerms)
-		results = k.searchAllTerms(q.Type, terms)
+		results = k.searchAllTerms(scope, terms)
 	default:
 		echo = needle
-		results = k.searchLiteral(q.Type, needle)
+		results = k.searchLiteral(scope, needle)
+	}
+
+	// Facets count the complete, ordered, scope-filtered match set, which is why they are taken
+	// here and not after paging: they describe what the query found, and a breakdown that moved
+	// with limit and offset would describe the page instead — the one thing the caller can
+	// already see. The sum of the counts is therefore page.total, on every page of one search.
+	facets := domain.NewSearchFacets(results)
+
+	// The echo names the class list only when the caller supplied one. A single-class Type
+	// search still echoes Type alone rather than acquiring a second spelling of its own filter.
+	var echoTypes []string
+	if len(q.EntityTypes) > 0 {
+		echoTypes = scope.names()
 	}
 
 	// Context is resolved after ordering and paging, and only for the results actually being
@@ -466,8 +634,10 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 		Query:          echo,
 		QueryMode:      echoMode,
 		Type:           q.Type,
+		EntityTypes:    echoTypes,
 		IncludeContext: q.IncludeContext,
 		Page:           meta,
+		Facets:         facets,
 		Results:        page,
 	}, nil
 }
@@ -477,14 +647,14 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 // It is the only literal implementation. all_terms reuses the same field projection and the
 // same substring test rather than carrying a second copy of them, so the two modes cannot drift
 // into disagreeing about what "this record contains that text" means.
-func (k *Knowledge) searchLiteral(typeFilter, needle string) []domain.SearchResult {
+func (k *Knowledge) searchLiteral(scope searchScope, needle string) []domain.SearchResult {
 	type ranked struct {
 		rank   int
 		result domain.SearchResult
 	}
 	matched := make([]ranked, 0, len(k.searchDocs))
 	for _, doc := range k.searchDocs {
-		if typeFilter != "" && string(doc.entityType) != typeFilter {
+		if !scope.admits(doc.entityType) {
 			continue
 		}
 		fields := doc.matchedFields(needle)
@@ -530,10 +700,10 @@ func (k *Knowledge) searchLiteral(typeFilter, needle string) []domain.SearchResu
 //
 // Nothing here scores. A record that carries every term in one field and a record that spreads
 // them over five are the same kind of hit, reported identically and ordered by class and ID.
-func (k *Knowledge) searchAllTerms(typeFilter string, terms []string) []domain.SearchResult {
+func (k *Knowledge) searchAllTerms(scope searchScope, terms []string) []domain.SearchResult {
 	matched := make([]domain.SearchResult, 0, len(k.searchDocs))
 	for _, doc := range k.searchDocs {
-		if typeFilter != "" && string(doc.entityType) != typeFilter {
+		if !scope.admits(doc.entityType) {
 			continue
 		}
 		termMatches := make([]domain.SearchTermMatch, 0, len(terms))
