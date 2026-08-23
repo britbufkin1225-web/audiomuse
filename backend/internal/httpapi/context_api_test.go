@@ -162,7 +162,7 @@ func TestSearchRouteContextIsNavigable(t *testing.T) {
 func TestSearchRouteContextRejectsMalformedControl(t *testing.T) {
 	handler := newHandler(t)
 
-	for _, malformed := range []string{"1", "0", "yes", "no", "TRUE", "True", "on", "maybe", "-"} {
+	for _, malformed := range []string{"", "   ", "1", "0", "yes", "no", "TRUE", "True", "on", "maybe", "-"} {
 		rec := do(t, handler, http.MethodGet,
 			searchURL(map[string]string{"q": "fixture", "include_context": malformed}))
 		if rec.Code != http.StatusBadRequest {

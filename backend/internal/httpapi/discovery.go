@@ -3,6 +3,7 @@ package httpapi
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/service"
 )
@@ -35,6 +36,16 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	// list or a relationship filter. Context is either the record's bounded canonical context or
 	// it is absent; letting a caller shape it would make the response a query result rather than
 	// a fixed projection, and would put the bounds in reach of the request.
+	//
+	// boolParam is shared with tri-state filters and treats an empty value as absent. Here the
+	// control's wire contract is stricter: once the key is present it must carry one of the two
+	// documented spellings, otherwise a malformed request would silently receive the plain
+	// Phase 1E response shape.
+	if _, present := query["include_context"]; present && strings.TrimSpace(query.Get("include_context")) == "" {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter include_context must be exactly true or false.")
+		return
+	}
 	includeContext, ok := boolParam(w, r, s.logger, query.Get("include_context"), "include_context")
 	if !ok {
 		return
