@@ -3,7 +3,7 @@
 A deterministic read-only HTTP projection of the canonical AudioMuse repository: nodes, sessions,
 the typed relationship graph, the sources, claims and provenance that stand behind them, the
 vocabulary, experiments and experiment runs that put them into practice, and one lexical search
-surface spanning all of them.
+surface spanning all of them that can resolve the canonical context around what it finds.
 
 **The repository remains the source of truth.** This service reads the corpus once at
 startup, validates what it read, indexes it in memory, and serves JSON. It performs no
@@ -147,7 +147,7 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/experiments/{id}` | one definition with the tally and IDs of its runs |
 | GET | `/api/v1/experiment-runs` | run records with their lifecycle state and evidence counts |
 | GET | `/api/v1/experiment-runs/{id}` | one full run |
-| GET | `/api/v1/search` | one lexical query across every searchable canonical layer |
+| GET | `/api/v1/search` | one lexical query across every searchable canonical layer, optionally with the bounded canonical context of each hit |
 | GET | `/api/v1/graph` | the full read-only graph projection |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
@@ -410,6 +410,7 @@ six searchable classes at once and reports which class each hit came from.
 | --- | --- |
 | `q` | **required.** Lexical substring search, case-insensitive, over the fields listed below |
 | `type` | optional; restrict results to exactly one searchable class |
+| `include_context` | optional; exactly `true` or `false`. Resolve the canonical context of each returned hit |
 | `limit`, `offset` | page size and start; default 50, clamped to 200 |
 
 `q` must be non-empty after trimming. An absent, empty or whitespace-only `q` is refused with
@@ -475,10 +476,11 @@ request, which matters more here than anywhere else in the API because a cross-l
 the one place a reader cannot see the surrounding record. Nothing is highlighted, no source text is
 rewritten, and no semantic category is inferred.
 
-A result carries only its own record's fields. A claim hit never presents its source's title, an
-experiment hit never presents its runs, and a vocabulary hit never presents the node it
-cross-references. **A unified search surface is not a unified ontology** — it is one entry point
-into six models that stay distinct. To follow a hit into its context, read the record itself:
+A result's own fields carry only its own record. A claim hit never presents its source's title as
+its own, an experiment hit never presents its runs, and a vocabulary hit never presents the
+definition of the node it cross-references. **A unified search surface is not a unified ontology**
+— it is one entry point into six models that stay distinct. To read a record itself rather than
+its identity, follow it to its own route:
 
 | `entity_type` | Route |
 | --- | --- |
@@ -488,6 +490,163 @@ into six models that stay distinct. To follow a hit into its context, read the r
 | `source` | `/api/v1/sources/{id}` |
 | `vocabulary` | `/api/v1/vocabulary/{id}` |
 | `experiment` | `/api/v1/experiments/{id}` |
+
+#### Result context
+
+A search result identifies a record. `include_context=true` additionally resolves, for each hit on
+the returned page, the canonical records it directly references and the canonical records that
+directly reference it — enough to decide what to open next without one request per candidate.
+
+Context is **absent by default**. A request without `include_context` returns the Phase 1E body
+unchanged: no `context` key on any result and no `include_context` key on the response.
+`include_context=false` is identical to omitting it, and any other spelling — `1`, `yes`, `TRUE` —
+is refused with `400 invalid_query` rather than guessed at.
+
+```json
+{
+  "entity_type": "claim",
+  "id": "beta-was-observed-in-1999",
+  "title": "The beta fixture phenomenon is recorded as having been observed during 1999.",
+  "match_kind": "id_exact",
+  "matched_fields": ["id"],
+  "context": {
+    "related": [
+      {
+        "relation": "appears_in",
+        "entity": { "entity_type": "node", "id": "beta", "label": "Beta" },
+        "origin": "claim.appears_in",
+        "derived": false
+      },
+      {
+        "relation": "contradicted_by",
+        "entity": {
+          "entity_type": "source",
+          "id": "fixture-reference-work",
+          "label": "A Fixture Reference Work"
+        },
+        "origin": "claim.evidence",
+        "derived": false
+      }
+    ],
+    "count": 5,
+    "returned": 5,
+    "truncated": false
+  }
+}
+```
+
+The `related` array above is abridged to two of this claim's five context items.
+
+| Field | Meaning |
+| --- | --- |
+| `relation` | the canonical relationship name; see the traversal vocabulary and the reference relations below |
+| `entity` | the identity of the other record: its searchable class, its canonical ID, and its display label |
+| `origin` | the canonical field the relation was read from |
+| `derived` | `false` if the hit's own record authored the reference, `true` if this is the documented reverse read of one |
+| `count` | the size of this record's full canonical context |
+| `returned` | how much of it this response carries |
+| `truncated` | `true` whenever `returned` is less than `count` |
+
+`entity` is an identity, not an embedded record and not a URL. It carries the same display label
+the record would carry as a search title, and nothing else; a client navigates by `entity_type`
+and `id` through the route table above. Two classes may share an ID — a session and its registry
+entry do — so a context ref is never resolved by ID alone, and the two have genuinely different
+contexts.
+
+#### What context resolves
+
+Every context item is read from exactly one canonical field of exactly one canonical record.
+Nothing is inferred from shared keywords, similar titles, overlapping prose or co-occurrence.
+There is no "you may also like", no "conceptually related to" and no similarity of any kind: a
+context item is a reference some record actually wrote down, or the documented reverse read of one,
+and `origin` says which field it came from.
+
+For `session`, `node`, `claim` and `source`, context **is** the graph traversal adjacency, reused
+unchanged — same relation names, same origins, same `derived` flag — so one repository connection
+keeps one meaning wherever it is read. Those canonical fields are listed under "Graph traversal".
+
+Vocabulary entries and experiment definitions are not graph entities, so their references are
+resolved separately, from the reference fields the graph deliberately does not model:
+
+| Canonical field | Relation | Reverse |
+| --- | --- | --- |
+| `vocabulary.node_refs` | `references` | `referenced_by` |
+| `vocabulary.session_refs` | `references` | `referenced_by` |
+| `vocabulary.related_terms` | `related_term` | none |
+| `experiment.node_refs` | `references` | `referenced_by` |
+| `experiment.vocabulary_refs` | `references` | `referenced_by` |
+| `experiment.session_refs` | `references` | `referenced_by` |
+| `experiment.source_refs` | `references` | `referenced_by` |
+| `experiment.related_experiments` | `related_experiment` | none |
+| `claim.appears_in` (kind `vocabulary`) | `appears_in` | `appearance_site_of` |
+
+`references` is one name rather than one per field because these fields are literally reference
+lists and `origin` already says which one was read; inventing `describes_node` and
+`applies_to_session` would assert relations the corpus does not state. The two symmetric lists emit
+no reverse: `vocabulary/README.md` states that related terms are human navigation only and imply
+neither equivalence nor a graph edge, and neither contract requires the pairing to be authored on
+both sides, so a reverse would turn "A listed B" into "B is related to A".
+
+Resolving a reference is still not the same as making it traversable. A context item is a
+navigation identity; a vocabulary entry or experiment definition named in one is not a graph
+vertex, is not an edge endpoint, and is still refused as a traversal root. `GET /api/v1/graph` and
+both traversal routes are unchanged by context being requested.
+
+#### Context is not traversal, and does not score
+
+Context stops at the hit's own direct references. There is no depth parameter, no expansion and no
+caller-supplied walk: it answers "what is this record connected to", once. For a neighbourhood —
+several hops, filtered by relationship or target type — use
+`/api/v1/graph/entities/{entity_type}/{id}/traverse`, which is shaped for that question.
+
+Context resolves provenance; it never evaluates it. A contradicting source is presented exactly
+like a supporting one, under its own canonical relation, and nothing here judges whether a source
+is reliable, whether a claim is well supported, or whether one relation matters more than another.
+
+Requesting context **cannot change which results match or in what order**. It is resolved after
+matching, ordering and paging, and only for the results being returned. Relationship count is not
+a ranking signal: a record does not sort higher for being well connected, and does not appear at
+all for being connected to something that matched. Context text is not searchable either — a query
+that appears only inside a related record is not a hit on the referring one, which is what keeps
+`matched_fields` a complete explanation of every result.
+
+#### Context bounds and ordering
+
+`related` is ordered by relation, then by the canonical class order above, then by canonical ID,
+then by `origin` and `derived`. The ordering is total, so the same corpus and the same request
+always return byte-identical context.
+
+| Bound | Value |
+| --- | --- |
+| context items per result | 25 |
+| context items per response | 2000 |
+
+Neither is configurable; both are API safety invariants rather than deployment choices, and both
+are sized against the real corpus so that only genuine hub records are ever shortened: its widest
+single context is 75 references, and the broadest possible page — 200 results — asks for roughly
+1,800 in total, of which about a dozen results reach the per-result cap and none reach the
+per-response one. The per-response
+figure is deliberately the same as the traversal edge cap, so one statement covers the whole API —
+no single request serialises more than 2,000 canonical relationships, whichever route asked for
+them. The budget is spent in result order, so one heavily referenced hit cannot fill a page and a
+full page of well-connected records cannot become an unbounded payload. Truncation keeps the
+head of the ordered list, so it is deterministic rather than an arbitrary subset, and a truncated
+context always reports its full `count` alongside a smaller `returned` and `truncated: true`. The
+rest of a truncated context is read through the record's own route or through traversal.
+
+A record that references nothing and is referenced by nothing returns `"related": []` with
+`"count": 0`, not a missing object: "this record has no canonical context" and "context was not
+requested" are different facts and are answered differently.
+
+#### Experiment runs stay out of context too
+
+No context item names an experiment run, under any relation, from any origin. An experiment
+definition resolves the records it references and stops there; its runs are reached through
+`/api/v1/experiment-runs?experiment_id=`. A run is not a searchable class, so there is no context
+ref that could address one, and the Phase 1E boundary therefore holds structurally rather than by
+convention: context resolves identities, and it must not become the route by which observation and
+measurement prose re-enters generic search. A claim's `appears_in: document` reference resolves to
+nothing for the related reason that no layer addresses it.
 
 #### Ordering
 
@@ -580,6 +739,14 @@ Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&type=vocabula
 
 ```powershell
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&limit=5&offset=5"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&include_context=true"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&type=claim&include_context=true"
 ```
 
 ```powershell
@@ -726,8 +893,8 @@ inconsistencies are reported for a human to decide about.
 single-record experiment and run parsers, the filesystem adapter and every validation defect
 including the whole run lifecycle contract, the service index, filtering, search, paging, the graph
 projection and every evidence and practice reverse index, the traversal adjacency, depth semantics,
-cycle termination, deduplication and truncation bounds, the cross-layer discovery projection, and
-the HTTP routes including 404, 400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
+cycle termination, deduplication and truncation bounds, the cross-layer discovery projection and
+its context resolver, and the HTTP routes including 404, 400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
 unchanged corpus and the results compared. Unit tests run against `testdata/corpus/`, a
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
 expectation.
@@ -737,8 +904,9 @@ one asserts the evidence layer parses and resolves, one asserts the practice lay
 every canonical entity as a traversal root at maximum depth and asserts no practice record appears
 anywhere in the result, and two snapshot the size, modification time and content digest of every
 canonical file — one across a load, one across a full index build plus one request to every read
-surface, including three searches, and a rejected request on each mutating method. All six skip if the canonical repository
-is not found above the working directory.
+surface, including three searches and two context resolutions, and a rejected request on each
+mutating method. All six skip if the canonical repository is not found above the working
+directory.
 
 Search is covered at both layers: class coverage, case insensitivity, exact-ID and match-class
 precedence, matched-field correctness, class filtering, empty and rejected queries, paging and
@@ -750,11 +918,28 @@ the same records, which is what keeps the two from drifting apart. Adversarial q
 glob, path, URL, SQL, shell and template shapes, Unicode, and oversized input — are asserted to be
 treated as literal text.
 
+Context resolution is covered at both layers. The service tests assert the exact resolved set, in
+order, for a representative record of every searchable class — including the canonical
+`claim -> source` provenance in both directions — plus the deterministic empty case for records
+nothing refers to, stability across eight rebuilt indexes, defensive copying, and both bounds
+against a synthetic densely connected corpus the real one does not yet contain. Three are
+guardrails rather than feature tests: one requires the result set and every result field to be
+identical with and without context, so context can never become a ranking or matching signal; one
+cross-checks every graph-class context item against the traversal adjacency for the same record,
+so the two layers cannot drift into two meanings for one connection; and one takes the vocabulary
+entries and experiment definitions a context just named and asserts each is still refused as a
+traversal root and still absent from the graph. The HTTP tests cover the wire contract: that a
+request without the control is byte-identical to the Phase 1E body, that every resolved identity
+is fetchable through its own route, that the serialised objects carry exactly the documented keys,
+that a malformed or duplicated control is refused without leaking internals, and that
+`include_context` is refused on every other route.
+
 A cross-phase suite covers the combined backend specifically: that every phase's routes coexist on
 one router without shadowing, that mutation and duplicate-parameter rejection hold on all of them,
-that the practice layer stays out of the traversal graph, that a record just found through search is
-still refused as a traversal root and still absent from the graph, and that the shared index is
-deterministic and hands out defensive copies across every layer at once.
+that the practice layer stays out of the traversal graph, that a record just found through search —
+or just named as another record's context — is still refused as a traversal root and still absent
+from the graph, and that the shared index is deterministic and hands out defensive copies across
+every layer at once.
 
 ## Known limitations
 
@@ -771,7 +956,17 @@ deterministic and hands out defensive copies across every layer at once.
 - Experiment runs are not searchable at all, by design. See "Experiment runs are deliberately
   absent"; they remain addressable through their own structured routes.
 - No query is stored. There is no search history, no query log, no analytics and no
-  personalisation, so nothing improves with use.
+  personalisation, so nothing improves with use. Context is resolved from the immutable startup
+  index on every request; nothing about it is cached, materialised or persisted.
+- Search-result context is deliberately one hop and bounded: 25 items per result, 2000 per
+  response, no depth control and no caller-supplied shaping. It resolves what a record directly
+  references and what directly references it, and nothing further; a neighbourhood is a traversal
+  request.
+- Context resolves provenance and never scores it. Nothing in the API rates a source's
+  reliability, a claim's strength or a relation's importance, and a contradicting source is served
+  exactly like a supporting one.
+- Context names only the six searchable classes. An experiment run is never named, and a claim's
+  `appears_in: document` reference resolves to nothing, because no layer addresses it.
 - No persistence and no database; the startup index is the only state.
 - Node `experiments:` is the one canonical reference field still carried unresolved. No
   repository validator treats it as a reference list and every current node leaves it empty, so
@@ -799,8 +994,8 @@ deterministic and hands out defensive copies across every layer at once.
 ## Future work
 
 Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, query
-syntax beyond a single literal term, graph visualization, semantic retrieval, and MLLM
-experimentation.
+syntax beyond a single literal term, deeper or caller-shaped context, graph visualization,
+semantic retrieval, and MLLM experimentation.
 
 Semantic retrieval is deferred deliberately. The deterministic lexical surface exists first so that
 the discovery contract — what is searchable, what a hit means, and what order results arrive in —

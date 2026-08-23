@@ -104,10 +104,17 @@ const (
 // are copied verbatim from fields the record already carries, and a class with no natural
 // summary field returns none rather than acquiring a fabricated one.
 //
-// A result carries only its own record's data. It never names a related record, so a claim
-// result cannot present its source's title as though claim and source were one record, and no
-// provenance axis is flattened into another. To follow a hit into its context, a client reads
-// the record itself through its own route, addressed by EntityType and ID.
+// A result's own fields carry only its own record's data. Title and Summary are never borrowed
+// from a related record, so a claim result cannot present its source's title as though claim
+// and source were one record, and no provenance axis is flattened into another.
+//
+// Context is the one place another record may be named, and it is a separate, explicitly
+// labelled sub-object for exactly that reason: every entity inside it arrives with the relation
+// and the canonical field it was read from, so it reads as "this record references that one"
+// rather than as part of the hit. It is absent unless the caller asked for it, so the default
+// response is the Phase 1E shape unchanged. A unified search surface is still not a unified
+// ontology. To read a related record itself rather than its identity, a client follows the ref
+// to that record's own route, addressed by EntityType and ID.
 type SearchResult struct {
 	EntityType SearchEntityType `json:"entity_type"`
 	ID         string           `json:"id"`
@@ -124,4 +131,11 @@ type SearchResult struct {
 	// names are the canonical ones from the record's schema, no text is highlighted or
 	// rewritten, and no semantic category is inferred.
 	MatchedFields []string `json:"matched_fields"`
+
+	// Context is the bounded canonical context of this hit, present only when the caller asked
+	// for it. A pointer rather than a value so that an unrequested context is absent from the
+	// response rather than serialised as an empty object that a client could mistake for "this
+	// record has no context"; those are different facts and a requested-but-empty context is
+	// served as an empty Related list. See context.go.
+	Context *SearchResultContext `json:"context,omitempty"`
 }

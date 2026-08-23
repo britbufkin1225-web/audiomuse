@@ -7,15 +7,15 @@ import (
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/service"
 )
 
-// The Phase 1E discovery handler. It stays as thin as every other handler in this package:
-// bound the query string, hand it to the immutable index, map the typed error, serialise. No
-// matching, ordering or paging logic lives here — that belongs to the service and is tested
-// there directly.
+// The discovery handler: Phase 1E search and the Phase 1F context control. It stays as thin as
+// every other handler in this package: bound the query string, hand it to the immutable index,
+// map the typed error, serialise. No matching, ordering, paging or relationship-resolution logic
+// lives here — all of it belongs to the service and is tested there directly.
 
 // searchParams is the complete accepted query string. rejectUnknownParams refuses anything
 // else, and refuses a parameter supplied twice, so a caller can never be handed a result set
 // that silently dropped a filter they believed was applied.
-var searchParams = []string{"q", "type", "limit", "offset"}
+var searchParams = []string{"q", "type", "include_context", "limit", "offset"}
 
 func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	if !rejectUnknownParams(w, r, s.logger, searchParams...) {
@@ -31,16 +31,25 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	// include_context is the Phase 1F control and is a plain flag rather than a depth, a field
+	// list or a relationship filter. Context is either the record's bounded canonical context or
+	// it is absent; letting a caller shape it would make the response a query result rather than
+	// a fixed projection, and would put the bounds in reach of the request.
+	includeContext, ok := boolParam(w, r, s.logger, query.Get("include_context"), "include_context")
+	if !ok {
+		return
+	}
 	limit, offset, ok := pagingParams(w, r, s.logger, query)
 	if !ok {
 		return
 	}
 
 	results, err := s.knowledge.Search(service.SearchQuery{
-		Q:      values["q"],
-		Type:   values["type"],
-		Limit:  limit,
-		Offset: offset,
+		Q:              values["q"],
+		Type:           values["type"],
+		IncludeContext: includeContext != nil && *includeContext,
+		Limit:          limit,
+		Offset:         offset,
 	})
 	if err != nil {
 		s.writeSearchError(w, r, err)

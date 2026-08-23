@@ -51,6 +51,14 @@ type SearchQuery struct {
 	Type   string
 	Limit  int
 	Offset int
+
+	// IncludeContext asks the resolver to attach the bounded canonical context of every result
+	// on the returned page. It is opt-in rather than the default so that the compact Phase 1E
+	// response stays exactly what it was: a caller who only needs to know where a term appears
+	// should not be made to receive, parse and discard the corpus's reference structure. It
+	// changes what a result carries and never which results match or in what order; see
+	// resolveContext.
+	IncludeContext bool
 }
 
 // SearchResults is the discovery projection.
@@ -60,8 +68,15 @@ type SearchQuery struct {
 // Type echoes the class filter for the same reason: two cached responses to different requests
 // must not be confusable.
 type SearchResults struct {
-	Query   string                `json:"query"`
-	Type    string                `json:"type,omitempty"`
+	Query string `json:"query"`
+	Type  string `json:"type,omitempty"`
+
+	// IncludeContext echoes the context control for the same reason Type echoes the class
+	// filter. A query whose every hit happens to reference nothing would otherwise be
+	// indistinguishable from one that never asked for context. It is omitted when false, so a
+	// response to a plain Phase 1E request is unchanged byte for byte.
+	IncludeContext bool `json:"include_context,omitempty"`
+
 	Page    Page                  `json:"page"`
 	Results []domain.SearchResult `json:"results"`
 }
@@ -379,8 +394,22 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 		results = append(results, m.result)
 	}
 
+	// Context is resolved after ordering and paging, and only for the results actually being
+	// returned. Resolving it before the page would do work the caller never sees and, more
+	// importantly, would put a relationship count in reach of the ordering; keeping it here
+	// makes it structurally impossible for context to influence which results matched or where
+	// they sorted.
 	page, meta := paginate(results, limit, offset)
-	return SearchResults{Query: needle, Type: q.Type, Page: meta, Results: page}, nil
+	if q.IncludeContext {
+		k.resolveContext(page)
+	}
+	return SearchResults{
+		Query:          needle,
+		Type:           q.Type,
+		IncludeContext: q.IncludeContext,
+		Page:           meta,
+		Results:        page,
+	}, nil
 }
 
 // SearchCounts is the size of the discovery projection, broken out by searchable class.
