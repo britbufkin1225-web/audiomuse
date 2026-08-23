@@ -3,8 +3,9 @@
 A deterministic read-only HTTP projection of the canonical AudioMuse repository: nodes, sessions,
 the typed relationship graph, the sources, claims and provenance that stand behind them, the
 vocabulary, experiments and experiment runs that put them into practice, and one lexical search
-surface spanning all of them that can compose several terms into one request and resolve the
-canonical context around what it finds.
+surface spanning all of them that can compose several terms into one request, rank what it finds by
+an explicit and reproducible relevance policy, explain why each result matched and where it ranked,
+and resolve the canonical context around it.
 
 **The repository remains the source of truth.** This service reads the corpus once at
 startup, validates what it read, indexes it in memory, and serves JSON. It performs no
@@ -201,8 +202,9 @@ a result set that silently dropped their filter.
 | `session_id` | claims whose `appears_in` names that session |
 | `limit`, `offset` | page size and start; default 50, clamped to 200 |
 
-Multiple filters compose with AND. Every list is returned in canonical ID order; search never
-reorders by relevance, so two requests against an unchanged corpus return byte-identical bodies.
+Multiple filters compose with AND. Every list is returned in canonical ID order, and the per-layer
+`q` filter never reorders it: relevance ranking exists on `/api/v1/search` alone, so two requests
+against an unchanged corpus return byte-identical bodies here.
 
 A bounded filter value outside its canonical vocabulary is refused with `400 invalid_query` and the
 response names the accepted values. An identifier filter such as `node_id` is not checked against
@@ -502,9 +504,11 @@ return the same records. A response echoes only the filter it was given.
 The list needs no length bound of its own: the set is closed at six and repetition is refused,
 so a valid list cannot be longer than the model.
 
-**Scope filters; it does not search.** Restricting classes changes nothing about matching — the
-same searchable fields, the same case-insensitive substring test, the same `match_kind`, the
-same `matched_fields`, the same `term_matches` and the same relative order. A scoped result set
+**Scope filters; it does not search, and it does not rank.** Restricting classes changes nothing
+about matching — the same searchable fields, the same case-insensitive substring test, the same
+`match_kind`, the same `relevance_score`, the same `match_signals`, the same `matched_fields`, the
+same `term_matches` and the same relative order. A score is a function of the query and one record,
+so removing other records cannot change it. A scoped result set
 is exactly the unscoped one with the other classes removed, which is what makes `entity_types`
 safe to add to a request whose results a client has already reasoned about. A record outside the
 scope is skipped as the corpus is walked, and everything after that — ordering, facet counting,
@@ -659,9 +663,11 @@ edge, so a direct `Knowledge.Search` caller inherits the same contract.
       "title": "Room Mode",
       "summary": "A standing-wave resonance determined by the dimensions of the space.",
       "match_kind": "all_terms",
-      "matched_fields": ["title", "definition"],
+      "relevance_score": 28,
+      "match_signals": ["title_terms", "id_substring", "field_match"],
+      "matched_fields": ["id", "title", "definition"],
       "term_matches": [
-        { "term": "room", "matched_fields": ["title"] },
+        { "term": "room", "matched_fields": ["id", "title"] },
         { "term": "resonance", "matched_fields": ["definition"] }
       ]
     }
@@ -673,6 +679,11 @@ edge, so a direct `Knowledge.Search` caller inherits the same contract.
 query that ran rather than the caller's spacing. `query_mode` is present only for `all_terms`;
 `term_matches` is present only on composed results.
 
+The signals above are the composed-mode ones: `room` occurs in the display field and `resonance`
+does not, which is partial coverage (`title_terms`, 16); the whole phrase `room resonance` occurs
+contiguously nowhere, so there is no `phrase_match`; `room` also occurs inside the canonical ID
+(`id_substring`, 8); and the `definition` hit contributes `field_match` (4). `16 + 8 + 4 = 28`.
+
 `term_matches` is the evidence for a composed hit, and it is bounded to exactly what the backend
 knows: which of this record's canonical fields each term was found in. Terms follow the normalised
 query order, fields follow the canonical field order, and there are no snippets, no offsets, no
@@ -683,10 +694,18 @@ union of the per-term lists in canonical field order.
 
 ##### Composed ordering
 
-Composed results are ordered by the canonical class order, then by canonical ID. There is no
-match-kind precedence, because every hit carries the one composed class `all_terms`: each returned
-record satisfies every term, and inventing a tie-break between them would be a relevance judgement.
-The same corpus and the same normalised query always produce the same bytes.
+Composed results are ordered by `relevance_score`, then by the canonical class order, then by
+canonical ID. Every hit still carries the one composed class `all_terms` — each returned record
+satisfies every term, so no match kind separates them — but the Phase 1I signals do: a record
+carrying the caller's words contiguously, or carrying all of them in its display field, is ranked
+above one that spreads them across five prose fields. See "Relevance ranking". The same corpus and
+the same normalised query always produce the same bytes.
+
+Term **order** is significant to the phrase-derived signals and to nothing else. Which records match
+is order-independent — every term must occur somewhere in the record either way — but `fixture term`
+and `term fixture` are different phrases, so they can rank the same matched records differently. The
+response echoes the normalised term list in the caller's own order, so the phrase that was ranked is
+always visible in `query`.
 
 `type`, `entity_types`, `limit` and `offset` compose unchanged, and the order of operations is
 fixed: normalise, match, filter by class, order the **complete** match set, count its facets, page
@@ -696,16 +715,27 @@ same full set.
 
 #### Result shape
 
+For `q=resonance`:
+
 ```json
 {
   "entity_type": "vocabulary",
-  "id": "resonance",
+  "id": "acoustic-resonance",
   "title": "Resonance",
   "summary": "...",
   "match_kind": "title_exact",
-  "matched_fields": ["term", "definition"]
+  "relevance_score": 524,
+  "match_signals": ["title_exact", "id_substring", "field_match"],
+  "matched_fields": ["id", "term", "definition"]
 }
 ```
+
+The query is exactly this entry's `term`, occurs inside its ID without being all of it, and also
+occurs in its `definition`: `512 + 8 + 4 = 524`.
+
+`relevance_score` and `match_signals` are the Phase 1I additions and are always present on every
+result of every mode. They are covered in "Relevance ranking" below; in short, the score is the
+exact sum of the weights of the signals listed beside it, so a client can recompute it and check it.
 
 `matched_fields` names every canonical field the query actually matched, in the record's own field
 order. It is the evidence for the hit: a client can answer "why did this appear" without a second
@@ -745,6 +775,8 @@ is refused with `400 invalid_query` rather than guessed at.
   "id": "beta-was-observed-in-1999",
   "title": "The beta fixture phenomenon is recorded as having been observed during 1999.",
   "match_kind": "id_exact",
+  "relevance_score": 1024,
+  "match_signals": ["id_exact"],
   "matched_fields": ["id"],
   "context": {
     "related": [
@@ -887,9 +919,19 @@ nothing for the related reason that no layer addresses it.
 
 #### Ordering
 
-Literal results are ordered by four mutually exclusive **categorical match classes**, then by the
-canonical class order above, then by canonical ID. (A composed `all_terms` result set carries the
-single class `all_terms` and is ordered by class and ID alone; see "Composed ordering".)
+Every result set, in both modes, is ordered by:
+
+1. `relevance_score`, descending;
+2. the canonical class order above;
+3. canonical ID, ascending.
+
+The last key is unique within a class, so the order is **total**: no two distinct results compare
+equal, and the same corpus and the same query always return byte-identical results. Two record
+classes may share an ID — a session and its registry entry do — so a hit is identified by
+`entity_type` **and** `id`, never by `id` alone.
+
+`match_kind` remains the four mutually exclusive **categorical match classes** it has been since
+Phase 1E, and it is still not a number:
 
 | `match_kind` | Meaning |
 | --- | --- |
@@ -899,12 +941,59 @@ single class `all_terms` and is ordered by class and ID alone; see "Composed ord
 | `field_substring` | the query appears only in some other searchable field |
 | `all_terms` | every term of a composed query was found in this record |
 
-This is **not a relevance score**, and it is deliberately not rendered as a number. There is no
-weighting, no field boosting, no term frequency and no ranking model; it is a fixed hand-written
-precedence, and calling it anything else would dress a priority list as information retrieval. The
-class order and canonical ID break every tie, so the ordering is total: the same corpus and the same
-query always return byte-identical results. Two record classes may share an ID — a session and its
-registry entry do — so a hit is identified by `entity_type` **and** `id`, never by `id` alone.
+Since Phase 1I it is **derived from** `match_signals` rather than computed separately, so the coarse
+class and the score can never describe one hit differently. For a literal search the score is a
+strict refinement of the class precedence above: every class-defining signal outweighs the sum of
+every weaker signal, so literal results still emerge in `id_exact`, `title_exact`, `title_substring`,
+`field_substring` order, now sorted *within* each class as well.
+
+#### Relevance ranking
+
+A **signal** is one named, yes-or-no fact about how the normalised query reached one record's own
+canonical fields, carrying a fixed integer weight. `relevance_score` is the sum of the weights of the
+signals that are true, and `match_signals` lists exactly those, in descending weight order:
+
+| Signal | Weight | Fires when |
+| --- | --- | --- |
+| `id_exact` | 1024 | the query is exactly the record's canonical ID |
+| `title_exact` | 512 | the query is exactly the record's display field |
+| `title_prefix` | 256 | the display field begins with the query and continues past it |
+| `title_substring` | 128 | the query occurs inside the display field, neither at its start nor as all of it |
+| `phrase_match` | 64 | *(composed only)* the whole query occurs contiguously in a field other than the display field |
+| `title_all_terms` | 32 | *(composed only)* every term occurs in the display field |
+| `title_terms` | 16 | *(composed only)* at least one term, but not every term, occurs in the display field |
+| `id_substring` | 8 | the query — composed, at least one term — occurs inside the ID without being all of it |
+| `field_match` | 4 | the query reached a field that is neither the ID nor the display field |
+
+Three groups are mutually exclusive and never appear together: `{id_exact, id_substring}`,
+`{title_exact, title_prefix, title_substring}`, and `{title_all_terms, title_terms}`. No signal is
+emitted twice, the list is never empty — a record that matched nothing is not a result — and every
+name comes from the closed set above.
+
+**Why powers of two.** Each weight is strictly greater than the sum of every weight below it. That
+one property is the whole soundness argument: it makes the integer sum behave exactly as a
+lexicographic comparison of the signal list, so a record carrying a stronger signal outranks a
+record carrying every weaker signal at once, and no accumulation of weak evidence can overtake one
+strong piece. A weight table without that property would be a set of magic numbers whose ordering
+nobody could predict from reading it. It is enforced by a test rather than asserted in a comment.
+
+**Why the score is explainable rather than opaque.** Because it is defined as the sum of its
+signals, `match_signals` and `relevance_score` are the same fact stated twice and cannot disagree.
+A client can add up the weights above and recover the number the backend sent, and can compare two
+results' signal lists to see exactly which signal separated them. Nothing else contributes: the
+score is a function of the query and that one record, so it cannot change because some other record
+also matched, and it is not affected by the scope filter, the page window or the context control.
+
+**What is deliberately absent.** There is no term frequency, no field-length normalisation, no
+inverse document frequency, no popularity, no click or usage data, no recency, no user or session
+weighting, no editorial boost, and no learned model. Every signal is a statement about the text of
+one record and the text of one query, and nothing in ranking reads a clock, a counter, a random
+source or another record. `relevance_score` is comparable only within one response: nothing
+calibrates it across queries, and a larger number on a different query does not mean a better answer.
+
+The score orders results; it does not filter them. A hit scoring 4 is returned exactly as a hit
+scoring 1024 is, in its correct position. There is no relevance threshold, no cutoff and no
+"did you mean".
 
 #### Lexical search, not semantic retrieval
 
@@ -1166,8 +1255,9 @@ inconsistencies are reported for a human to decide about.
 single-record experiment and run parsers, the filesystem adapter and every validation defect
 including the whole run lifecycle contract, the service index, filtering, search, paging, the graph
 projection and every evidence and practice reverse index, the traversal adjacency, depth semantics,
-cycle termination, deduplication and truncation bounds, the cross-layer discovery projection and
-its context resolver, and the HTTP routes including 404, 400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
+cycle termination, deduplication and truncation bounds, the cross-layer discovery projection with
+its relevance ranking, match explanations and context resolver, and the HTTP routes including 404,
+400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
 unchanged corpus and the results compared. Unit tests run against `testdata/corpus/`, a
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
 expectation.
@@ -1221,6 +1311,34 @@ by the facet structure, so a class added to the model without a facet cannot sil
 invariant. At the HTTP layer the facet object is pinned as a wire contract: exactly the six class
 keys, in canonical order, present at zero, with no `experiment_run` key.
 
+Relevance ranking and match explainability have their own suite at three layers. The domain tests
+hold the weight table to the property the design rests on — every signal outweighing the sum of
+every weaker signal — plus the declared order matching the weight order, the score being exactly the
+sum of its signals, and an unknown signal name contributing nothing. The service tests cover each
+tier in turn: an exact ID strictly outscoring every other hit, an exact name beating descriptive
+text, a name **prefix** beating an interior name match inside the one `title_substring` class, an
+ID-only hit ranking last and still being returned, a contiguous phrase beating scattered terms, and
+complete term coverage of a display field beating partial. Ordering is pinned as a whole list, not
+only as pairs, so the tie-break — score, then canonical class, then canonical ID — is asserted where
+it actually fires; a test fails if the chosen query stops producing an equal-score pair at all.
+Determinism is asserted across repeated runs and across two indexes built from one corpus. The
+explanation itself is held to a contract: signals in declared weight order, no repetition, every
+name inside the closed set, the three mutually exclusive tiers never firing twice, composed-only
+signals never appearing on a literal hit, and `match_kind` always agreeing with the signals it is
+derived from. Normalisation is covered as identity of whole responses — case, surrounding and
+repeated whitespace, and a repeated term all rank identically — and term **order** is pinned as
+significant to the phrase signals and to nothing else. Integration is asserted against the phases
+it composes with: one scope, several scopes, all six, the single-class `type`, a zero-result scope,
+facets still counting the complete filtered set, paging applied strictly after ranking, and
+`include_context` leaving every score, signal and position untouched. One is a guardrail rather than
+a feature test: it requires every emitted signal to come from the closed compile-time vocabulary and
+to carry no record content, which is what keeps the two new fields outside the provenance-flattening
+rule they were added against. At the HTTP layer the wire contract is pinned separately: both keys
+present on every result of every mode, the score recomputable from the signals over the wire, the
+serialised order being the ranking, byte-identical bodies across repeated requests and across two
+handlers, page windows matching the ranked set position for position, and the result object carrying
+exactly the documented keys and no more.
+
 Context resolution is covered at both layers. The service tests assert the exact resolved set, in
 order, for a representative record of every searchable class — including the canonical
 `claim -> source` provenance in both directions — plus the deterministic empty case for records
@@ -1248,10 +1366,19 @@ every layer at once.
 
 - Repository changes require a process restart. There is no watcher, no background sync and
   no filesystem polling, so a running process always serves one consistent snapshot.
-- Search is lexical substring matching, in both query modes. `/api/v1/search` orders literal
-  results by a fixed categorical match precedence and composed ones by class and ID, never by a
-  relevance score; the per-layer `q` parameters do not reorder at all. There is no stemming, no
-  fuzzy matching, no semantic retrieval and no embedding.
+- Search is lexical substring matching, in both query modes. There is no stemming, no fuzzy
+  matching, no semantic retrieval and no embedding, and Phase 1I did not add any: `relevance_score`
+  ranks the records substring matching already found, and cannot make an unmatched record
+  reachable. The per-layer `q` parameters do not rank at all.
+- `relevance_score` is a fixed, hand-written weighting of explicit lexical signals, not a retrieval
+  model. It has no term frequency, no field-length normalisation, no IDF, no popularity, usage,
+  recency or user weighting, and no learned component. It is comparable only within one response:
+  nothing calibrates it across queries, so a larger score on a different query does not mean a
+  better answer. It orders results and never filters them — there is no relevance threshold and no
+  "did you mean".
+- Ranking sees only the query and each record's own searchable fields. It cannot use a record's
+  relationships, its provenance, its resolved context or how often it is referenced, because
+  context is resolved after ranking and paging and can never feed back into either.
 - Search matches only the fields documented under "Cross-layer search". A record whose relevant
   text lives in an excluded field — source `notes`, an experiment's `procedure`, a node's markdown
   body — is not discoverable by that text.
@@ -1319,14 +1446,26 @@ visualization, semantic retrieval, and MLLM experimentation.
 
 Deterministic multi-term composition is no longer deferred; `query_mode=all_terms` is the whole of
 what shipped. Multi-class result scope is no longer deferred either; `entity_types` is the whole of
-that one, and it filters rather than searching. Richer *syntax* — boolean operators, quoted phrases
-inside a composed query, negation, wildcards, field-scoped terms — remains deferred, as do facets
-over any axis other than the searchable class, and each would be its own contract rather than an
-extension of this one.
+that one, and it filters rather than searching. Deterministic relevance ranking is no longer
+deferred; `relevance_score` and `match_signals` are the whole of that one, and they rank and explain
+the records lexical matching already found rather than widening what matching reaches. Richer
+*syntax* — boolean operators, quoted phrases inside a composed query, negation, wildcards,
+field-scoped terms — remains deferred, as do facets over any axis other than the searchable class,
+and each would be its own contract rather than an extension of this one.
+
+Ranking beyond explicit lexical signals stays deferred for the same reason semantic retrieval does.
+Term frequency, field-length normalisation, IDF, popularity, usage or recency weighting, per-caller
+ranking and any learned model would each require a judgment this service cannot source from the
+corpus, and would trade a score a client can recompute for one it has to trust. A caller who
+disagrees with the current ordering can read `match_signals` and see exactly which signal produced
+it, which is the property a tuned model would give up first.
 
 Semantic retrieval is deferred deliberately. The deterministic lexical surface exists first so that
-the discovery contract — what is searchable, what a hit means, and what order results arrive in —
-is fixed and test-covered before anything harder to reason about is layered on top of it.
+the discovery contract — what is searchable, what a hit means, what order results arrive in and why
+— is fixed and test-covered before anything harder to reason about is layered on top of it. Relevance
+ranking was added inside that contract rather than alongside it, which is why it is a weighted list
+of stated signals: the ordering stays as reproducible and as inspectable as the matching underneath
+it.
 
 Traversal over the practice layer is deferred deliberately, not incidentally. Vocabulary entries,
 experiments and experiment runs are read surfaces adjacent to the graph, and their cross-references

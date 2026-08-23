@@ -643,7 +643,14 @@ func TestSearchDoesNotFlattenProvenance(t *testing.T) {
 	// make against this rule: every value in it is a term the caller supplied and a canonical
 	// field name of this record, so it introduces no record content at all, borrowed or
 	// otherwise. TestAllTermsEvidenceNamesOnlyTheHitsOwnFields holds it to that.
-	if fields := reflect.TypeOf(domain.SearchResult{}).NumField(); fields != 8 {
+	//
+	// Phase 1I added the ninth and tenth, RelevanceScore and MatchSignals, and they are safer
+	// still: neither can carry text of any kind. RelevanceScore is an integer derived from this
+	// record's own fields, and MatchSignals holds names drawn from domain.SearchMatchSignals, a
+	// closed vocabulary fixed at compile time and containing no record content, this record's or
+	// anyone's. Nothing in either can be borrowed from a related record, because neither is read
+	// from a record at all. TestRankingExplanationLeaksNothing holds them to that.
+	if fields := reflect.TypeOf(domain.SearchResult{}).NumField(); fields != 10 {
 		t.Errorf("SearchResult has %d fields; a new field must be justified against provenance "+
 			"flattening before this expectation is updated", fields)
 	}
