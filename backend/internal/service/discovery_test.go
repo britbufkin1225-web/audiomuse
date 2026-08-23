@@ -638,7 +638,12 @@ func TestSearchDoesNotFlattenProvenance(t *testing.T) {
 	// requested, which is what keeps the distinction real: TestContextPreservesResultIdentityAndOrder
 	// asserts that stripping Context off an enriched result yields the plain result exactly, so
 	// every display-field assertion below carries over to a context request unchanged.
-	if fields := reflect.TypeOf(domain.SearchResult{}).NumField(); fields != 7 {
+	//
+	// Phase 1G added the eighth field, TermMatches, and it is the safest kind of addition to
+	// make against this rule: every value in it is a term the caller supplied and a canonical
+	// field name of this record, so it introduces no record content at all, borrowed or
+	// otherwise. TestAllTermsEvidenceNamesOnlyTheHitsOwnFields holds it to that.
+	if fields := reflect.TypeOf(domain.SearchResult{}).NumField(); fields != 8 {
 		t.Errorf("SearchResult has %d fields; a new field must be justified against provenance "+
 			"flattening before this expectation is updated", fields)
 	}
@@ -647,6 +652,9 @@ func TestSearchDoesNotFlattenProvenance(t *testing.T) {
 	for _, result := range results.Results {
 		if result.Context != nil {
 			t.Errorf("result %s/%s carries context that was never requested", result.EntityType, result.ID)
+		}
+		if result.TermMatches != nil {
+			t.Errorf("literal result %s/%s carries multi-term evidence", result.EntityType, result.ID)
 		}
 	}
 

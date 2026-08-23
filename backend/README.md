@@ -3,7 +3,8 @@
 A deterministic read-only HTTP projection of the canonical AudioMuse repository: nodes, sessions,
 the typed relationship graph, the sources, claims and provenance that stand behind them, the
 vocabulary, experiments and experiment runs that put them into practice, and one lexical search
-surface spanning all of them that can resolve the canonical context around what it finds.
+surface spanning all of them that can compose several terms into one request and resolve the
+canonical context around what it finds.
 
 **The repository remains the source of truth.** This service reads the corpus once at
 startup, validates what it read, indexes it in memory, and serves JSON. It performs no
@@ -147,7 +148,7 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/experiments/{id}` | one definition with the tally and IDs of its runs |
 | GET | `/api/v1/experiment-runs` | run records with their lifecycle state and evidence counts |
 | GET | `/api/v1/experiment-runs/{id}` | one full run |
-| GET | `/api/v1/search` | one lexical query across every searchable canonical layer, optionally with the bounded canonical context of each hit |
+| GET | `/api/v1/search` | one lexical query across every searchable canonical layer, optionally composed from several terms and with the bounded canonical context of each hit |
 | GET | `/api/v1/graph` | the full read-only graph projection |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
@@ -410,6 +411,7 @@ six searchable classes at once and reports which class each hit came from.
 | --- | --- |
 | `q` | **required.** Lexical substring search, case-insensitive, over the fields listed below |
 | `type` | optional; restrict results to exactly one searchable class |
+| `query_mode` | optional; exactly `literal` or `all_terms`. How `q` is composed into a query. Default `literal` |
 | `include_context` | optional; exactly `true` or `false`. Resolve the canonical context of each returned hit |
 | `limit`, `offset` | page size and start; default 50, clamped to 200 |
 
@@ -456,6 +458,124 @@ records, and a generic free-text hit inside them would quietly mean "this run ob
 evidence assertion a discovery surface has no standing to make. Runs stay addressable through
 `/api/v1/experiment-runs`, where the caller states which definition and which lifecycle state they
 are asking about, and through `/api/v1/experiment-runs/{id}` by exact ID.
+
+#### Query composition
+
+`query_mode` decides how the text in `q` becomes a query. It changes composition only: both modes
+run the same case-insensitive substring test over the same field set, and neither one widens what
+is searchable.
+
+| `query_mode` | Meaning |
+| --- | --- |
+| omitted | Identical to `literal`. This is the default and is what every request before this contract existed already meant |
+| `literal` | The whole normalised query is **one contiguous needle**. Whitespace inside `q` is part of the phrase |
+| `all_terms` | `q` is split on whitespace and **every term must occur somewhere in the same record** |
+
+Only those two spellings are accepted. `AND`, `and`, `all`, `any`, `ALL_TERMS`, `semantic`, `fuzzy`,
+`1` and `true` are refused with `400 invalid_query` rather than guessed at, and a present but empty
+`query_mode=` is refused for the same reason: a mode that quietly resolved to something else would
+answer a different question than the one asked.
+
+**Whitespace is never silently reinterpreted.** `?q=room resonance` still searches for the phrase
+`room resonance`, exactly as it did before `query_mode` existed. A response to a literal request —
+omitted mode or explicit — carries no `query_mode` key and no `term_matches` key on any result, so
+an existing client's responses are unchanged.
+
+##### `all_terms`
+
+`q` is trimmed, lower-cased and split with whitespace as the only separator. A record matches when
+**every** term appears as a substring of at least one of that record's own searchable values.
+Terms may land in the same canonical field or in different ones:
+
+```text
+node "room-mode"
+  title:      Room Mode
+  definition: A standing-wave resonance determined by the dimensions of the space.
+
+?q=room resonance                        -> no hit; the phrase is not contiguous anywhere
+?q=room resonance&query_mode=all_terms   -> hit; "room" in title, "resonance" in definition
+```
+
+What the composition may **not** do:
+
+- It may not span two records. If one record holds `room` and a different record holds
+  `resonance`, neither is a hit — joining them would assert a relationship the corpus did not make.
+- It may not be satisfied by context. `include_context` resolves *after* matching, for the
+  returned page only, so a term carried by a related record never completes a query.
+- It may not reach an unsearchable field. The field set under "Searchable classes and fields" is
+  unchanged: node markdown bodies, source `notes`, experiment `procedure` and `setup`, and every
+  experiment run remain outside discovery in both modes.
+
+**Tokenisation is whitespace and nothing else.** There is no stemming, no accent folding, no
+Unicode normalisation pipeline and no punctuation stripping, so punctuation stays part of a term:
+`room,` and `room` are two different terms, and only the second finds a record that wrote the bare
+word. That is a documented limit of a deterministic composition rather than an oversight — every
+heuristic that would smooth it over is an unsourced judgement about language.
+
+**Duplicates collapse.** `?q=resonance resonance room` executes as `resonance room`: the first
+occurrence of each term wins, and repetition cannot change the result set, the ordering, the totals
+or the evidence.
+
+**Term bounds.**
+
+| Bound | Value |
+| --- | --- |
+| minimum distinct terms | 2 |
+| maximum distinct terms | 8 |
+| total `q` length | 128 characters, as in every mode |
+
+Both term bounds apply to the *distinct* terms that actually execute. One term under `all_terms` is
+refused rather than run: it would be literal search under a second name, and an explicit mode
+should mean what its name says. All four bounds are enforced in the service as well as at the HTTP
+edge, so a direct `Knowledge.Search` caller inherits the same contract.
+
+##### Composed response
+
+```json
+{
+  "query": "room resonance",
+  "query_mode": "all_terms",
+  "page": { "total": 1, "count": 1, "limit": 50, "offset": 0 },
+  "results": [
+    {
+      "entity_type": "node",
+      "id": "room-mode",
+      "title": "Room Mode",
+      "summary": "A standing-wave resonance determined by the dimensions of the space.",
+      "match_kind": "all_terms",
+      "matched_fields": ["title", "definition"],
+      "term_matches": [
+        { "term": "room", "matched_fields": ["title"] },
+        { "term": "resonance", "matched_fields": ["definition"] }
+      ]
+    }
+  ]
+}
+```
+
+`query` echoes the normalised term list joined by single spaces, so the response describes the
+query that ran rather than the caller's spacing. `query_mode` is present only for `all_terms`;
+`term_matches` is present only on composed results.
+
+`term_matches` is the evidence for a composed hit, and it is bounded to exactly what the backend
+knows: which of this record's canonical fields each term was found in. Terms follow the normalised
+query order, fields follow the canonical field order, and there are no snippets, no offsets, no
+highlighting, no occurrence counts and no rewritten prose. Every field named belongs to the hit's
+own record — nothing is borrowed from a related one, including when `include_context=true`
+resolved that record on the same response. `matched_fields` keeps its Phase 1E meaning and is the
+union of the per-term lists in canonical field order.
+
+##### Composed ordering
+
+Composed results are ordered by the canonical class order, then by canonical ID. There is no
+match-kind precedence, because every hit carries the one composed class `all_terms`: each returned
+record satisfies every term, and inventing a tie-break between them would be a relevance judgement.
+The same corpus and the same normalised query always produce the same bytes.
+
+`type`, `limit` and `offset` compose unchanged, and the order of operations is fixed: normalise,
+match, filter by class, order the **complete** match set, page it, and only then resolve context.
+Paging never precedes matching, so `page.total` is always the size of the full composed result set
+rather than of the page.
 
 #### Result shape
 
@@ -650,8 +770,9 @@ nothing for the related reason that no layer addresses it.
 
 #### Ordering
 
-Results are ordered by four mutually exclusive **categorical match classes**, then by the canonical
-class order above, then by canonical ID:
+Literal results are ordered by four mutually exclusive **categorical match classes**, then by the
+canonical class order above, then by canonical ID. (A composed `all_terms` result set carries the
+single class `all_terms` and is ordered by class and ID alone; see "Composed ordering".)
 
 | `match_kind` | Meaning |
 | --- | --- |
@@ -659,6 +780,7 @@ class order above, then by canonical ID:
 | `title_exact` | the query is exactly the record's display field |
 | `title_substring` | the query appears inside the record's display field |
 | `field_substring` | the query appears only in some other searchable field |
+| `all_terms` | every term of a composed query was found in this record |
 
 This is **not a relevance score**, and it is deliberately not rendered as a number. There is no
 weighting, no field boosting, no term frequency and no ranking model; it is a fixed hand-written
@@ -669,11 +791,25 @@ registry entry do — so a hit is identified by `entity_type` **and** `id`, neve
 
 #### Lexical search, not semantic retrieval
 
-Matching is case-insensitive substring matching and nothing else. There is no stemming, no fuzzy or
-Levenshtein matching, no BM25 or TF-IDF, no synonyms, no query rewriting, no embeddings and no
-vector similarity. This is the point of the phase rather than a shortfall of it: deterministic
-retrieval can be pinned by tests, so the contract is fixed *before* anything smarter is built on top
-of it. Semantic retrieval is a later phase with its own contract.
+Matching is case-insensitive substring matching and nothing else, in both query modes. There is no
+stemming, no fuzzy or Levenshtein matching, no BM25 or TF-IDF, no synonyms, no query rewriting, no
+embeddings and no vector similarity. This is the point of the contract rather than a shortfall of
+it: deterministic retrieval can be pinned by tests, so what is searchable and what a hit means are
+fixed *before* anything smarter is built on top of them. Semantic retrieval is a later phase with
+its own contract.
+
+`all_terms` does not change that, and the distinction is worth stating plainly:
+
+```text
+term A and term B were both found in one canonical record
+```
+
+is a deterministic retrieval fact about text. It does **not** mean the backend understands any
+relationship between A and B, that the record is *about* both, or that it is a better answer than
+a record containing one of them. `all_terms` is a bounded composition of literal tests, not a
+query language and not a step towards one: there is no `AND`/`OR`/`NOT` parser, no parentheses, no
+quoting, no `+`/`-` operators, no wildcards, no regular expressions and no caller-supplied field
+names. A token that looks like an operator is a term like any other, required literally.
 
 The query is treated as plain text throughout. It is never compiled as a regular expression,
 expanded as a glob, joined to a filesystem path, or handed to any interpreter, and no query is
@@ -739,6 +875,18 @@ Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&type=vocabula
 
 ```powershell
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&limit=5&offset=5"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=room%20resonance&query_mode=all_terms"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=frequency%20pitch&query_mode=all_terms&type=node"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=sampling%20audio&query_mode=all_terms&include_context=true"
 ```
 
 ```powershell
@@ -910,7 +1058,19 @@ directory.
 
 Search is covered at both layers: class coverage, case insensitivity, exact-ID and match-class
 precedence, matched-field correctness, class filtering, empty and rejected queries, paging and
-clamped bounds, defensive copying, and determinism across two indexes built from one corpus. Two
+clamped bounds, defensive copying, and determinism across two indexes built from one corpus.
+Query composition has its own suite at both layers. It pins the compatibility half first — that an
+omitted mode and an explicit `literal` are the same response, that two words are still a phrase,
+and that no literal result gains a `query_mode` or `term_matches` key — and then the composed half:
+terms in one field and in separate fields of one record, a missing term rejecting the record, terms
+held by two different records refusing to combine, case, whitespace and duplicate normalisation,
+both term bounds and the character ceiling at the service rather than only over HTTP, per-term
+evidence in canonical field and query order, class-then-ID ordering across two indexes, `type`,
+`limit` and `offset` composition, and defensive copying through the per-term evidence. Three are
+guardrails rather than feature tests: one requires a record whose context names a term to still be
+refused when its own fields lack that term, so context can never complete a query; one requires
+operator-shaped tokens to be required as literal text, so no Boolean syntax can creep in; and one
+re-checks that a composed query still cannot reach an experiment run. Two
 assertions are guardrails rather than feature tests. One searches a run's own observation text and
 requires it to match nothing, so a future change that starts indexing observations fails loudly.
 The other cross-checks every layer's own `q` against `/api/v1/search` for the same term and requires
@@ -945,14 +1105,23 @@ every layer at once.
 
 - Repository changes require a process restart. There is no watcher, no background sync and
   no filesystem polling, so a running process always serves one consistent snapshot.
-- Search is lexical substring matching. `/api/v1/search` orders by a fixed categorical match
-  precedence, not by a relevance score; the per-layer `q` parameters do not reorder at all. There
-  is no stemming, no fuzzy matching, no semantic retrieval and no embedding.
+- Search is lexical substring matching, in both query modes. `/api/v1/search` orders literal
+  results by a fixed categorical match precedence and composed ones by class and ID, never by a
+  relevance score; the per-layer `q` parameters do not reorder at all. There is no stemming, no
+  fuzzy matching, no semantic retrieval and no embedding.
 - Search matches only the fields documented under "Cross-layer search". A record whose relevant
   text lives in an excluded field — source `notes`, an experiment's `procedure`, a node's markdown
   body — is not discoverable by that text.
-- `q` accepts a single term and is matched literally. There is no phrase, boolean, wildcard or
-  field-scoped query syntax, and `type` accepts one class rather than a set.
+- `q` composes in exactly two ways: one literal phrase, or `query_mode=all_terms` requiring every
+  whitespace-separated term inside one record. There is no boolean, wildcard, regex, quoting or
+  field-scoped query syntax, `type` accepts one class rather than a set, and the per-layer `q`
+  parameters remain literal-only — composition exists on `/api/v1/search` alone.
+- `all_terms` splits on whitespace and nothing else, so punctuation stays part of a term and
+  `room,` will not find a record that wrote `room`. It requires 2 to 8 distinct terms; one term is
+  refused rather than treated as literal search under another name.
+- `all_terms` intersects within one record only. Two terms held by two records that reference each
+  other are not a hit, and `include_context` cannot supply a missing term — context is resolved
+  after matching, for the returned page only.
 - Experiment runs are not searchable at all, by design. See "Experiment runs are deliberately
   absent"; they remain addressable through their own structured routes.
 - No query is stored. There is no search history, no query log, no analytics and no
@@ -994,8 +1163,13 @@ every layer at once.
 ## Future work
 
 Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, query
-syntax beyond a single literal term, deeper or caller-shaped context, graph visualization,
-semantic retrieval, and MLLM experimentation.
+syntax beyond the two documented composition modes, deeper or caller-shaped context, graph
+visualization, semantic retrieval, and MLLM experimentation.
+
+Deterministic multi-term composition is no longer deferred; `query_mode=all_terms` is the whole of
+what shipped. Richer *syntax* — boolean operators, quoted phrases inside a composed query, negation,
+wildcards, field-scoped terms, multi-class `type` — remains deferred, and each would be its own
+contract rather than an extension of this one.
 
 Semantic retrieval is deferred deliberately. The deterministic lexical surface exists first so that
 the discovery contract — what is searchable, what a hit means, and what order results arrive in —

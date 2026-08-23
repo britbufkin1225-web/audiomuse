@@ -413,6 +413,12 @@ func TestLiveRepositoryIsNotMutatedByAPIRequests(t *testing.T) {
 		// the search scan, so it is the broadest read the API performs in one request.
 		"/api/v1/search?q=resonance&include_context=true",
 		"/api/v1/search?q=e&limit=200&include_context=true",
+		// Multi-term composition runs one substring pass per term over the same projection, so
+		// it is the most work a single discovery request can do, and the combination below —
+		// every term, every document, then context resolution over the returned page — is the
+		// broadest read the API performs at all.
+		"/api/v1/search?q=resonance+frequency&query_mode=all_terms",
+		"/api/v1/search?q=resonance+frequency&query_mode=all_terms&include_context=true",
 	}
 	for _, target := range targets {
 		rec := httptest.NewRecorder()

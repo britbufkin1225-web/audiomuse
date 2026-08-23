@@ -38,6 +38,30 @@ var ErrEmptySearchQuery = errors.New("search query must not be empty")
 // different query.
 var ErrSearchQueryTooLong = errors.New("search query exceeds maximum length")
 
+// Multi-term bounds. They are deliberately narrow, and they are enforced in the service rather
+// than only at the HTTP edge so a future internal caller inherits the same contract.
+const (
+	// MinSearchTerms is the floor for a composed query. One term is refused rather than run,
+	// because a single-term all_terms search is literal search under a second name: the two
+	// would be indistinguishable in behaviour and distinguishable in response shape, which is
+	// exactly the kind of redundant spelling that makes an API contract ambiguous. A caller who
+	// wants one term already has a mode for it.
+	MinSearchTerms = 2
+	// MaxSearchTerms is the ceiling. Each additional term is another full pass over the
+	// projection, and a query composed of dozens of terms is not a question a reader asks; it
+	// is a way to make one request cost more. The ceiling is a small fixed number rather than a
+	// budget, so the cost of a request is knowable from the contract.
+	MaxSearchTerms = 8
+)
+
+// ErrTooFewSearchTerms reports an all_terms query that normalised to fewer than MinSearchTerms
+// distinct terms. It is refused rather than quietly demoted to literal search: the mode was
+// named explicitly, so it should mean what it says.
+var ErrTooFewSearchTerms = errors.New("all_terms search requires at least two distinct terms")
+
+// ErrTooManySearchTerms reports an all_terms query past MaxSearchTerms distinct terms.
+var ErrTooManySearchTerms = errors.New("all_terms search accepts at most eight distinct terms")
+
 // SearchQuery is a bounded, deterministic cross-layer discovery request.
 //
 // Q is required. Type is an optional filter naming exactly one searchable class and is
@@ -51,6 +75,11 @@ type SearchQuery struct {
 	Type   string
 	Limit  int
 	Offset int
+
+	// Mode selects how Q is composed into a query. An empty value is domain.SearchModeLiteral,
+	// so the zero SearchQuery is the Phase 1E request it has always been and no existing caller
+	// changes behaviour by recompiling. Any value outside domain.SearchQueryModes is refused.
+	Mode string
 
 	// IncludeContext asks the resolver to attach the bounded canonical context of every result
 	// on the returned page. It is opt-in rather than the default so that the compact Phase 1E
@@ -69,7 +98,17 @@ type SearchQuery struct {
 // must not be confusable.
 type SearchResults struct {
 	Query string `json:"query"`
-	Type  string `json:"type,omitempty"`
+
+	// QueryMode echoes the composition that ran, and is present only when it was not the
+	// default. A literal search — whether the mode was omitted or spelled out — serialises no
+	// query_mode key at all, so a Phase 1E/1F client sees the response it always saw and an
+	// explicit literal request is not a third, subtly different shape. When it is present, the
+	// meaning of Query changes with it: under all_terms, Query is the normalised term list
+	// joined by single spaces rather than a phrase that was searched for contiguously, and the
+	// mode is what tells the two apart.
+	QueryMode string `json:"query_mode,omitempty"`
+
+	Type string `json:"type,omitempty"`
 
 	// IncludeContext echoes the context control for the same reason Type echoes the class
 	// filter. A query whose every hit happens to reference nothing would otherwise be
@@ -129,6 +168,28 @@ func (d searchDocument) matchedFields(needle string) []string {
 	for _, field := range d.fields {
 		if field.matches(needle) {
 			out = append(out, field.name)
+		}
+	}
+	return out
+}
+
+// unionMatchedFields returns every canonical field any term matched, in the record's own field
+// order and without repetition.
+//
+// A composed hit still reports MatchedFields, and it reports the union rather than the fields
+// of some chosen term: the question that field answers — "which of this record's fields did the
+// query reach" — has the same meaning in both modes, and a client that reads it without knowing
+// about term_matches gets a true answer rather than a partial one. The per-term breakdown lives
+// in TermMatches, which is where the composition is actually explained. Like matchedFields, the
+// slice is built per call, so nothing here is shared with the index.
+func (d searchDocument) unionMatchedFields(termMatches []domain.SearchTermMatch) []string {
+	var out []string
+	for _, field := range d.fields {
+		for _, match := range termMatches {
+			if contains(match.MatchedFields, field.name) {
+				out = append(out, field.name)
+				break
+			}
 		}
 	}
 	return out
@@ -334,16 +395,32 @@ func (k *Knowledge) buildSearch() {
 // the only operation performed on it is a case-insensitive substring test against in-memory
 // strings, so no query can reach the operator's disk or change how the search is evaluated.
 //
-// Ordering is explicit and total: match-kind precedence, then the canonical class order, then
-// canonical ID. Nothing is left to Go map iteration or to the order the filesystem returned
-// records in, so the same corpus and the same query always produce the same bytes.
+// Ordering is explicit and total in both modes. Literal search orders by match-kind precedence,
+// then the canonical class order, then canonical ID; a composed all_terms search orders by the
+// canonical class order and then canonical ID, because every hit satisfies every term equally
+// and inventing a tie-break between them would be a relevance judgement. Nothing is left to Go
+// map iteration or to the order the filesystem returned records in, so the same corpus and the
+// same query always produce the same bytes.
+//
+// Composition is decided before matching and never after: the whole match set is built, ordered
+// and only then paged, so a page boundary can never hide a record that satisfied the query.
 func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 	if q.Type != "" && !domain.ValidSearchEntityType(q.Type) {
 		return SearchResults{}, &InvalidFilterError{Param: "type", Allowed: domain.SearchEntityTypeNames()}
 	}
 
+	// An unset mode is the Phase 1E default rather than an error, so the zero SearchQuery keeps
+	// its meaning. Anything else must name a mode exactly.
+	mode := domain.SearchQueryMode(q.Mode)
+	if q.Mode == "" {
+		mode = domain.SearchModeLiteral
+	} else if !domain.ValidSearchQueryMode(q.Mode) {
+		return SearchResults{}, &InvalidFilterError{Param: "query_mode", Allowed: domain.SearchQueryModeNames()}
+	}
+
 	// Apply the same strict ceiling as HTTP so direct callers cannot have a suffix silently
-	// discarded and receive the results of a different query.
+	// discarded and receive the results of a different query. The ceiling is on the whole query
+	// in both modes: it bounds the text, and the term bounds below bound the composition.
 	trimmed := strings.TrimSpace(q.Q)
 	if len(trimmed) > MaxQueryChars {
 		return SearchResults{}, ErrSearchQueryTooLong
@@ -354,13 +431,60 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 	}
 	limit, offset := normalisePaging(q.Limit, q.Offset)
 
+	var (
+		echo     string
+		results  []domain.SearchResult
+		echoMode string
+	)
+	switch mode {
+	case domain.SearchModeAllTerms:
+		terms, err := normaliseTerms(needle)
+		if err != nil {
+			return SearchResults{}, err
+		}
+		// The echo is the normalised term list rather than the caller's spacing, so a response
+		// describes the query that ran: repeated terms and runs of whitespace are already gone.
+		echo = strings.Join(terms, " ")
+		echoMode = string(domain.SearchModeAllTerms)
+		results = k.searchAllTerms(q.Type, terms)
+	default:
+		echo = needle
+		results = k.searchLiteral(q.Type, needle)
+	}
+
+	// Context is resolved after ordering and paging, and only for the results actually being
+	// returned. Resolving it before the page would do work the caller never sees and, more
+	// importantly, would put a relationship count in reach of the ordering; keeping it here
+	// makes it structurally impossible for context to influence which results matched or where
+	// they sorted. It is equally impossible for context to satisfy a term: matching is finished
+	// before the resolver is called, and it only ever adds a Context object to a hit.
+	page, meta := paginate(results, limit, offset)
+	if q.IncludeContext {
+		k.resolveContext(page)
+	}
+	return SearchResults{
+		Query:          echo,
+		QueryMode:      echoMode,
+		Type:           q.Type,
+		IncludeContext: q.IncludeContext,
+		Page:           meta,
+		Results:        page,
+	}, nil
+}
+
+// searchLiteral is the Phase 1E match: one contiguous needle, four categorical match classes.
+//
+// It is the only literal implementation. all_terms reuses the same field projection and the
+// same substring test rather than carrying a second copy of them, so the two modes cannot drift
+// into disagreeing about what "this record contains that text" means.
+func (k *Knowledge) searchLiteral(typeFilter, needle string) []domain.SearchResult {
 	type ranked struct {
 		rank   int
 		result domain.SearchResult
 	}
 	matched := make([]ranked, 0, len(k.searchDocs))
 	for _, doc := range k.searchDocs {
-		if q.Type != "" && string(doc.entityType) != q.Type {
+		if typeFilter != "" && string(doc.entityType) != typeFilter {
 			continue
 		}
 		fields := doc.matchedFields(needle)
@@ -393,23 +517,91 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 	for _, m := range matched {
 		results = append(results, m.result)
 	}
+	return results
+}
 
-	// Context is resolved after ordering and paging, and only for the results actually being
-	// returned. Resolving it before the page would do work the caller never sees and, more
-	// importantly, would put a relationship count in reach of the ordering; keeping it here
-	// makes it structurally impossible for context to influence which results matched or where
-	// they sorted.
-	page, meta := paginate(results, limit, offset)
-	if q.IncludeContext {
-		k.resolveContext(page)
+// searchAllTerms is the Phase 1G composition: every term, somewhere in the same record.
+//
+// "The same record" is the whole of the new semantics and the whole of its limit. A term may be
+// satisfied by any of that record's own searchable fields, so a node whose title carries one
+// word and whose definition carries another is a hit; a term satisfied by a different record —
+// including one this record references — is not a match, because the unit of retrieval is the
+// canonical record and joining two of them would assert a relationship the corpus did not.
+//
+// Nothing here scores. A record that carries every term in one field and a record that spreads
+// them over five are the same kind of hit, reported identically and ordered by class and ID.
+func (k *Knowledge) searchAllTerms(typeFilter string, terms []string) []domain.SearchResult {
+	matched := make([]domain.SearchResult, 0, len(k.searchDocs))
+	for _, doc := range k.searchDocs {
+		if typeFilter != "" && string(doc.entityType) != typeFilter {
+			continue
+		}
+		termMatches := make([]domain.SearchTermMatch, 0, len(terms))
+		for _, term := range terms {
+			fields := doc.matchedFields(term)
+			if len(fields) == 0 {
+				// One missing term rejects the record. There is no partial hit and no
+				// "matched 2 of 3": a caller asked for records containing all of these, and
+				// a record containing some of them is not an answer to that question.
+				termMatches = nil
+				break
+			}
+			termMatches = append(termMatches, domain.SearchTermMatch{Term: term, MatchedFields: fields})
+		}
+		if len(termMatches) != len(terms) {
+			continue
+		}
+		matched = append(matched, domain.SearchResult{
+			EntityType:    doc.entityType,
+			ID:            doc.id,
+			Title:         doc.title,
+			Summary:       doc.summary,
+			MatchKind:     domain.MatchAllTerms,
+			MatchedFields: doc.unionMatchedFields(termMatches),
+			TermMatches:   termMatches,
+		})
 	}
-	return SearchResults{
-		Query:          needle,
-		Type:           q.Type,
-		IncludeContext: q.IncludeContext,
-		Page:           meta,
-		Results:        page,
-	}, nil
+
+	sort.SliceStable(matched, func(i, j int) bool {
+		if matched[i].EntityType != matched[j].EntityType {
+			return domain.SearchEntityRank(matched[i].EntityType) <
+				domain.SearchEntityRank(matched[j].EntityType)
+		}
+		return matched[i].ID < matched[j].ID
+	})
+	return matched
+}
+
+// normaliseTerms splits a normalised query into the distinct terms that will be required.
+//
+// Splitting is strings.Fields over the already trimmed and lower-cased query, and that is the
+// whole of the tokenisation. There is no stemming, no accent folding, no Unicode normalisation
+// pipeline and no punctuation stripping: a term keeps whatever punctuation the caller typed,
+// so "room," and "room" are different terms and only the second finds a record that wrote the
+// bare word. That is a documented limit of a deterministic composition rather than a defect to
+// be papered over with heuristics, each of which would be an unsourced judgement about language.
+//
+// Duplicates collapse to their first occurrence, so a repeated term cannot change the result
+// set, the ordering, the counts or the evidence — a query means the same thing however many
+// times the caller typed one of its words.
+func normaliseTerms(needle string) ([]string, error) {
+	fields := strings.Fields(needle)
+	terms := make([]string, 0, len(fields))
+	for _, term := range fields {
+		if !contains(terms, term) {
+			terms = append(terms, term)
+		}
+	}
+	// The bounds are applied to the distinct terms, because those are what actually execute:
+	// a query of one word repeated is one term's worth of question, and refusing it is the
+	// same refusal as refusing the word on its own.
+	if len(terms) < MinSearchTerms {
+		return nil, ErrTooFewSearchTerms
+	}
+	if len(terms) > MaxSearchTerms {
+		return nil, ErrTooManySearchTerms
+	}
+	return terms, nil
 }
 
 // SearchCounts is the size of the discovery projection, broken out by searchable class.

@@ -3,12 +3,15 @@ package httpapi
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
+	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/service"
 )
 
-// The discovery handler: Phase 1E search and the Phase 1F context control. It stays as thin as
+// The discovery handler: Phase 1E search, the Phase 1F context control and the Phase 1G
+// query-composition control. It stays as thin as
 // every other handler in this package: bound the query string, hand it to the immutable index,
 // map the typed error, serialise. No matching, ordering, paging or relationship-resolution logic
 // lives here — all of it belongs to the service and is tested there directly.
@@ -16,7 +19,7 @@ import (
 // searchParams is the complete accepted query string. rejectUnknownParams refuses anything
 // else, and refuses a parameter supplied twice, so a caller can never be handed a result set
 // that silently dropped a filter they believed was applied.
-var searchParams = []string{"q", "type", "include_context", "limit", "offset"}
+var searchParams = []string{"q", "type", "query_mode", "include_context", "limit", "offset"}
 
 func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	if !rejectUnknownParams(w, r, s.logger, searchParams...) {
@@ -28,8 +31,18 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	// trimmed, refused rather than truncated past the service ceiling, and refused if it
 	// carries a NUL. It is then plain text and nothing else — never a path, a pattern or a
 	// program. See service.Search.
-	values, ok := boundedParams(w, r, s.logger, query, "q", "type")
+	values, ok := boundedParams(w, r, s.logger, query, "q", "type", "query_mode")
 	if !ok {
+		return
+	}
+	// query_mode is the Phase 1G composition control. An absent parameter is the Phase 1E
+	// literal search unchanged, so whitespace in q stays part of the phrase; the service decides
+	// whether a supplied value names a mode. The one check that belongs here is the wire one: a
+	// present but blank parameter is a caller mistake, and treating it as "absent" would hand
+	// back literal results to someone who believes they asked for a composed query.
+	if _, present := query["query_mode"]; present && values["query_mode"] == "" {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter query_mode must be one of: "+strings.Join(domain.SearchQueryModeNames(), ", ")+".")
 		return
 	}
 	// include_context is the Phase 1F control and is a plain flag rather than a depth, a field
@@ -58,6 +71,7 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 	results, err := s.knowledge.Search(service.SearchQuery{
 		Q:              values["q"],
 		Type:           values["type"],
+		Mode:           values["query_mode"],
 		IncludeContext: includeContext != nil && *includeContext,
 		Limit:          limit,
 		Offset:         offset,
@@ -84,6 +98,20 @@ func (s *Server) writeSearchError(w http.ResponseWriter, r *http.Request, err er
 	if errors.Is(err, service.ErrSearchQueryTooLong) {
 		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
 			"Parameter q exceeds the maximum length.")
+		return
+	}
+	// The multi-term bounds. The message states the bound rather than echoing the caller's
+	// terms, and it names the mode, because the same q is a valid literal query.
+	if errors.Is(err, service.ErrTooFewSearchTerms) {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter q must supply at least "+strconv.Itoa(service.MinSearchTerms)+
+				" distinct whitespace-separated terms when query_mode is all_terms.")
+		return
+	}
+	if errors.Is(err, service.ErrTooManySearchTerms) {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter q must supply at most "+strconv.Itoa(service.MaxSearchTerms)+
+				" distinct whitespace-separated terms when query_mode is all_terms.")
 		return
 	}
 	// An unsupported type arrives as an InvalidFilterError and is rendered by the Phase 1B
