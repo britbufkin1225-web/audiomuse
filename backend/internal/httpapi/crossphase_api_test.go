@@ -42,6 +42,10 @@ func TestEveryPhaseRouteCoexistsOnOneHandler(t *testing.T) {
 		{"1E", "/api/v1/search?q=alpha&limit=5&offset=1"},
 		{"1F", "/api/v1/search?q=fixture&include_context=true"},
 		{"1F", "/api/v1/search?q=alpha&type=node&include_context=true"},
+		{"1G", "/api/v1/search?q=alpha+acoustics&query_mode=all_terms"},
+		{"1G", "/api/v1/search?q=acoustics+synthetic&query_mode=all_terms&type=node"},
+		{"1G", "/api/v1/search?q=acoustics+synthetic&query_mode=all_terms&include_context=true"},
+		{"1G", "/api/v1/search?q=fixture&query_mode=literal&limit=5"},
 		{"shared", "/api/v1/project"},
 		{"shared", "/api/v1/diagnostics"},
 		{"shared", "/health"},
@@ -109,6 +113,7 @@ func TestMutationIsRejectedOnEveryPhaseRoute(t *testing.T) {
 		"/api/v1/experiments",
 		"/api/v1/experiment-runs",
 		"/api/v1/search?q=fixture",
+		"/api/v1/search?q=alpha+acoustics&query_mode=all_terms",
 	}
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete}
 
@@ -141,6 +146,7 @@ func TestDuplicateQueryParametersAreRejectedAcrossPhases(t *testing.T) {
 		"/api/v1/search?q=alpha&q=beta",
 		"/api/v1/search?q=alpha&type=node&type=claim",
 		"/api/v1/search?q=alpha&include_context=true&include_context=true",
+		"/api/v1/search?q=alpha+acoustics&query_mode=all_terms&query_mode=literal",
 	}
 
 	for _, target := range targets {

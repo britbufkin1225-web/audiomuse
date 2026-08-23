@@ -132,10 +132,97 @@ type SearchResult struct {
 	// rewritten, and no semantic category is inferred.
 	MatchedFields []string `json:"matched_fields"`
 
+	// TermMatches is the per-term evidence of a multi-term hit, present only for a query
+	// composed under SearchModeAllTerms. It is absent from every literal result, so a Phase
+	// 1E/1F response is unchanged, and it is a distinct field rather than a reshaping of
+	// MatchedFields because the two answer different questions: MatchedFields is still the
+	// union of this record's fields the query reached, while TermMatches says which term
+	// reached which. Terms appear in normalised query order and fields in canonical field
+	// order, so the evidence is as reproducible as the result it explains. See
+	// SearchTermMatch.
+	TermMatches []SearchTermMatch `json:"term_matches,omitempty"`
+
 	// Context is the bounded canonical context of this hit, present only when the caller asked
 	// for it. A pointer rather than a value so that an unrequested context is absent from the
 	// response rather than serialised as an empty object that a client could mistake for "this
 	// record has no context"; those are different facts and a requested-but-empty context is
 	// served as an empty Related list. See context.go.
 	Context *SearchResultContext `json:"context,omitempty"`
+}
+
+// Query modes: how the caller's text is composed into one lexical query.
+//
+// Phase 1E searched for one contiguous needle and nothing else, and that stays the default:
+// a request that names no mode means exactly what it meant before, so whitespace in q is part
+// of the phrase rather than a separator. Reinterpreting it silently would change the meaning
+// of every query already in a client's code.
+//
+// The second mode exists because a reader who types two words usually means "a record about
+// both", and the corpus may carry those words in different canonical fields of the same
+// record — a node whose title says one and whose definition says the other. Making that
+// reachable is a composition decision, not a retrieval one: SearchModeAllTerms still performs
+// the same case-insensitive substring test, term by term, over the same field set. It does
+// not stem, score, rank, expand or infer, and a record matching every term is a statement
+// about text, not about meaning.
+type SearchQueryMode string
+
+const (
+	// SearchModeLiteral is the Phase 1E contract: the whole normalised query is one needle.
+	SearchModeLiteral SearchQueryMode = "literal"
+	// SearchModeAllTerms requires every normalised term to occur somewhere in the same record.
+	SearchModeAllTerms SearchQueryMode = "all_terms"
+)
+
+// SearchQueryModes is the closed set, in the order an error message lists them: the default
+// first, so a caller reading the list sees what an omitted mode does.
+var SearchQueryModes = []SearchQueryMode{SearchModeLiteral, SearchModeAllTerms}
+
+// ValidSearchQueryMode reports whether a caller-supplied string names a query mode.
+//
+// The comparison is exact. "AND", "and", "all", "true" and "1" are refused rather than guessed
+// at, for the same reason the tri-state boolean filters refuse "yes": a mode that silently
+// resolved to the wrong composition would answer a different question than the one asked.
+func ValidSearchQueryMode(value string) bool {
+	for _, mode := range SearchQueryModes {
+		if string(mode) == value {
+			return true
+		}
+	}
+	return false
+}
+
+// SearchQueryModeNames renders the closed set for an error message.
+func SearchQueryModeNames() []string {
+	out := make([]string, 0, len(SearchQueryModes))
+	for _, mode := range SearchQueryModes {
+		out = append(out, string(mode))
+	}
+	return out
+}
+
+// MatchAllTerms is the categorical match class of a multi-term hit.
+//
+// It is a fifth class rather than a reuse of the four single-needle ones, because none of them
+// is true of a composed query: the record did not match "the query" in its title or in one
+// field, it matched each term somewhere. Forcing it into MatchFieldSubstring would report a
+// fact that did not happen, and forcing it into MatchTitleSubstring would require picking one
+// term as the important one — a weighting judgement this layer does not make.
+//
+// Like the other four it is a label, not a score. Every all_terms hit carries this one class,
+// so it orders nothing; multi-term ordering is the canonical class order and then canonical ID.
+const MatchAllTerms = "all_terms"
+
+// SearchTermMatch is the per-term evidence for one multi-term hit.
+//
+// A composed query is not one substring, so reporting it as one would misdescribe the hit.
+// This says which canonical fields each term was found in, which is the whole of what the
+// backend knows: no snippet, no offset, no highlighting, no rewritten prose, and no count. A
+// term appearing five times in a field is recorded the same way as one appearing once, because
+// frequency is the first step towards a relevance score and this layer has none.
+//
+// MatchedFields names fields of the hit's own record only. A term satisfied by a related
+// record is not a match here: context is resolved after discovery and never feeds back into it.
+type SearchTermMatch struct {
+	Term          string   `json:"term"`
+	MatchedFields []string `json:"matched_fields"`
 }

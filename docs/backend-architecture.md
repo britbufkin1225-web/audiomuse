@@ -127,6 +127,21 @@ structured records is exactly the brittleness `tools/validate-graph.ps1` works a
 and a decision about what "related" means — three unsourced judgments. Phase 1A search is
 deterministic substring matching over declared fields, and it says so.
 
+**Why multi-term composition is opt-in and not a query language.** A reader who types two words
+usually means "a record about both", and the corpus routinely carries those words in different
+canonical fields of one record — a node whose title says one and whose definition says the other.
+Phase 1G makes that reachable through `query_mode=all_terms` without changing what a query means by
+default: reinterpreting whitespace as an implicit AND would silently alter the meaning of every
+request already written against the literal contract, so the default stays one contiguous phrase and
+the composed mode has to be named. The composition is bounded on purpose — whitespace splitting, 2
+to 8 distinct terms, no operators, no quoting, no wildcards, no field selectors — because the moment
+a query grows a parser it grows a precedence, and a precedence is a judgment about what the reader
+meant. What ships is one deterministic retrieval fact: these terms all occur in this record. That is
+a statement about text, not about meaning, and the response says so — `all_terms` is its own match
+class, evidence is per-term canonical field names with no counts or snippets, and ordering is the
+canonical class order and then ID, because every hit satisfies every term equally and any tie-break
+between them would be a relevance score by another name.
+
 **Why Phase 1B extended the Phase 1A machinery instead of adding a subsystem.** Sources, claims,
 and provenance are not an independent content type sitting beside the knowledge graph; they are
 relationships inside it. A claim's evidence points at the same registry a node's `sources:` points
@@ -375,11 +390,18 @@ reported for human decision.
 `runtime_projection`, while `repository_semantic_validation` is `external_precondition`. Its
 `valid` status must not be interpreted as an in-process execution of the PowerShell semantic rules.
 
-## Known limitations (through Phase 1D)
+## Known limitations (through Phase 1G)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, ranking model, or
-  embedding.
+  embedding. `/api/v1/search?query_mode=all_terms` composes several literal terms into one
+  record-level request and is bounded to whitespace splitting and 2 to 8 distinct terms: no boolean
+  operators, no quoting, no negation, no wildcards, no regular expressions and no field-scoped
+  terms. Terms must all occur inside one canonical record; two terms held by two records never
+  combine, and search-result context is resolved after matching and can never supply a term.
+- Query composition does not widen the search corpus. The searchable field set is unchanged in both
+  modes, so node markdown bodies, source notes, experiment procedures and every experiment run stay
+  outside discovery.
 - No persistence, no database, no cache beyond the startup index.
 - No file watcher, background worker, or scheduled ingestion.
 - No frontend and no graph visualization.
@@ -417,8 +439,11 @@ reported for human decision.
 
 ## Future work
 
-Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, search
-hardening, graph visualization, semantic retrieval, and MLLM experimentation. The Phase 1C contract
+Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, query
+syntax beyond the two documented composition modes, graph visualization, semantic retrieval, and
+MLLM experimentation. Deterministic multi-term composition is no longer deferred — it shipped as
+`query_mode=all_terms` — while richer syntax and semantic retrieval remain separately reviewed
+future phases. The Phase 1C contract
 is shaped to be useful to a future read-only graph inspector, provenance-path view or
 claim-confidence overlay without any of them being implemented here, and without the backend being
 distorted around a hypothetical frontend.

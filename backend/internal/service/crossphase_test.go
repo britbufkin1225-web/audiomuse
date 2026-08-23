@@ -409,4 +409,30 @@ func TestDiscoveryDoesNotEnrolRecordsInTheGraph(t *testing.T) {
 	if after := k.Graph(); !reflect.DeepEqual(before, after) {
 		t.Error("the graph projection changed across search requests")
 	}
+
+	// Phase 1G composes several terms into one discovery request, and composition is not
+	// promotion either: a vocabulary entry or experiment definition found by two terms rather
+	// than one is exactly as un-traversable as before, and the graph is still untouched.
+	composed := mustSearch(t, k, service.SearchQuery{
+		Q: "fixture synthetic", Mode: string(domain.SearchModeAllTerms), Limit: 200,
+	})
+	if composed.Page.Total == 0 {
+		t.Fatal("the composed query matched nothing, so this half would pass vacuously")
+	}
+	practice := 0
+	for _, result := range composed.Results {
+		if result.EntityType != domain.SearchVocabulary && result.EntityType != domain.SearchExperiment {
+			continue
+		}
+		practice++
+		if _, err := k.Traverse(string(result.EntityType), result.ID, service.TraversalQuery{Depth: 1}); err == nil {
+			t.Errorf("composed %s hit %q was accepted as a traversal root", result.EntityType, result.ID)
+		}
+	}
+	if practice == 0 {
+		t.Fatal("the composed query returned no practice-layer records, so this half is vacuous")
+	}
+	if after := k.Graph(); !reflect.DeepEqual(before, after) {
+		t.Error("the graph projection changed across a composed search request")
+	}
 }
