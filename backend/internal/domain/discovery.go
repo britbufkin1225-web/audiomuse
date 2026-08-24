@@ -176,13 +176,12 @@ func (f SearchEntityTypeFacets) Total() int {
 	return f.Session + f.Node + f.Claim + f.Source + f.Vocabulary + f.Experiment
 }
 
-// Match kinds: the categorical precedence classes a result is ordered by.
+// Match kinds: the coarse categorical summary of how a literal result matched.
 //
-// These are not a relevance score and are deliberately not rendered as a number. They are a
-// fixed, hand-written precedence over four mutually exclusive ways a query can have matched,
-// and calling them anything else would dress a priority list as information retrieval. There
-// is no weighting, no field boosting and no tie-breaking by frequency; ties are broken by the
-// entity class order and then by canonical ID, which is what makes the ordering reproducible.
+// These remain the four mutually exclusive Phase 1E classes and are not themselves a relevance
+// score. Phase 1I derives them from MatchSignals so the coarse explanation cannot disagree with
+// the score, then orders results by RelevanceScore, canonical entity class and canonical ID.
+// There is still no field-frequency or occurrence-frequency tie-break.
 //
 // "Title" here means the record's display field, which is a different canonical field per
 // class — a node, source or experiment title, a vocabulary term, a session title, a claim
@@ -227,6 +226,31 @@ type SearchResult struct {
 	// MatchKind is the categorical precedence class above, echoed so a client can see why a
 	// result sorted where it did rather than having to trust the order.
 	MatchKind string `json:"match_kind"`
+
+	// RelevanceScore is the deterministic integer relevance of this hit: the exact sum of the
+	// weights of every signal in MatchSignals, and nothing else. It is always present, on every
+	// result of every mode, because a score that appeared only sometimes would make "this hit is
+	// unranked" and "this hit scored nothing" the same response. It is an integer rather than a
+	// normalised float: it is compared, never displayed as a percentage, and a float would make
+	// two equal hits capable of differing in the last bit.
+	//
+	// It is comparable only within one response. Nothing calibrates it across queries, and a
+	// larger score on a different query does not mean a better answer, because the signals a
+	// query can even fire depend on the query. See the match-signal block.
+	RelevanceScore int `json:"relevance_score"`
+
+	// MatchSignals names every ranking signal this hit fired, in SearchMatchSignals order —
+	// descending weight — so the first entry is always the strongest thing true of this hit. It
+	// is the explanation of RelevanceScore and of the ordering together: a client can sum the
+	// weights and recover the score, and can compare two results' lists and see which signal
+	// separated them.
+	//
+	// Signals are facts about how the query reached this record's own canonical fields. No entry
+	// is prose, none is generated, none is inferred, and none can name another record. Mutually
+	// exclusive signals never appear together and no signal appears twice, so the list is the
+	// minimal true description of the hit rather than every statement that could be made about
+	// it. It is always non-empty: a record that matched nothing is not a result.
+	MatchSignals []string `json:"match_signals"`
 
 	// MatchedFields names every canonical field of this record the query matched, in the
 	// record's own field order. It is the evidence for the hit: a client can answer "why did
@@ -312,7 +336,8 @@ func SearchQueryModeNames() []string {
 // term as the important one — a weighting judgement this layer does not make.
 //
 // Like the other four it is a label, not a score. Every all_terms hit carries this one class,
-// so it orders nothing; multi-term ordering is the canonical class order and then canonical ID.
+// so it orders nothing; Phase 1I orders multi-term hits by their relevance score before the
+// canonical class and ID tie-breaks.
 const MatchAllTerms = "all_terms"
 
 // SearchTermMatch is the per-term evidence for one multi-term hit.
@@ -328,4 +353,144 @@ const MatchAllTerms = "all_terms"
 type SearchTermMatch struct {
 	Term          string   `json:"term"`
 	MatchedFields []string `json:"matched_fields"`
+}
+
+// Match signals: the deterministic ranking vocabulary.
+//
+// Phase 1E gave a result one categorical MatchKind, which answers "why did this match" but not
+// "why is this above that" beyond four coarse tiers, and Phase 1G's composed mode answers
+// neither — every all_terms hit carries one class, so the whole ordering was the class order and
+// the ID. A signal is the missing middle: one named, individually observable property of how the
+// normalised query reached this record, carrying a fixed weight.
+//
+// A signal is not a score component in the information-retrieval sense. Nothing here counts
+// occurrences, measures a field's length, consults how often a record is referenced, or knows
+// anything about any request but this one. Each signal is a yes-or-no fact about one query and
+// one record's own canonical fields, and the whole of the relevance score is the sum of the
+// weights of the signals that are true. That is the point of expressing it this way: a client
+// holding match_signals can recompute relevance_score itself and check the backend's arithmetic,
+// which a hand-tuned opaque score would not allow.
+//
+// "Title" here means the record's display field, which is a different canonical field per class
+// exactly as it is for the match kinds; see the MatchKind block.
+const (
+	// SignalIDExact: the normalised query is exactly the record's canonical ID.
+	SignalIDExact = "id_exact"
+	// SignalTitleExact: the normalised query is exactly the record's display field.
+	SignalTitleExact = "title_exact"
+	// SignalTitlePrefix: the display field begins with the normalised query and continues past
+	// it. A reader who types the start of a name means that name, and a record it opens is a
+	// better answer than one that mentions the same text halfway through a sentence.
+	SignalTitlePrefix = "title_prefix"
+	// SignalTitleSubstring: the normalised query occurs inside the display field, neither at its
+	// start nor as the whole of it.
+	SignalTitleSubstring = "title_substring"
+	// SignalPhraseMatch: the complete normalised query occurs contiguously in some field of the
+	// record. It is emitted only for a composed query, because a literal hit is a contiguous
+	// occurrence by definition and the signal would restate the mode instead of distinguishing
+	// the hit. For a composed query it is the strongest thing that can be said short of the
+	// display field itself: the record carries the caller's words together, in their order,
+	// rather than scattered across five fields.
+	SignalPhraseMatch = "phrase_match"
+	// SignalTitleAllTerms: every term of a composed query occurs in the display field.
+	SignalTitleAllTerms = "title_all_terms"
+	// SignalTitleTerms: at least one term of a composed query, but not every term, occurs in the
+	// display field. It is mutually exclusive with SignalTitleAllTerms rather than additive, so
+	// complete coverage is never reported as partial coverage plus something.
+	SignalTitleTerms = "title_terms"
+	// SignalIDSubstring: the query — or, for a composed query, at least one of its terms —
+	// occurs inside the canonical ID without being the whole of it. The ID is authored, stable
+	// and short, so text inside it is a stronger indication than the same text inside prose,
+	// and weaker than any statement about the display field.
+	SignalIDSubstring = "id_substring"
+	// SignalFieldMatch: the query reached at least one searchable field that is neither the
+	// canonical ID nor the display field. It is the floor: every hit that is not explained by
+	// identity or by its name carries this and nothing stronger.
+	SignalFieldMatch = "field_match"
+)
+
+// SearchMatchSignals is the closed set, in descending weight order.
+//
+// The order is the ranking policy written down. A result's own signal list is emitted in this
+// order, so two results that matched the same way describe themselves identically and a client
+// diffing two responses sees an ordering change rather than a reshuffled explanation.
+var SearchMatchSignals = []string{
+	SignalIDExact,
+	SignalTitleExact,
+	SignalTitlePrefix,
+	SignalTitleSubstring,
+	SignalPhraseMatch,
+	SignalTitleAllTerms,
+	SignalTitleTerms,
+	SignalIDSubstring,
+	SignalFieldMatch,
+}
+
+// SearchSignalWeight is the fixed integer weight of one signal, or zero for an unknown name.
+//
+// The weights are powers of two chosen so that each is strictly greater than the sum of every
+// weight below it. That is the whole of the ranking policy's soundness argument: it makes the
+// integer sum behave exactly as a lexicographic comparison of the signal list would, so a
+// record carrying a stronger signal outranks a record carrying every weaker signal at once, and
+// no accumulation of weak evidence can ever overtake one strong piece. A weight table without
+// that property would be a set of magic numbers whose ordering nobody could predict from
+// reading it. SearchSignalWeightsAreLexicographic states the invariant, and a test enforces it.
+//
+// It is a switch rather than a map because a map would invite ranging over it, and a ranking
+// policy must never be read in Go's map order. Weights are integers, and the score is their
+// exact sum: there is no floating-point arithmetic anywhere in ranking, so no result's position
+// depends on rounding.
+func SearchSignalWeight(signal string) int {
+	switch signal {
+	case SignalIDExact:
+		return 1024
+	case SignalTitleExact:
+		return 512
+	case SignalTitlePrefix:
+		return 256
+	case SignalTitleSubstring:
+		return 128
+	case SignalPhraseMatch:
+		return 64
+	case SignalTitleAllTerms:
+		return 32
+	case SignalTitleTerms:
+		return 16
+	case SignalIDSubstring:
+		return 8
+	case SignalFieldMatch:
+		return 4
+	}
+	return 0
+}
+
+// SearchRelevanceScore is the sum of the weights of the signals a hit carries.
+//
+// It is the only way a score is ever produced, so the score and the explanation cannot disagree:
+// there is no path by which a result acquires relevance the signal list does not account for.
+// An unknown signal contributes nothing rather than a default, so a score can never be inflated
+// by a name this build does not define.
+func SearchRelevanceScore(signals []string) int {
+	total := 0
+	for _, signal := range signals {
+		total += SearchSignalWeight(signal)
+	}
+	return total
+}
+
+// SearchSignalWeightsAreLexicographic reports whether every signal's weight exceeds the sum of
+// all weaker weights, which is the property that makes the summed score behave as a precedence
+// order rather than as an accumulation. It exists so the invariant is checkable rather than
+// merely asserted in a comment, and so a future weight change is caught by a test instead of by
+// a reordered result set nobody expected.
+func SearchSignalWeightsAreLexicographic() bool {
+	remaining := 0
+	for i := len(SearchMatchSignals) - 1; i >= 0; i-- {
+		weight := SearchSignalWeight(SearchMatchSignals[i])
+		if weight <= 0 || weight <= remaining {
+			return false
+		}
+		remaining += weight
+	}
+	return true
 }

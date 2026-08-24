@@ -24,15 +24,6 @@ import (
 // only situation in which a class filter means anything.
 const scopeNeedle = "fixture"
 
-// classesOf renders a result set as the class of each hit, in result order.
-func classesOf(results service.SearchResults) []domain.SearchEntityType {
-	out := make([]domain.SearchEntityType, 0, len(results.Results))
-	for _, result := range results.Results {
-		out = append(out, result.EntityType)
-	}
-	return out
-}
-
 // keepClasses is the reference implementation of the filter: the same results, in the same
 // order, with the classes outside the scope dropped. Every scope assertion below compares
 // against this rather than against a list of IDs.
@@ -55,6 +46,16 @@ func classNames(classes ...domain.SearchEntityType) []string {
 	out := make([]string, 0, len(classes))
 	for _, class := range classes {
 		out = append(out, string(class))
+	}
+	return out
+}
+
+// refsOf renders a bare result slice as type/id pairs, so an assertion comparing against
+// keepClasses can report both sides in the same shape searchRefs reports a response in.
+func refsOf(results []domain.SearchResult) []string {
+	out := make([]string, 0, len(results))
+	for _, result := range results {
+		out = append(out, string(result.EntityType)+"/"+result.ID)
 	}
 	return out
 }
@@ -199,16 +200,23 @@ func TestSearchScopeIsOrderedCanonically(t *testing.T) {
 	if want := []string{"session", "claim", "experiment"}; !reflect.DeepEqual(forward.EntityTypes, want) {
 		t.Errorf("echoed entity_types = %v, want the canonical order %v", forward.EntityTypes, want)
 	}
-	// Results stay in the canonical class order too: filtering removes classes, it does not
-	// group or reorder what it keeps.
-	seen := classesOf(forward)
-	rank := -1
-	for _, class := range seen {
-		next := domain.SearchEntityRank(class)
-		if next < rank {
-			t.Fatalf("results left canonical class order: %v", seen)
-		}
-		rank = next
+	// Filtering removes classes; it does not group or reorder what it keeps. Phase 1H stated
+	// that by requiring the surviving classes to ascend, which held only because the class order
+	// was then the primary sort key. Phase 1I made relevance the primary key and the class order
+	// the tie-break, so a high-scoring experiment may now precede a low-scoring session and the
+	// ascent no longer describes a correct result set.
+	//
+	// The invariant Phase 1H actually asserted survives intact and is checked here directly
+	// against keepClasses, the reference implementation of the filter: the scoped set is the
+	// unscoped set with the excluded classes dropped, in the order the unscoped search produced.
+	// That is strictly stronger than the ascent it replaces — it pins every hit's position
+	// rather than only its class's — and it is the same comparison every other scope assertion
+	// in this file already makes.
+	unscoped := mustSearch(t, k, service.SearchQuery{Q: universalNeedle, Limit: 200})
+	want := keepClasses(unscoped, domain.SearchSession, domain.SearchClaim, domain.SearchExperiment)
+	if !reflect.DeepEqual(forward.Results, want) {
+		t.Errorf("scoped results are not the unscoped results with other classes dropped:\n%v\n%v",
+			searchRefs(forward), refsOf(want))
 	}
 }
 

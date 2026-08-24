@@ -138,9 +138,11 @@ to 8 distinct terms, no operators, no quoting, no wildcards, no field selectors 
 a query grows a parser it grows a precedence, and a precedence is a judgment about what the reader
 meant. What ships is one deterministic retrieval fact: these terms all occur in this record. That is
 a statement about text, not about meaning, and the response says so — `all_terms` is its own match
-class, evidence is per-term canonical field names with no counts or snippets, and ordering is the
-canonical class order and then ID, because every hit satisfies every term equally and any tie-break
-between them would be a relevance score by another name.
+class, and evidence is per-term canonical field names with no counts or snippets. Phase 1G ordered
+composed hits by the canonical class order and then ID, on the grounds that every hit satisfies
+every term equally and any tie-break between them would be a relevance score by another name. That
+was the right call while there was no score to name; Phase 1I supplies one explicitly, and composed
+results are now ranked by it before falling back to the same class and ID keys.
 
 **Why result scope is a separate parameter, and why facets are counts of one axis.** A reader who
 searches across six layers at once needs two things the Phase 1E result page cannot give them:
@@ -408,11 +410,54 @@ reported for human decision.
 `runtime_projection`, while `repository_semantic_validation` is `external_precondition`. Its
 `valid` status must not be interpreted as an in-process execution of the PowerShell semantic rules.
 
-## Known limitations (through Phase 1H)
+**Why ranking is a weighted signal list and not a retrieval model.** Phase 1E ordered results by
+four categorical match classes and Phase 1G ordered composed results by class and ID, which left
+two questions a search response could not answer: why one `title_substring` hit sat above another,
+and why one `all_terms` hit sat above another at all. The honest answer in both cases was "the
+canonical ID sorted first", which is reproducible but is not relevance. Phase 1I closes that
+without importing an information-retrieval system.
+
+A signal is one named, yes-or-no fact about how the normalised query reached one record's own
+canonical fields — the query *is* the ID, the display field *begins* with the query, every term
+occurs in the display field — carrying a fixed integer weight. `relevance_score` is the sum of the
+weights of the signals that are true, and `match_signals` lists exactly those. Defining the score
+as the sum of its own explanation is the whole design: the two are one fact stated twice and cannot
+drift apart, a client can recompute the number it was sent, and comparing two results' signal lists
+shows precisely which signal separated them. An opaque score would allow none of that.
+
+The weights are powers of two, each strictly greater than the sum of every weight below it, which
+makes the integer sum behave exactly as a lexicographic comparison of the signal list: one strong
+signal always beats any accumulation of weak ones. That property is what lets the score be read off
+the table rather than trusted, and it is enforced by a test rather than asserted in a comment. It is
+also what keeps Phase 1I additive rather than disruptive — for a literal search the score is a
+strict refinement of the Phase 1E class precedence, so results still emerge in `id_exact`,
+`title_exact`, `title_substring`, `field_substring` order and are merely sorted within each class
+now. `match_kind` is derived from the signals rather than computed a second time, so the coarse
+class a client reads and the score it is ordered by cannot disagree.
+
+What is excluded is excluded on the same grounds every other exclusion in this backend is. There is
+no term frequency, no field-length normalisation, no IDF, no popularity, click or usage weighting,
+no recency and no learned component, because each is either an unsourced judgment about what a
+reader meant or a measurement this service has no business taking. Ranking reads no clock, no
+counter and no random source. It also cannot see a record's relationships, provenance or resolved
+context: context is resolved after ranking and paging precisely so that it is structurally
+impossible for a relationship count to reach the ordering. A record's score is a function of the
+query and that record alone, which is why the scope filter, the page window and the context control
+cannot move it.
+
+The ranking stage sits inside the bounded pipeline that already existed, and the stage order is
+unchanged: validate, match, restrict to scope, rank the complete set, count facets, page, resolve
+context. Ranking the complete set before paging is what makes the first page the top of the ranking
+rather than an arbitrary window of it, and counting facets before paging keeps them describing the
+whole filtered set exactly as Phase 1H defined.
+
+## Known limitations (through Phase 1I)
 
 - Corpus changes require a process restart.
-- Search is lexical substring matching only; there is no semantic retrieval, ranking model, or
-  embedding, and neither result scope nor facets adds one. `/api/v1/search?query_mode=all_terms`
+- Search is lexical substring matching only; there is no semantic retrieval, embedding or learned
+  ranking model, and neither result scope, facets nor relevance ranking adds one. `relevance_score`
+  is a fixed weighting of explicit lexical signals over the records substring matching already
+  found; it orders results, never filters them, and cannot make an unmatched record reachable. `/api/v1/search?query_mode=all_terms`
   composes several literal terms into one record-level request and is bounded to whitespace
   splitting and 2 to 8 distinct terms: no boolean operators, no quoting, no negation, no wildcards,
   no regular expressions and no field-scoped terms. Terms must all occur inside one canonical

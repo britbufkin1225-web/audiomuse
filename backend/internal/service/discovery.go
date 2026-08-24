@@ -268,19 +268,176 @@ func searchFieldsMatch(fields []searchField, needle string) bool {
 	return false
 }
 
-// classify assigns the categorical precedence class of a hit. See the match-kind block in
-// domain: these are four mutually exclusive ways a query matched, not a score.
-func (d searchDocument) classify(needle string, matched []string) (string, int) {
-	switch {
-	case d.idLower == needle:
-		return domain.MatchIDExact, 0
-	case d.titleLower == needle:
-		return domain.MatchTitleExact, 1
-	case contains(matched, d.titleField):
-		return domain.MatchTitleSubstring, 2
-	default:
-		return domain.MatchFieldSubstring, 3
+// searchIDField is the canonical field name every search document projects its ID under. The
+// ranking policy asks questions about that field by name, so the name is written once here and
+// read by both the document builder and the signal derivation rather than spelled independently
+// in each; a drift between the two would silently stop the ID from being a high-priority field.
+const searchIDField = "id"
+
+// signals derives the ordered ranking signals one hit fired. It is the Phase 1I ranking policy,
+// and it is the only place a relevance score can originate.
+//
+// phrase is the whole normalised query: the literal needle, or — for a composed search — the
+// distinct terms joined by single spaces, which is exactly the query the response echoes. terms
+// is nil for a literal search and the normalised term list for a composed one, and that is the
+// only difference between the two modes' ranking: both ask the same questions of the same
+// fields, and a composed query can additionally be asked how much of it one field carried.
+//
+// The signals are appended in domain.SearchMatchSignals order — descending weight — so the list
+// needs no sort and cannot acquire one that depends on anything but the policy. Within each tier
+// the branches are mutually exclusive, so no signal is emitted twice and no hit is described
+// both as an exact name match and as a substring of the same name.
+//
+// Every question here is answered from this record's own fields. Nothing consults another
+// record, the size of the corpus, the number of hits, the request, or anything outside the two
+// arguments and the document, so a record's score is a function of the query and that record
+// alone and cannot change because a different record happened to also match.
+func (d searchDocument) signals(phrase string, terms []string, matched []string) []string {
+	signals := make([]string, 0, len(domain.SearchMatchSignals))
+
+	// Identity, strongest tier. A caller who typed a canonical ID typed an address, not a
+	// description, and the record at that address is the answer.
+	idExact := d.idLower == phrase
+	if idExact {
+		signals = append(signals, domain.SignalIDExact)
 	}
+
+	// The display field, second tier: exact, then prefix, then anywhere inside. The three are
+	// mutually exclusive by construction, and each is a statement about where the whole query
+	// sits in the name rather than about how much of the name it covers.
+	//
+	// All three test the phrase against the display value itself rather than against the matched
+	// field list. For a literal search the two are the same question, because the phrase is the
+	// needle the list was built from. For a composed search they are not: the list is the union
+	// over the terms, so reading it here would report "the whole query is inside this name"
+	// whenever any single term touched it — which is what the coverage tier below says, said
+	// once, accurately.
+	switch {
+	case d.titleLower == phrase:
+		signals = append(signals, domain.SignalTitleExact)
+	case strings.HasPrefix(d.titleLower, phrase):
+		signals = append(signals, domain.SignalTitlePrefix)
+	case strings.Contains(d.titleLower, phrase):
+		signals = append(signals, domain.SignalTitleSubstring)
+	}
+
+	if len(terms) > 0 {
+		// The composed-only tiers. phrase_match asks whether the record carries the caller's
+		// words together, in order, somewhere other than its display field — the display field
+		// is already fully described by the tier above, so asking about it again here would add
+		// weight for one fact stated twice. A composed query whose words appear side by side in
+		// a definition is a stronger hit than one whose words are scattered over five fields,
+		// and this is the signal that says so.
+		if d.phraseMatchesOutsideTitle(phrase) {
+			signals = append(signals, domain.SignalPhraseMatch)
+		}
+		// Term coverage of the display field: the second axis, and a different question from
+		// the tier above. "Every one of your words is in this record's name" can be true of a
+		// record that never carries them contiguously.
+		switch covered := d.titleTermCoverage(terms); {
+		case covered == len(terms):
+			signals = append(signals, domain.SignalTitleAllTerms)
+		case covered > 0:
+			signals = append(signals, domain.SignalTitleTerms)
+		}
+	}
+
+	// Text inside the canonical ID, below every statement about the name and above prose.
+	// Suppressed when the ID is the whole query, which the strongest signal already said.
+	if !idExact && contains(matched, searchIDField) {
+		signals = append(signals, domain.SignalIDSubstring)
+	}
+
+	// The floor: the query reached a field that is neither identity nor name.
+	for _, field := range matched {
+		if field != searchIDField && field != d.titleField {
+			signals = append(signals, domain.SignalFieldMatch)
+			break
+		}
+	}
+	return signals
+}
+
+// phraseMatchesOutsideTitle reports whether the complete normalised query occurs contiguously in
+// some searchable field that is not the display field. The display field is excluded because the
+// signal tier above already describes how the whole query sits in the name, and a score is only
+// interpretable if each signal contributes evidence no other signal already contributed.
+func (d searchDocument) phraseMatchesOutsideTitle(phrase string) bool {
+	for _, field := range d.fields {
+		if field.name == d.titleField {
+			continue
+		}
+		if field.matches(phrase) {
+			return true
+		}
+	}
+	return false
+}
+
+// titleTermCoverage counts how many of a composed query's terms occur in the display field.
+//
+// It counts distinct terms, never occurrences: normaliseTerms has already collapsed repeats, so
+// a caller cannot raise a record's score by typing one of its words twice, and a record cannot
+// raise its own by repeating a word in its title. That is the line this phase keeps — coverage
+// of the query is a property of the query, and frequency in the corpus is not something this
+// layer measures.
+func (d searchDocument) titleTermCoverage(terms []string) int {
+	covered := 0
+	for _, term := range terms {
+		for _, field := range d.fields {
+			if field.name == d.titleField && field.matches(term) {
+				covered++
+				break
+			}
+		}
+	}
+	return covered
+}
+
+// matchKindFor is the categorical precedence class of a hit, derived from the signals it fired
+// rather than recomputed from the query.
+//
+// It used to be a second, independent classification of the same four cases, which meant the
+// coarse class a client reads and the score it is ordered by were two answers to one question
+// and could drift apart under any later edit. Deriving one from the other makes that impossible:
+// a result's match_kind is now a summary of its own match_signals, so the two cannot disagree
+// about whether the query was this record's name.
+//
+// The mapping reproduces the Phase 1E classes exactly. A prefix hit and an interior hit are both
+// title_substring, because they were before and because the class is deliberately coarse; the
+// distinction between them lives in the signals and in the score, which is where Phase 1I added
+// it. See the match-kind block in domain.
+func matchKindFor(signals []string) string {
+	switch {
+	case contains(signals, domain.SignalIDExact):
+		return domain.MatchIDExact
+	case contains(signals, domain.SignalTitleExact):
+		return domain.MatchTitleExact
+	case contains(signals, domain.SignalTitlePrefix), contains(signals, domain.SignalTitleSubstring):
+		return domain.MatchTitleSubstring
+	default:
+		return domain.MatchFieldSubstring
+	}
+}
+
+// lessSearchResult is the total order every search result set is sorted by, in both modes.
+//
+// Relevance first, descending. Then the canonical class order, and then the canonical ID
+// ascending — the Phase 1E tie-break unchanged, now applied to score ties rather than to
+// match-kind ties. The last key is unique within a class, so the order is total: no pair of
+// distinct results compares equal, which is what makes repeated runs and separately built
+// indexes produce the same bytes rather than merely the same set.
+//
+// It is one function used by both modes rather than a closure written twice, so literal and
+// composed search cannot drift into disagreeing about how a tie is broken.
+func lessSearchResult(a, b domain.SearchResult) bool {
+	if a.RelevanceScore != b.RelevanceScore {
+		return a.RelevanceScore > b.RelevanceScore
+	}
+	if a.EntityType != b.EntityType {
+		return domain.SearchEntityRank(a.EntityType) < domain.SearchEntityRank(b.EntityType)
+	}
+	return a.ID < b.ID
 }
 
 // buildSearch constructs the discovery projection and, from the same field definitions, every
@@ -320,7 +477,7 @@ func (k *Knowledge) buildSearch() {
 			title:      session.Title,
 			titleField: "title",
 			fields: []searchField{
-				lexicalField("id", session.ID),
+				lexicalField(searchIDField, session.ID),
 				lexicalField("title", session.Title),
 			},
 		})
@@ -334,7 +491,7 @@ func (k *Knowledge) buildSearch() {
 			titleField: "title",
 			summary:    node.Definition,
 			fields: []searchField{
-				lexicalField("id", node.ID),
+				lexicalField(searchIDField, node.ID),
 				lexicalField("title", node.Title),
 				lexicalField("domain", node.Domain),
 				lexicalField("status", node.Status),
@@ -354,7 +511,7 @@ func (k *Knowledge) buildSearch() {
 			title:      claim.Statement,
 			titleField: "statement",
 			fields: []searchField{
-				lexicalField("id", claim.ID),
+				lexicalField(searchIDField, claim.ID),
 				lexicalField("statement", claim.Statement),
 			},
 		})
@@ -366,7 +523,7 @@ func (k *Knowledge) buildSearch() {
 	// smaller result than a node hit.
 	for _, source := range k.sources {
 		fields := []searchField{
-			lexicalField("id", source.ID),
+			lexicalField(searchIDField, source.ID),
 			lexicalField("title", source.Title),
 		}
 		if source.Author != nil {
@@ -389,7 +546,7 @@ func (k *Knowledge) buildSearch() {
 			titleField: "term",
 			summary:    entry.Definition,
 			fields: []searchField{
-				lexicalField("id", entry.ID),
+				lexicalField(searchIDField, entry.ID),
 				lexicalField("term", entry.Term),
 				lexicalField("domain", entry.Domain),
 				lexicalField("definition", entry.Definition),
@@ -409,7 +566,7 @@ func (k *Knowledge) buildSearch() {
 			titleField: "title",
 			summary:    experiment.Purpose,
 			fields: []searchField{
-				lexicalField("id", experiment.ID),
+				lexicalField(searchIDField, experiment.ID),
 				lexicalField("title", experiment.Title),
 				lexicalField("status", experiment.Status),
 				lexicalField("type", experiment.Type),
@@ -534,12 +691,10 @@ func resolveSearchScope(single string, requested []string) (searchScope, error) 
 // the only operation performed on it is a case-insensitive substring test against in-memory
 // strings, so no query can reach the operator's disk or change how the search is evaluated.
 //
-// Ordering is explicit and total in both modes. Literal search orders by match-kind precedence,
-// then the canonical class order, then canonical ID; a composed all_terms search orders by the
-// canonical class order and then canonical ID, because every hit satisfies every term equally
-// and inventing a tie-break between them would be a relevance judgement. Nothing is left to Go
-// map iteration or to the order the filesystem returned records in, so the same corpus and the
-// same query always produce the same bytes.
+// Ordering is explicit and total in both modes. Results are ordered by relevance score, then the
+// canonical class order, then canonical ID. Nothing is left to Go map iteration or to the order
+// the filesystem returned records in, so the same corpus and the same query always produce the
+// same bytes.
 //
 // Composition is decided before matching and never after: the whole match set is built, ordered
 // and only then paged, so a page boundary can never hide a record that satisfied the query.
@@ -648,11 +803,7 @@ func (k *Knowledge) Search(q SearchQuery) (SearchResults, error) {
 // same substring test rather than carrying a second copy of them, so the two modes cannot drift
 // into disagreeing about what "this record contains that text" means.
 func (k *Knowledge) searchLiteral(scope searchScope, needle string) []domain.SearchResult {
-	type ranked struct {
-		rank   int
-		result domain.SearchResult
-	}
-	matched := make([]ranked, 0, len(k.searchDocs))
+	matched := make([]domain.SearchResult, 0, len(k.searchDocs))
 	for _, doc := range k.searchDocs {
 		if !scope.admits(doc.entityType) {
 			continue
@@ -661,33 +812,27 @@ func (k *Knowledge) searchLiteral(scope searchScope, needle string) []domain.Sea
 		if len(fields) == 0 {
 			continue
 		}
-		kind, rank := doc.classify(needle, fields)
-		matched = append(matched, ranked{rank: rank, result: domain.SearchResult{
-			EntityType:    doc.entityType,
-			ID:            doc.id,
-			Title:         doc.title,
-			Summary:       doc.summary,
-			MatchKind:     kind,
-			MatchedFields: fields,
-		}})
+		// Signals are derived once per hit and are the source of both the score and the coarse
+		// class, so the two cannot describe the same match differently. The separate rank the
+		// sort used to carry is gone: the score already orders the four classes, because every
+		// class-defining signal outweighs the sum of everything below it.
+		signals := doc.signals(needle, nil, fields)
+		matched = append(matched, domain.SearchResult{
+			EntityType:     doc.entityType,
+			ID:             doc.id,
+			Title:          doc.title,
+			Summary:        doc.summary,
+			MatchKind:      matchKindFor(signals),
+			RelevanceScore: domain.SearchRelevanceScore(signals),
+			MatchSignals:   signals,
+			MatchedFields:  fields,
+		})
 	}
 
 	sort.SliceStable(matched, func(i, j int) bool {
-		if matched[i].rank != matched[j].rank {
-			return matched[i].rank < matched[j].rank
-		}
-		ri, rj := matched[i].result, matched[j].result
-		if ri.EntityType != rj.EntityType {
-			return domain.SearchEntityRank(ri.EntityType) < domain.SearchEntityRank(rj.EntityType)
-		}
-		return ri.ID < rj.ID
+		return lessSearchResult(matched[i], matched[j])
 	})
-
-	results := make([]domain.SearchResult, 0, len(matched))
-	for _, m := range matched {
-		results = append(results, m.result)
-	}
-	return results
+	return matched
 }
 
 // searchAllTerms is the Phase 1G composition: every term, somewhere in the same record.
@@ -698,8 +843,9 @@ func (k *Knowledge) searchLiteral(scope searchScope, needle string) []domain.Sea
 // including one this record references — is not a match, because the unit of retrieval is the
 // canonical record and joining two of them would assert a relationship the corpus did not.
 //
-// Nothing here scores. A record that carries every term in one field and a record that spreads
-// them over five are the same kind of hit, reported identically and ordered by class and ID.
+// Every accepted record remains the same categorical kind of hit, MatchAllTerms. Phase 1I also
+// derives signals from where its terms and complete phrase matched, then orders the complete set
+// by relevance score, canonical class and canonical ID.
 func (k *Knowledge) searchAllTerms(scope searchScope, terms []string) []domain.SearchResult {
 	matched := make([]domain.SearchResult, 0, len(k.searchDocs))
 	for _, doc := range k.searchDocs {
@@ -721,23 +867,28 @@ func (k *Knowledge) searchAllTerms(scope searchScope, terms []string) []domain.S
 		if len(termMatches) != len(terms) {
 			continue
 		}
+		fields := doc.unionMatchedFields(termMatches)
+		// A composed hit keeps its one categorical class — every all_terms hit satisfied every
+		// term, so none of the four single-needle classes is true of it — and gains the score
+		// that class could never express. phrase is the normalised term list joined by single
+		// spaces, which is the query the response echoes, so a client can reproduce the phrase
+		// signal from the response alone.
+		signals := doc.signals(strings.Join(terms, " "), terms, fields)
 		matched = append(matched, domain.SearchResult{
-			EntityType:    doc.entityType,
-			ID:            doc.id,
-			Title:         doc.title,
-			Summary:       doc.summary,
-			MatchKind:     domain.MatchAllTerms,
-			MatchedFields: doc.unionMatchedFields(termMatches),
-			TermMatches:   termMatches,
+			EntityType:     doc.entityType,
+			ID:             doc.id,
+			Title:          doc.title,
+			Summary:        doc.summary,
+			MatchKind:      domain.MatchAllTerms,
+			RelevanceScore: domain.SearchRelevanceScore(signals),
+			MatchSignals:   signals,
+			MatchedFields:  fields,
+			TermMatches:    termMatches,
 		})
 	}
 
 	sort.SliceStable(matched, func(i, j int) bool {
-		if matched[i].EntityType != matched[j].EntityType {
-			return domain.SearchEntityRank(matched[i].EntityType) <
-				domain.SearchEntityRank(matched[j].EntityType)
-		}
-		return matched[i].ID < matched[j].ID
+		return lessSearchResult(matched[i], matched[j])
 	})
 	return matched
 }
