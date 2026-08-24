@@ -421,9 +421,73 @@ six searchable classes at once and reports which class each hit came from.
 `q` must be non-empty after trimming. An absent, empty or whitespace-only `q` is refused with
 `400 invalid_query` rather than returning everything: each layer already has its own list endpoint,
 and an empty search would be a second, slower whole-corpus dump that a caller who mistyped a
-parameter name could not tell from a successful query. Values longer than 128 characters are
-refused rather than truncated. An unknown or duplicated query parameter is refused exactly as it is
-on every other route.
+parameter name could not tell from a successful query. Values longer than the length bound below
+are refused rather than truncated. An unknown or duplicated query parameter is refused exactly as
+it is on every other route.
+
+#### Empty, malformed and unsatisfiable requests
+
+These are three different things, and the difference between them is the difference between a `400`
+and a `200`:
+
+| Request | Response |
+| --- | --- |
+| `q` absent, empty, or only whitespace | `400 invalid_query` |
+| `q` past the length bound | `400 invalid_query`; never truncated to a shorter query |
+| `q` containing a NUL byte | `400 invalid_query` |
+| `q` containing any other control character | `200`; it is ordinary text, matched literally like any other character |
+| any parameter supplied twice | `400 invalid_query` |
+| any parameter outside the table above | `400 invalid_query`, listing the accepted parameters |
+| a well-formed query the corpus does not answer | `200`, empty `results`, all-zero facets |
+| a legal scope or composition nothing satisfies | `200`, empty `results`, all-zero facets |
+
+The length bound is **128 bytes of the trimmed UTF-8 value**, and it is the same bound every other
+route applies to its own `q`. For an ASCII query that is 128 characters, which is what the refusal
+message says; a query written in a script whose characters take more than one byte reaches the bound
+sooner. The bound exists to keep the cost of one request knowable, so it is deliberately a bound on
+the bytes the service was handed rather than on how they decompose.
+
+A present but **empty** parameter is not uniformly "absent", and the split is deliberate. `type=` is
+absent, exactly as a blank filter is on every other route — including for the purpose of the
+`type`/`entity_types` conflict below, so `?q=x&type=&entity_types=node` is a scoped search rather
+than a refused combination. `entity_types=`, `query_mode=` and `include_context=` are refused
+instead, because for those three a blank value would silently return a differently shaped response
+than the caller asked for.
+
+An unsatisfiable search is a complete response, not a truncated one. `?q=nothing-matches-this`:
+
+```json
+{
+  "query": "nothing-matches-this",
+  "page": { "total": 0, "count": 0, "limit": 50, "offset": 0 },
+  "facets": {
+    "entity_types": {
+      "session": 0,
+      "node": 0,
+      "claim": 0,
+      "source": 0,
+      "vocabulary": 0,
+      "experiment": 0
+    }
+  },
+  "results": []
+}
+```
+
+A malformed one is the stable error envelope and nothing else. `?q=resonance&entity_types=node,`:
+
+```json
+{
+  "error": {
+    "code": "invalid_query",
+    "message": "Parameter entity_types must not contain an empty value."
+  }
+}
+```
+
+Every refusal on this route carries the existing `invalid_query` code; search introduces no error
+code and no second error shape of its own. The message states the rule that was broken and never
+echoes the caller's own value, which is the one part of a response an attacker controls.
 
 #### Searchable classes and fields
 
@@ -475,7 +539,7 @@ are asking about, and through `/api/v1/experiment-runs/{id}` by exact ID.
 | --- | --- |
 | omitted | every searchable class, exactly as before this parameter existed |
 | one or more classes | results are restricted to those classes |
-| all six classes | identical to omitting the parameter |
+| all six classes | the same result set, facets and page as omitting the parameter; the response additionally echoes the list |
 | unknown class | `400 invalid_query`, listing the accepted classes |
 | `experiment_run` | `400 invalid_query`; it is not a searchable class |
 | empty member | `400 invalid_query`; a leading, trailing or doubled comma produces one |
@@ -916,6 +980,31 @@ ref that could address one, and the Phase 1E boundary therefore holds structural
 convention: context resolves identities, and it must not become the route by which observation and
 measurement prose re-enters generic search. A claim's `appears_in: document` reference resolves to
 nothing for the related reason that no layer addresses it.
+
+#### Result bounds
+
+Every search response is bounded, and no spelling of `limit` removes the bound:
+
+| `limit` | Effective page size |
+| --- | --- |
+| omitted | 50 |
+| `limit=` (present but blank) | 50 |
+| `limit=0` | 50; zero means "use the default", it does not mean "return nothing" |
+| `1` to `200` | as supplied |
+| above `200` | clamped to 200 |
+| negative, fractional, or not a number | `400 invalid_query` |
+
+`offset` follows the same rules minus the ceiling: absent, blank or `0` starts at the beginning,
+a negative or non-numeric value is `400 invalid_query`, and an offset past the end of the result
+set is a legal empty window — `results` is `[]` while `page.total` and `facets` still describe the
+whole set, because they always describe the set rather than the window.
+
+**The bound is applied after ranking, never inside it.** The order of operations is fixed: normalise,
+match, restrict to the requested classes, order the complete match set, count its facets, page it,
+and only then resolve context. Every page is therefore a contiguous window onto the one ranked result
+set — the returned `results` are exactly `[offset:offset+limit]` of the complete ordering — so a page
+boundary can never hide a record the query matched, a client walking the pages sees each hit exactly
+once, and `page.total` and `facets` are identical on every page of one search.
 
 #### Ordering
 
@@ -1361,6 +1450,34 @@ that the practice layer stays out of the traversal graph, that a record just fou
 or just named as another record's context — is still refused as a traversal root and still absent
 from the graph, and that the shared index is deterministic and hands out defensive copies across
 every layer at once.
+
+A search-workflow suite covers the composed pipeline rather than any one of its stages. The suites
+above each pin the contract of the feature they introduced; this one pins what is only true once all
+of them are present, by stating each property once and requiring it of a shared matrix of requests
+that crosses both query modes with every scope spelling, the context control and a range of page
+windows. The invariants are that the facet sum equals `page.total` on every page, that a page never
+exceeds its reported limit and the limit never exceeds the ceiling, that no result repeats, that
+`relevance_score` is exactly the sum of the weights of the `match_signals` beside it, that the signal
+list is closed, unique, ordered by descending weight and free of two members of one exclusive group,
+that `matched_fields` is exactly the union of the per-term evidence, that the ordering is total and
+monotone, and that context is present exactly when requested and internally consistent inside both
+its bounds.
+
+Determinism is asserted three ways there: repeated identical requests are compared as raw bytes
+rather than as decoded values; the same matrix is answered by an index built from an in-memory copy
+of the fixture and required to be byte-identical, which is what rules out a dependency on how the
+corpus was enumerated rather than merely on the query path; and the matrix is replayed from eight
+concurrent readers. Four further regressions state contract decisions that span stages: every page is
+required to be exactly the matching window of the complete ranked set, so bounding demonstrably
+follows ranking; taking the context off an enriched response is required to leave exactly the plain
+one, so context is additive and never a ranking signal; every hit's whole explanation is required to
+be unchanged by scope, paging and context, so a score is a function of the query and one record; and
+every signal in the published weight table is required to be fired by a named request, so the table
+cannot become documentation of a ranking the API can no longer express. The validation surface is one
+table of malformed requests — the query itself, the query string, composition, scope, context and
+paging — each required to answer `400` with the existing `invalid_query` code and an envelope
+carrying exactly `code` and `message`, and separated from the well-formed-but-unsatisfiable requests
+that must answer `200` with an empty result list and the complete all-zero facet structure.
 
 ## Known limitations
 
