@@ -691,12 +691,10 @@ func resolveSearchScope(single string, requested []string) (searchScope, error) 
 // the only operation performed on it is a case-insensitive substring test against in-memory
 // strings, so no query can reach the operator's disk or change how the search is evaluated.
 //
-// Ordering is explicit and total in both modes. Literal search orders by match-kind precedence,
-// then the canonical class order, then canonical ID; a composed all_terms search orders by the
-// canonical class order and then canonical ID, because every hit satisfies every term equally
-// and inventing a tie-break between them would be a relevance judgement. Nothing is left to Go
-// map iteration or to the order the filesystem returned records in, so the same corpus and the
-// same query always produce the same bytes.
+// Ordering is explicit and total in both modes. Results are ordered by relevance score, then the
+// canonical class order, then canonical ID. Nothing is left to Go map iteration or to the order
+// the filesystem returned records in, so the same corpus and the same query always produce the
+// same bytes.
 //
 // Composition is decided before matching and never after: the whole match set is built, ordered
 // and only then paged, so a page boundary can never hide a record that satisfied the query.
@@ -845,8 +843,9 @@ func (k *Knowledge) searchLiteral(scope searchScope, needle string) []domain.Sea
 // including one this record references — is not a match, because the unit of retrieval is the
 // canonical record and joining two of them would assert a relationship the corpus did not.
 //
-// Nothing here scores. A record that carries every term in one field and a record that spreads
-// them over five are the same kind of hit, reported identically and ordered by class and ID.
+// Every accepted record remains the same categorical kind of hit, MatchAllTerms. Phase 1I also
+// derives signals from where its terms and complete phrase matched, then orders the complete set
+// by relevance score, canonical class and canonical ID.
 func (k *Knowledge) searchAllTerms(scope searchScope, terms []string) []domain.SearchResult {
 	matched := make([]domain.SearchResult, 0, len(k.searchDocs))
 	for _, doc := range k.searchDocs {

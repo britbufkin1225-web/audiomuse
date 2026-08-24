@@ -176,13 +176,12 @@ func (f SearchEntityTypeFacets) Total() int {
 	return f.Session + f.Node + f.Claim + f.Source + f.Vocabulary + f.Experiment
 }
 
-// Match kinds: the categorical precedence classes a result is ordered by.
+// Match kinds: the coarse categorical summary of how a literal result matched.
 //
-// These are not a relevance score and are deliberately not rendered as a number. They are a
-// fixed, hand-written precedence over four mutually exclusive ways a query can have matched,
-// and calling them anything else would dress a priority list as information retrieval. There
-// is no weighting, no field boosting and no tie-breaking by frequency; ties are broken by the
-// entity class order and then by canonical ID, which is what makes the ordering reproducible.
+// These remain the four mutually exclusive Phase 1E classes and are not themselves a relevance
+// score. Phase 1I derives them from MatchSignals so the coarse explanation cannot disagree with
+// the score, then orders results by RelevanceScore, canonical entity class and canonical ID.
+// There is still no field-frequency or occurrence-frequency tie-break.
 //
 // "Title" here means the record's display field, which is a different canonical field per
 // class — a node, source or experiment title, a vocabulary term, a session title, a claim
@@ -337,7 +336,8 @@ func SearchQueryModeNames() []string {
 // term as the important one — a weighting judgement this layer does not make.
 //
 // Like the other four it is a label, not a score. Every all_terms hit carries this one class,
-// so it orders nothing; multi-term ordering is the canonical class order and then canonical ID.
+// so it orders nothing; Phase 1I orders multi-term hits by their relevance score before the
+// canonical class and ID tie-breaks.
 const MatchAllTerms = "all_terms"
 
 // SearchTermMatch is the per-term evidence for one multi-term hit.
