@@ -696,7 +696,7 @@ or the evidence.
 | --- | --- |
 | minimum distinct terms | 2 |
 | maximum distinct terms | 8 |
-| total `q` length | 128 characters, as in every mode |
+| total `q` length | 128 bytes of the trimmed UTF-8 value, as in every mode |
 
 Both term bounds apply to the *distinct* terms that actually execute. One term under `all_terms` is
 refused rather than run: it would be literal search under a second name, and an explicit mode
@@ -1368,7 +1368,7 @@ omitted mode and an explicit `literal` are the same response, that two words are
 and that no literal result gains a `query_mode` or `term_matches` key — and then the composed half:
 terms in one field and in separate fields of one record, a missing term rejecting the record, terms
 held by two different records refusing to combine, case, whitespace and duplicate normalisation,
-both term bounds and the character ceiling at the service rather than only over HTTP, per-term
+both term bounds and the UTF-8 byte ceiling at the service rather than only over HTTP, per-term
 evidence in canonical field and query order, class-then-ID ordering across two indexes, `type`,
 `limit` and `offset` composition, and defensive copying through the per-term evidence. Three are
 guardrails rather than feature tests: one requires a record whose context names a term to still be

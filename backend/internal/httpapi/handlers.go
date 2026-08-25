@@ -190,7 +190,7 @@ func boundedText(w http.ResponseWriter, r *http.Request, logger *slog.Logger, va
 	trimmed := strings.TrimSpace(value)
 	if len(trimmed) > service.MaxQueryChars {
 		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
-			"Parameter "+name+" exceeds "+strconv.Itoa(service.MaxQueryChars)+" characters.")
+			"Parameter "+name+" exceeds "+strconv.Itoa(service.MaxQueryChars)+" UTF-8 bytes.")
 		return "", false
 	}
 	if strings.ContainsRune(trimmed, 0) {

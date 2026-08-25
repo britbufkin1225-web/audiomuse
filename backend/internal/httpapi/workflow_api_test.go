@@ -684,6 +684,27 @@ func TestSearchWorkflowMalformedRequestsAreRefusedConsistently(t *testing.T) {
 	}
 }
 
+// TestSearchWorkflowQueryBoundCountsUTF8Bytes pins the unit used by the shared text safety bound.
+// A multibyte query at exactly the byte ceiling is accepted, while adding one ASCII byte is
+// refused. This distinguishes the implemented byte contract from a rune-counting implementation.
+func TestSearchWorkflowQueryBoundCountsUTF8Bytes(t *testing.T) {
+	handler := newHandler(t)
+	atBound := strings.Repeat("é", service.MaxQueryChars/len("é"))
+	if len(atBound) != service.MaxQueryChars {
+		t.Fatalf("test query is %d bytes, want %d", len(atBound), service.MaxQueryChars)
+	}
+
+	if rec := do(t, handler, http.MethodGet, searchTarget(atBound)); rec.Code != http.StatusOK {
+		t.Fatalf("a %d-byte UTF-8 query returned %d, want 200: %s",
+			len(atBound), rec.Code, rec.Body.String())
+	}
+
+	message := refusedSearch(t, handler, searchTarget(atBound+"a"))
+	if !strings.Contains(message, strconv.Itoa(service.MaxQueryChars)+" UTF-8 bytes") {
+		t.Errorf("the byte-bound refusal was not explicit about its unit: %q", message)
+	}
+}
+
 // TestSearchWorkflowConflictingFiltersAreRefusedRatherThanReconciled covers the combinations that
 // exist only because the scope filter has two spellings.
 //
