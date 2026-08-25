@@ -28,6 +28,12 @@ const (
 	CodeVocabularyNotFound    = "vocabulary_not_found"
 	CodeExperimentNotFound    = "experiment_not_found"
 	CodeExperimentRunNotFound = "experiment_run_not_found"
+
+	// Related-knowledge code, added in Phase 2A. It is distinct from entity_not_found because a
+	// discovery start is one of the six searchable classes rather than one of the four graph
+	// classes: a caller who asked about a vocabulary entry and received entity_not_found would be
+	// told the lookup failed in the graph layer, which never held that record to begin with.
+	CodeRelatedStartNotFound = "related_start_not_found"
 )
 
 // errorBody is the stable error envelope.

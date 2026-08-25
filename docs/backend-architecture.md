@@ -60,6 +60,7 @@ Every field the API serves can be traced back through this chain to a canonical 
 | `claim.appears_in[]` and `claim.derived_from[]` (`{kind, ref}`) | kind-qualified reference lists | `domain.ClaimReference` | `claimIDsByNodeID`, `claimIDsBySessionID` | `claim.appears_in`, `?node_id=`, `?session_id=` |
 | `schemas/claim.schema.yaml` and `schemas/source.schema.yaml` bounded enums | vocabulary lists | `domain.Vocabularies` | evidence filter validation set | `project.vocabulary`; `400 invalid_query` |
 | the fields above, read as one graph | canonical field references | `domain.GraphRelationship`, `domain.EntityRef` | `Knowledge.adjacency`, one entry per `(type, id)` | `GET /api/v1/graph/entities/{entity_type}/{id}/relationships`, `.../traverse` |
+| the resolved context of one searchable record, ranked by the canonical field each relation came from | canonical field references | `domain.RelatedReason`, `domain.RelatedItem` | `Knowledge.searchContext` grouped by destination, plus `relatedSummary` | `GET /api/v1/related/{entity_type}/{id}` |
 | `vocabulary/entries/*.yaml` YAML document streams (`schemas/vocabulary.schema.yaml`) | one mapping per entry | `domain.VocabularyEntry` | `vocabularyByID`, sorted `vocabulary` | `GET /api/v1/vocabulary`, `GET /api/v1/vocabulary/{id}` |
 | vocabulary `domain`, reusing the enum in `schemas/node.schema.yaml` | bounded vocabulary | `domain.Vocabularies.VocabularyDomains` | startup and filter validation set | `?domain=`; `400 invalid_query` |
 | `vocabulary.related_terms[]` | curated navigation ID list | `[]string` on the entry | none; deliberately not indexed as adjacency | `entry.related_terms` — never a graph edge |
@@ -90,6 +91,9 @@ httpapi  →  service  →  repository (interface)  →  repository/filesystem  
   claims and relationship types; `buildPractice` reads vocabulary, experiments, runs and claims —
   and neither reads the other's derived state, which is what keeps the practice layer out of the
   traversal adjacency structurally rather than by convention.
+  `buildSearchContext` and then `buildRelated` run last, after every projection they read; the
+  related-knowledge layer derives no connection of its own and only ranks, deduplicates and bounds
+  the context projection.
 - `internal/httpapi` — routing, query parsing, bounds, JSON envelopes, method lock.
 
 ## Rationale
@@ -451,7 +455,135 @@ context. Ranking the complete set before paging is what makes the first page the
 rather than an arbitrary window of it, and counting facets before paging keeps them describing the
 whole filtered set exactly as Phase 1H defined.
 
-## Known limitations (through Phase 1I)
+**Why related-knowledge discovery is a ranking of authored references and not a similarity model.**
+Phase 1E answers "where in the corpus does this text appear" and Phase 1C answers "what is the
+neighbourhood of this graph vertex". Neither answers the question a reader actually has while
+holding one record and no query: which of the things this record is connected to is worth opening
+first. Phase 2A adds that as one read-only route without adding a second definition of what
+"related" means.
+
+It derives nothing. The canonical references of every searchable record are already resolved once,
+at startup, by the Phase 1F context layer — authored references and their documented reverse reads,
+each carrying the canonical field it came from — and discovery reads that projection. Re-deriving
+the connections would create two definitions of one repository fact that are free to disagree,
+which is precisely the failure the traversal and context layers were each careful to avoid. What
+the phase adds is precedence and bounds: the context layer returns everything a record references,
+a discovery answer has to be short, and something therefore has to decide what is cut. "Whatever
+the corpus listed last" is not a decision.
+
+The rule that graph edges are explicit-only is not weakened here, and the reason it would have been
+tempting to weaken it is worth naming. A "what should I read next" surface is exactly where an
+embedding is conventionally reached for, and the conventional argument — that the corpus obviously
+knows two records are about the same thing even where no field says so — is the same argument the
+Phase 1A edge rule already refuses. A projection manufacturing edges from proximity inserts
+unsourced claims into a corpus whose whole discipline is that claims carry provenance; a projection
+that ranked *authored* references by their apparent similarity would do the same thing one step
+later, presenting a machine's guess about meaning as though AudioMuse had said it. Every reason a
+caller receives from this route is checkable against the canonical file it names.
+
+**Why precedence is keyed on the canonical field rather than the relation name.** A related item's
+rank has to come from something closed, or the ranking is only defined for the corpus that happens
+to exist. Relation names are not closed: node-to-node edges carry the relationship-type IDs from
+`schemas/relationship-types.yaml` and their declared inverses, so the vocabulary grows whenever the
+corpus adds a type, and a table keyed by relation name would either have to be edited in lockstep
+with a canonical contract or would silently drop new types into a fallback. Canonical field names
+are closed, are already carried on every relation the context layer emits as `origin`, and name
+exactly the fact the precedence is about — which field said so. The closed set is written down and
+a test walks it, so a canonical field cannot reach the discovery contract without a deliberate
+decision about where it ranks.
+
+The seven classes are, strongest first: `conceptual` (`node.relationships`), `evidential`
+(`claim.evidence`), `attributive` (`claim.attribution`), `assertional` (`claim.appears_in`,
+`claim.derived_from`), `contextual` (`node.sources`, `node.session_origin`), `referential` (the
+vocabulary and experiment reference lists) and `navigational` (`vocabulary.related_terms`,
+`experiment.related_experiments`). The typed concept edge leads because it is the only connection
+AudioMuse authors specifically as a knowledge relation. Evidence is kept ahead of attribution
+because `docs/claim-provenance-model.md` treats what stands behind a statement and who says it as
+different facts and the first is the one a reader checks — the same distinction that already keeps
+`sourced_from` and `supported_by` apart. Curated navigation comes last because `vocabulary/README.md`
+states that related terms are human navigation only and imply neither equivalence nor a graph edge,
+which is the weakest thing any canonical field here says.
+
+**Why the rank is an ordinal and not a weight.** Search ranking sums weights because one hit can
+fire several independent signals at once and the score has to combine them, and the powers of two
+exist to make that sum behave as a precedence order. A related item's precedence comes from exactly
+one canonical field, so there is nothing to add up, and introducing a weight would invite exactly
+the arithmetic this layer must not perform: three weak references outranking one strong one, which
+is how a precedence order quietly becomes a popularity score. There is no confidence, similarity,
+relevance percentage or probability anywhere in a discovery response, for the same reason there is
+no measurement in a claim projection the corpus did not author.
+
+**Why one item per destination, and why the strongest connection wins.** Two records are often
+connected by more than one canonical field — a claim that both names a node in `appears_in` and
+derives from it, a claim that both cites a source and credits it. The reader is being offered a
+record to open, not a list of edges to read, so the destination appears once. The strongest
+connection becomes the reason and decides the item's rank, and the rest are reported as bounded
+further evidence in the same order, with the true total kept. Choosing the strongest rather than
+the first is what makes deduplication independent of which loop ran first; reporting the others
+rather than discarding them is what keeps the response from claiming a pair is connected in fewer
+ways than it is. Evidence is a list inside a list, so it carries its own cap: without one the
+payload would be the product of two corpus properties rather than of two constants.
+
+**Why the ordering is what it is.** Items sort by the primary reason's precedence, then authored
+before derived, then the destination's canonical class in model order, then its canonical ID. The
+direction key sits second rather than first because the canonical field is the stronger statement
+about what kind of connection this is and which way it was written is secondary to what it says.
+The obvious alternative for the third key was the relation name, the way `sortContextRelations`
+already groups a context list; it was rejected because the two lists are read differently. A
+context list is read as a record's reference structure, where grouping by relation *is* the
+structure. A discovery list is read as a set of records to choose between, where the class of
+record is what a reader is choosing among and the relation name within one precedence class says
+almost nothing to separate them. A destination appears exactly once, so class and ID are unique and
+the order is total: no two items compare equal, which is what makes two runs and two independently
+built indexes produce the same bytes rather than merely the same set.
+
+**Why there is no depth, and why the traversal bounds are not reused.** Discovery is one hop by
+construction. The references are resolved at startup, so a request is a map lookup, a group, a sort
+and a slice — there is no frontier, no visited set, no recursion and no expansion, and a depth
+parameter would have nothing to control. Reusing `MaxTraversalDepth` would suggest a walk that does
+not happen. A caller who wants the neighbourhood of a graph record still uses
+`/api/v1/graph/entities/{type}/{id}/traverse`, which is the route shaped for that question, and
+this phase deliberately does not become a second, differently spelled traversal surface.
+
+The bounds it does declare are its own: a default of 25 items, a hard maximum of 100, and at most 5
+canonical connections reported per item. They are service constants rather than configuration for
+the reason the traversal and context bounds are — API safety invariants, not deployment choices —
+and their product is the statement that covers the whole response: no discovery request serialises
+more than 500 canonical relations, a quarter of the 2,000 the API already states no single request
+exceeds. Against the corpus today the widest discovery result is 75 items and the widest single
+item carries 3 connections, so the ceiling and the evidence cap have real headroom while the
+default does shorten the handful of genuine hub records, which is what a default is for. As the
+encyclopedia grows the cost of one request stays a map lookup plus a sort of the eligible set,
+because the projection is built once at startup and no request reads the corpus; what grows is the
+eligible count a hub reports, and that is a number in the response rather than work in the request.
+
+**Why `limit` is clamped where `depth` is refused.** The two contracts differ deliberately. A
+silently reduced depth would let a caller believe they had seen a whole neighbourhood, so an
+out-of-range depth is refused. A clamped limit returns the front of the same ordering the caller
+asked for, and the response echoes both the applied limit and the exact eligible total, so the
+clamp is visible rather than silent. Following the paging contract every other route already uses
+also keeps one spelling of `limit` from behaving differently depending on which endpoint it was
+sent to.
+
+**Why the starting classes are the search six and not the graph four.** A reader can be holding a
+vocabulary entry or an experiment definition and want to know where to go next, and neither is a
+graph vertex. Discovery therefore starts from the six searchable classes, and the boundary
+`traversal.go` draws is untouched: a vocabulary entry named here is a navigation reference, never
+an `EntityRef`, a graph vertex or an edge endpoint. `experiment_run` is refused as a start for the
+reason it is refused as a search class — a run's prose is its observations and interpretation, and
+a discovery surface over it would make a connection read as an evidence assertion. The route is
+therefore `/api/v1/related/{entity_type}/{id}` rather than a fifth path under `/api/v1/graph/`,
+because nesting it there would enrol two non-graph classes in the graph by URL alone.
+
+**Why the destination scope reuses the Phase 1H class list unchanged.** It is the same restriction
+over the same six classes, and a second spelling would be a second contract to keep in step: a
+caller who moved a malformed list from one route to the other would be told two different things
+about one mistake. The validation function is shared, and so is the renderer that turns its errors
+into messages. Only the set spelling is offered — `/api/v1/search` carries a single-class `type`
+alongside it only because `type` predates the list and an existing contract had to keep working, and
+a new route has no such history to preserve.
+
+## Known limitations (through Phase 2A)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, embedding or learned
@@ -509,12 +641,37 @@ whole filtered set exactly as Phase 1H defined.
   if one did.
 - A registered session and its registry entry are addressed as two entities that share an ID, and
   no edge is emitted between them: they are one canonical record seen through two projections.
+- Related-knowledge discovery is one hop and nothing else. `/api/v1/related/{entity_type}/{id}`
+  returns records the start directly references, or that directly reference it, ranked by the
+  canonical field each connection came from. There is no transitive discovery, no depth, no paging,
+  no caller-supplied ranking or weighting, and no relationship-priority parameter: the ordering is a
+  property of the corpus rather than of the request. It is bounded to 25 items by default, 100 at
+  most, and 5 reported connections per item.
+- Discovery ranks authored references and measures nothing. There is no similarity, embedding,
+  vector, keyword-overlap or co-occurrence input anywhere in it, and no confidence, relevance or
+  probability in its output. A record is related to another if and only if some canonical record
+  wrote down a reference between them; AI- or embedding-based discovery is not implemented and is
+  not part of this phase.
+- Discovery starts from the six searchable classes and never from an experiment run, for the reason
+  runs are not a search class. It resolves no connection the Phase 1F context layer does not already
+  hold, so a canonical field that layer does not read — node `experiments:`, `appears_in: document` —
+  is invisible to it as well.
+- Discovery is stateless and per-caller state does not exist. There is no reading history, no
+  popularity, no click weighting and no personalisation; two callers asking about one record are
+  told the same thing.
 
 ## Future work
 
 Deferred, not implemented: graph traversal across the practice layer, richer diagnostics, query
 syntax beyond the two documented composition modes, facets over any axis other than the searchable
-class, graph visualization, semantic retrieval, and MLLM experimentation. Deterministic multi-term
+class, graph visualization, semantic retrieval, and MLLM experimentation. Deterministic
+related-knowledge discovery is no longer deferred — it shipped as
+`GET /api/v1/related/{entity_type}/{id}` — and three extensions to it are recommended without being
+implemented or promised: exposing the precedence table as a read-only contract endpoint so a client
+need not hard-code the classes, a per-class breakdown of the eligible set in the shape search facets
+already use, and a bounded intersection answering "related to both of these". Each would be its own
+phase with its own contract. Multi-hop, similarity-ranked or model-generated discovery is not on
+that list and remains refused on the grounds above. Deterministic multi-term
 composition is no longer deferred — it shipped as `query_mode=all_terms` — nor is multi-class
 result scope, which shipped as `entity_types` and filters rather than searching, while richer
 syntax and semantic retrieval remain separately reviewed future phases. The Phase 1C contract
