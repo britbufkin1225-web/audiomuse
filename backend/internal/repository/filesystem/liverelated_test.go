@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strconv"
 	"testing"
 
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
@@ -224,6 +225,8 @@ func TestLiveRepositoryIsNotMutatedByRelatedKnowledgeRequests(t *testing.T) {
 			for _, query := range []string{
 				"?limit=100",
 				"?entity_types=node,claim,source",
+				"?relationship_types=conceptual,evidential",
+				"?entity_types=claim&relationship_types=assertional",
 				"",
 			} {
 				target := "/api/v1/related/" + string(class) + "/" + id + query
@@ -244,6 +247,9 @@ func TestLiveRepositoryIsNotMutatedByRelatedKnowledgeRequests(t *testing.T) {
 		"/api/v1/related/experiment_run/anything",
 		"/api/v1/related/node/no-such-node-exists-here",
 		"/api/v1/related/node/frequency?entity_types=node,,claim",
+		"/api/v1/related/node/frequency?relationship_types=conceptual,,evidential",
+		"/api/v1/related/node/frequency?relationship_types=widget",
+		"/api/v1/related/node/frequency?relationship_types=",
 		"/api/v1/related/node/frequency?limit=-1",
 	} {
 		rec := httptest.NewRecorder()
@@ -263,4 +269,126 @@ func TestLiveRepositoryIsNotMutatedByRelatedKnowledgeRequests(t *testing.T) {
 	if after := snapshot(t, root); !reflect.DeepEqual(after, before) {
 		t.Error("serving related-knowledge discovery changed the canonical repository")
 	}
+}
+
+// TestLiveCorpusRelationshipScopePartitionsTheRealCorpus is the Phase 2B corpus-scale assertion.
+//
+// The fixture proves the filtering rule; this proves the rule holds over records the fixture does
+// not contain, including the hub records where a single destination is reached by several
+// canonical fields at once. For every discovery start the repository offers, the seven one-class
+// results must together account for the unfiltered result exactly: every unfiltered connection
+// appears in the result for its own class and in no other, and every destination the unfiltered
+// result names is named by at least one class.
+//
+// It is the strongest available statement that the filter only ever removes. A class-scoped
+// response carrying a connection the unfiltered response does not have would mean the filter
+// invented one; a destination no class reaches would mean it silently dropped one.
+func TestLiveCorpusRelationshipScopePartitionsTheRealCorpus(t *testing.T) {
+	k := liveIndex(t)
+
+	checked, filtered := 0, 0
+	for _, class := range domain.SearchEntityTypes {
+		for _, id := range liveRelatedStarts(t, k, class) {
+			full, err := k.RelatedKnowledgeFor(string(class), id,
+				service.RelatedQuery{Limit: service.MaxRelatedLimit})
+			if err != nil {
+				t.Fatalf("%s/%s: %v", class, id, err)
+			}
+			if full.RelationshipTypes != nil {
+				t.Fatalf("%s/%s: an unfiltered request echoed a relationship scope", class, id)
+			}
+			checked++
+
+			// The comparison below reads the unfiltered response as the complete set of this
+			// record's connections, which it is only while nothing was cut. A start whose result
+			// hit the item ceiling, and an item whose explanation hit the evidence cap, each
+			// report a prefix rather than a total, and a class-scoped request may then surface a
+			// connection the unfiltered response legitimately did not carry. Those cases are
+			// excluded from the subset assertions rather than asserted loosely, because a weaker
+			// assertion here would stop failing for the bug it exists to catch. Against the
+			// corpus today neither cap binds, so nothing is skipped; the guards are what keep
+			// this test correct as the encyclopedia grows past them.
+			unfiltered := make(map[string]bool)
+			destinations := make(map[string]bool)
+			complete := !full.Truncated
+			for _, item := range full.Items {
+				if item.EvidenceTruncated {
+					complete = false
+				}
+				destinations[string(item.EntityType)+"/"+item.ID] = true
+				for _, reason := range append([]domain.RelatedReason{item.Reason}, item.AdditionalEvidence...) {
+					unfiltered[liveReasonKey(item, reason)] = true
+				}
+			}
+
+			reached := make(map[string]bool, len(destinations))
+			for _, priority := range domain.RelatedPriorityNames() {
+				scoped, err := k.RelatedKnowledgeFor(string(class), id, service.RelatedQuery{
+					Limit:             service.MaxRelatedLimit,
+					RelationshipTypes: []string{priority},
+				})
+				if err != nil {
+					t.Fatalf("%s/%s scope %s: %v", class, id, priority, err)
+				}
+				filtered++
+				if !reflect.DeepEqual(scoped.RelationshipTypes, []string{priority}) {
+					t.Errorf("%s/%s: relationship_types = %v, want [%s]",
+						class, id, scoped.RelationshipTypes, priority)
+				}
+				// A filter may not enlarge the work behind an answer.
+				if scoped.Bounds != full.Bounds {
+					t.Errorf("%s/%s scope %s: bounds = %+v, want the unfiltered %+v",
+						class, id, priority, scoped.Bounds, full.Bounds)
+				}
+				for _, item := range scoped.Items {
+					ref := string(item.EntityType) + "/" + item.ID
+					if complete && !destinations[ref] {
+						t.Errorf("%s/%s scope %s reached %s, which the unfiltered result does not name",
+							class, id, priority, ref)
+					}
+					reached[ref] = true
+					for _, reason := range append([]domain.RelatedReason{item.Reason}, item.AdditionalEvidence...) {
+						if string(reason.Priority) != priority {
+							t.Errorf("%s/%s scope %s: %s carries a %s connection",
+								class, id, priority, ref, reason.Priority)
+						}
+						if complete && !unfiltered[liveReasonKey(item, reason)] {
+							t.Errorf("%s/%s scope %s: %s is not an unfiltered connection",
+								class, id, priority, liveReasonKey(item, reason))
+						}
+						// Every result explains itself, and the sentence is the one the class
+						// declares rather than anything derived from the records involved.
+						if want := domain.RelatedPriorityExplanation(reason.Priority); reason.Explanation != want {
+							t.Errorf("%s/%s: %s explained as %q, want %q",
+								class, id, ref, reason.Explanation, want)
+						}
+					}
+				}
+			}
+			// Every destination the unfiltered result names must be reachable by at least one
+			// class, or a filter dropped a record that satisfies it. This half holds even when
+			// the unfiltered result was cut, because a class-scoped result is never shorter than
+			// its share of a prefix — but the evidence cap can hide the only class that reaches a
+			// destination, so the guard applies here too.
+			if complete {
+				for ref := range destinations {
+					if !reached[ref] {
+						t.Errorf("%s/%s: destination %s is reached by no declared class, so a filter dropped it",
+							class, id, ref)
+					}
+				}
+			}
+		}
+	}
+	if checked == 0 || filtered == 0 {
+		t.Fatal("the canonical repository offered no discovery start, so this test would pass vacuously")
+	}
+	t.Logf("canonical corpus: %d starts checked against %d class-scoped discoveries", checked, filtered)
+}
+
+// liveReasonKey identifies one connection by all four canonical facts plus its destination, which
+// is the granularity the context layer deduplicates at.
+func liveReasonKey(item domain.RelatedItem, reason domain.RelatedReason) string {
+	return string(item.EntityType) + "/" + item.ID + "|" + reason.Relation + "|" +
+		reason.Origin + "|" + string(reason.Priority) + "|" + strconv.FormatBool(reason.Derived)
 }

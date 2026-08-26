@@ -23,7 +23,16 @@ import (
 // There is no offset, no depth and no q. Each is absent because the operation does not have it,
 // not because the handler forgot: accepting and ignoring one would let a caller believe they had
 // asked for something the response does not reflect.
-var relatedParams = []string{"entity_types", "limit"}
+//
+// relationship_types is the Phase 2B addition and is spelled to match entity_types exactly: a
+// plural name, one comma-separated value, supplied at most once. That is this API's only
+// multi-value query convention - rejectUnknownParams refuses any parameter supplied twice, on
+// every route - so a repeated-parameter spelling would have been a second convention introduced
+// on one route rather than the existing one followed. The singular relationship_type is
+// deliberately not accepted as an alias: /api/v1/search carries both spellings of its class
+// filter only because the singular predates the list, and a new filter has no such history to
+// preserve.
+var relatedParams = []string{"entity_types", "limit", "relationship_types"}
 
 func (s *Server) handleRelatedKnowledge(w http.ResponseWriter, r *http.Request) {
 	if !rejectUnknownParams(w, r, s.logger, relatedParams...) {
@@ -40,7 +49,12 @@ func (s *Server) handleRelatedKnowledge(w http.ResponseWriter, r *http.Request) 
 	// list means. The split is deliberately naive - no empty members are dropped and nothing is
 	// collapsed - so a leading, trailing or doubled comma survives as the blank member it is and
 	// is refused, instead of being quietly repaired into a working filter.
-	values, ok := boundedParams(w, r, s.logger, query, "entity_types")
+	//
+	// relationship_types is the Phase 2B relationship scope and is split identically, because it
+	// is the same kind of list over a different closed vocabulary. Both are bounded by
+	// boundedParams before either is split, so neither can present the service with an unbounded
+	// string to walk.
+	values, ok := boundedParams(w, r, s.logger, query, "entity_types", "relationship_types")
 	if !ok {
 		return
 	}
@@ -54,6 +68,22 @@ func (s *Server) handleRelatedKnowledge(w http.ResponseWriter, r *http.Request) 
 		}
 		entityTypes = strings.Split(values["entity_types"], ",")
 	}
+	var relationshipTypes []string
+	if _, present := query["relationship_types"]; present {
+		// An empty value is refused here rather than in the service, following entity_types: a
+		// present-but-empty parameter is a caller who wrote a filter and supplied nothing to
+		// filter by, and reading it as "no filter" would answer a different request than the one
+		// they sent. A value that is only whitespace trims to the same thing and is refused with
+		// it, and a list with a blank member survives the split as the blank member it is and is
+		// refused by the service. No spelling of "nothing" falls back to an unfiltered discovery.
+		if values["relationship_types"] == "" {
+			writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+				"Parameter relationship_types must be a comma-separated list of: "+
+					strings.Join(domain.RelatedPriorityNames(), ", ")+".")
+			return
+		}
+		relationshipTypes = strings.Split(values["relationship_types"], ",")
+	}
 	// limit is parsed by the shared non-negative integer parser, so a negative or non-integer
 	// value is refused here and the range is applied in the service. That is the same division
 	// every other limit on this API uses, and it is what keeps the ceiling a property of the
@@ -64,8 +94,9 @@ func (s *Server) handleRelatedKnowledge(w http.ResponseWriter, r *http.Request) 
 	}
 
 	result, err := s.knowledge.RelatedKnowledgeFor(entityType, id, service.RelatedQuery{
-		Limit:       limit,
-		EntityTypes: entityTypes,
+		Limit:             limit,
+		EntityTypes:       entityTypes,
+		RelationshipTypes: relationshipTypes,
 	})
 	if err != nil {
 		s.writeRelatedError(w, r, err)
@@ -121,14 +152,44 @@ func (s *Server) writeRelatedError(w http.ResponseWriter, r *http.Request, err e
 		writeError(w, r, s.logger, http.StatusNotFound, CodeRelatedStartNotFound,
 			"Related-knowledge start record was not found.")
 	default:
-		// The scope errors are the Phase 1H ones, rendered by the shared helper so the two
-		// routes cannot drift into refusing one malformed class list with two different
-		// messages. Anything else is an InvalidFilterError or an unexpected error and is handled
+		// The destination-scope errors are the Phase 1H ones, rendered by the shared helper so
+		// the two routes cannot drift into refusing one malformed class list with two different
+		// messages. The relationship-scope errors belong to this route alone and are rendered
+		// below it. Anything else is an InvalidFilterError or an unexpected error and is handled
 		// by the Phase 1B mapping, which lists the permitted values and never echoes the
 		// caller's own.
 		if writeScopeFilterError(w, r, s.logger, err) {
 			return
 		}
+		if writeRelationshipScopeError(w, r, s.logger, err) {
+			return
+		}
 		writeFilterError(w, r, s.logger, err)
 	}
+}
+
+// writeRelationshipScopeError renders the Phase 2B relationship-class errors and reports whether
+// it handled one.
+//
+// Each message states the rule and names the parameter it is about, rather than echoing the
+// caller's list, for the reason writeFilterError does not echo a rejected value: the caller
+// already has their own query string, and it is the one part of a response an attacker would
+// control. The wording deliberately parallels writeScopeFilterError sentence for sentence, so the
+// two lists a caller may send to this route read as one set of rules over two vocabularies.
+//
+// It is not merged into writeScopeFilterError because that helper is shared with /api/v1/search,
+// which has no relationship filter. Widening it would make one route's messages reachable from a
+// route that cannot produce them, which is how a shared renderer stops describing either contract.
+func writeRelationshipScopeError(w http.ResponseWriter, r *http.Request, logger *slog.Logger, err error) bool {
+	switch {
+	case errors.Is(err, service.ErrEmptyRelatedPriority):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter relationship_types must not contain an empty value.")
+	case errors.Is(err, service.ErrDuplicateRelatedPriority):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter relationship_types must not repeat a value.")
+	default:
+		return false
+	}
+	return true
 }

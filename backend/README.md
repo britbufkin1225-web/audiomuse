@@ -1154,6 +1154,7 @@ a discovery start". Runs stay reachable through their own routes.
 | Parameter | Meaning |
 | --- | --- |
 | `entity_types` | optional; restrict *destinations* to a comma-separated **set** of searchable classes |
+| `relationship_types` | optional; restrict *connections* to a comma-separated **set** of precedence classes |
 | `limit` | optional; how many items to return. Default 25, clamped to 100 |
 
 `entity_types` is the same filter, with the same semantics and the same refusals, as the one on
@@ -1161,6 +1162,12 @@ a discovery start". Runs stay reachable through their own routes.
 refused rather than repaired, and the response echoes the scope in canonical class order. There is
 deliberately no single-class `type` alongside it — `/api/v1/search` carries both spellings only
 because `type` predates the list.
+
+`relationship_types` restricts the other axis and follows the same rules — see
+"Filtering by relationship class" below. Both are comma-separated single parameters, because that
+is this API's only multi-value query convention: every route refuses a parameter supplied twice, so
+`?relationship_types=conceptual&relationship_types=evidential` is `400 invalid_query`, not two
+values. The singular `relationship_type` is not accepted as an alias.
 
 There is no `depth`, no `offset` and no `q`, and each absence is the contract rather than an
 omission. Text would make this search, which exists. Depth would make it traversal, which exists.
@@ -1195,7 +1202,8 @@ instead, so a caller can see what was left without walking it.
         "origin": "node.relationships",
         "derived": false,
         "priority": "conceptual",
-        "priority_rank": 0
+        "priority_rank": 0,
+        "explanation": "A typed concept relationship connects the two records."
       },
       "evidence_count": 1,
       "evidence_truncated": false
@@ -1210,7 +1218,8 @@ instead, so a caller can see what was left without walking it.
         "origin": "node.relationships",
         "derived": false,
         "priority": "conceptual",
-        "priority_rank": 0
+        "priority_rank": 0,
+        "explanation": "A typed concept relationship connects the two records."
       },
       "evidence_count": 1,
       "evidence_truncated": false
@@ -1221,8 +1230,8 @@ instead, so a caller can see what was left without walking it.
 
 `start` echoes the record the backend resolved, so a caller who navigated by ID alone can confirm
 they landed where they meant. `counts.eligible` is the exact number of distinct records related to
-the start after the destination scope was applied, counted **before** the limit; `truncated` is
-never `false` when anything was cut.
+the start after the destination and relationship scopes were applied, counted **before** the limit;
+`truncated` is never `false` when anything was cut.
 
 An item carries its own record's identity and its own display fields and nothing else. `title` and
 `summary` are the same fields the search layer already uses for that class — a related item and a
@@ -1241,12 +1250,23 @@ generated, and generated prose is the one kind of explanation this backend canno
 | `relation` | the canonical relation name, the same one traversal and search context use |
 | `origin` | the canonical field the connection was read from |
 | `derived` | `false` if the start authored the reference, `true` if it is another record's reference read backwards |
-| `priority` | the precedence class of that canonical field |
+| `priority` | the precedence class of that canonical field — the machine-readable explanation code, and the vocabulary `relationship_types` filters on |
 | `priority_rank` | that class's integer rank; lower is stronger |
+| `explanation` | a fixed sentence stating what that class of canonical field asserts |
+
+`explanation` is a **lookup, not generated prose**: one of eight fixed strings, chosen by
+`priority` alone. It carries no fact `priority` does not already carry, and exists because a
+machine-readable vocabulary term is not something a person reading one response can expand. It
+never names either endpoint, never interpolates a record's text, never claims a destination is
+relevant, important or similar, and never varies between two responses for the same class. The
+sentences are listed in the precedence table below, and every reason carries one — the primary and
+every entry in `additional_evidence` alike — so a client rendering an item's full connection list
+never has to leave a line unexplained.
 
 There is no confidence, no similarity, no relevance percentage and no probability anywhere in a
 discovery response, and the omission is deliberate: a number there would be read as a measurement,
-and nothing in the corpus measures how related two records are.
+and nothing in the corpus measures how related two records are. `explanation` does not reintroduce
+one in words.
 
 When two records are connected by more than one canonical field, the item appears **once**. The
 strongest connection becomes `reason` and the others are reported in `additional_evidence`, in the
@@ -1262,15 +1282,20 @@ Precedence is a property of the **canonical field**, never of the records at eit
 of their text. That is what makes the ordering explainable: the answer to "why is this above that"
 is always "because AudioMuse wrote the connection down in this field rather than that one".
 
-| Rank | `priority` | Canonical fields | What those fields assert |
-| --- | --- | --- | --- |
-| 0 | `conceptual` | `node.relationships` | a typed edge between two concepts — the only connection AudioMuse authors specifically as a knowledge relation |
-| 1 | `evidential` | `claim.evidence` | what materially supports, contradicts or qualifies a statement |
-| 2 | `attributive` | `claim.attribution` | who a statement is credited to |
-| 3 | `assertional` | `claim.appears_in`, `claim.derived_from` | which records a statement is about, or rests on |
-| 4 | `contextual` | `node.sources`, `node.session_origin` | a concept's topical provenance and its chronological origin |
-| 5 | `referential` | `vocabulary.node_refs`, `vocabulary.session_refs`, `experiment.node_refs`, `experiment.vocabulary_refs`, `experiment.session_refs`, `experiment.source_refs` | a practice record pointing into another layer |
-| 6 | `navigational` | `vocabulary.related_terms`, `experiment.related_experiments` | curated human navigation, which those contracts say implies neither equivalence nor a graph edge |
+| Rank | `priority` | Canonical fields | What those fields assert | `explanation` |
+| --- | --- | --- | --- | --- |
+| 0 | `conceptual` | `node.relationships` | a typed edge between two concepts — the only connection AudioMuse authors specifically as a knowledge relation | A typed concept relationship connects the two records. |
+| 1 | `evidential` | `claim.evidence` | what materially supports, contradicts or qualifies a statement | A claim's evidence list cites one record in support of the other. |
+| 2 | `attributive` | `claim.attribution` | who a statement is credited to | A claim's attribution list credits one record to the other. |
+| 3 | `assertional` | `claim.appears_in`, `claim.derived_from` | which records a statement is about, or rests on | A claim states that it appears in, or derives from, the other record. |
+| 4 | `contextual` | `node.sources`, `node.session_origin` | a concept's topical provenance and its chronological origin | A node names the other record as one of its sources or as its session origin. |
+| 5 | `referential` | `vocabulary.node_refs`, `vocabulary.session_refs`, `experiment.node_refs`, `experiment.vocabulary_refs`, `experiment.session_refs`, `experiment.source_refs` | a practice record pointing into another layer | A practice-layer reference list names the other record. |
+| 6 | `navigational` | `vocabulary.related_terms`, `experiment.related_experiments` | curated human navigation, which those contracts say implies neither equivalence nor a graph edge | A curated navigation list names the other record; it implies no equivalence and no graph edge. |
+
+This one table is the whole vocabulary. The seven `priority` values are the classes the ranking is
+defined over, the values `relationship_types` accepts, the codes `explanation` is chosen by, and
+the list an `invalid_query` message enumerates. They are one closed set in the backend, not four
+that have to be kept in step.
 
 Evidence is kept ahead of attribution because `docs/claim-provenance-model.md` treats "what stands
 behind this" and "who says so" as different facts and the first is the one a reader checks. Topical
@@ -1302,6 +1327,74 @@ left to Go map iteration or to the order the filesystem returned records in.
 Truncation is applied last: a bounded result is always the **front** of the complete ordering, never
 a different selection. A scoped result is likewise the unscoped one with other classes removed —
 same items, same reasons, same relative order — so a filter never changes the ranking.
+
+#### Filtering by relationship class
+
+`relationship_types` restricts which **connections** are eligible to explain and rank an item. Its
+values are the seven `priority` classes in the table above, and nothing else — `unclassified` is
+refused with every other unknown value, because a canonical field the model does not name is a gap
+rather than a scope anybody can ask for.
+
+```text
+GET /api/v1/related/node/rhythm?relationship_types=conceptual
+GET /api/v1/related/node/rhythm?relationship_types=evidential,attributive
+GET /api/v1/related/claim/{id}?relationship_types=evidential&entity_types=source
+```
+
+The response echoes the applied scope at the top level, in precedence order rather than the order
+the caller wrote. Written as `?relationship_types=attributive,evidential`, the echo is:
+
+```json
+"relationship_types": ["evidential", "attributive"]
+```
+
+The rest of the body is the shape shown under "Response" above, unchanged.
+
+The key is **absent** when no filter was supplied, exactly as `entity_types` is, and absent means
+every class. An unfiltered request and a request naming all seven return the same items, reasons,
+counts and ordering; they differ only in the echo, because a caller who names all seven has pinned
+the scope against a model that may later grow a class and a caller who names none has not.
+
+**What the filter does, precisely.** It removes canonical relations, not finished items. A
+destination survives if *any* eligible relation reaches it, and is then explained by its strongest
+eligible relation, with its remaining eligible relations reported as `additional_evidence` and
+counted in `evidence_count`. Two consequences follow, and both are the point:
+
+- a record whose strongest connection is excluded but which a weaker admitted connection also
+  reaches still appears, explained by that weaker connection — a filter never silently drops a
+  record that satisfies it;
+- a filtered response never explains an item by a class the caller removed, and never counts one
+  towards its evidence.
+
+**Filtering runs before the limit.** A caller asking for one class and 25 items receives up to 25
+items *of that class*, not whatever survives of the first 25 items of the unfiltered ranking.
+`counts.eligible` describes the filtered set before the cut.
+
+**Filtering never reorders.** `relationship_types` is a filter and not a ranking parameter: naming
+a class does not promote it, and the order the classes are written in means nothing. The precedence
+among whatever survives is the same closed table, so
+`?relationship_types=navigational,conceptual` and `?relationship_types=conceptual,navigational`
+return byte-identical bodies, still conceptual-first.
+
+**Refusals.** Members are trimmed and then compared exactly. A blank member — which is what a
+leading, trailing or doubled comma produces — a repeated class, a mis-cased class, an unknown
+value, or a present-but-empty parameter are each `400 invalid_query`, and none of them falls back
+to an unfiltered discovery. The message names `relationship_types` and states the rule; it never
+echoes the rejected value.
+
+| Request | Answer |
+| --- | --- |
+| `?relationship_types=conceptual` | `200`, conceptual connections only |
+| `?relationship_types=evidential,attributive` | `200`, the union of both classes, deduplicated by destination |
+| `?relationship_types=conceptual,conceptual` | `400 invalid_query` — a repeated value |
+| `?relationship_types=conceptual,` | `400 invalid_query` — a blank member |
+| `?relationship_types=` | `400 invalid_query` — a filter with nothing to filter by |
+| `?relationship_types=Conceptual` | `400 invalid_query` — exact, case-sensitive |
+| `?relationship_types=unclassified` | `400 invalid_query` — not a scope |
+| a valid class the record has no connection of | `200`, `"items": []`, zero counts |
+
+A valid filter matching nothing is an **answer**, not an error: it says this record has no
+connection of that kind, which is a fact about the corpus rather than a mistake in the request.
 
 #### Bounds
 
@@ -1343,10 +1436,21 @@ mark the change. Against the canonical repository no request comes close to it �
 context is 75 relations — so `relations_truncated` is `false` for every record the corpus holds
 today.
 
-Relations are counted as they are examined, before the destination scope and the self-reference
-exclusion are applied. Counting only what survives would let a narrow `entity_types` filter buy an
-unbounded scan while admitting almost nothing from it, which is exactly the work this bound exists
-to cap.
+Relations are counted as they are examined, before the destination scope, the relationship scope
+and the self-reference exclusion are applied. Counting only what survives would let a narrow filter
+buy an unbounded scan while admitting almost nothing from it, which is exactly the work this bound
+exists to cap. `relations_scanned` is therefore identical for the same start whether a request
+names no class, one class or every class: it reports the work done, not the answer produced, and
+**no filter can enlarge it**.
+
+Both filters are validated before the scan runs and before the start is resolved, so a malformed
+filter costs one pass over a handful of short strings and never reaches the projection. The scope
+values themselves are bounded twice over: the raw parameter is capped at 128 UTF-8 bytes like every
+other text parameter on this API, and each list is a closed set that refuses repetition, so an
+accepted `relationship_types` holds at most seven members and an accepted `entity_types` at most
+six. Explanations add no scan of their own — each is a table lookup on a reason that already
+exists — so an item carries at most as many sentences as it carries connections, which the
+five-per-item cap already bounds.
 
 The Phase 1C traversal depth limits are deliberately **not** reused, because there is no traversal
 here to bound. Discovery is one hop by construction: the canonical references of every searchable
@@ -1365,8 +1469,11 @@ handful of genuine hub records — which is what a default is for.
 | --- | --- |
 | a record that exists and is related to nothing | `200`, `"items": []`, zero counts |
 | a scope naming a class the record is not connected to | `200`, `"items": []`, zero counts |
+| a `relationship_types` scope the record has no connection of | `200`, `"items": []`, zero counts |
 | a start class outside the six | `400 invalid_query`, listing the accepted classes |
 | a malformed or repeated `entity_types` member | `400 invalid_query`, stating the rule |
+| a malformed, repeated or unknown `relationship_types` member | `400 invalid_query`, stating the rule and naming that parameter |
+| either scope parameter supplied twice | `400 invalid_query` — two values are two requests |
 | a negative or non-integer `limit` | `400 invalid_query` |
 | a `limit` above the maximum | `200`, clamped, with the applied value echoed |
 | an identifier containing `/`, `\`, `..` or a NUL | `400 invalid_query` |
@@ -1425,22 +1532,27 @@ anything outside the canonical repository.
 #### Scope of this phase, and what it is not
 
 Implemented: one read-only route, six starting classes, the seven-class precedence table above,
-deduplication with bounded evidence, destination-scope filtering, a default and maximum limit, and
-an exact eligible count.
+deduplication with bounded evidence, destination-scope filtering, relationship-scope filtering, a
+per-connection explanation, a default and maximum limit, and an exact eligible count.
 
 Deliberately not implemented, and not planned as part of it:
 
 - multi-hop or transitive discovery — the traversal routes serve that question;
-- caller-supplied ranking, weights, or a relationship-priority parameter, which would make the
-  ordering a property of the request rather than of the corpus;
+- caller-supplied ranking or weights. `relationship_types` restricts which connections are eligible
+  and cannot reorder what survives, so the ordering remains a property of the corpus rather than of
+  the request; a parameter that *promoted* a class, or a weight per class, would invert that and is
+  not offered;
+- filtering finer than the precedence class — there is no filter on `relation`, on `origin`, or on
+  `derived`, no negation, and no per-class limit;
 - personalisation, reading history, popularity or any per-caller state; no request is stored;
-- similarity, embeddings, vectors or generated explanations, as above.
+- similarity, embeddings, vectors or generated explanations. `explanation` is a fixed sentence
+  selected by `priority`, not text produced for the pair of records it appears on.
 
 Reasonable future extensions, none of which exist today: exposing the precedence table itself as a
-read-only contract endpoint so a client can render the classes without hard-coding them; a
-per-class breakdown of the eligible set, in the shape search facets already use; and a bounded
-"related to both of these" intersection. Each would be its own phase with its own contract, and
-none is a quiet widening of this one.
+read-only contract endpoint so a client can render — and now filter by — the classes without
+hard-coding them; a per-class breakdown of the eligible set, in the shape search facets already
+use; and a bounded "related to both of these" intersection. Each would be its own phase with its
+own contract, and none is a quiet widening of this one.
 
 ### Errors
 
@@ -1542,6 +1654,18 @@ Invoke-RestMethod http://127.0.0.1:8788/api/v1/related/node/rhythm
 
 ```powershell
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?entity_types=claim,source"
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?relationship_types=conceptual"
+```
+
+```powershell
+(Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?relationship_types=contextual,referential").relationship_types
+```
+
+```powershell
+(Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?limit=5").items.reason | Select-Object priority, priority_rank, explanation
 ```
 
 ```powershell
@@ -2034,11 +2158,18 @@ the corpus that the corpus does not make. See "Practice-layer representation" ab
 
 Deterministic related-knowledge discovery is no longer deferred; `GET /api/v1/related/{entity_type}/{id}`
 is the whole of what shipped, and it ranks references the corpus already authored rather than
-widening what any layer reaches. Three extensions to it are worth recording as recommendations and
-are explicitly **not** implemented: exposing the precedence table as a read-only contract endpoint,
-so a client can render the classes without hard-coding them; a per-class breakdown of the eligible
-set, in the shape search facets already use; and a bounded intersection answering "related to both
-of these". Each would be its own phase with its own contract.
+widening what any layer reaches. Relationship-scope filtering is no longer deferred either;
+`relationship_types` is the whole of that one, and it restricts which canonical connections are
+eligible without touching the precedence among the ones that survive, so it filters rather than
+ranking. The per-connection `explanation` shipped with it and is a fixed sentence chosen by the
+precedence class, not text produced for the records it appears on.
+
+Two of the three recommended extensions remain worth recording and are explicitly **not**
+implemented: a per-class breakdown of the eligible set, in the shape search facets already use; and
+a bounded intersection answering "related to both of these". The third — exposing the precedence
+table as a read-only contract endpoint — is now more useful rather than less, because those seven
+class names are a request vocabulary as well as a response one, and a client that filters by them
+is hard-coding a list it could be served. It is still its own phase with its own contract.
 
 Multi-hop, similarity-ranked and model-generated discovery are not on that list. The first is what
 the traversal routes are for; the second and third are deferred on exactly the grounds semantic
