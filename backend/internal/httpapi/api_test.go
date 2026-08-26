@@ -293,6 +293,49 @@ func TestInvalidQueryParameters(t *testing.T) {
 	}
 }
 
+// TestEveryGuardedRouteRejectsUnparseableQueries pins the shared admission rule at every
+// current call site. A related-route-only regression would keep passing if another handler later
+// bypassed the guard and silently interpreted the parseable remainder as a broader request.
+func TestEveryGuardedRouteRejectsUnparseableQueries(t *testing.T) {
+	handler := newHandler(t)
+	routes := []string{
+		"/health",
+		"/api/v1/project",
+		"/api/v1/nodes",
+		"/api/v1/nodes/alpha",
+		"/api/v1/sessions",
+		"/api/v1/sessions/session-01",
+		"/api/v1/sources",
+		"/api/v1/sources/source-01",
+		"/api/v1/claims",
+		"/api/v1/claims/claim-01",
+		"/api/v1/vocabulary",
+		"/api/v1/vocabulary/fixture-term",
+		"/api/v1/experiments",
+		"/api/v1/experiments/fixture-experiment",
+		"/api/v1/experiment-runs",
+		"/api/v1/experiment-runs/fixture-run",
+		"/api/v1/search",
+		"/api/v1/related/node/alpha",
+		"/api/v1/graph",
+		"/api/v1/graph/entities/node/alpha/relationships",
+		"/api/v1/graph/entities/node/alpha/traverse",
+		"/api/v1/diagnostics",
+	}
+	for _, route := range routes {
+		t.Run(route, func(t *testing.T) {
+			rec := do(t, handler, http.MethodGet, route+"?secret=%zz")
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want 400: %s", rec.Code, rec.Body.String())
+			}
+			assertErrorCode(t, rec, "invalid_query")
+			if strings.Contains(rec.Body.String(), "secret") || strings.Contains(rec.Body.String(), "%zz") {
+				t.Errorf("error echoed the rejected query: %s", rec.Body.String())
+			}
+		})
+	}
+}
+
 // TestPathTraversalIsRejected confirms no route can be turned into a file reader. The ID is
 // only ever a map key, and separators are refused before it even gets that far.
 func TestPathTraversalIsRejected(t *testing.T) {

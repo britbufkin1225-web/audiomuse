@@ -1474,7 +1474,9 @@ handful of genuine hub records — which is what a default is for.
 | a malformed or repeated `entity_types` member | `400 invalid_query`, stating the rule |
 | a malformed, repeated or unknown `relationship_types` member | `400 invalid_query`, stating the rule and naming that parameter |
 | either scope parameter supplied twice | `400 invalid_query` — two values are two requests |
+| a query string that cannot be parsed at all | `400 invalid_query` — see "The query string" below |
 | a negative or non-integer `limit` | `400 invalid_query` |
+| an omitted, empty or zero `limit` | `200`, the default of 25, echoed |
 | a `limit` above the maximum | `200`, clamped, with the applied value echoed |
 | an identifier containing `/`, `\`, `..` or a NUL | `400 invalid_query` |
 | a well-formed identifier naming no record | `404 related_start_not_found` |
@@ -1564,6 +1566,34 @@ Codes: `not_found`, `node_not_found`, `session_not_found`, `source_not_found`, `
 `entity_not_found`, `vocabulary_not_found`, `experiment_not_found`, `experiment_run_not_found`,
 `related_start_not_found`, `invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
 logged locally and never serialised into a response.
+
+### The query string
+
+Every route bounds its own accepted parameters, and the same three rules apply on all of them:
+
+| Query string | Answer |
+| --- | --- |
+| a parameter the route does not accept | `400 invalid_query`, naming it and listing what is supported |
+| a parameter supplied twice | `400 invalid_query` — two values are two requests, and this API has no repeated-key convention |
+| a string that cannot be parsed as a query string | `400 invalid_query` — the whole string is refused |
+
+The third was added in Phase 2C and closes a gap the first two left open. A query string carrying an
+invalid percent-escape (`?entity_types=%zz`) or a semicolon separator (`?a=1;b=2`) is not parseable,
+and Go's `r.URL.Query()` answers such a string by discarding the error and returning whichever pairs
+it managed to read. The malformed ones were therefore simply *absent* by the time a handler looked —
+and an absent filter is an unfiltered request, so a caller received the complete unrestricted result
+set under a `200`, with no echo of the filter they believed they had applied and nothing in the body
+to mark that anything had been dropped. Refusing the string whole is the same decision the other two
+rules make: a request whose meaning cannot be established is refused rather than approximated.
+
+When a request breaks more than one of these rules at once, the message cites the alphabetically
+first parameter at fault. Any of them would be a correct thing to report, and the point of fixing
+which is that an error body is part of a response: an identical request returns an identical
+response on this API, and that has to include the refusals.
+
+A shared-guard regression sends an unparseable query through all 22 routes that currently call the
+guard, so the repository will fail if a later handler bypasses this admission rule while the
+related-knowledge route continues to enforce it.
 
 ### Read-only enforcement
 
@@ -2031,6 +2061,63 @@ own route. A cross-route test requires a malformed class list to be refused with
 and message on this route and on `/api/v1/search`, and a cross-phase test captures every earlier
 route, runs a discovery sweep, and requires each one byte for byte unchanged.
 
+Phase 2C adds a related-knowledge **workflow** suite, in the shape Phase 1J gave the search
+pipeline: invariants stated once and required of a shared request matrix rather than more
+per-feature expectations. The matrix crosses every start the fixture resolves — including the
+uncited source, the orphan vocabulary term and the unused session entry, whose correct answer is
+empty — with the unfiltered request, each of the seven precedence classes alone, two subsets, the
+complete set, each destination class, the limit at its default, its minimum, its ceiling and past
+it, and both filters together. Each response is then required to satisfy the properties that only
+exist once the whole pipeline runs: `counts.returned` equals the serialised item count and never
+exceeds the applied limit, which never exceeds the ceiling; `truncated` is exactly
+`returned < eligible`; a truncated scan has reached the ceiling; `counts.eligible` never exceeds
+`relations_scanned`; an item's serialised reasons number exactly `min(evidence_count, 5)` with
+`evidence_truncated` set accordingly and no connection reported twice; every reason's `priority` is
+in the closed seven and its `priority_rank` and `explanation` are the table's own values for it; no
+explanation names either endpoint; the four-key ordering holds and is total; and each echo is
+present exactly when that filter was supplied, normalised, and actually constrains what it
+accompanies.
+
+Four cross-request regressions state the things one response cannot: naming all seven classes
+returns the identical body to naming none but for the echo; permuted filter spellings are
+byte-identical, which is what keeps the filter a set restriction rather than a ranking input; every
+smaller limit is a byte-identical prefix of the result at the ceiling, with the eligible total
+unchanged; and `relations_scanned` is identical for one start under every filter spelling in the
+matrix, so no filter can enlarge or shrink the work the ceiling bounds. Determinism is covered four
+ways — repeated bytes, a second index built from an in-memory copy of the corpus, eight concurrent
+readers followed by a sequential replay, and the refusals, which are required to be as reproducible
+as the successes.
+
+The validation surface is one table of malformed requests covering both filters in every spelling of
+wrong, the limit, the route values and the query string itself, each asserted to answer `400
+invalid_query` with an envelope carrying exactly `code` and `message` and never echoing the rejected
+value — kept separate from the well-formed-but-empty requests that answer `200`, and from the
+missing starts that answer `404 related_start_not_found`. `HEAD` is exercised over a real listener
+rather than a recorder, which is the only place net/http actually discards the body, and every
+mutating method is required to be refused identically on a path that resolves and one that does not.
+
+At the service layer Phase 2C adds what the fixture cannot express: a corpus one relation past the
+scan ceiling, asked with every filter, where three caps apply to one request and the response has to
+keep them distinguishable. A scope admitting nothing must still report the full ceiling scan beside
+an eligible count of zero, which is the difference between counting relations before and after the
+filter; a truncated result must still be byte-identical across repeats and across two indexes; and
+the contract a direct caller sees must be complete without HTTP, so a negative limit falls back to
+the default, a nil and an empty filter are one request, padded members are trimmed but a
+whitespace-only or mis-cased member is still refused, and a malformed filter beats a missing start
+whichever combination is sent. Defensive copying is checked on everything writable, both echoes
+included.
+
+Three tests tie discovery to the repository's own builders. The inventory is derived from
+`tools/build-*.ps1` rather than restated, so a builder added later fails until somebody decides what
+it means for discovery; every artifact those builders write is required to exist; the canonical
+corpus is loaded twice, once as it stands and once from an in-memory copy with every generated view
+removed, and all six start classes are swept unfiltered and once per precedence class with both
+indexes required to agree byte for byte (2,840 comparisons against the repository today); and the
+generated views are snapshotted by size, modification time and content digest either side of a full
+discovery sweep including its refusals. Together they pin from both directions the property the
+documentation states and the code expresses only as the absence of a path: a generated view is never
+an input to discovery, and discovery is never a writer of one.
+
 ## Known limitations
 
 - Repository changes require a process restart. There is no watcher, no background sync and
@@ -2163,6 +2250,14 @@ widening what any layer reaches. Relationship-scope filtering is no longer defer
 eligible without touching the precedence among the ones that survive, so it filters rather than
 ranking. The per-connection `explanation` shipped with it and is a fixed sentence chosen by the
 precedence class, not text produced for the records it appears on.
+
+Phase 2C added no discovery feature and moved nothing off this list. It validated the merged
+Phase 2A and Phase 2B workflow as one system, and justified two production corrections in the
+shared parameter guard: refusing unparseable query strings and selecting multi-violation errors in
+sorted parameter-name order. Both are admission and determinism rules shared by every guarded route
+rather than discovery features. The three extensions below are therefore
+still the repository's own record of what a next phase could take up, and exposing the precedence
+table as a read-only contract endpoint remains the most concrete of them.
 
 Two of the three recommended extensions remain worth recording and are explicitly **not**
 implemented: a per-class breakdown of the eligible set, in the shape search facets already use; and
