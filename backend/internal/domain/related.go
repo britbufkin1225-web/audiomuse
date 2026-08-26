@@ -89,12 +89,74 @@ var RelatedPriorities = []RelatedPriority{
 }
 
 // RelatedPriorityNames renders the closed set for a document or an error message.
+//
+// Phase 2B also makes it the allowlist of the relationship-scope filter, and that reuse is the
+// point rather than a convenience: the values a caller may filter by, the classes the ranking is
+// defined over and the names an error message lists are one list read three ways. A separate
+// filter vocabulary would be a second spelling of a closed seven-value set, free to drift from
+// the table that actually decides precedence.
+//
+// PriorityUnclassified is absent, as it has always been. It is the fallback for a canonical field
+// this model does not name and no corpus can produce one today, so accepting it as a filter value
+// would offer a caller a scope whose only honest answer is empty.
 func RelatedPriorityNames() []string {
 	out := make([]string, 0, len(RelatedPriorities))
 	for _, p := range RelatedPriorities {
 		out = append(out, string(p))
 	}
 	return out
+}
+
+// ValidRelatedPriority reports whether a caller-supplied string names a precedence class.
+//
+// The comparison is exact and case-sensitive, which is what every canonical filter on this API
+// already does: "Conceptual" is refused rather than folded, because a filter that guesses at a
+// caller's spelling is a filter that can guess wrong and answer a different question.
+func ValidRelatedPriority(value string) bool {
+	for _, known := range RelatedPriorities {
+		if string(known) == value {
+			return true
+		}
+	}
+	return false
+}
+
+// RelatedPriorityExplanation renders one precedence class as a fixed sentence.
+//
+// It is a closed switch over a closed vocabulary and it reads no argument other than the class,
+// so the same class always produces the same bytes. Nothing here is generated, interpolated from
+// a record, or derived from the text of either endpoint: the sentence says which kind of
+// canonical field connected two records and what that kind of field asserts, which is a fact
+// about the corpus vocabulary rather than a statement about this particular pair.
+//
+// The sentences are deliberately about the field and never about the reader's task. None of them
+// says a destination is important, relevant, similar or worth reading, because none of those is
+// something the corpus wrote down; the caller is told what AudioMuse recorded and decides for
+// themselves. They also avoid asserting causality the field does not carry - a source that
+// supports a claim is cited by it, which is not the same as having caused it.
+//
+// A class the table does not name renders the unclassified sentence rather than an empty string,
+// so an item explained by an unrecognised field is visibly unranked rather than silently
+// unexplained. That is the same degradation RelatedPriorityFor already chooses, for the same
+// reason.
+func RelatedPriorityExplanation(p RelatedPriority) string {
+	switch p {
+	case PriorityConceptual:
+		return "A typed concept relationship connects the two records."
+	case PriorityEvidential:
+		return "A claim's evidence list cites one record in support of the other."
+	case PriorityAttributive:
+		return "A claim's attribution list credits one record to the other."
+	case PriorityAssertional:
+		return "A claim states that it appears in, or derives from, the other record."
+	case PriorityContextual:
+		return "A node names the other record as one of its sources or as its session origin."
+	case PriorityReferential:
+		return "A practice-layer reference list names the other record."
+	case PriorityNavigational:
+		return "A curated navigation list names the other record; it implies no equivalence and no graph edge."
+	}
+	return "The canonical field connecting the two records is outside the declared precedence model."
 }
 
 // RelatedPriorityRank is the integer precedence of one class: lower is stronger.
@@ -183,9 +245,19 @@ func RelatedPriorityFor(origin string) RelatedPriority {
 // from, Derived says whether the starting record authored the reference or the backend read
 // another record's backwards, and the two priority fields are the precedence class and its rank.
 //
+// Explanation, added in Phase 2B, is the one human-readable field, and it is a lookup rather than
+// a sentence built here: RelatedPriorityExplanation maps the precedence class to a fixed string.
+// It carries no new fact - a caller reading Priority already has everything the sentence says -
+// and exists because the machine-readable class is a vocabulary term a person reading one
+// response has no way to expand. It is on every reason rather than only the winning one because
+// NewRelatedReason is the single constructor, so a uniform field cannot drift into a contract
+// where some reasons explain themselves and others do not.
+//
 // There is no confidence, no score, no similarity and no probability here, and the omission is
 // the point. A number in this object would be read as a measurement, and nothing in the corpus
-// measures how related two records are.
+// measures how related two records are. Explanation does not reintroduce one in prose: it is one
+// of eight fixed strings, it never names either endpoint, and it never says a destination is
+// relevant, important or similar.
 //
 // The reason names neither endpoint. The originating record is the start of the whole response
 // and is the origin of every reason in it by construction, and the destination is the item the
@@ -198,13 +270,15 @@ type RelatedReason struct {
 	Derived      bool            `json:"derived"`
 	Priority     RelatedPriority `json:"priority"`
 	PriorityRank int             `json:"priority_rank"`
+	Explanation  string          `json:"explanation"`
 }
 
 // NewRelatedReason classifies one resolved context relation.
 //
-// It is the only way a reason is produced, so a reason's priority and the origin it claims to
-// have been derived from cannot disagree: there is no path by which an item acquires a
-// precedence its own origin does not account for.
+// It is the only way a reason is produced, so a reason's priority, the origin it claims to have
+// been derived from, and the sentence it is explained by cannot disagree: there is no path by
+// which an item acquires a precedence its own origin does not account for, and none by which it
+// acquires an explanation its own precedence does not account for.
 func NewRelatedReason(relation ContextRelation) RelatedReason {
 	priority := RelatedPriorityFor(relation.Origin)
 	return RelatedReason{
@@ -213,6 +287,7 @@ func NewRelatedReason(relation ContextRelation) RelatedReason {
 		Derived:      relation.Derived,
 		Priority:     priority,
 		PriorityRank: RelatedPriorityRank(priority),
+		Explanation:  RelatedPriorityExplanation(priority),
 	}
 }
 
@@ -225,12 +300,20 @@ func NewRelatedReason(relation ContextRelation) RelatedReason {
 // record: a discovery item says what a record is called and why it is here, and reading it is a
 // request to that record's own route.
 //
-// Reason is the strongest canonical connection between the start and this item, and it is what
-// the item's position in the list was decided by. AdditionalEvidence carries the other canonical
-// connections between the same two records, bounded, in the same precedence order; it is absent
-// when there is only one, so the common case is not padded with an empty list. EvidenceCount is
-// how many connections there are in total, so an item whose evidence was cut short says so
-// rather than looking like an item with fewer connections than it has.
+// Reason is the strongest eligible canonical connection between the start and this item, and it
+// is what the item's position in the list was decided by. AdditionalEvidence carries the other
+// eligible canonical connections between the same two records, bounded, in the same precedence
+// order; it is absent when there is only one, so the common case is not padded with an empty
+// list. EvidenceCount is how many eligible connections there are in total, so an item whose
+// evidence was cut short says so rather than looking like an item with fewer connections than it
+// has.
+//
+// "Eligible" is the whole request's relationship scope, and on an unfiltered request - which is
+// every Phase 2A request - it is every connection, so nothing above changes meaning. Under a
+// Phase 2B relationship filter it is the connections whose precedence class the caller admitted:
+// an item's reason and its evidence describe the discovery that ran, so a filtered response never
+// explains an item by a class the caller excluded, and never counts one towards the evidence of
+// an item it did not rank.
 type RelatedItem struct {
 	EntityType SearchEntityType `json:"entity_type"`
 	ID         string           `json:"id"`
@@ -286,7 +369,8 @@ type RelatedBounds struct {
 // RelatedCounts reports the size of a discovery result.
 //
 // Eligible is how many distinct records are related to the start once the requested destination
-// scope has been applied, counted before the limit; Returned is how many the response carries.
+// and relationship scopes have both been applied, counted before the limit; Returned is how many
+// the response carries.
 // The pair is what makes truncation honest: a caller can tell a complete short list from the
 // front of a long one without a second request. Eligible is an exact count rather than an
 // estimate, because the whole canonical context of every record is resolved once at startup and
@@ -318,6 +402,18 @@ type RelatedKnowledge struct {
 	// than the caller's, so the response describes the request that ran. It is absent when the
 	// caller supplied none, which is what an unrestricted discovery has always meant.
 	EntityTypes []string `json:"entity_types,omitempty"`
+
+	// RelationshipTypes echoes the relationship scope that was applied, in precedence order
+	// rather than the caller's, added in Phase 2B. It is the same convention EntityTypes uses and
+	// deliberately so: one applied filter is echoed under the name of the parameter that applied
+	// it, normalised, and is absent when the caller supplied none.
+	//
+	// Absent therefore means every precedence class, which is what an unfiltered discovery has
+	// always returned. The alternative - echoing all seven classes on an unfiltered request - was
+	// rejected because it would make the two requests indistinguishable in the response while
+	// they differ in the contract: a caller who names all seven has pinned the scope against a
+	// model that may later grow a class, and a caller who names none has not.
+	RelationshipTypes []string `json:"relationship_types,omitempty"`
 
 	Limit     int           `json:"limit"`
 	Bounds    RelatedBounds `json:"bounds"`

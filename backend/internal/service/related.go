@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"sort"
+	"strings"
 
 	"github.com/britbufkin1225-web/audiomuse/backend/internal/domain"
 )
@@ -98,6 +99,37 @@ const (
 // the discovery model that the earlier phases spell out at length.
 var ErrUnsupportedRelatedEntityType = errors.New("unsupported related-knowledge entity type")
 
+// Relationship-scope errors, added in Phase 2B.
+//
+// They mirror the Phase 1H class-list errors one for one, and the parallel is deliberate: a
+// caller who has learned what a malformed entity_types list is refused for should not have to
+// learn a second set of rules for the second list on the same route. A malformed filter is
+// refused rather than repaired, for the reason every other malformed filter on this API is - a
+// discovery whose scope silently differed from the one the caller wrote would return a list, an
+// eligible count and a set of explanations that do not mean what they think they mean, and unlike
+// a mistyped query string that is invisible in the response.
+//
+// They are distinct error values rather than reuses of the entity_types ones because each renders
+// into a message naming its own parameter. A caller who wrote one comma too many in
+// relationship_types must be told which of the two lists on this route was wrong.
+var (
+	// ErrEmptyRelatedPriority reports a relationship-class list carrying a blank member, which is
+	// what a leading, trailing or doubled separator produces, and what a whitespace-only value
+	// trims to.
+	ErrEmptyRelatedPriority = errors.New("relationship type filter must not contain an empty value")
+
+	// ErrDuplicateRelatedPriority reports a precedence class named twice. A repeated class cannot
+	// change which relations are admitted, so accepting it would be harmless and refusing it is
+	// still right: the two things a caller might mean - a set and a multiset - differ, and a
+	// filter that quietly collapses one into the other is a filter whose contract is guessed at.
+	//
+	// Rejecting rather than normalising is the existing convention on this API rather than a new
+	// decision. entity_types has refused a repeated class since Phase 1H, and the two lists sit
+	// on one route; normalising one while refusing the other would be the drift both spellings
+	// were written to avoid.
+	ErrDuplicateRelatedPriority = errors.New("relationship type filter must not repeat a value")
+)
+
 // RelatedQuery is a bounded, deterministic related-knowledge request.
 //
 // It carries no query text and no depth, and both omissions are the contract rather than a gap.
@@ -115,9 +147,105 @@ var ErrUnsupportedRelatedEntityType = errors.New("unsupported related-knowledge 
 // because Type predates the list and an existing contract had to keep working; this route has no
 // such history, so it offers the set spelling only rather than being born with two ways to say
 // one thing.
+//
+// RelationshipTypes is the Phase 2B relationship scope and is the third thing a navigation
+// request legitimately says: which kinds of connection the reader is interested in. It is a
+// filter and never a ranking parameter - it decides which canonical relations are eligible, and
+// the precedence among whatever remains is the same closed table it has always been. A caller
+// cannot promote a class by naming it, cannot reorder the classes by the order they are written
+// in, and cannot introduce a weight; a scope of one class returns exactly the items an unfiltered
+// discovery would have ranked in that class, in the same relative order.
+//
+// Its members are the precedence classes of domain.RelatedPriorities, and the semantics follow
+// EntityTypes exactly - trimmed, exact, closed set, no blank member, no repetition, an empty
+// slice meaning every class - so the two lists on one route are one set of rules rather than two.
 type RelatedQuery struct {
-	Limit       int
-	EntityTypes []string
+	Limit             int
+	EntityTypes       []string
+	RelationshipTypes []string
+}
+
+// relatedScope is the resolved set of precedence classes one discovery may be explained by.
+//
+// An empty scope is every class, which is what an unfiltered request has always meant, and it is
+// the same shape searchScope has for the same reason: one type carries the admission test, so
+// the grouping loop asks one question per axis rather than branching on whether a filter is set.
+type relatedScope []domain.RelatedPriority
+
+// has is exact membership, and is separate from admits for the reason searchScope.has is: an
+// empty scope admits everything and contains nothing, and the duplicate check needs the second
+// question rather than the first.
+func (s relatedScope) has(p domain.RelatedPriority) bool {
+	for _, allowed := range s {
+		if allowed == p {
+			return true
+		}
+	}
+	return false
+}
+
+// admits reports whether a connection of this precedence class may explain an item.
+func (s relatedScope) admits(p domain.RelatedPriority) bool {
+	return len(s) == 0 || s.has(p)
+}
+
+// names renders the scope for the response echo, in precedence order. The slice is fresh on every
+// call, so an echoed scope can never alias anything the index holds.
+func (s relatedScope) names() []string {
+	out := make([]string, 0, len(s))
+	for _, p := range s {
+		out = append(out, string(p))
+	}
+	return out
+}
+
+// resolveRelatedScope validates the relationship filter and returns the classes a discovery may be
+// explained by, or nil for every class.
+//
+// It is a pure function of the request and runs before any grouping, so a malformed filter costs
+// one pass over at most a handful of short strings rather than a pass over the projection. That
+// ordering is also the bound: a request whose filter is refused never reaches the relation scan
+// at all, so no spelling of a filter can buy work.
+//
+// Members are trimmed and then compared exactly, which is the comparison every canonical filter on
+// this API already uses: "Conceptual" and "CONCEPTUAL" are refused rather than folded, because a
+// filter that guesses at a caller's spelling is a filter that can guess wrong and answer a
+// different question. Nothing else is normalised - there is no alias table, no plural form and no
+// grouping of classes into families, because the API has no such convention to follow and
+// inventing one here would make this list the only place a model term is not written as the model
+// spells it.
+//
+// The returned scope is in precedence order rather than the caller's, so two spellings of one
+// scope produce one response. That is what makes the filter order-independent rather than merely
+// order-tolerant: the echo, the admission test and the result are all functions of the set.
+//
+// unclassified is refused with every other unknown value, and deliberately: it is the fallback for
+// a canonical field the model does not name, no corpus can produce one, and a scope that accepted
+// it would answer with an empty set a caller could read as "nothing connects these records in an
+// unrecognised way" rather than as "that is not a class you may ask for".
+func resolveRelatedScope(requested []string) (relatedScope, error) {
+	if len(requested) == 0 {
+		return nil, nil
+	}
+	scope := make(relatedScope, 0, len(requested))
+	for _, raw := range requested {
+		value := strings.TrimSpace(raw)
+		if value == "" {
+			return nil, ErrEmptyRelatedPriority
+		}
+		if !domain.ValidRelatedPriority(value) {
+			return nil, &InvalidFilterError{Param: "relationship_types", Allowed: domain.RelatedPriorityNames()}
+		}
+		class := domain.RelatedPriority(value)
+		if scope.has(class) {
+			return nil, ErrDuplicateRelatedPriority
+		}
+		scope = append(scope, class)
+	}
+	sort.SliceStable(scope, func(i, j int) bool {
+		return domain.RelatedPriorityRank(scope[i]) < domain.RelatedPriorityRank(scope[j])
+	})
+	return scope, nil
 }
 
 // relatedGroup collects every canonical connection between the start and one destination record.
@@ -159,10 +287,16 @@ func (k *Knowledge) buildRelated() {
 // canonical record.
 //
 // The order of operations is fixed and each step is separable: validate the class, validate the
-// destination scope, resolve the start, group the start's canonical context by destination, rank
-// each group, order the groups, count, then cut at the limit. Counting before cutting is what
-// lets the response report an exact eligible total; cutting before counting would make the total
-// the size of the page, which the caller can already see.
+// destination scope, validate the relationship scope, resolve the start, group the start's
+// eligible canonical context by destination, rank each group, order the groups, count, then cut
+// at the limit. Counting before cutting is what lets the response report an exact eligible total;
+// cutting before counting would make the total the size of the page, which the caller can already
+// see.
+//
+// Both filters are applied before the limit and neither is applied after it, which is the
+// difference between a filter and a post-filter over a page. A caller asking for one relationship
+// class and twenty-five items receives up to twenty-five items of that class, not whatever
+// survives of the first twenty-five items of the unfiltered ranking.
 //
 // The whole request is validated before the start is looked up, so a malformed request is never
 // reported as a missing record. It matters because the two failures ask different things of the
@@ -197,6 +331,15 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 	if err != nil {
 		return domain.RelatedKnowledge{}, err
 	}
+	// The relationship scope is resolved next and for the same reasons: it is cheap, it is a
+	// filter rather than an address, and refusing it here means a malformed class list neither
+	// reaches the projection nor is masked by a lookup that missed. The two filters are validated
+	// in the order they appear in the accepted query string, so a request carrying two malformed
+	// lists is refused with the same error on every run.
+	relationScope, err := resolveRelatedScope(q.RelationshipTypes)
+	if err != nil {
+		return domain.RelatedKnowledge{}, err
+	}
 	start := searchRef{entityType: domain.SearchEntityType(entityType), id: id}
 	title, ok := k.searchLabels[start]
 	if !ok {
@@ -204,7 +347,7 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 	}
 	limit := normaliseRelatedLimit(q.Limit)
 
-	groups, scanned, scanCut := k.groupRelated(start, scope, MaxRelatedRelationsScanned)
+	groups, scanned, scanCut := k.groupRelated(start, scope, relationScope, MaxRelatedRelationsScanned)
 	items := make([]domain.RelatedItem, 0, len(groups))
 	for _, group := range groups {
 		items = append(items, k.relatedItem(group))
@@ -216,14 +359,23 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 		items = items[:limit]
 	}
 
+	// Each echo is present exactly when the caller supplied that filter, and carries the
+	// normalised scope rather than their spelling of it. A caller can therefore tell an
+	// unrestricted axis from a restricted one, and can see what their list normalised to, without
+	// the response having to carry a separate "was this filtered" flag beside each list.
 	var echoTypes []string
 	if len(q.EntityTypes) > 0 {
 		echoTypes = scope.names()
 	}
+	var echoRelationships []string
+	if len(q.RelationshipTypes) > 0 {
+		echoRelationships = relationScope.names()
+	}
 	return domain.RelatedKnowledge{
-		Start:       domain.RelatedStart{EntityType: start.entityType, ID: start.id, Title: title},
-		EntityTypes: echoTypes,
-		Limit:       limit,
+		Start:             domain.RelatedStart{EntityType: start.entityType, ID: start.id, Title: title},
+		EntityTypes:       echoTypes,
+		RelationshipTypes: echoRelationships,
+		Limit:             limit,
 		Bounds: domain.RelatedBounds{
 			MaxEvidencePerItem:  MaxRelatedEvidencePerItem,
 			MaxRelationsScanned: MaxRelatedRelationsScanned,
@@ -244,16 +396,33 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 // map iteration; the explicit sort afterwards would fix the order anyway, and this keeps the
 // input to that sort reproducible as well.
 //
-// Two destinations are dropped here rather than ranked. One outside the requested scope is not an
-// answer to the question that was asked. The start itself is not an answer either: a discovery
-// result telling a reader to go and read the record they are already holding is not a place to go
-// next. That second exclusion is defence in depth rather than a filter the corpus needs - every
-// canonical layer with a reference list treats a record referencing itself as a fatal validation
-// issue, so an index that started cannot hold one - and it is kept because the cost is one
-// comparison and the alternative is a contract that depends on a rule enforced three packages
-// away. The exclusion is on identity, class and ID together, so the registry entry and the
-// session projected from it, which share an ID and are two different records, are never confused
-// for one another.
+// Three exclusions run here rather than later, and the order they are written in is the order
+// they are cheapest in rather than a precedence among them.
+//
+// A destination outside the requested class scope is not an answer to the question that was
+// asked. The start itself is not an answer either: a discovery result telling a reader to go and
+// read the record they are already holding is not a place to go next. And a relation whose
+// precedence class the caller excluded is not eligible to explain anything, which is the Phase 2B
+// filter.
+//
+// The relationship filter is applied to the relation rather than to the finished item, and that
+// is the phase's central filtering decision. Filtering items after grouping would have two
+// consequences the contract cannot carry: an item admitted by its strongest connection would keep
+// reporting excluded connections as its evidence and its evidence count, so a filtered response
+// would explain an item by a class the caller had removed; and an item whose strongest connection
+// was excluded would vanish entirely even where a weaker admitted connection also reaches it, so
+// a filter would silently drop records that satisfy it. Filtering the relations makes the
+// eligible set exactly "the connections the caller asked about", and everything downstream -
+// the winning reason, the evidence, the count, the ranking - is then computed over that set
+// without needing to know a filter was applied at all.
+//
+// Excluding the start is defence in depth rather than a filter the corpus needs - every canonical
+// layer with a reference list treats a record referencing itself as a fatal validation issue, so
+// an index that started cannot hold one - and it is kept because the cost is one comparison and
+// the alternative is a contract that depends on a rule enforced three packages away. That
+// exclusion is on identity, class and ID together, so the registry entry and the session
+// projected from it, which share an ID and are two different records, are never confused for one
+// another.
 //
 // maxScanned bounds the relations examined and is returned alongside the count actually examined
 // and whether the scan stopped early. It is a parameter rather than a constant read from inside
@@ -262,12 +431,15 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 // should be visible at the call site that assembles the response rather than buried at the point
 // it happens to be enforced. Every caller in this package passes MaxRelatedRelationsScanned.
 //
-// The scan is counted before the two exclusions rather than after, and that is the whole point of
-// the bound. Counting only what survives would let a request with a narrow destination scope walk
-// an unbounded number of relations while admitting almost none of them, which is precisely the
-// work a ceiling on examined relations exists to cap. A caller therefore cannot use a filter to
-// buy a larger scan.
-func (k *Knowledge) groupRelated(start searchRef, scope searchScope, maxScanned int) ([]relatedGroup, int, bool) {
+// The scan is counted before every exclusion rather than after, and that is the whole point of
+// the bound. Counting only what survives would let a request with a narrow scope walk an
+// unbounded number of relations while admitting almost none of them, which is precisely the work
+// a ceiling on examined relations exists to cap. A caller therefore cannot use either filter to
+// buy a larger scan, and the scan count a filtered response reports is the same number the
+// unfiltered one reports: it describes the work done, not the answer produced.
+func (k *Knowledge) groupRelated(
+	start searchRef, scope searchScope, relationScope relatedScope, maxScanned int,
+) ([]relatedGroup, int, bool) {
 	relations := k.searchContext[start]
 	scanned := len(relations)
 	truncated := false
@@ -288,6 +460,13 @@ func (k *Knowledge) groupRelated(start searchRef, scope searchScope, maxScanned 
 			continue
 		}
 		if !scope.admits(ref.entityType) {
+			continue
+		}
+		// The precedence class is read from the same closed table the reason will be built from,
+		// so a relation the filter admits and the reason it produces cannot disagree about which
+		// class this connection belongs to. An unclassified origin is admitted only by an
+		// unfiltered request, because unclassified is not a value the filter accepts.
+		if !relationScope.admits(domain.RelatedPriorityFor(relation.Origin)) {
 			continue
 		}
 		at, seen := index[ref]

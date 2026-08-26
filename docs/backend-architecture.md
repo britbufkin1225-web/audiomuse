@@ -61,6 +61,7 @@ Every field the API serves can be traced back through this chain to a canonical 
 | `schemas/claim.schema.yaml` and `schemas/source.schema.yaml` bounded enums | vocabulary lists | `domain.Vocabularies` | evidence filter validation set | `project.vocabulary`; `400 invalid_query` |
 | the fields above, read as one graph | canonical field references | `domain.GraphRelationship`, `domain.EntityRef` | `Knowledge.adjacency`, one entry per `(type, id)` | `GET /api/v1/graph/entities/{entity_type}/{id}/relationships`, `.../traverse` |
 | the resolved context of one searchable record, ranked by the canonical field each relation came from | canonical field references | `domain.RelatedReason`, `domain.RelatedItem` | `Knowledge.searchContext` grouped by destination, plus `relatedSummary` | `GET /api/v1/related/{entity_type}/{id}` |
+| the closed precedence classes those canonical fields fall into | ranking model, not corpus data | `domain.RelatedPriority`, `domain.RelatedPriorities` | one table: ranking, filter allowlist and explanation codes | `reason.priority`, `reason.priority_rank`, `reason.explanation`, `?relationship_types=` |
 | `vocabulary/entries/*.yaml` YAML document streams (`schemas/vocabulary.schema.yaml`) | one mapping per entry | `domain.VocabularyEntry` | `vocabularyByID`, sorted `vocabulary` | `GET /api/v1/vocabulary`, `GET /api/v1/vocabulary/{id}` |
 | vocabulary `domain`, reusing the enum in `schemas/node.schema.yaml` | bounded vocabulary | `domain.Vocabularies.VocabularyDomains` | startup and filter validation set | `?domain=`; `400 invalid_query` |
 | `vocabulary.related_terms[]` | curated navigation ID list | `[]string` on the entry | none; deliberately not indexed as adjacency | `entry.related_terms` — never a graph edge |
@@ -616,7 +617,53 @@ into messages. Only the set spelling is offered — `/api/v1/search` carries a s
 alongside it only because `type` predates the list and an existing contract had to keep working, and
 a new route has no such history to preserve.
 
-## Known limitations (through Phase 2A)
+**Why the relationship filter is the precedence class and not the relation name.** Phase 2B adds
+`relationship_types` to the same route, restricting which canonical connections may explain and
+rank an item. Its vocabulary is the seven precedence classes, for the reason the precedence itself
+is keyed on the canonical field: relation names are not a closed set and grow whenever
+`schemas/relationship-types.yaml` does, so a filter keyed on them would either drift from a
+canonical contract or accept values with no defined rank. Canonical field names are closed but are
+finer than a caller navigating records is choosing among, and a filter over fifteen field names
+would expose the projection's internals as a request vocabulary. The precedence classes are closed,
+already carried on every reason, already documented as the ranking model, and already the thing a
+reader is choosing between — "show me what supports this" is a class-level question.
+
+The consequence is that one list in `domain.related` is now four things at once: the ranking table,
+the filter allowlist, the explanation codes, and the values an `invalid_query` message enumerates.
+That is deliberate rather than incidental. A separate filter vocabulary over a seven-value closed
+set would be a second spelling free to drift from the table that decides precedence, and the
+drift would be invisible — a caller could name a scope the ranking has no rank for.
+
+**Why the filter removes relations rather than filtering finished items.** A destination is often
+reached by several canonical fields at once. Filtering after grouping would mean an item admitted
+by its strongest connection kept reporting excluded connections as its evidence, so a filtered
+response would explain an item by a class the caller removed; and an item whose strongest
+connection was excluded would vanish even where a weaker admitted connection also reaches it, so a
+filter would silently drop records that satisfy it. Removing the ineligible relations first makes
+the eligible set exactly "the connections the caller asked about", and the winning reason, the
+evidence, the count and the ranking are then computed over that set without any of them needing to
+know a filter ran. Filtering therefore also happens before the limit: a caller asking for one class
+and twenty-five items receives up to twenty-five items of that class, not what survives of the
+first twenty-five of the unfiltered ranking.
+
+The scan ceiling is counted before every exclusion, so neither filter can buy work: the relations
+examined for one start are the same number whether a request names no class, one class or all
+seven. A filter restricts what an answer contains and never enlarges what is behind it.
+
+**Why the explanation is a lookup and not generated prose.** Phase 2A's reason is structured
+because prose would have to be generated, and generated prose is the one kind of explanation this
+backend cannot check. Phase 2B adds one human-readable field without weakening that: `explanation`
+is one of eight fixed strings selected by the precedence class alone, so it is checkable against a
+table, identical across calls, and adds no fact `priority` did not already carry. It exists because
+a machine-readable vocabulary term is not something a person reading one response can expand.
+
+The sentences say what a kind of canonical field asserts, never anything about the pair of records
+they appear on. None names an endpoint, interpolates a record's text, or says a destination is
+relevant, important or similar — none of which the corpus states. A template with a title
+interpolated into it would have been the obvious alternative and is exactly what this refuses: it
+would read as a claim about two specific records, which only the corpus may make.
+
+## Known limitations (through Phase 2B)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, embedding or learned
@@ -677,9 +724,21 @@ a new route has no such history to preserve.
 - Related-knowledge discovery is one hop and nothing else. `/api/v1/related/{entity_type}/{id}`
   returns records the start directly references, or that directly reference it, ranked by the
   canonical field each connection came from. There is no transitive discovery, no depth, no paging,
-  no caller-supplied ranking or weighting, and no relationship-priority parameter: the ordering is a
-  property of the corpus rather than of the request. It is bounded to 25 items by default, 100 at
-  most, and 5 reported connections per item.
+  and no caller-supplied ranking or weighting: the ordering is a property of the corpus rather than
+  of the request. It is bounded to 25 items by default, 100 at most, and 5 reported connections per
+  item.
+- Discovery filters on two axes and nothing finer. `entity_types` restricts the destination class
+  and `relationship_types` restricts the precedence class of the connection; both are closed sets,
+  both refuse a blank, repeated, mis-cased or unknown member rather than repairing it, and neither
+  falls back to an unfiltered discovery. There is no filter on the relation name, on the canonical
+  field, or on direction, no negation, no per-class limit, and no way to name a class more than
+  once. `relationship_types` cannot reorder anything: it removes ineligible connections before the
+  limit is applied, and the precedence among whatever survives is the unchanged closed table, so
+  the order the classes are written in has no effect on the response.
+- A discovery explanation is a fixed sentence, not generated text. `explanation` is one of eight
+  strings selected by the precedence class, identical across calls, and it names neither endpoint.
+  Nothing in it is produced for the pair of records it appears on, and no model, template
+  interpolation or corpus text contributes to it.
 - Discovery ranks authored references and measures nothing. There is no similarity, embedding,
   vector, keyword-overlap or co-occurrence input anywhere in it, and no confidence, relevance or
   probability in its output. A record is related to another if and only if some canonical record
@@ -699,11 +758,13 @@ Deferred, not implemented: graph traversal across the practice layer, richer dia
 syntax beyond the two documented composition modes, facets over any axis other than the searchable
 class, graph visualization, semantic retrieval, and MLLM experimentation. Deterministic
 related-knowledge discovery is no longer deferred — it shipped as
-`GET /api/v1/related/{entity_type}/{id}` — and three extensions to it are recommended without being
-implemented or promised: exposing the precedence table as a read-only contract endpoint so a client
-need not hard-code the classes, a per-class breakdown of the eligible set in the shape search facets
-already use, and a bounded intersection answering "related to both of these". Each would be its own
-phase with its own contract. Multi-hop, similarity-ranked or model-generated discovery is not on
+`GET /api/v1/related/{entity_type}/{id}`, with relationship-scope filtering and per-connection
+explanations added to the same route — and two extensions to it are recommended without being
+implemented or promised: a per-class breakdown of the eligible set in the shape search facets
+already use, and a bounded intersection answering "related to both of these". A third, exposing the
+precedence table as a read-only contract endpoint, is now more useful rather than less: those seven
+class names are a request vocabulary as well as a response one, so a client filtering by them is
+hard-coding a list it could be served. Each would be its own phase with its own contract. Multi-hop, similarity-ranked or model-generated discovery is not on
 that list and remains refused on the grounds above. Deterministic multi-term
 composition is no longer deferred — it shipped as `query_mode=all_terms` — nor is multi-class
 result scope, which shipped as `entity_types` and filters rather than searching, while richer
