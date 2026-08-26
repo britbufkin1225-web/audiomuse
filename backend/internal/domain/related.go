@@ -390,11 +390,14 @@ type RelatedCounts struct {
 // edit. The ordering is documented at the service, and it is total, so two identical requests
 // against an unchanged corpus produce the same bytes.
 //
-// There is no offset and no page object. Paging a discovery list would make it a cursor over a
-// derived ordering rather than a bounded answer, and a reader deciding where to go next is not
-// working through a result set. A caller who needs everything a record is connected to has that
-// already: the context layer serves it under search, and the traversal routes serve the graph
-// classes' neighbourhoods.
+// There is still no offset and no page object, and neither is what Phase 2D added. An offset is a
+// count into an ordering the caller cannot see, and it silently repeats or skips records whenever
+// the ordering it counts into has changed; a page object would describe a result set the server
+// was holding, and this server holds none. What the phase added is a continuation cursor: an
+// opaque token naming the last item a page returned, which the next request presents to resume
+// from the same position in the same rebuilt ordering. The default answer is unchanged - a
+// caller who names no token gets the same bounded first page Phase 2A returned - and the eligible
+// total is still reported, so a reader deciding where to go next never has to page at all.
 type RelatedKnowledge struct {
 	Start RelatedStart `json:"start"`
 
@@ -419,5 +422,30 @@ type RelatedKnowledge struct {
 	Bounds    RelatedBounds `json:"bounds"`
 	Counts    RelatedCounts `json:"counts"`
 	Truncated bool          `json:"truncated"`
-	Items     []RelatedItem `json:"items"`
+
+	// HasMore says whether another page of this same discovery exists, added in Phase 2D.
+	//
+	// It is a distinct fact from Truncated and the two are not interchangeable. Truncated has
+	// always meant "this response does not carry the whole eligible set", which stays true on
+	// every page of a paged traversal including the last one; HasMore means "there is a page
+	// after this one". The last page of a long result therefore reports Truncated true and
+	// HasMore false, which is exactly the pair a client needs to stop: something was cut, and
+	// nothing further can be fetched.
+	//
+	// It is always present rather than omitted when false, because a boolean that disappears when
+	// it is false cannot be told apart from a boolean a server does not implement, and a client
+	// that reads a missing HasMore as "keep going" would loop.
+	HasMore bool `json:"has_more"`
+
+	// NextContinuationToken is the opaque cursor for the following page, added in Phase 2D.
+	//
+	// It is present exactly when HasMore is true, so the two can never disagree, and it is absent
+	// rather than empty on a final page: a token that produced an empty page would be a
+	// termination condition a client had to discover by making one more request. It is opaque by
+	// contract - its contents are a service concern, it carries no field a caller is expected to
+	// read, and it is neither authentication nor authorization. Presenting one grants exactly
+	// what re-sending the same query string grants.
+	NextContinuationToken string `json:"next_continuation_token,omitempty"`
+
+	Items []RelatedItem `json:"items"`
 }
