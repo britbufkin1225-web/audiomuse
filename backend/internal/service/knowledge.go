@@ -93,6 +93,12 @@ type Knowledge struct {
 	// context entry is a navigation reference, never a graph edge; see buildSearchContext.
 	searchContext map[searchRef][]domain.ContextRelation
 	searchLabels  map[searchRef]string
+
+	// Related-knowledge layer (Phase 2A). relatedSummary holds the display summary of every
+	// searchable record that has one; titles are not indexed again, because searchLabels above
+	// already carries them. Discovery itself derives no new connection: it ranks, deduplicates
+	// and bounds the context projection. See related.go.
+	relatedSummary map[searchRef]string
 }
 
 // New loads the corpus through the repository interface and builds the startup index.
@@ -166,9 +172,12 @@ func New(ctx context.Context, repo repository.KnowledgeRepository) (*Knowledge, 
 	k.buildEvidence()
 	k.buildTraversal()
 	k.buildPractice()
-	// buildSearchContext runs last: it reads the adjacency, the discovery documents and the
+	// buildSearchContext runs after them: it reads the adjacency, the discovery documents and the
 	// practice records, so every index it projects from has to exist first.
 	k.buildSearchContext()
+	// buildRelated runs last: it indexes the discovery documents' display summaries so the
+	// Phase 2A projection can name a related record without reopening the corpus.
+	k.buildRelated()
 	return k, nil
 }
 

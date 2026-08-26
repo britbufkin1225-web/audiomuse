@@ -5,7 +5,8 @@ the typed relationship graph, the sources, claims and provenance that stand behi
 vocabulary, experiments and experiment runs that put them into practice, and one lexical search
 surface spanning all of them that can compose several terms into one request, rank what it finds by
 an explicit and reproducible relevance policy, explain why each result matched and where it ranked,
-and resolve the canonical context around it.
+and resolve the canonical context around it — and, from any one of those records, a bounded ranked
+list of what to read next, each entry naming the canonical field that connected it.
 
 **The repository remains the source of truth.** This service reads the corpus once at
 startup, validates what it read, indexes it in memory, and serves JSON. It performs no
@@ -24,7 +25,7 @@ backend/
 │   ├── domain/                 typed AudioMuse records; no I/O, no HTTP
 │   ├── repository/             KnowledgeRepository — a read-only interface with no write method
 │   │   └── filesystem/         the only package that touches the corpus
-│   ├── service/                immutable startup index, filtering, graph, evidence, traversal, practice and cross-layer discovery projections
+│   ├── service/                immutable startup index, filtering, graph, evidence, traversal, practice, cross-layer discovery and related-knowledge projections
 │   ├── httpapi/                routing, query bounds, JSON envelopes, method lock
 │   └── testsupport/            fixture corpus loading for tests
 ├── testdata/corpus/            synthetic fixture corpus (not canonical knowledge)
@@ -150,6 +151,7 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/experiment-runs` | run records with their lifecycle state and evidence counts |
 | GET | `/api/v1/experiment-runs/{id}` | one full run |
 | GET | `/api/v1/search` | one lexical query across every searchable canonical layer, optionally composed from several terms and with the bounded canonical context of each hit |
+| GET | `/api/v1/related/{entity_type}/{id}` | the bounded, ranked, explained set of canonical records related to one record |
 | GET | `/api/v1/graph` | the full read-only graph projection |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
@@ -1114,6 +1116,332 @@ life of that request.
 A search that matches nothing is `200` with an empty `results` array. "The corpus contains no such
 text" is an answer, not a `404`.
 
+### Related-knowledge discovery
+
+`GET /api/v1/related/{entity_type}/{id}` answers the question a reader has *while holding a
+record*: given this, what else in AudioMuse should I read, and why that. Search requires the caller
+to know what to type; traversal requires them to know which graph vertex to walk from. This route
+requires neither — it takes one canonical record and returns a short, ranked, explained list of
+other canonical records.
+
+It is **derivation-free**. Every item is reached over a reference some canonical record actually
+authored, or the documented reverse read of one, and every item says which canonical field
+connected it. Nothing is inferred from similar wording, shared keywords, prose overlap,
+co-occurrence, embeddings or any model output. See "Why explicit references and not similarity"
+below.
+
+**Starting records.** The six searchable classes, addressed by the `(entity_type, id)` pair every
+other identity on this API uses:
+
+| Start | Canonical record |
+| --- | --- |
+| `session` | a registry entry of `type: session` |
+| `node` | `nodes/<domain>/<id>.md` |
+| `claim` | one record in `claims/records/*.yaml` |
+| `source` | one entry in `sources/source-registry.yaml` |
+| `vocabulary` | one entry in `vocabulary/entries/*.yaml` |
+| `experiment` | one record in `experiments/records/*.yaml` |
+
+This is the **search** class set, not the **graph** class set: vocabulary entries and experiment
+definitions are discovery starts and are still not graph vertices, exactly as
+"Graph traversal" above states. `experiment_run` is not a start and is refused with
+`400 invalid_query` rather than answered with an empty list, for the reason it is not a search
+class either — a zero would read as "this run is connected to nothing" rather than "runs are not
+a discovery start". Runs stay reachable through their own routes.
+
+**Query parameters.**
+
+| Parameter | Meaning |
+| --- | --- |
+| `entity_types` | optional; restrict *destinations* to a comma-separated **set** of searchable classes |
+| `limit` | optional; how many items to return. Default 25, clamped to 100 |
+
+`entity_types` is the same filter, with the same semantics and the same refusals, as the one on
+`/api/v1/search`: members are trimmed and compared exactly, a blank member or a repeated class is
+refused rather than repaired, and the response echoes the scope in canonical class order. There is
+deliberately no single-class `type` alongside it — `/api/v1/search` carries both spellings only
+because `type` predates the list.
+
+There is no `depth`, no `offset` and no `q`, and each absence is the contract rather than an
+omission. Text would make this search, which exists. Depth would make it traversal, which exists.
+Paging would make a discovery list a cursor over a derived ordering, and a reader deciding where to
+go next is not working through a result set — the response reports the exact eligible total
+instead, so a caller can see what was left without walking it.
+
+#### Response
+
+`GET /api/v1/related/node/rhythm?limit=2` against the canonical repository:
+
+```json
+{
+  "start": { "entity_type": "node", "id": "rhythm", "title": "Rhythm" },
+  "limit": 2,
+  "bounds": {
+    "max_evidence_per_item": 5,
+    "max_relations_scanned": 2000,
+    "relations_scanned": 35,
+    "relations_truncated": false
+  },
+  "counts": { "eligible": 35, "returned": 2 },
+  "truncated": true,
+  "items": [
+    {
+      "entity_type": "node",
+      "id": "beatmatching",
+      "title": "Beatmatching",
+      "summary": "Aligning the tempo and beat positions of two recordings so that they can play together in time.",
+      "reason": {
+        "relation": "influences",
+        "origin": "node.relationships",
+        "derived": false,
+        "priority": "conceptual",
+        "priority_rank": 0
+      },
+      "evidence_count": 1,
+      "evidence_truncated": false
+    },
+    {
+      "entity_type": "node",
+      "id": "rhythmic-entrainment",
+      "title": "Rhythmic Entrainment",
+      "summary": "The alignment of a listener's internal periodic activity — bodily, motor, or neural — with a periodicity in the music, used both as a proposed emotion-induction mechanism and as a contested technical term in the neuroscience literature.",
+      "reason": {
+        "relation": "influences",
+        "origin": "node.relationships",
+        "derived": false,
+        "priority": "conceptual",
+        "priority_rank": 0
+      },
+      "evidence_count": 1,
+      "evidence_truncated": false
+    }
+  ]
+}
+```
+
+`start` echoes the record the backend resolved, so a caller who navigated by ID alone can confirm
+they landed where they meant. `counts.eligible` is the exact number of distinct records related to
+the start after the destination scope was applied, counted **before** the limit; `truncated` is
+never `false` when anything was cut.
+
+An item carries its own record's identity and its own display fields and nothing else. `title` and
+`summary` are the same fields the search layer already uses for that class — a related item and a
+search hit name one record identically by construction — and a class with no summary field returns
+none rather than acquiring an empty one. An item is **not** the record: reading it is a request to
+that record's own route.
+
+#### Why each item is there
+
+`reason` is the strongest canonical connection between the start and that item, and it is what
+decided the item's position. It is structured rather than prose because prose would have to be
+generated, and generated prose is the one kind of explanation this backend cannot check.
+
+| Field | Meaning |
+| --- | --- |
+| `relation` | the canonical relation name, the same one traversal and search context use |
+| `origin` | the canonical field the connection was read from |
+| `derived` | `false` if the start authored the reference, `true` if it is another record's reference read backwards |
+| `priority` | the precedence class of that canonical field |
+| `priority_rank` | that class's integer rank; lower is stronger |
+
+There is no confidence, no similarity, no relevance percentage and no probability anywhere in a
+discovery response, and the omission is deliberate: a number there would be read as a measurement,
+and nothing in the corpus measures how related two records are.
+
+When two records are connected by more than one canonical field, the item appears **once**. The
+strongest connection becomes `reason` and the others are reported in `additional_evidence`, in the
+same precedence order, bounded at five connections in total per item including the primary.
+`evidence_count` is the true total and `evidence_truncated` says whether the list was cut, so a
+shortened explanation is visibly shortened rather than looking like a record with fewer
+connections than it has. `additional_evidence` is absent entirely when there is only one
+connection, so the common case is not padded with an empty array.
+
+#### Relationship precedence
+
+Precedence is a property of the **canonical field**, never of the records at either end and never
+of their text. That is what makes the ordering explainable: the answer to "why is this above that"
+is always "because AudioMuse wrote the connection down in this field rather than that one".
+
+| Rank | `priority` | Canonical fields | What those fields assert |
+| --- | --- | --- | --- |
+| 0 | `conceptual` | `node.relationships` | a typed edge between two concepts — the only connection AudioMuse authors specifically as a knowledge relation |
+| 1 | `evidential` | `claim.evidence` | what materially supports, contradicts or qualifies a statement |
+| 2 | `attributive` | `claim.attribution` | who a statement is credited to |
+| 3 | `assertional` | `claim.appears_in`, `claim.derived_from` | which records a statement is about, or rests on |
+| 4 | `contextual` | `node.sources`, `node.session_origin` | a concept's topical provenance and its chronological origin |
+| 5 | `referential` | `vocabulary.node_refs`, `vocabulary.session_refs`, `experiment.node_refs`, `experiment.vocabulary_refs`, `experiment.session_refs`, `experiment.source_refs` | a practice record pointing into another layer |
+| 6 | `navigational` | `vocabulary.related_terms`, `experiment.related_experiments` | curated human navigation, which those contracts say implies neither equivalence nor a graph edge |
+
+Evidence is kept ahead of attribution because `docs/claim-provenance-model.md` treats "what stands
+behind this" and "who says so" as different facts and the first is the one a reader checks. Topical
+and evidential source relations keep the separate precedence their separate relation names already
+record, so a source that merely bears on a concept never outranks one that supports a statement.
+
+Precedence is keyed on `origin` rather than on `relation` because relation names are not a closed
+set — node-to-node edges use the relationship-type IDs from `schemas/relationship-types.yaml` and
+their declared inverses, so the vocabulary grows whenever the corpus adds a type. Canonical field
+names are closed, and a test walks that closed set and requires every member to be classified, so a
+new canonical field cannot reach this contract without a deliberate decision about where it ranks.
+
+#### Ordering
+
+Items are ordered by four keys, in this order:
+
+1. the primary reason's `priority_rank`, ascending — strongest connection first;
+2. authored connections before derived ones, because an authored reference is something the start
+   itself wrote down;
+3. the destination's class in canonical model order — `session`, `node`, `claim`, `source`,
+   `vocabulary`, `experiment`;
+4. the destination's canonical ID, ascending.
+
+A destination appears exactly once, so the last two keys are unique and the order is **total**: no
+two items ever compare equal. Two identical requests against an unchanged corpus therefore return
+byte-identical bodies, and two indexes built independently from the same corpus agree. Nothing is
+left to Go map iteration or to the order the filesystem returned records in.
+
+Truncation is applied last: a bounded result is always the **front** of the complete ordering, never
+a different selection. A scoped result is likewise the unscoped one with other classes removed —
+same items, same reasons, same relative order — so a filter never changes the ranking.
+
+#### Bounds
+
+| Bound | Value | What it protects |
+| --- | --- | --- |
+| default `limit` | 25 | one navigable list rather than an index |
+| maximum `limit` | 100 | one heavily referenced record cannot become a corpus dump |
+| connections per item | 5 | evidence is a list inside a list, so it needs its own cap |
+| relations scanned per request | 2000 | the work behind an answer is capped by contract, not by how wide the corpus happens to be |
+
+These are service constants, not configuration: they are API safety invariants rather than
+deployment choices, exactly as the traversal and context bounds are. The first three bound what a
+response carries: at most 500 canonical connections, a quarter of the 2,000 the API already states
+no single request exceeds. The fourth bounds the work behind it, and it is the same 2,000, so one
+statement covers the whole API — no single request examines more than two thousand canonical
+relationships, whichever route asked for them.
+
+The scan bound exists because without it the cost of a request would be bounded by a property of
+the corpus — the widest context any one record happens to have — rather than by anything the
+backend declares. That is a bound in practice and not in contract, and the difference appears
+exactly when the corpus grows past the size the other bounds were reasoned about at.
+
+Every bound that shaped an answer is reported in it, under `bounds`:
+
+| Field | Meaning |
+| --- | --- |
+| `max_evidence_per_item` | the cap an item's connection list was cut at, which is what makes a per-item `evidence_truncated` interpretable |
+| `max_relations_scanned` | the ceiling on relations this request was allowed to examine |
+| `relations_scanned` | how many it did examine — the work actually done, not the constant restated |
+| `relations_truncated` | whether the scan stopped before the record's canonical context ran out |
+
+The applied `limit` is already echoed at the top level, so that value and the two caps above state
+every bound the answer was subject to, while `relations_scanned` says what the request actually
+cost. `relations_truncated` is the one field that changes how another must be read:
+while it is `false`, `counts.eligible` is the exact number of distinct related records, and while
+it is `true` the scan stopped early and `eligible` is a **floor** rather than a total. A silent
+scan ceiling would turn an exact count into an approximate one with nothing in the response to
+mark the change. Against the canonical repository no request comes close to it — the widest single
+context is 75 relations — so `relations_truncated` is `false` for every record the corpus holds
+today.
+
+Relations are counted as they are examined, before the destination scope and the self-reference
+exclusion are applied. Counting only what survives would let a narrow `entity_types` filter buy an
+unbounded scan while admitting almost nothing from it, which is exactly the work this bound exists
+to cap.
+
+The Phase 1C traversal depth limits are deliberately **not** reused, because there is no traversal
+here to bound. Discovery is one hop by construction: the canonical references of every searchable
+record are resolved once at startup by the context layer, and a request is a map lookup, a group, a
+sort and a slice. There is no frontier, no visited set, no recursion and no expansion, so a depth
+parameter would have nothing to control.
+
+Against the canonical repository today the widest discovery result is 75 items (from
+`session/session-01-what-is-sound`) and the widest single item carries 3 connections, so the
+ceiling and the evidence cap both have real headroom while the default limit does shorten the
+handful of genuine hub records — which is what a default is for.
+
+#### Empty results, and errors
+
+| Request | Answer |
+| --- | --- |
+| a record that exists and is related to nothing | `200`, `"items": []`, zero counts |
+| a scope naming a class the record is not connected to | `200`, `"items": []`, zero counts |
+| a start class outside the six | `400 invalid_query`, listing the accepted classes |
+| a malformed or repeated `entity_types` member | `400 invalid_query`, stating the rule |
+| a negative or non-integer `limit` | `400 invalid_query` |
+| a `limit` above the maximum | `200`, clamped, with the applied value echoed |
+| an identifier containing `/`, `\`, `..` or a NUL | `400 invalid_query` |
+| a well-formed identifier naming no record | `404 related_start_not_found` |
+| a malformed request that also names no record | `400 invalid_query` — the request is refused before the lookup |
+
+"This record is related to nothing" and "this record does not exist" are different facts and are
+answered differently. A registered source nothing cites is a successful empty discovery, not a
+`404`.
+
+The whole request is validated before the start is looked up, so a request that is both malformed
+and names a record the corpus does not contain is answered as malformed. A caller told only about
+the identifier would fix it, resend, and be refused a second time for a mistake that was already
+visible in the request they sent. The start *class* is decided before either, because a request
+that does not name a discovery class is not a discovery request. A refusal never echoes the
+identifier that was not found, so a `400` cannot become a way to learn whether a record exists.
+
+The traversal routes are the partial precedent rather than the model: an out-of-range `depth` is
+already a `400` on a root that does not resolve, but a mistyped `relationship` or `target_type` is
+still answered as `404 entity_not_found`, because those vocabularies are checked after the root is
+resolved. Discovery does not copy that half.
+
+`limit` follows the paging contract every other route on this API uses — clamped, with the applied
+value echoed — rather than the traversal `depth` contract, where an out-of-range value is refused.
+The two differ because a silently reduced *depth* would let a caller believe they had seen a whole
+neighbourhood, while a clamped *limit* returns the front of the same ordering they asked for and
+the response says both what was applied and what was left.
+
+`related_start_not_found` is a distinct code from `entity_not_found`. A discovery start may be a
+vocabulary entry or an experiment definition, neither of which is a graph vertex, so reporting a
+graph miss would tell a client the lookup failed in a layer it never asked about.
+
+Canonical IDs are ASCII kebab-case by contract, enforced at load by every layer, so a Unicode
+identifier is well-formed input naming a record the corpus cannot contain and is answered as a
+miss. Record *titles* carry whatever the corpus authored, Unicode included, and are served
+verbatim as UTF-8.
+
+#### Why explicit references and not similarity
+
+`docs/backend-architecture.md` states that a projection manufacturing edges from keyword overlap or
+embedding proximity would insert unsourced claims into a corpus whose entire discipline is that
+claims carry provenance. A projection that ranked *authored* references by their apparent
+similarity would do the same thing one step later: it would present a machine's guess about meaning
+as though AudioMuse had said it.
+
+The practical case is the same one that justified lexical search first. A deterministic baseline is
+testable and a semantic one is not, yet: an explicit-reference ranking produces the same bytes for
+the same corpus on every run, which means the contract can be pinned by tests before any embedding,
+similarity threshold or retrieval model is introduced on top of it. Every reason a caller receives
+here is checkable against the canonical file it names.
+
+Embedding-based or AI-generated discovery is **out of scope** for this phase and is not implemented
+anywhere in this backend. Nothing in this route calls a model, computes a vector, or consults
+anything outside the canonical repository.
+
+#### Scope of this phase, and what it is not
+
+Implemented: one read-only route, six starting classes, the seven-class precedence table above,
+deduplication with bounded evidence, destination-scope filtering, a default and maximum limit, and
+an exact eligible count.
+
+Deliberately not implemented, and not planned as part of it:
+
+- multi-hop or transitive discovery — the traversal routes serve that question;
+- caller-supplied ranking, weights, or a relationship-priority parameter, which would make the
+  ordering a property of the request rather than of the corpus;
+- personalisation, reading history, popularity or any per-caller state; no request is stored;
+- similarity, embeddings, vectors or generated explanations, as above.
+
+Reasonable future extensions, none of which exist today: exposing the precedence table itself as a
+read-only contract endpoint so a client can render the classes without hard-coding them; a
+per-class breakdown of the eligible set, in the shape search facets already use; and a bounded
+"related to both of these" intersection. Each would be its own phase with its own contract, and
+none is a quiet widening of this one.
+
 ### Errors
 
 ```json
@@ -1122,7 +1450,7 @@ text" is an answer, not a `404`.
 
 Codes: `not_found`, `node_not_found`, `session_not_found`, `source_not_found`, `claim_not_found`,
 `entity_not_found`, `vocabulary_not_found`, `experiment_not_found`, `experiment_run_not_found`,
-`invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
+`related_start_not_found`, `invalid_query`, `method_not_allowed`, `internal_error`. Go errors, stack traces and filesystem paths are
 logged locally and never serialised into a response.
 
 ### Read-only enforcement
@@ -1198,6 +1526,30 @@ Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&include_conte
 
 ```powershell
 Invoke-RestMethod "http://127.0.0.1:8788/api/v1/search?q=resonance&type=claim&include_context=true"
+```
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8788/api/v1/related/node/rhythm
+```
+
+```powershell
+(Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?limit=5").items | Select-Object entity_type, id, title
+```
+
+```powershell
+(Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?limit=5").items.reason
+```
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8788/api/v1/related/node/rhythm?entity_types=claim,source"
+```
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8788/api/v1/related/session/session-01-what-is-sound
+```
+
+```powershell
+(Invoke-RestMethod http://127.0.0.1:8788/api/v1/related/session/session-01-what-is-sound).counts
 ```
 
 ```powershell
@@ -1345,20 +1697,25 @@ single-record experiment and run parsers, the filesystem adapter and every valid
 including the whole run lifecycle contract, the service index, filtering, search, paging, the graph
 projection and every evidence and practice reverse index, the traversal adjacency, depth semantics,
 cycle termination, deduplication and truncation bounds, the cross-layer discovery projection with
-its relevance ranking, match explanations and context resolver, and the HTTP routes including 404,
-400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
+its relevance ranking, match explanations and context resolver, the related-knowledge precedence
+table with its deduplication and bounds, and the HTTP routes including 404, 400 and 405 behaviour. Determinism is tested directly: the loader and the index are each built twice from an
 unchanged corpus and the results compared. Unit tests run against `testdata/corpus/`, a
 small synthetic fixture, so a canonical content change cannot silently move a unit-test
 expectation.
 
-Six tests run against the real repository on purpose: one asserts it loads with no fatal issues,
+Nine tests run against the real repository on purpose: one asserts it loads with no fatal issues,
 one asserts the evidence layer parses and resolves, one asserts the practice layer does, one walks
 every canonical entity as a traversal root at maximum depth and asserts no practice record appears
 anywhere in the result, and two snapshot the size, modification time and content digest of every
 canonical file — one across a load, one across a full index build plus one request to every read
 surface, including three searches and two context resolutions, and a rejected request on each
-mutating method. All six skip if the canonical repository is not found above the working
-directory.
+mutating method. Three more cover related-knowledge discovery at corpus scale, which the fixture
+cannot: one walks every discovery start the repository offers and requires each reason to name a
+canonical field the precedence table classifies, each result to stay inside the declared bounds, and
+no start to appear in its own list; one requires every one of those starts to answer identically
+twice; and a third snapshots the corpus across a discovery request for every start, plus the
+refusals and a rejected request on each mutating method. All nine skip if the canonical repository
+is not found above the working directory.
 
 Search is covered at both layers: class coverage, case insensitivity, exact-ID and match-class
 precedence, matched-field correctness, class filtering, empty and rejected queries, paging and
@@ -1479,6 +1836,77 @@ paging — each required to answer `400` with the existing `invalid_query` code 
 carrying exactly `code` and `message`, and separated from the well-formed-but-unsatisfiable requests
 that must answer `200` with an empty result list and the complete all-zero facet structure.
 
+Related-knowledge discovery has its own suite at four layers, and the split follows what each layer
+can actually prove. The domain tests hold the precedence table to properties no Go switch asserts on
+its own: every canonical field in the declared closed set classifies, the set contains no duplicate,
+an unknown field falls through to `unclassified` rather than being guessed at, the ranks are the
+list positions with the fallback strictly last, and a reason's precedence is always derived from the
+origin it reports. One is a guardrail rather than a feature test: it asserts the reason struct's
+exact field set, so a confidence, similarity or relevance number cannot be added to an explanation
+without a test to change.
+
+The service tests pin the whole contract for a start of every searchable class as an ordered list of
+`item <-relation- canonical-field (priority, derived)` lines, so identity, ranking and explanation
+are asserted together and a projection returning the right records for invented reasons fails. They
+cover the precedence order end to end from a node, provenance leading from a claim, evidence
+outranking attribution, a source read backwards to everything that cites it, a vocabulary entry
+reaching the concept layer, and an experiment definition reaching what it demonstrates without ever
+reaching a run. Bounds are asserted against the unbounded result rather than a hard-coded list: a cut
+list must be the front of the complete ordering at every limit, must report the true eligible total,
+and must say it was cut. The limit contract is pinned as clamping rather than refusal, including the
+exactly maximal value. Scope is asserted as an invariant — a scoped result must be the unscoped one
+with other classes removed, same reasons, same relative order — and the echoed scope is required to
+be in canonical order regardless of how the caller spelled it.
+
+Determinism is asserted three ways: twenty-five repeated calls per start compared as whole values;
+the same starts answered by an index built from an in-memory copy of the fixture and required to
+match the one built from disk, which is what rules out a dependency on how the corpus was
+enumerated; and the ordering required to be total, with no two items of any result sharing a sort
+key. Both tie-breaks are pinned where they actually fire — two sources separated by nothing but
+their IDs, and a session and a source separated by the canonical class order.
+
+Evidence integrity has its own group. Every reason of every item of every start is required to name
+a canonical field from the declared set, to carry a classified precedence, and to report the rank
+that precedence actually has. The grounding test is the load-bearing one: every reason is looked up
+in the Phase 1F context the search route independently serves for the same record, matched on
+relation, destination, canonical field and direction together, so a connection this layer cannot
+point at in the context projection is a fabrication no matter how reasonable it looks. That is the
+test that fails if a future edit ever starts inferring a connection from similarity, prose overlap
+or co-occurrence. Deduplication is covered against real canonical data — a claim that names one node
+in both `appears_in` and `derived_from` — and against two constructed corpora the fixture cannot
+supply: one claim that both cites and credits the same source, which pins that the stronger
+precedence class wins rather than field order or alphabetical relation name, and two nodes joined by
+all three canonical relationship types in both directions, which pins the per-item evidence cap, the
+kept order, and that the primary reason is never repeated inside the additional list.
+
+Four are guardrails rather than feature tests. One requires the loader to refuse a node self-link
+and then requires no start to appear in its own discovery, so the exclusion is checked at the layer
+that owns the rule as well as at the layer that depends on it. One requires the session and the
+registry entry that share an ID to be offered as two separate items with their own canonical fields,
+so identity stays the `(class, id)` pair. One captures search, context and traversal, runs a full
+sweep of discovery requests, and requires all three to answer identically afterwards, so a
+projection that sorted its input in place would fail. The last cross-checks every item's title and
+summary against the same record's search hit, so one record cannot be named two ways.
+
+The HTTP tests pin the wire contract: the route serving all six start classes, the documented keys
+and nothing more, omitted keys asserted on the bytes rather than the decoded value — no echoed scope
+when none was asked for, no empty `additional_evidence`, no fabricated empty `summary`, and an empty
+discovery serialising `[]` rather than `null`. Byte-identical bodies are required across repeated
+requests for every start and every parameter shape. A percent-encoded identifier is required to be
+the same request as its plain spelling, while an encoded separator is refused by the shared
+identifier bound. The refusals are covered one at a time — unsupported start class, unknown record
+under its own stable `related_start_not_found` code, a real ID under the wrong class, a Unicode
+identifier the canonical ID contract cannot produce, every malformed scope spelling, a negative or
+non-integer limit, and each of `depth`, `offset`, `q`, `type`, `relationship`, `target_type`,
+`include_context` and `query_mode` refused as unknown parameters rather than ignored. Two are
+disclosure guardrails: one requires no absolute path, repository-relative path, Go error or stack
+frame in any response, success or failure; the other requires no record content — prose bodies,
+future questions, practical applications, confidence bases — to appear in a suggestion list, since
+canonical field *names* are legitimate explanations while their *contents* belong to the record's
+own route. A cross-route test requires a malformed class list to be refused with the identical code
+and message on this route and on `/api/v1/search`, and a cross-phase test captures every earlier
+route, runs a discovery sweep, and requires each one byte for byte unchanged.
+
 ## Known limitations
 
 - Repository changes require a process restart. There is no watcher, no background sync and
@@ -1553,6 +1981,21 @@ that must answer `200` with an empty result list and the complete all-zero facet
   through a graph whose shape they cannot yet see.
 - The graph is derived, never stored. There is no graph database, no persisted adjacency and
   no edge mutation of any kind.
+- Related-knowledge discovery is one hop, like context and unlike traversal. It returns records
+  the start directly references or that directly reference it, ranked by the canonical field each
+  connection came from; there is no transitive discovery, no depth, no paging and no
+  caller-supplied ranking, weighting or priority parameter. It is bounded to 25 items by default,
+  100 at most, and 5 reported connections per item.
+- Discovery ranks authored references and measures nothing. No similarity, embedding, vector,
+  keyword overlap or co-occurrence contributes to it, and no confidence, relevance or probability
+  appears in its output. Two records are related if and only if some canonical record wrote down a
+  reference between them; AI- or embedding-based discovery is not implemented anywhere in this
+  backend.
+- Discovery reaches exactly what the context layer already resolves, so a canonical field that
+  layer does not read is invisible to it too — node `experiments:` and `appears_in: document`
+  among them. It starts from the six searchable classes and never from an experiment run.
+- Discovery is stateless and identical for every caller. There is no reading history, no
+  popularity, no click weighting and no personalisation, and nothing about a request is stored.
 - No frontend, no graph visualization, and no LLM integration.
 
 ## Future work
@@ -1588,3 +2031,19 @@ Traversal over the practice layer is deferred deliberately, not incidentally. Vo
 experiments and experiment runs are read surfaces adjacent to the graph, and their cross-references
 are not canonical graph relationships; promoting them to traversal edges would assert a claim about
 the corpus that the corpus does not make. See "Practice-layer representation" above.
+
+Deterministic related-knowledge discovery is no longer deferred; `GET /api/v1/related/{entity_type}/{id}`
+is the whole of what shipped, and it ranks references the corpus already authored rather than
+widening what any layer reaches. Three extensions to it are worth recording as recommendations and
+are explicitly **not** implemented: exposing the precedence table as a read-only contract endpoint,
+so a client can render the classes without hard-coding them; a per-class breakdown of the eligible
+set, in the shape search facets already use; and a bounded intersection answering "related to both
+of these". Each would be its own phase with its own contract.
+
+Multi-hop, similarity-ranked and model-generated discovery are not on that list. The first is what
+the traversal routes are for; the second and third are deferred on exactly the grounds semantic
+retrieval is, and a "what should I read next" surface is where the temptation to reach for an
+embedding is strongest, which is why the refusal is stated rather than assumed. As the encyclopedia
+grows, the cost of one discovery request stays a map lookup and a sort, because the references are
+resolved once at startup; what grows is the eligible count a hub record reports, and that is a
+number in the response rather than work in the request.

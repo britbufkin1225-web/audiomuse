@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -134,26 +135,39 @@ func (s *Server) writeSearchError(w http.ResponseWriter, r *http.Request, err er
 				" distinct whitespace-separated terms when query_mode is all_terms.")
 		return
 	}
-	// The scope errors. Each states the rule rather than echoing the caller's list, for the
-	// reason writeFilterError does not echo a rejected value: the caller already has their own
-	// query string, and it is the one part of a response an attacker would control.
-	if errors.Is(err, service.ErrEmptySearchEntityType) {
-		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
-			"Parameter entity_types must not contain an empty value.")
-		return
-	}
-	if errors.Is(err, service.ErrDuplicateSearchEntityType) {
-		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
-			"Parameter entity_types must not repeat a value.")
-		return
-	}
-	if errors.Is(err, service.ErrConflictingSearchScope) {
-		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
-			"Parameters type and entity_types must not be combined; supply one or the other.")
+	// The scope errors are rendered by the shared helper below.
+	if writeScopeFilterError(w, r, s.logger, err) {
 		return
 	}
 	// An unsupported type or entity_types member arrives as an InvalidFilterError and is
 	// rendered by the Phase 1B mapping, which lists the permitted values and never echoes the
 	// caller's own.
 	writeFilterError(w, r, s.logger, err)
+}
+
+// writeScopeFilterError renders the class-list errors and reports whether it handled one.
+//
+// Each message states the rule rather than echoing the caller's list, for the reason
+// writeFilterError does not echo a rejected value: the caller already has their own query
+// string, and it is the one part of a response an attacker would control.
+//
+// It is shared rather than written once per route because entity_types is one filter with one
+// meaning wherever it appears. Two copies of these three messages would be two contracts that
+// are free to drift, and a caller who moved a malformed class list from one route to another
+// would be told two different things about the same mistake.
+func writeScopeFilterError(w http.ResponseWriter, r *http.Request, logger *slog.Logger, err error) bool {
+	switch {
+	case errors.Is(err, service.ErrEmptySearchEntityType):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter entity_types must not contain an empty value.")
+	case errors.Is(err, service.ErrDuplicateSearchEntityType):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter entity_types must not repeat a value.")
+	case errors.Is(err, service.ErrConflictingSearchScope):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameters type and entity_types must not be combined; supply one or the other.")
+	default:
+		return false
+	}
+	return true
 }
