@@ -3,6 +3,8 @@ package httpapi
 import (
 	"log/slog"
 	"net/http"
+	"net/url"
+	"sort"
 	"strings"
 	"time"
 
@@ -123,18 +125,56 @@ func (s *Server) handleNotFound(w http.ResponseWriter, r *http.Request) {
 // An unrecognised parameter is refused rather than ignored: silently dropping a filter the
 // caller believed was applied would return a result set that does not mean what they think
 // it means, which for a knowledge projection is worse than an error.
+//
+// The query string is parsed here rather than read from r.URL.Query(), and the difference is the
+// whole point of the first check below. r.URL.Query() discards url.ParseQuery's error and returns
+// whatever pairs it managed to read, so a query string carrying an invalid percent-escape or a
+// semicolon separator arrives at a handler with the malformed pairs simply absent - and an absent
+// filter is an unfiltered request. A caller who wrote entity_types=%zz would have received the
+// complete unrestricted result set under a 200, with no echo of the filter they believed they had
+// applied and nothing in the response to mark that anything had been dropped. That is precisely
+// the failure this function exists to prevent, arriving one layer earlier than the check that was
+// written for it. A query string Go cannot parse is therefore refused whole, before any parameter
+// is looked at: refusing part of it would leave the same silent drop in place for the rest.
+//
+// Handlers still call r.URL.Query() afterwards, and that stays correct because this guard runs
+// first on every route: past it, the raw string has parsed cleanly, so the two readings of it are
+// the same map rather than two possibly different ones.
+//
+// Parameter names are then checked in sorted order rather than in Go map order. A request
+// carrying more than one violation - two unsupported names, or an unsupported name beside a
+// repeated one - was refused either way, but which rule the message cited was decided by map
+// iteration, so one unchanged request produced two different bodies across runs. This API's
+// contract is that an identical request returns an identical response, and an error body is part
+// of the response. Sorting decides it by the parameter name instead, which is a property of the
+// request. A request with exactly one violation is unaffected: it reported that violation before
+// and reports the same one now.
 func rejectUnknownParams(w http.ResponseWriter, r *http.Request, logger *slog.Logger, known ...string) bool {
+	query, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		// The message states the fault and never echoes the string that caused it, following
+		// every other refusal on this API: the caller already holds their own query string, and
+		// it is the one part of a response an attacker would control.
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"The query string could not be parsed. Supported: "+strings.Join(known, ", ")+".")
+		return false
+	}
 	allowed := make(map[string]bool, len(known))
 	for _, name := range known {
 		allowed[name] = true
 	}
-	for name, values := range r.URL.Query() {
+	names := make([]string, 0, len(query))
+	for name := range query {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
 		if !allowed[name] {
 			writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
 				"Unsupported query parameter: "+sanitizeParamName(name)+". Supported: "+strings.Join(known, ", ")+".")
 			return false
 		}
-		if len(values) != 1 {
+		if len(query[name]) != 1 {
 			writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
 				"Query parameter "+sanitizeParamName(name)+" must be supplied exactly once.")
 			return false

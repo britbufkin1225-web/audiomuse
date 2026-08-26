@@ -663,7 +663,28 @@ relevant, important or similar — none of which the corpus states. A template w
 interpolated into it would have been the obvious alternative and is exactly what this refuses: it
 would read as a claim about two specific records, which only the corpus may make.
 
-## Known limitations (through Phase 2B)
+**Why an unparseable query string is refused whole.** Every route on this API refuses a parameter it
+does not accept, and refuses one supplied twice, on the stated ground that silently dropping a
+filter a caller believed was applied returns a result set that does not mean what they think it
+means. Phase 2C found the same drop reachable one layer earlier. Go's `r.URL.Query()` discards the
+error from `url.ParseQuery` and returns whichever pairs it could read, so a query string carrying an
+invalid percent-escape or a semicolon separator arrived with the malformed pairs simply absent — and
+an absent filter is an unfiltered request. `?entity_types=%zz` answered `200` with the complete
+unrestricted result set, no echo, and nothing in the body to mark the loss.
+
+The refusal is placed on the shared parameter guard rather than on the related-knowledge handler,
+because the defect is not this route's. It is a property of how every handler reads its query string,
+and a fix applied to one of them would leave the same silent drop on the other twenty-two while
+splitting one rule into two spellings — which is the drift the shared renderers on this API were each
+written to avoid. Refusing the whole string rather than the pairs that failed follows from the same
+reasoning: a request whose meaning cannot be established is refused rather than approximated.
+
+The guard also decides *which* violation a multiply-malformed request is told about, by parameter
+name rather than by Go map order. An error body is part of a response, and this API's contract is
+that an identical request returns an identical response; a refusal that cited a different rule on
+each run would be the one part of the surface where that stopped being true.
+
+## Known limitations (through Phase 2C)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, embedding or learned
