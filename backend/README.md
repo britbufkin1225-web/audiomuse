@@ -1591,6 +1591,10 @@ first parameter at fault. Any of them would be a correct thing to report, and th
 which is that an error body is part of a response: an identical request returns an identical
 response on this API, and that has to include the refusals.
 
+A shared-guard regression sends an unparseable query through all 22 routes that currently call the
+guard, so the repository will fail if a later handler bypasses this admission rule while the
+related-knowledge route continues to enforce it.
+
 ### Read-only enforcement
 
 Only `GET` and `HEAD` are accepted, anywhere. Every other method returns `405` with
@@ -2248,9 +2252,10 @@ ranking. The per-connection `explanation` shipped with it and is a fixed sentenc
 precedence class, not text produced for the records it appears on.
 
 Phase 2C added no discovery feature and moved nothing off this list. It validated the merged
-Phase 2A and Phase 2B workflow as one system, and the single production change it justified is the
-query-string refusal described under "The query string" above, which is a parameter-admission rule
-shared by every route rather than anything about discovery. The three extensions below are therefore
+Phase 2A and Phase 2B workflow as one system, and justified two production corrections in the
+shared parameter guard: refusing unparseable query strings and selecting multi-violation errors in
+sorted parameter-name order. Both are admission and determinism rules shared by every guarded route
+rather than discovery features. The three extensions below are therefore
 still the repository's own record of what a next phase could take up, and exposing the precedence
 table as a read-only contract endpoint remains the most concrete of them.
 

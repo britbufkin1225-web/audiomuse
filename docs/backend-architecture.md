@@ -674,7 +674,7 @@ unrestricted result set, no echo, and nothing in the body to mark the loss.
 
 The refusal is placed on the shared parameter guard rather than on the related-knowledge handler,
 because the defect is not this route's. It is a property of how every handler reads its query string,
-and a fix applied to one of them would leave the same silent drop on the other twenty-two while
+and a fix applied to one of them would leave the same silent drop on the other twenty-one while
 splitting one rule into two spellings — which is the drift the shared renderers on this API were each
 written to avoid. Refusing the whole string rather than the pairs that failed follows from the same
 reasoning: a request whose meaning cannot be established is refused rather than approximated.
