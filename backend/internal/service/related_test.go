@@ -1090,6 +1090,129 @@ func TestRelatedKnowledgeReusesTheDiscoveryDisplayFields(t *testing.T) {
 	}
 }
 
+// TestRelatedKnowledgeReportsTheBoundsThatShapedIt asserts every bound behind a result is stated
+// in it.
+//
+// A bounded answer that does not say what bounded it cannot be told apart from a complete one.
+// The applied item limit is already echoed at the top level; these are the other two, and the
+// scan count is cross-checked against the record's own canonical context, so the number reported
+// is the work actually done rather than a constant restated.
+func TestRelatedKnowledgeReportsTheBoundsThatShapedIt(t *testing.T) {
+	k := evidenceIndex(t)
+
+	// The context layer's own count of a record's canonical relations is the independent number
+	// the scan count has to agree with.
+	contextCount := make(map[string]int)
+	for _, result := range mustSearch(t, k, service.SearchQuery{Q: universalNeedle, Limit: 200, IncludeContext: true}).Results {
+		contextCount[string(result.EntityType)+"/"+result.ID] = result.Context.Count
+	}
+
+	checked := 0
+	for _, start := range everyStart {
+		result := mustRelated(t, k, start.class, start.id, service.RelatedQuery{Limit: service.MaxRelatedLimit})
+
+		if result.Bounds.MaxEvidencePerItem != service.MaxRelatedEvidencePerItem {
+			t.Errorf("%s/%s: max_evidence_per_item = %d, want %d",
+				start.class, start.id, result.Bounds.MaxEvidencePerItem, service.MaxRelatedEvidencePerItem)
+		}
+		if result.Bounds.MaxRelationsScanned != service.MaxRelatedRelationsScanned {
+			t.Errorf("%s/%s: max_relations_scanned = %d, want %d",
+				start.class, start.id, result.Bounds.MaxRelationsScanned, service.MaxRelatedRelationsScanned)
+		}
+		// The fixture corpus is far narrower than the ceiling, so no start may report a cut scan.
+		if result.Bounds.RelationsTruncated {
+			t.Errorf("%s/%s: reported a truncated scan of %d relations in the fixture corpus",
+				start.class, start.id, result.Bounds.RelationsScanned)
+		}
+		if want, ok := contextCount[string(start.class)+"/"+start.id]; ok {
+			checked++
+			if result.Bounds.RelationsScanned != want {
+				t.Errorf("%s/%s: scanned %d relations, but its canonical context holds %d",
+					start.class, start.id, result.Bounds.RelationsScanned, want)
+			}
+		}
+		// A scan that was not cut examined the whole context, so the eligible count is exact and
+		// can never exceed the relations it was derived from.
+		if result.Counts.Eligible > result.Bounds.RelationsScanned {
+			t.Errorf("%s/%s: eligible = %d from %d scanned relations",
+				start.class, start.id, result.Counts.Eligible, result.Bounds.RelationsScanned)
+		}
+	}
+	if checked == 0 {
+		t.Fatal("no scan count was cross-checked against the context layer, so this test would pass vacuously")
+	}
+}
+
+// TestRelatedKnowledgeBoundsTheRelationScan exercises the scan ceiling at its boundary.
+//
+// The other two bounds cap what a response carries; this one caps the work behind it, and without
+// it the cost of a request would be bounded by whatever the widest context in the corpus happened
+// to be rather than by anything the phase declares. The corpus here is deliberately one relation
+// past the ceiling, which is the only place the difference between "bounded by contract" and
+// "bounded by the corpus" is observable.
+//
+// The cut is required to be reported, because it is the one bound that changes how another field
+// must be read: a truncated scan makes the eligible count a floor rather than a total, and a
+// caller cannot be left to discover that by comparing counts across requests.
+func TestRelatedKnowledgeBoundsTheRelationScan(t *testing.T) {
+	const spokes = service.MaxRelatedRelationsScanned + 1
+	k := indexFrom(t, wideRelatedCorpus(t, spokes))
+
+	result := mustRelated(t, k, domain.SearchNode, "hub", service.RelatedQuery{Limit: service.MaxRelatedLimit})
+
+	if result.Bounds.RelationsScanned != service.MaxRelatedRelationsScanned {
+		t.Errorf("scanned = %d, want the ceiling %d",
+			result.Bounds.RelationsScanned, service.MaxRelatedRelationsScanned)
+	}
+	if !result.Bounds.RelationsTruncated {
+		t.Error("a scan cut at the ceiling did not report itself as truncated")
+	}
+	// Every spoke is a distinct destination, so the eligible count is exactly what was scanned:
+	// a floor, and visibly short of the spokes the corpus actually holds.
+	if result.Counts.Eligible != service.MaxRelatedRelationsScanned {
+		t.Errorf("eligible = %d, want %d", result.Counts.Eligible, service.MaxRelatedRelationsScanned)
+	}
+	if result.Counts.Eligible >= spokes {
+		t.Errorf("eligible = %d reached the %d spokes, so the scan was not bounded", result.Counts.Eligible, spokes)
+	}
+	// The item bound still applies on top of the scan bound, and the result is still the front of
+	// the same canonical ordering rather than a different selection.
+	if len(result.Items) != service.MaxRelatedLimit {
+		t.Errorf("items = %d, want %d", len(result.Items), service.MaxRelatedLimit)
+	}
+	if !result.Truncated {
+		t.Error("a result cut at the item limit did not report truncation")
+	}
+	if first := result.Items[0].ID; first != "spoke-00000" {
+		t.Errorf("result starts at %s, want the front of the canonical ID order", first)
+	}
+	// A start whose context fits under the ceiling in the same corpus must still report an
+	// untruncated scan, so the flag tracks the request rather than the corpus it ran against.
+	spoke := mustRelated(t, k, domain.SearchNode, "spoke-00000", service.RelatedQuery{})
+	if spoke.Bounds.RelationsTruncated {
+		t.Error("a narrow start in a wide corpus reported a truncated scan")
+	}
+}
+
+// wideRelatedCorpus is hubRelatedCorpus at a size that crosses the scan ceiling.
+//
+// It is a separate helper rather than a larger argument to hubRelatedCorpus because the spoke
+// identifiers need a wider zero-padding to keep canonical ID order and numeric order the same
+// past a thousand, and silently changing the existing helper's ID shape would move the
+// expectations of the test that already depends on it.
+func wideRelatedCorpus(t testing.TB, count int) fstest.MapFS {
+	t.Helper()
+	corpus := testsupport.MutableCorpus(t)
+	testsupport.Write(corpus, "nodes/dsp/hub.md",
+		testsupport.ValidNode("hub", "Hub", "dsp", "foundation", "[]", "[]"))
+	for i := 0; i < count; i++ {
+		id := fmt.Sprintf("spoke-%05d", i)
+		testsupport.Write(corpus, "nodes/dsp/"+id+".md", testsupport.ValidNode(
+			id, "Spoke "+id, "dsp", "seed", `[{"target": "hub", "type": "produces"}]`, "[]"))
+	}
+	return corpus
+}
+
 // hubRelatedCorpus is a corpus whose every node points at one hub, so the hub's discovery result
 // is far larger than any bound the phase declares.
 func hubRelatedCorpus(t testing.TB, count int) fstest.MapFS {

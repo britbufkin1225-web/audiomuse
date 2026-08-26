@@ -112,7 +112,7 @@ func liveIndex(t testing.TB) *service.Knowledge {
 func TestLiveCorpusRelatedKnowledgeIsClassifiedAndBounded(t *testing.T) {
 	k := liveIndex(t)
 
-	starts, widest, widestRef, widestEvidence := 0, 0, "", 0
+	starts, widest, widestRef, widestEvidence, widestScan := 0, 0, "", 0, 0
 	for _, class := range domain.SearchEntityTypes {
 		ids := liveRelatedStarts(t, k, class)
 		if len(ids) == 0 {
@@ -129,6 +129,17 @@ func TestLiveCorpusRelatedKnowledgeIsClassifiedAndBounded(t *testing.T) {
 			}
 			if len(result.Items) > service.MaxRelatedLimit {
 				t.Fatalf("%s/%s returned %d items, past the ceiling", class, id, len(result.Items))
+			}
+			if result.Bounds.RelationsScanned > widestScan {
+				widestScan = result.Bounds.RelationsScanned
+			}
+			// The scan ceiling is declared with headroom over this corpus, so no canonical record
+			// may reach it. A start that did would mean the eligible count it reported was a
+			// floor, and the widest-scan number logged below is what a later reader checks that
+			// headroom against as the encyclopedia grows.
+			if result.Bounds.RelationsTruncated {
+				t.Errorf("%s/%s scanned the ceiling of %d relations, so its eligible count is a floor",
+					class, id, result.Bounds.MaxRelationsScanned)
 			}
 			for _, item := range result.Items {
 				if item.EntityType == class && item.ID == id {
@@ -157,8 +168,8 @@ func TestLiveCorpusRelatedKnowledgeIsClassifiedAndBounded(t *testing.T) {
 	if starts == 0 {
 		t.Fatal("the canonical repository offered no discovery start, so this test would pass vacuously")
 	}
-	t.Logf("canonical corpus: %d discovery starts, widest result %d items at %s, widest evidence %d connections",
-		starts, widest, widestRef, widestEvidence)
+	t.Logf("canonical corpus: %d discovery starts, widest result %d items at %s, widest evidence %d connections, widest scan %d of %d relations",
+		starts, widest, widestRef, widestEvidence, widestScan, service.MaxRelatedRelationsScanned)
 }
 
 // TestLiveCorpusRelatedKnowledgeIsDeterministic asserts the real corpus, not just the fixture,

@@ -545,17 +545,36 @@ not happen. A caller who wants the neighbourhood of a graph record still uses
 `/api/v1/graph/entities/{type}/{id}/traverse`, which is the route shaped for that question, and
 this phase deliberately does not become a second, differently spelled traversal surface.
 
-The bounds it does declare are its own: a default of 25 items, a hard maximum of 100, and at most 5
-canonical connections reported per item. They are service constants rather than configuration for
-the reason the traversal and context bounds are — API safety invariants, not deployment choices —
-and their product is the statement that covers the whole response: no discovery request serialises
-more than 500 canonical relations, a quarter of the 2,000 the API already states no single request
-exceeds. Against the corpus today the widest discovery result is 75 items and the widest single
-item carries 3 connections, so the ceiling and the evidence cap have real headroom while the
-default does shorten the handful of genuine hub records, which is what a default is for. As the
-encyclopedia grows the cost of one request stays a map lookup plus a sort of the eligible set,
-because the projection is built once at startup and no request reads the corpus; what grows is the
-eligible count a hub reports, and that is a number in the response rather than work in the request.
+The bounds it does declare are its own: a default of 25 items, a hard maximum of 100, at most 5
+canonical connections reported per item, and at most 2,000 canonical relations examined per
+request. They are service constants rather than configuration for the reason the traversal and
+context bounds are — API safety invariants, not deployment choices. The first three are the
+statement that covers the response: no discovery request serialises more than 500 canonical
+relations, a quarter of the 2,000 the API already states no single request exceeds. The fourth
+covers the work behind it at that same 2,000, so one number now covers both halves of the API-wide
+claim.
+
+The scan bound is the one that had to be added rather than inherited. Without it the cost of a
+request would be bounded by a property of the corpus — the widest context any single record happens
+to have — rather than by anything the backend declares, which is a bound in practice and not in
+contract; the two diverge exactly when the corpus outgrows the size the other bounds were reasoned
+about at. Relations are counted as they are examined, before the destination scope and the
+self-reference exclusion are applied, so a narrow class filter cannot buy a larger scan while
+admitting almost nothing from it. A scan that stops early is reported rather than hidden, because
+it is the one bound that changes how another field must be read: it makes the eligible count a
+floor instead of an exact total, and a caller must not have to discover that by comparing counts
+across requests. Every bound that shaped an answer is echoed in it for the same reason a truncated
+list reports its true total — a bounded answer that does not say what bounded it cannot be told
+apart from a complete one.
+
+Against the corpus today the widest discovery result is 75 items, the widest single item carries 3
+connections, and the widest scan examines 75 relations of the 2,000 allowed, so all three ceilings
+have real headroom while the default does shorten the handful of genuine hub records, which is
+what a default is for. As the encyclopedia grows the cost of one request stays a map lookup plus a
+sort of the eligible set, because the projection is built once at startup and no request reads the
+corpus; what grows is the eligible count a hub reports, and that is a number in the response rather
+than work in the request, until a record's context reaches the scan ceiling, at which point the
+response says so.
 
 **Why `limit` is clamped where `depth` is refused.** The two contracts differ deliberately. A
 silently reduced depth would let a caller believe they had seen a whole neighbourhood, so an

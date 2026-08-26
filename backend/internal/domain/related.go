@@ -255,6 +255,34 @@ type RelatedStart struct {
 	Title      string           `json:"title"`
 }
 
+// RelatedBounds reports the bounds that shaped one discovery result.
+//
+// The response already echoes the applied item limit at the top level, because a caller who
+// asked for more items than the ceiling allows needs to see which number was actually used.
+// These are the other two caps, reported for the same reason - a bounded answer that does not say
+// what bounded it cannot be told apart from a complete one - together with what the relation scan
+// actually did, since a ceiling nothing reached and a ceiling that cut the work short are
+// different facts about the answer.
+//
+// MaxEvidencePerItem is the cap an item's connection list was cut at, and it is the number that
+// makes a per-item EvidenceTruncated flag interpretable - a caller reading "this explanation was
+// shortened" can otherwise only guess by how much. MaxRelationsScanned is the ceiling on how many
+// canonical relations one request may examine at all, RelationsScanned is how many it did, and
+// RelationsTruncated says whether the scan stopped early.
+//
+// RelationsTruncated is the one flag here that changes how another field must be read. While it
+// is false, RelatedCounts.Eligible is the exact number of distinct related records, which is what
+// the counts contract promises. While it is true, the scan stopped before the record's canonical
+// context ran out, so Eligible is a floor rather than a total. Saying so is the whole point of
+// carrying the flag: a silent scan ceiling would turn an exact count into an approximate one with
+// nothing in the response to mark the change.
+type RelatedBounds struct {
+	MaxEvidencePerItem  int  `json:"max_evidence_per_item"`
+	MaxRelationsScanned int  `json:"max_relations_scanned"`
+	RelationsScanned    int  `json:"relations_scanned"`
+	RelationsTruncated  bool `json:"relations_truncated"`
+}
+
 // RelatedCounts reports the size of a discovery result.
 //
 // Eligible is how many distinct records are related to the start once the requested destination
@@ -263,6 +291,9 @@ type RelatedStart struct {
 // front of a long one without a second request. Eligible is an exact count rather than an
 // estimate, because the whole canonical context of every record is resolved once at startup and
 // is already bounded, so counting it costs a slice length.
+//
+// The one case where Eligible is a floor rather than a total is a request whose relation scan hit
+// its ceiling, and RelatedBounds.RelationsTruncated is how a caller knows that happened.
 type RelatedCounts struct {
 	Eligible int `json:"eligible"`
 	Returned int `json:"returned"`
@@ -289,6 +320,7 @@ type RelatedKnowledge struct {
 	EntityTypes []string `json:"entity_types,omitempty"`
 
 	Limit     int           `json:"limit"`
+	Bounds    RelatedBounds `json:"bounds"`
 	Counts    RelatedCounts `json:"counts"`
 	Truncated bool          `json:"truncated"`
 	Items     []RelatedItem `json:"items"`

@@ -1176,6 +1176,12 @@ instead, so a caller can see what was left without walking it.
 {
   "start": { "entity_type": "node", "id": "rhythm", "title": "Rhythm" },
   "limit": 2,
+  "bounds": {
+    "max_evidence_per_item": 5,
+    "max_relations_scanned": 2000,
+    "relations_scanned": 35,
+    "relations_truncated": false
+  },
   "counts": { "eligible": 35, "returned": 2 },
   "truncated": true,
   "items": [
@@ -1304,11 +1310,43 @@ same items, same reasons, same relative order — so a filter never changes the 
 | default `limit` | 25 | one navigable list rather than an index |
 | maximum `limit` | 100 | one heavily referenced record cannot become a corpus dump |
 | connections per item | 5 | evidence is a list inside a list, so it needs its own cap |
+| relations scanned per request | 2000 | the work behind an answer is capped by contract, not by how wide the corpus happens to be |
 
 These are service constants, not configuration: they are API safety invariants rather than
-deployment choices, exactly as the traversal and context bounds are. The whole response is bounded
-by their product — at most 500 canonical connections, a quarter of the 2,000 the API already states
-no single request exceeds.
+deployment choices, exactly as the traversal and context bounds are. The first three bound what a
+response carries: at most 500 canonical connections, a quarter of the 2,000 the API already states
+no single request exceeds. The fourth bounds the work behind it, and it is the same 2,000, so one
+statement covers the whole API — no single request examines more than two thousand canonical
+relationships, whichever route asked for them.
+
+The scan bound exists because without it the cost of a request would be bounded by a property of
+the corpus — the widest context any one record happens to have — rather than by anything the
+backend declares. That is a bound in practice and not in contract, and the difference appears
+exactly when the corpus grows past the size the other bounds were reasoned about at.
+
+Every bound that shaped an answer is reported in it, under `bounds`:
+
+| Field | Meaning |
+| --- | --- |
+| `max_evidence_per_item` | the cap an item's connection list was cut at, which is what makes a per-item `evidence_truncated` interpretable |
+| `max_relations_scanned` | the ceiling on relations this request was allowed to examine |
+| `relations_scanned` | how many it did examine — the work actually done, not the constant restated |
+| `relations_truncated` | whether the scan stopped before the record's canonical context ran out |
+
+The applied `limit` is already echoed at the top level, so that value and the two caps above state
+every bound the answer was subject to, while `relations_scanned` says what the request actually
+cost. `relations_truncated` is the one field that changes how another must be read:
+while it is `false`, `counts.eligible` is the exact number of distinct related records, and while
+it is `true` the scan stopped early and `eligible` is a **floor** rather than a total. A silent
+scan ceiling would turn an exact count into an approximate one with nothing in the response to
+mark the change. Against the canonical repository no request comes close to it — the widest single
+context is 75 relations — so `relations_truncated` is `false` for every record the corpus holds
+today.
+
+Relations are counted as they are examined, before the destination scope and the self-reference
+exclusion are applied. Counting only what survives would let a narrow `entity_types` filter buy an
+unbounded scan while admitting almost nothing from it, which is exactly the work this bound exists
+to cap.
 
 The Phase 1C traversal depth limits are deliberately **not** reused, because there is no traversal
 here to bound. Discovery is one hop by construction: the canonical references of every searchable

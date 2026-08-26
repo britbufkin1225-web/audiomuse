@@ -115,6 +115,12 @@ func TestRelatedRouteServesTheDocumentedShape(t *testing.T) {
 			Title      string `json:"title"`
 		} `json:"start"`
 		Limit  int `json:"limit"`
+		Bounds struct {
+			MaxEvidencePerItem  int  `json:"max_evidence_per_item"`
+			MaxRelationsScanned int  `json:"max_relations_scanned"`
+			RelationsScanned    int  `json:"relations_scanned"`
+			RelationsTruncated  bool `json:"relations_truncated"`
+		} `json:"bounds"`
 		Counts struct {
 			Eligible int `json:"eligible"`
 			Returned int `json:"returned"`
@@ -145,6 +151,23 @@ func TestRelatedRouteServesTheDocumentedShape(t *testing.T) {
 	}
 	if raw.Counts.Returned != len(raw.Items) || raw.Counts.Eligible != len(raw.Items) || raw.Truncated {
 		t.Errorf("counts = %+v truncated = %v for %d items", raw.Counts, raw.Truncated, len(raw.Items))
+	}
+	// Every bound behind the answer is stated in it. The applied item limit is the top-level
+	// limit above; these are the other two, and the scan count is the work actually done rather
+	// than a constant restated, so it must be positive for a start that returned items and can
+	// never be smaller than the eligible total it was derived from.
+	if raw.Bounds.MaxEvidencePerItem != service.MaxRelatedEvidencePerItem {
+		t.Errorf("max_evidence_per_item = %d, want %d", raw.Bounds.MaxEvidencePerItem, service.MaxRelatedEvidencePerItem)
+	}
+	if raw.Bounds.MaxRelationsScanned != service.MaxRelatedRelationsScanned {
+		t.Errorf("max_relations_scanned = %d, want %d", raw.Bounds.MaxRelationsScanned, service.MaxRelatedRelationsScanned)
+	}
+	if raw.Bounds.RelationsTruncated {
+		t.Error("the fixture corpus is far narrower than the scan ceiling, yet the scan reported truncation")
+	}
+	if len(raw.Items) > 0 && raw.Bounds.RelationsScanned < raw.Counts.Eligible {
+		t.Errorf("scanned %d relations but reported %d eligible records",
+			raw.Bounds.RelationsScanned, raw.Counts.Eligible)
 	}
 	for _, item := range raw.Items {
 		if item.EntityType == "" || item.ID == "" || item.Title == "" {

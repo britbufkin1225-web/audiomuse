@@ -58,6 +58,25 @@ const (
 	// exceeds.
 	MaxRelatedLimit = 100
 
+	// MaxRelatedRelationsScanned bounds how many canonical relations one request may examine.
+	//
+	// The other two bounds cap what a response carries; this one caps the work behind it. Without
+	// it the cost of a request would be bounded by a property of the corpus - the widest context
+	// any one record happens to have - rather than by anything this package declares. That is a
+	// bound in practice and not in contract, and the difference shows up exactly when the corpus
+	// grows past the size the bounds were reasoned about at.
+	//
+	// It is the same number as MaxContextRelationsPerResponse and MaxTraversalEdges, so one
+	// statement still covers the whole API: no single request examines more than 2,000 canonical
+	// relationships, whichever route asked for them. Against the corpus today the widest single
+	// context is 75 relations, so the ceiling has more than an order of magnitude of headroom and
+	// no request reaches it; it is a safety invariant rather than part of the answer.
+	//
+	// A scan that stops early is reported rather than hidden. It is the one bound that can make
+	// RelatedCounts.Eligible a floor instead of a total, and a caller cannot be left to discover
+	// that by comparing counts across requests.
+	MaxRelatedRelationsScanned = 2000
+
 	// MaxRelatedEvidencePerItem bounds how many canonical connections one item may report,
 	// counting the primary reason.
 	//
@@ -185,7 +204,7 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 	}
 	limit := normaliseRelatedLimit(q.Limit)
 
-	groups := k.groupRelated(start, scope)
+	groups, scanned, scanCut := k.groupRelated(start, scope, MaxRelatedRelationsScanned)
 	items := make([]domain.RelatedItem, 0, len(groups))
 	for _, group := range groups {
 		items = append(items, k.relatedItem(group))
@@ -205,9 +224,15 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 		Start:       domain.RelatedStart{EntityType: start.entityType, ID: start.id, Title: title},
 		EntityTypes: echoTypes,
 		Limit:       limit,
-		Counts:      domain.RelatedCounts{Eligible: eligible, Returned: len(items)},
-		Truncated:   len(items) < eligible,
-		Items:       items,
+		Bounds: domain.RelatedBounds{
+			MaxEvidencePerItem:  MaxRelatedEvidencePerItem,
+			MaxRelationsScanned: MaxRelatedRelationsScanned,
+			RelationsScanned:    scanned,
+			RelationsTruncated:  scanCut,
+		},
+		Counts:    domain.RelatedCounts{Eligible: eligible, Returned: len(items)},
+		Truncated: len(items) < eligible,
+		Items:     items,
 	}, nil
 }
 
@@ -229,11 +254,35 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 // away. The exclusion is on identity, class and ID together, so the registry entry and the
 // session projected from it, which share an ID and are two different records, are never confused
 // for one another.
-func (k *Knowledge) groupRelated(start searchRef, scope searchScope) []relatedGroup {
-	groups := make([]relatedGroup, 0, len(k.searchContext[start]))
-	index := make(map[searchRef]int, len(k.searchContext[start]))
+//
+// maxScanned bounds the relations examined and is returned alongside the count actually examined
+// and whether the scan stopped early. It is a parameter rather than a constant read from inside
+// the loop, following contextFor, which takes its response budget the same way: a function that
+// reaches for its own ceiling is not a function of its inputs, and the bound that shaped a result
+// should be visible at the call site that assembles the response rather than buried at the point
+// it happens to be enforced. Every caller in this package passes MaxRelatedRelationsScanned.
+//
+// The scan is counted before the two exclusions rather than after, and that is the whole point of
+// the bound. Counting only what survives would let a request with a narrow destination scope walk
+// an unbounded number of relations while admitting almost none of them, which is precisely the
+// work a ceiling on examined relations exists to cap. A caller therefore cannot use a filter to
+// buy a larger scan.
+func (k *Knowledge) groupRelated(start searchRef, scope searchScope, maxScanned int) ([]relatedGroup, int, bool) {
+	relations := k.searchContext[start]
+	scanned := len(relations)
+	truncated := false
+	// A non-positive ceiling is read as unbounded rather than as a request to examine nothing,
+	// following normaliseRelatedLimit, where zero means unspecified rather than empty. No caller
+	// passes one; the guard is here so that an internal misuse degrades into the behaviour that
+	// preceded this bound rather than into a panic on a negative slice bound.
+	if maxScanned > 0 && scanned > maxScanned {
+		scanned, truncated = maxScanned, true
+	}
 
-	for _, relation := range k.searchContext[start] {
+	groups := make([]relatedGroup, 0, scanned)
+	index := make(map[searchRef]int, scanned)
+
+	for _, relation := range relations[:scanned] {
 		ref := searchRef{entityType: relation.Entity.EntityType, id: relation.Entity.ID}
 		if ref == start {
 			continue
@@ -249,7 +298,7 @@ func (k *Knowledge) groupRelated(start searchRef, scope searchScope) []relatedGr
 		}
 		groups[at].relations = append(groups[at].relations, relation)
 	}
-	return groups
+	return groups, scanned, truncated
 }
 
 // relatedItem turns one destination's connections into one explained, bounded result.
