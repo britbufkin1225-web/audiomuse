@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"io"
 	"strings"
 	"unicode/utf8"
 
@@ -248,17 +249,14 @@ func decodeRelatedCursor(token string) (relatedCursor, error) {
 	if body == "" || body[0] != '{' {
 		return relatedCursor{}, ErrRelatedContinuationMalformed
 	}
+	if !validRelatedCursorObject(body) {
+		return relatedCursor{}, ErrRelatedContinuationMalformed
+	}
 
 	decoder := json.NewDecoder(strings.NewReader(body))
 	decoder.DisallowUnknownFields()
 	var cursor relatedCursor
 	if err := decoder.Decode(&cursor); err != nil {
-		return relatedCursor{}, ErrRelatedContinuationMalformed
-	}
-	// A payload carrying a second JSON value after the object is refused whole. It is not a token
-	// this build issued, and reading only the first value would accept a string whose remainder
-	// no contract accounts for.
-	if decoder.More() {
 		return relatedCursor{}, ErrRelatedContinuationMalformed
 	}
 
@@ -271,6 +269,37 @@ func decodeRelatedCursor(token string) (relatedCursor, error) {
 		return relatedCursor{}, err
 	}
 	return cursor, nil
+}
+
+// validRelatedCursorObject rejects duplicate keys and trailing JSON before the payload is decoded
+// into a struct. encoding/json otherwise accepts duplicate object keys and keeps the last value,
+// which would make a conflicting payload appear to be one this build issued. Values are decoded
+// as RawMessage because the struct decoder below remains the authority for their types.
+func validRelatedCursorObject(body string) bool {
+	decoder := json.NewDecoder(strings.NewReader(body))
+	opening, err := decoder.Token()
+	if err != nil || opening != json.Delim('{') {
+		return false
+	}
+	seen := make(map[string]bool)
+	for decoder.More() {
+		key, err := decoder.Token()
+		name, ok := key.(string)
+		if err != nil || !ok || seen[name] {
+			return false
+		}
+		seen[name] = true
+		var value json.RawMessage
+		if err := decoder.Decode(&value); err != nil {
+			return false
+		}
+	}
+	closing, err := decoder.Token()
+	if err != nil || closing != json.Delim('}') {
+		return false
+	}
+	var trailing json.RawMessage
+	return decoder.Decode(&trailing) == io.EOF
 }
 
 // validate range-checks a decoded payload against the closed vocabularies and the declared bounds.

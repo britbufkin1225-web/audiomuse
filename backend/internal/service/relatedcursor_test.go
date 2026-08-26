@@ -690,6 +690,12 @@ func TestRelatedContinuationRefusesACursorAtADifferentRank(t *testing.T) {
 func TestRelatedContinuationRefusesAMalformedToken(t *testing.T) {
 	k := evidenceIndex(t)
 	valid := firstPageToken(t, k, domain.SearchNode, "alpha", service.RelatedQuery{Limit: 1})
+	validPayload, err := base64.RawURLEncoding.DecodeString(valid)
+	if err != nil {
+		t.Fatalf("decode valid token: %v", err)
+	}
+	duplicateLimit := base64.RawURLEncoding.EncodeToString([]byte(
+		`{"li":99,` + strings.TrimPrefix(string(validPayload), "{")))
 
 	oversized := strings.Repeat("A", service.MaxRelatedContinuationTokenChars+1)
 	// A payload that is well formed base64 and well formed JSON but larger than the decoded bound,
@@ -710,6 +716,7 @@ func TestRelatedContinuationRefusesAMalformedToken(t *testing.T) {
 		{"json-string", base64.RawURLEncoding.EncodeToString([]byte(`"token"`))},
 		{"json-null", base64.RawURLEncoding.EncodeToString([]byte(`null`))},
 		{"trailing-json", base64.RawURLEncoding.EncodeToString([]byte(`{"v":1} {"v":1}`))},
+		{"duplicate-json-key", duplicateLimit},
 		{"oversized-encoded", oversized},
 		{"oversized-decoded", bulky},
 		{"truncated-valid-token", valid[:len(valid)/2]},
