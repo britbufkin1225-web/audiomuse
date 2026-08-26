@@ -1333,10 +1333,23 @@ handful of genuine hub records — which is what a default is for.
 | a `limit` above the maximum | `200`, clamped, with the applied value echoed |
 | an identifier containing `/`, `\`, `..` or a NUL | `400 invalid_query` |
 | a well-formed identifier naming no record | `404 related_start_not_found` |
+| a malformed request that also names no record | `400 invalid_query` — the request is refused before the lookup |
 
 "This record is related to nothing" and "this record does not exist" are different facts and are
 answered differently. A registered source nothing cites is a successful empty discovery, not a
 `404`.
+
+The whole request is validated before the start is looked up, so a request that is both malformed
+and names a record the corpus does not contain is answered as malformed. A caller told only about
+the identifier would fix it, resend, and be refused a second time for a mistake that was already
+visible in the request they sent. The start *class* is decided before either, because a request
+that does not name a discovery class is not a discovery request. A refusal never echoes the
+identifier that was not found, so a `400` cannot become a way to learn whether a record exists.
+
+The traversal routes are the partial precedent rather than the model: an out-of-range `depth` is
+already a `400` on a root that does not resolve, but a mistyped `relationship` or `target_type` is
+still answered as `404 entity_not_found`, because those vocabularies are checked after the root is
+resolved. Discovery does not copy that half.
 
 `limit` follows the paging contract every other route on this API uses — clamped, with the applied
 value echoed — rather than the traversal `depth` contract, where an out-of-range value is refused.

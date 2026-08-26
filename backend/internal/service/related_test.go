@@ -868,6 +868,77 @@ func TestRelatedKnowledgeRejectsMalformedDestinationScope(t *testing.T) {
 	}
 }
 
+// TestRelatedKnowledgeRefusesAMalformedScopeBeforeResolvingTheStart pins the order the request
+// is validated in.
+//
+// The whole request is checked before the start is looked up, so a caller who sent both a
+// mistyped identifier and a malformed class list is told about the class list. Reporting the miss
+// first would send them to fix the identifier and then refuse them a second time for a mistake
+// that was already visible in the request they sent.
+//
+// The traversal routes are the partial precedent: an out-of-range depth is already refused on a
+// root that does not resolve, while the relationship and target_type vocabularies are resolved
+// after the root and a mistyped one there is still reported as a missing entity. This test pins
+// the discovery half only. It is deliberately not a statement about the Phase 1C routes, which
+// this phase does not change.
+//
+// The complement is asserted with it. A well-formed scope over a missing start must still be
+// ErrNotFound, or the ordering would have turned a miss into a refusal rather than the other way
+// round, and a malformed scope over a start that does resolve must still be the scope error.
+func TestRelatedKnowledgeRefusesAMalformedScopeBeforeResolvingTheStart(t *testing.T) {
+	k := evidenceIndex(t)
+
+	cases := map[string]struct {
+		scope []string
+		want  error
+	}{
+		"blank member":      {[]string{"node", ""}, service.ErrEmptySearchEntityType},
+		"whitespace member": {[]string{"   "}, service.ErrEmptySearchEntityType},
+		"repeated class":    {[]string{"node", "node"}, service.ErrDuplicateSearchEntityType},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			// The start does not exist under any class, so the only reachable errors are the
+			// scope error and ErrNotFound.
+			for _, class := range domain.SearchEntityTypeNames() {
+				_, err := k.RelatedKnowledgeFor(class, "no-such-record", service.RelatedQuery{EntityTypes: tc.scope})
+				if !errors.Is(err, tc.want) {
+					t.Errorf("%s/no-such-record: err = %v, want %v", class, err, tc.want)
+				}
+			}
+			// And the same scope is still refused the same way over a start that resolves, so
+			// the ordering changed which error is reported first and not what either means.
+			if _, err := k.RelatedKnowledgeFor("node", "alpha", service.RelatedQuery{EntityTypes: tc.scope}); !errors.Is(err, tc.want) {
+				t.Errorf("node/alpha: err = %v, want %v", err, tc.want)
+			}
+		})
+	}
+
+	// An unsupported class member is an InvalidFilterError rather than a miss, and it names the
+	// parameter and the permitted values rather than anything about the start.
+	var invalid *service.InvalidFilterError
+	_, err := k.RelatedKnowledgeFor("node", "no-such-record", service.RelatedQuery{EntityTypes: []string{"widget"}})
+	if !errors.As(err, &invalid) {
+		t.Fatalf("err = %v, want an InvalidFilterError", err)
+	}
+	if invalid.Param != "entity_types" {
+		t.Errorf("param = %q, want entity_types", invalid.Param)
+	}
+
+	// A well-formed scope over the same missing start is still a miss.
+	for _, scope := range [][]string{nil, {"node"}, {"node", "claim"}} {
+		if _, err := k.RelatedKnowledgeFor("node", "no-such-record", service.RelatedQuery{EntityTypes: scope}); !errors.Is(err, service.ErrNotFound) {
+			t.Errorf("scope %v: err = %v, want ErrNotFound", scope, err)
+		}
+	}
+
+	// An unsupported start class outranks both. It is the class half of the address rather than a
+	// filter, and a request that does not name a discovery class is not a discovery request.
+	if _, err := k.RelatedKnowledgeFor("experiment_run", "no-such-run", service.RelatedQuery{EntityTypes: []string{"widget"}}); !errors.Is(err, service.ErrUnsupportedRelatedEntityType) {
+		t.Errorf("err = %v, want ErrUnsupportedRelatedEntityType", err)
+	}
+}
+
 // TestRelatedKnowledgeEmptyResultIsSuccess asserts the empty case is an answer.
 //
 // A registered source nothing cites, and a vocabulary entry that references nothing and is

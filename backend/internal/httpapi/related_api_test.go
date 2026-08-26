@@ -418,6 +418,63 @@ func TestRelatedRouteUnknownStartIsNotFound(t *testing.T) {
 	}
 }
 
+// TestRelatedRouteRefusesAMalformedRequestBeforeReportingAMissingStart pins the order the two
+// refusals are decided in.
+//
+// A request that names an unresolvable start and also carries a malformed query string is a
+// malformed request, and it is answered as one. Reporting the missing record first would tell a
+// caller to fix the identifier, and a caller who fixed it would then be refused a second time for
+// a mistake that was already visible in the request they sent. The Phase 1C traversal route is the
+// partial precedent: an out-of-range depth is already a 400 on a root that does not resolve, while
+// a mistyped relationship or target_type there is still a 404, because those vocabularies are
+// checked after the root resolves. This test pins the discovery route only.
+//
+// The 404 half is asserted alongside it, because the ordering is only meaningful if a well-formed
+// request naming a missing record still reaches the lookup and is still reported as a miss.
+func TestRelatedRouteRefusesAMalformedRequestBeforeReportingAMissingStart(t *testing.T) {
+	handler := newHandler(t)
+
+	for _, params := range []string{
+		"entity_types=widget",          // unsupported class
+		"entity_types=experiment_run",  // a class of the corpus that discovery does not offer
+		"entity_types=node,node",       // repeated class
+		"entity_types=node,",           // blank member
+		"entity_types=",                // present but empty
+		"limit=-1",                     // refused rather than clamped
+		"limit=abc",                    // not an integer
+		"offset=0",                     // a parameter this operation does not have
+		"limit=1&limit=2",              // one parameter, two values
+		"entity_types=widget&limit=-1", // both halves malformed at once
+	} {
+		target := "/api/v1/related/node/no-such-node?" + params
+		status, code, message := relatedErrorCode(t, handler, target)
+		if status != http.StatusBadRequest || code != "invalid_query" {
+			t.Errorf("%s: status = %d code = %q, want 400 invalid_query", target, status, code)
+		}
+		// The refusal states the rule it applied and never echoes the identifier that was not
+		// found, so a 400 here cannot become a way to learn whether a record exists.
+		if strings.Contains(message, "no-such-node") {
+			t.Errorf("%s: message echoed the start identifier: %q", target, message)
+		}
+	}
+
+	// A well-formed scope over a missing start is still a miss, not a 400.
+	for _, params := range []string{"entity_types=node", "entity_types=node,claim", "limit=5"} {
+		target := "/api/v1/related/node/no-such-node?" + params
+		status, code, _ := relatedErrorCode(t, handler, target)
+		if status != http.StatusNotFound || code != "related_start_not_found" {
+			t.Errorf("%s: status = %d code = %q, want 404 related_start_not_found", target, status, code)
+		}
+	}
+
+	// An unsupported start class outranks both: it is the one part of the address this route
+	// validates itself, and it is decided before the query string is read at all.
+	status, code, _ := relatedErrorCode(t, handler, "/api/v1/related/experiment_run/no-such-run?entity_types=node")
+	if status != http.StatusBadRequest || code != "invalid_query" {
+		t.Errorf("unsupported start class: status = %d code = %q, want 400 invalid_query", status, code)
+	}
+}
+
 // TestRelatedRouteRejectsUnknownParameters asserts the accepted query string is closed.
 //
 // Silently dropping a parameter the caller believed was applied would return a list that does not

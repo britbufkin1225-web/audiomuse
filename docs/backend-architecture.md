@@ -565,6 +565,20 @@ clamp is visible rather than silent. Following the paging contract every other r
 also keeps one spelling of `limit` from behaving differently depending on which endpoint it was
 sent to.
 
+**Why the whole request is validated before the start is resolved.** A request that is both
+malformed and names a record the corpus does not contain is refused as malformed rather than
+reported as a miss. The two failures ask different things of the caller — "fix the query string you
+wrote" and "that record is not in this corpus" — and a caller told only about the identifier would
+fix it, resend, and be refused a second time for a mistake that was already visible in the request
+they sent.
+
+The traversal routes are a partial precedent rather than the model for this. An out-of-range depth
+is already refused on a root that does not resolve, because that bound is checked at the edge, but
+the `relationship` and `target_type` vocabularies are resolved after the root, so a mistyped filter
+there is still reported as a missing entity. Phase 2A does not reach into a Phase 1C contract to
+change that; it decides only what its own route does, and the other order would have added a second
+surface that behaves that way rather than leaving one fewer.
+
 **Why the starting classes are the search six and not the graph four.** A reader can be holding a
 vocabulary entry or an experiment definition and want to know where to go next, and neither is a
 graph vertex. Discovery therefore starts from the six searchable classes, and the boundary

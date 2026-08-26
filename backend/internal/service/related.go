@@ -139,11 +139,25 @@ func (k *Knowledge) buildRelated() {
 // RelatedKnowledgeFor returns the bounded, ranked, explained set of records related to one
 // canonical record.
 //
-// The order of operations is fixed and each step is separable: validate the class, resolve the
-// start, validate the destination scope, group the start's canonical context by destination,
-// rank each group, order the groups, count, then cut at the limit. Counting before cutting is
-// what lets the response report an exact eligible total; cutting before counting would make the
-// total the size of the page, which the caller can already see.
+// The order of operations is fixed and each step is separable: validate the class, validate the
+// destination scope, resolve the start, group the start's canonical context by destination, rank
+// each group, order the groups, count, then cut at the limit. Counting before cutting is what
+// lets the response report an exact eligible total; cutting before counting would make the total
+// the size of the page, which the caller can already see.
+//
+// The whole request is validated before the start is looked up, so a malformed request is never
+// reported as a missing record. It matters because the two failures ask different things of the
+// caller: a rejected scope means "fix the query string you wrote", a missing start means "that
+// record is not in this corpus", and a caller who sent both mistakes at once and was told only
+// about the ID would fix it, resend, and be refused a second time for a mistake that was already
+// visible in the request they sent.
+//
+// The Phase 1C routes already do this for the one bound they check at the edge - an out-of-range
+// depth is refused on a root that does not resolve - but resolve the root before validating the
+// relationship and target_type vocabularies, so a mistyped filter there is still reported as a
+// missing entity. That is a Phase 1C contract and this phase does not reach into it. What is
+// decided here is only what this route does, and doing it in the other order would have made a
+// second surface behave that way rather than one fewer.
 //
 // A class outside the searchable six is ErrUnsupportedRelatedEntityType and an ID that resolves
 // to no record is ErrNotFound. The two are kept apart deliberately, and neither is answered with
@@ -154,19 +168,20 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 	if !domain.ValidSearchEntityType(entityType) {
 		return domain.RelatedKnowledge{}, ErrUnsupportedRelatedEntityType
 	}
+	// Scope is resolved before the start is, and before any grouping. It is the cheapest
+	// validation on the request and the one most likely to be wrong in a hand-written query
+	// string, and refusing it first means a malformed class list neither reaches the projection
+	// nor is masked by a lookup that missed. The single-class spelling is passed as empty
+	// because this route does not offer one; resolveSearchScope is otherwise the Phase 1H
+	// function unchanged, so the two surfaces cannot drift about what a class list means.
+	scope, err := resolveSearchScope("", q.EntityTypes)
+	if err != nil {
+		return domain.RelatedKnowledge{}, err
+	}
 	start := searchRef{entityType: domain.SearchEntityType(entityType), id: id}
 	title, ok := k.searchLabels[start]
 	if !ok {
 		return domain.RelatedKnowledge{}, ErrNotFound
-	}
-	// Scope is resolved before any grouping. It is the cheapest validation on the request and
-	// the one most likely to be wrong in a hand-written query string, and refusing it here means
-	// a malformed class list never reaches the projection. The single-class spelling is passed
-	// as empty because this route does not offer one; resolveSearchScope is otherwise the Phase
-	// 1H function unchanged, so the two surfaces cannot drift about what a class list means.
-	scope, err := resolveSearchScope("", q.EntityTypes)
-	if err != nil {
-		return domain.RelatedKnowledge{}, err
 	}
 	limit := normaliseRelatedLimit(q.Limit)
 
