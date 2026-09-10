@@ -189,6 +189,29 @@ func getRelatedWorkflow(t testing.TB, handler http.Handler, target string) domai
 
 // relatedBody runs one request and returns the raw bytes, which is what a determinism check has to
 // compare: two structurally equal results can still serialise differently.
+// withoutContinuationToken removes the opaque cursor's value from a serialised response.
+//
+// It removes the value and leaves the key, so a scan run over the result still sees every other
+// byte the server wrote, including the field name itself. It fails rather than returning the body
+// unchanged if the response does not decode, so a malformed body cannot slip past a check by way
+// of this helper.
+func withoutContinuationToken(t testing.TB, body string) string {
+	t.Helper()
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(body), &raw); err != nil {
+		t.Fatalf("decode body: %v: %s", err, body)
+	}
+	if _, present := raw["next_continuation_token"]; !present {
+		return body
+	}
+	raw["next_continuation_token"] = json.RawMessage(`""`)
+	out, err := json.Marshal(raw)
+	if err != nil {
+		t.Fatalf("re-encode body: %v", err)
+	}
+	return string(out)
+}
+
 func relatedBody(t testing.TB, handler http.Handler, target string) string {
 	t.Helper()
 	rec := do(t, handler, http.MethodGet, target)
@@ -471,7 +494,22 @@ func TestRelatedWorkflowInvariantsHoldAcrossTheMatrix(t *testing.T) {
 			}
 
 			// 14. Nothing in a successful body describes the operator's machine.
-			assertNoInternalDisclosure(t, tc.target, relatedBody(t, handler, tc.target))
+			//
+			// The Phase 2D continuation token is removed before the scan rather than exempted
+			// from it, and the distinction matters. The scan looks for literal fragments that
+			// betray a Go process - a package qualifier, a source path, a pointer's 0x - in prose
+			// the server wrote. A token is not prose: it is base64 over an opaque payload, and
+			// base64 produces those two characters by arithmetic. The claim identifier
+			// beta-was-observed-in-1999 encodes through "bi0xOTk5", which contains 0x and means
+			// nothing. Leaving it in the scan would make this invariant fail on the contents of
+			// the corpus rather than on anything the backend disclosed.
+			//
+			// What the token actually carries is asserted directly instead, against the decoded
+			// payload rather than against its encoding, by the Phase 2D service suite: no title,
+			// no summary, no evidence, no path, no host, no internal name, and no field outside
+			// the documented set.
+			assertNoInternalDisclosure(t, tc.target,
+				withoutContinuationToken(t, relatedBody(t, handler, tc.target)))
 		})
 	}
 }
@@ -1261,16 +1299,22 @@ func TestRelatedWorkflowSuccessResponsesCarryTheDocumentedHeaders(t *testing.T) 
 		if err := json.Unmarshal(rec.Body.Bytes(), &raw); err != nil {
 			t.Fatalf("GET %s: decode: %v", target, err)
 		}
+		// has_more and next_continuation_token are the Phase 2D additions. has_more joins the
+		// required list below rather than only this one, because a boolean that disappears when
+		// false cannot be told apart from a server that does not implement it;
+		// next_continuation_token is documented but optional, since it is present exactly when
+		// has_more is true and a final page must not carry one.
 		documented := map[string]bool{
 			"start": true, "entity_types": true, "relationship_types": true,
 			"limit": true, "bounds": true, "counts": true, "truncated": true, "items": true,
+			"has_more": true, "next_continuation_token": true,
 		}
 		for key := range raw {
 			if !documented[key] {
 				t.Errorf("GET %s: undocumented top-level key %q", target, key)
 			}
 		}
-		for _, required := range []string{"start", "limit", "bounds", "counts", "truncated", "items"} {
+		for _, required := range []string{"start", "limit", "bounds", "counts", "truncated", "has_more", "items"} {
 			if raw[required] == nil {
 				t.Errorf("GET %s: required key %q is absent", target, required)
 			}

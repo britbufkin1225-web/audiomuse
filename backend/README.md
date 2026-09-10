@@ -151,7 +151,7 @@ Base path `/api/v1`. Every response is JSON.
 | GET | `/api/v1/experiment-runs` | run records with their lifecycle state and evidence counts |
 | GET | `/api/v1/experiment-runs/{id}` | one full run |
 | GET | `/api/v1/search` | one lexical query across every searchable canonical layer, optionally composed from several terms and with the bounded canonical context of each hit |
-| GET | `/api/v1/related/{entity_type}/{id}` | the bounded, ranked, explained set of canonical records related to one record |
+| GET | `/api/v1/related/{entity_type}/{id}` | the bounded, ranked, explained set of canonical records related to one record, continuable a page at a time |
 | GET | `/api/v1/graph` | the full read-only graph projection |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/relationships` | the direct relationships of one graph entity |
 | GET | `/api/v1/graph/entities/{entity_type}/{id}/traverse` | the bounded neighbourhood of one graph entity |
@@ -1156,6 +1156,7 @@ a discovery start". Runs stay reachable through their own routes.
 | `entity_types` | optional; restrict *destinations* to a comma-separated **set** of searchable classes |
 | `relationship_types` | optional; restrict *connections* to a comma-separated **set** of precedence classes |
 | `limit` | optional; how many items to return. Default 25, clamped to 100 |
+| `continuation_token` | optional; an opaque cursor from a previous response of this route, to fetch the next page |
 
 `entity_types` is the same filter, with the same semantics and the same refusals, as the one on
 `/api/v1/search`: members are trimmed and compared exactly, a blank member or a repeated class is
@@ -1169,11 +1170,17 @@ is this API's only multi-value query convention: every route refuses a parameter
 `?relationship_types=conceptual&relationship_types=evidential` is `400 invalid_query`, not two
 values. The singular `relationship_type` is not accepted as an alias.
 
-There is no `depth`, no `offset` and no `q`, and each absence is the contract rather than an
+`continuation_token` is the opaque cursor described in "Continuation" below. It is the only
+parameter a caller does not compose: it is handed back by a previous response of this same route
+and sent again unread.
+
+There is still no `depth`, no `offset` and no `q`, and each absence is the contract rather than an
 omission. Text would make this search, which exists. Depth would make it traversal, which exists.
-Paging would make a discovery list a cursor over a derived ordering, and a reader deciding where to
-go next is not working through a result set — the response reports the exact eligible total
-instead, so a caller can see what was left without walking it.
+An offset would be a count into an ordering the caller cannot see, which silently repeats or drops
+records whenever that ordering has changed — a continuation token names the record it resumes
+after instead, and is refused rather than approximated when that record has moved. The response
+still reports the exact eligible total, so a caller who only wants to know what was left does not
+have to walk it.
 
 #### Response
 
@@ -1191,6 +1198,8 @@ instead, so a caller can see what was left without walking it.
   },
   "counts": { "eligible": 35, "returned": 2 },
   "truncated": true,
+  "has_more": true,
+  "next_continuation_token": "eyJ2IjoxLCJzdCI6Im5vZGUiLCJzaSI6InJoeXRobSIsImxpIjoyLCJjdCI6Im5vZGUiLCJjaSI6InJoeXRobWljLWVudHJhaW5tZW50IiwiY3AiOjAsImNkIjpmYWxzZX0",
   "items": [
     {
       "entity_type": "node",
@@ -1232,6 +1241,12 @@ instead, so a caller can see what was left without walking it.
 they landed where they meant. `counts.eligible` is the exact number of distinct records related to
 the start after the destination and relationship scopes were applied, counted **before** the limit;
 `truncated` is never `false` when anything was cut.
+
+`truncated` and `has_more` are different facts and are not interchangeable. `truncated` means *this
+response does not carry the whole eligible set*, which stays true on every page of a paged
+traversal including the last one. `has_more` means *there is a page after this one*. The final page
+of a long result therefore reports `"truncated": true` with `"has_more": false`, which is exactly
+the pair a client needs in order to stop.
 
 An item carries its own record's identity and its own display fields and nothing else. `title` and
 `summary` are the same fields the search layer already uses for that class — a related item and a
@@ -1396,6 +1411,101 @@ echoes the rejected value.
 A valid filter matching nothing is an **answer**, not an error: it says this record has no
 connection of that kind, which is a fact about the corpus rather than a mistake in the request.
 
+#### Continuation
+
+A discovery list is meant to be read, not worked through, and the default answer is unchanged: a
+request with no `continuation_token` returns the same bounded first page this route has always
+returned, with the exact eligible total beside it. What Phase 2D adds is a bounded way to fetch the
+rest for the client that genuinely needs it — one rendering a well-connected record's whole
+neighbourhood, which previously had to raise `limit` to the ceiling and then had nothing.
+
+**How a traversal works.** Send the request; if the response carries `"has_more": true`, send the
+same request again with `next_continuation_token` copied into `continuation_token`; stop when
+`has_more` is `false`.
+
+```text
+GET /api/v1/related/node/rhythm?limit=25
+GET /api/v1/related/node/rhythm?continuation_token=<the token from the response above>
+GET /api/v1/related/node/rhythm?continuation_token=<the token from the response above>
+```
+
+**The token is opaque.** It is URL-safe base64 (`A–Z a–z 0–9 - _`, no padding) over a versioned
+payload, and no field in it is part of the contract: do not parse it, construct it, or read
+anything out of it. It is bounded at 1024 characters, and a longer value is refused before anything
+is decoded.
+
+**It is not authentication and it is not authorization.** It is an encoding of a position in a
+public, read-only ordering, on an API that has no identities to distinguish and no records to
+withhold. Holding one grants exactly what re-sending the original query string grants. It is
+deliberately **not signed**: this repository has no secret-management contract, and an unkeyed
+digest carried beside the payload it digests detects nothing that base64 and a strict decode do not
+already detect, while reading to a client as though it were tamper protection. What protects the
+contract instead is that nothing in the token is trusted on its own — every field is checked
+against what the presenting request independently resolves.
+
+**It creates no session.** Nothing is stored between requests: no result set, no cache, no
+server-side cursor, no row. Each page is re-validated, re-scanned, re-grouped and re-ranked from
+the same immutable startup index, and the token only says where in that rebuilt ordering to resume.
+A token therefore survives a restart, and it cannot be used to see anything a fresh request could
+not see.
+
+**What a token binds.** A continuation request must resolve to the same start record, the same
+normalised `entity_types` scope, the same normalised `relationship_types` scope and the same
+effective `limit` the token was issued under. Because the scopes are compared **normalised**, a
+client that re-renders its filter in a different order between pages continues successfully;
+a client that actually changes the set does not.
+
+`limit` is the one parameter a continuation may omit, and omitting it uses the limit the token
+carries — which is what makes a traversal expressible as "the same URL plus a token". Supplying it
+is fine as long as it is the limit that was actually applied, after the default and the ceiling:
+`limit=1000` normalises to 100 on both pages and continues, while `limit=5` against a token issued
+at 25 is refused rather than silently re-windowing the remainder.
+
+**Where it resumes.** The token names the last item the issuing page returned — its class, its
+canonical ID, and the two ranking keys it held. Resuming means finding that record in the rebuilt
+ordering and returning the window that follows it. Because a destination is grouped exactly once,
+that pair names a position unambiguously even where many items share a rank, which is why an index
+into the list would not do: an index counts into an ordering, and a count means something different
+the moment the ordering changes.
+
+**Adjacent pages therefore neither repeat nor skip.** Every page of one traversal is a slice of the
+identical ordering, and the pages concatenated are exactly the ordering — up to the same scan
+ceiling any single request is subject to.
+
+**When the corpus has changed.** If the record a token names is no longer in the result set, or is
+in it at a different rank, the token is refused rather than approximated. There is no position
+"near" a record that has moved, and resuming from a guess would silently drop or repeat items with
+nothing in the response to mark it. The remedy is always the same: request the first page again.
+
+**End of results.** The last page carries no `next_continuation_token` and reports
+`"has_more": false`. A token is never issued for a page that would come back empty, so a client
+never makes a request to discover it had already finished. `has_more` is always present;
+`next_continuation_token` is present exactly when `has_more` is `true`, so the two cannot
+contradict each other.
+
+**Empty results.** A valid request that matches nothing is unchanged: `200`, `"items": []`, zero
+counts, no token.
+
+| Continuation refusal | Answer |
+| --- | --- |
+| `continuation_token` supplied but empty or whitespace | `400 invalid_query` |
+| a token longer than 1024 characters | `400 invalid_query` |
+| a token that is not valid base64url, or whose payload is not a valid token | `400 invalid_query` |
+| a token issued under a contract version this API does not implement | `400 invalid_query` |
+| a token presented against a different start record | `400 invalid_query` |
+| a token presented with a different `entity_types` scope | `400 invalid_query` |
+| a token presented with a different `relationship_types` scope | `400 invalid_query` |
+| a token presented with a different effective `limit` | `400 invalid_query` |
+| a token whose position the current result set no longer contains | `400 invalid_query` |
+| `continuation_token` supplied twice | `400 invalid_query` |
+
+Every one is `400 invalid_query`, which is the status and code this route already gives every
+malformed request — a stale cursor is a request the caller must rewrite, not a missing record and
+not a write conflict, and this API has no writers. The messages name the parameter and say what
+must change. None of them echoes the token, quotes a decoder, or describes the payload: the token
+is the one part of a continuation request an attacker fully controls, and a message reflecting it,
+or naming which decoding step failed, would make the error envelope an oracle.
+
 #### Bounds
 
 | Bound | Value | What it protects |
@@ -1404,6 +1514,7 @@ connection of that kind, which is a fact about the corpus rather than a mistake 
 | maximum `limit` | 100 | one heavily referenced record cannot become a corpus dump |
 | connections per item | 5 | evidence is a list inside a list, so it needs its own cap |
 | relations scanned per request | 2000 | the work behind an answer is capped by contract, not by how wide the corpus happens to be |
+| `continuation_token` length | 1024 characters | an oversized string is refused on one length comparison, before anything is decoded |
 
 These are service constants, not configuration: they are API safety invariants rather than
 deployment choices, exactly as the traversal and context bounds are. The first three bound what a
@@ -1443,6 +1554,13 @@ exists to cap. `relations_scanned` is therefore identical for the same start whe
 names no class, one class or every class: it reports the work done, not the answer produced, and
 **no filter can enlarge it**.
 
+Paging moves none of these. The scan ceiling is per request, not per traversal, so every page of a
+paged traversal does the same bounded work a single request does, and a paged walk cannot reach a
+record an unpaged request at the ceiling could not — `relations_truncated` says so on every page,
+identically. The continuation token is validated on the same schedule the filters are: its length
+is checked before it is decoded, its payload before it is compared to anything, and the whole of it
+before the start is resolved.
+
 Both filters are validated before the scan runs and before the start is resolved, so a malformed
 filter costs one pass over a handful of short strings and never reaches the projection. The scope
 values themselves are bounded twice over: the raw parameter is capped at 128 UTF-8 bytes like every
@@ -1481,6 +1599,7 @@ handful of genuine hub records — which is what a default is for.
 | an identifier containing `/`, `\`, `..` or a NUL | `400 invalid_query` |
 | a well-formed identifier naming no record | `404 related_start_not_found` |
 | a malformed request that also names no record | `400 invalid_query` — the request is refused before the lookup |
+| any unusable `continuation_token` | `400 invalid_query` — see the continuation refusal table above |
 
 "This record is related to nothing" and "this record does not exist" are different facts and are
 answered differently. A registered source nothing cites is a successful empty discovery, not a
@@ -1535,11 +1654,17 @@ anything outside the canonical repository.
 
 Implemented: one read-only route, six starting classes, the seven-class precedence table above,
 deduplication with bounded evidence, destination-scope filtering, relationship-scope filtering, a
-per-connection explanation, a default and maximum limit, and an exact eligible count.
+per-connection explanation, a default and maximum limit, an exact eligible count, and a stateless
+continuation cursor over the same ordering.
 
 Deliberately not implemented, and not planned as part of it:
 
 - multi-hop or transitive discovery — the traversal routes serve that question;
+- an `offset`, a page number, or any position a caller composes themselves;
+- persistent search sessions, server-side result sets, cached pages or database-backed cursors —
+  continuation stores nothing between requests;
+- a signed, encrypted or authenticated token. The cursor is an encoding, not a credential, and is
+  documented as one;
 - caller-supplied ranking or weights. `relationship_types` restricts which connections are eligible
   and cannot reorder what survives, so the ordering remains a property of the corpus rather than of
   the request; a parameter that *promoted* a class, or a weight per class, would invert that and is
@@ -2194,9 +2319,16 @@ an input to discovery, and discovery is never a writer of one.
   no edge mutation of any kind.
 - Related-knowledge discovery is one hop, like context and unlike traversal. It returns records
   the start directly references or that directly reference it, ranked by the canonical field each
-  connection came from; there is no transitive discovery, no depth, no paging and no
-  caller-supplied ranking, weighting or priority parameter. It is bounded to 25 items by default,
-  100 at most, and 5 reported connections per item.
+  connection came from; there is no transitive discovery, no depth, and no caller-supplied ranking,
+  weighting or priority parameter. It is bounded to 25 items by default, 100 at most, and 5
+  reported connections per item, and `continuation_token` pages over that same ranked set without
+  moving any of those bounds. There is no `offset`: a count into a rebuilt ordering repeats or
+  drops records whenever the ordering has changed, so the cursor names the record it resumes after
+  and is refused rather than approximated when that record has moved.
+- Continuation creates no session. The token is opaque, versioned, bounded at 1024 characters and
+  unsigned, it is checked field by field against the request presenting it, and nothing is stored
+  between pages — no result set, no cache, no cursor row. It is not authentication and not
+  authorization: holding one grants exactly what re-sending the original query string grants.
 - Discovery ranks authored references and measures nothing. No similarity, embedding, vector,
   keyword overlap or co-occurrence contributes to it, and no confidence, relevance or probability
   appears in its output. Two records are related if and only if some canonical record wrote down a
@@ -2206,7 +2338,8 @@ an input to discovery, and discovery is never a writer of one.
   layer does not read is invisible to it too — node `experiments:` and `appears_in: document`
   among them. It starts from the six searchable classes and never from an experiment run.
 - Discovery is stateless and identical for every caller. There is no reading history, no
-  popularity, no click weighting and no personalisation, and nothing about a request is stored.
+  popularity, no click weighting and no personalisation, and nothing about a request is stored —
+  including a paged one, where the position lives in the caller's token and never on the server.
 - No frontend, no graph visualization, and no LLM integration.
 
 ## Future work

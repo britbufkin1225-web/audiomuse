@@ -663,6 +663,62 @@ relevant, important or similar — none of which the corpus states. A template w
 interpolated into it would have been the obvious alternative and is exactly what this refuses: it
 would read as a claim about two specific records, which only the corpus may make.
 
+**Why continuation is a cursor and not an offset, and why Phase 2A said no to paging at all.**
+Phase 2A refused paging on the ground that a discovery list is a set of records to choose between
+rather than a result set to work through, and that reasoning still holds for the reader it was
+written about — the default answer is unchanged, and a caller who only wants to know what was left
+still reads `counts.eligible` rather than walking anything. What it did not serve is the client
+rendering a well-connected record's whole neighbourhood, which could raise `limit` to the ceiling
+and then had no way to reach the remainder of an ordering the response told it existed.
+
+An `offset` was refused a second time rather than reconsidered. An offset is a count into an
+ordering the caller cannot see, and a count means something different the moment the ordering
+changes: two requests either side of a corpus reload silently drop or repeat records, with nothing
+in either response to mark it. A cursor naming the last item returned has the opposite property —
+it is either found at the rank it claims, or it is refused. That is why the token carries the
+destination's class, its canonical ID and its two ranking keys, and why a cursor the rebuilt
+ordering does not contain is a `400` rather than a resume from the nearest survivor.
+
+The pair (class, ID) is enough to name a position unambiguously because a destination is grouped
+exactly once, so no two items of one result share it — including in the common case where dozens of
+items tie on precedence, direction and class and are separated only by the canonical-ID tie-break.
+The ranking was not changed to make paging easier, and the tie-break chain paging depends on is the
+one Phase 2A already documented.
+
+**Why the token is unsigned, and why that is not a gap.** The repository has no secret-management
+contract, no key material and no deployment step that could supply one. An unkeyed digest carried
+beside the payload it digests detects only the corruption base64 and a strict decode already
+detect, while reading to a client as though it were tamper protection — which is the kind of
+security theatre this backend's documentation is otherwise careful not to publish. Inventing a
+secret, an environment variable or a persistence layer to sign a cursor would also have added a
+deployment requirement to a read-only API that has none.
+
+What replaces a signature is that no field in the token is trusted on its own. The start, both
+normalised scopes and the effective limit must equal what the presenting request independently
+resolves, and the cursor must name a record the rebuilt ordering actually contains at the rank the
+token claims. An attacker editing a decoded payload can therefore produce only a token that is
+refused, or one identical in effect to a query string they could have written anyway — on an API
+that has no identities to distinguish and no records to withhold. The token is documented as a
+continuation cursor and explicitly not as authentication or authorization, so no client builds a
+capability on it.
+
+**Why the token binds the limit.** A continuation whose window size differed from the issuing
+page's would make "the next page" mean something the caller cannot compute, so `limit` is carried
+in the token and compared after normalisation. Omitting it inherits the token's value, which makes
+a traversal expressible as "the same URL plus a token"; supplying a different one is refused rather
+than silently re-windowing the remainder. Comparing the *effective* limit rather than the caller's
+literal is what keeps that from being pedantic: `limit=1000` normalises to the ceiling on every
+page and continues, exactly as an omitted limit does.
+
+**Why `has_more` is a new field rather than a reuse of `truncated`.** `truncated` has always meant
+"this response does not carry the whole eligible set", and that stays true on every page of a paged
+traversal including the last. Overloading it to also mean "you can fetch more" would have made the
+final page of a long result unrepresentable: it is simultaneously incomplete and final. `has_more`
+is always serialised, including when false, because a boolean that disappears cannot be told apart
+from a server that does not implement it, and a client reading its absence as "keep going" would
+loop. `next_continuation_token` is present exactly when `has_more` is true, so the two cannot
+contradict each other, and no token is ever issued for a window that would come back empty.
+
 **Why an unparseable query string is refused whole.** Every route on this API refuses a parameter it
 does not accept, and refuses one supplied twice, on the stated ground that silently dropping a
 filter a caller believed was applied returns a result set that does not mean what they think it
@@ -684,7 +740,7 @@ name rather than by Go map order. An error body is part of a response, and this 
 that an identical request returns an identical response; a refusal that cited a different rule on
 each run would be the one part of the surface where that stopped being true.
 
-## Known limitations (through Phase 2C)
+## Known limitations (through Phase 2D)
 
 - Corpus changes require a process restart.
 - Search is lexical substring matching only; there is no semantic retrieval, embedding or learned
@@ -744,10 +800,22 @@ each run would be the one part of the surface where that stopped being true.
   no edge is emitted between them: they are one canonical record seen through two projections.
 - Related-knowledge discovery is one hop and nothing else. `/api/v1/related/{entity_type}/{id}`
   returns records the start directly references, or that directly reference it, ranked by the
-  canonical field each connection came from. There is no transitive discovery, no depth, no paging,
-  and no caller-supplied ranking or weighting: the ordering is a property of the corpus rather than
-  of the request. It is bounded to 25 items by default, 100 at most, and 5 reported connections per
-  item.
+  canonical field each connection came from. There is no transitive discovery, no depth, and no
+  caller-supplied ranking or weighting: the ordering is a property of the corpus rather than of the
+  request. It is bounded to 25 items by default, 100 at most, and 5 reported connections per item.
+  Phase 2D adds a continuation cursor over that same ordering and moves none of those bounds: a
+  page is a window on the ranked eligible set, the scan ceiling is per request rather than per
+  traversal, and paging cannot reach a record an unpaged request at the ceiling could not.
+- Continuation creates no session and no server-side state. `continuation_token` is an opaque,
+  versioned, bounded cursor naming the last item a page returned; each page is re-validated and
+  rebuilt from the immutable startup index, and nothing is stored between requests — no result set,
+  no cache, no cursor row, no per-caller record. It is not authentication and not authorization,
+  and it is deliberately unsigned: the repository has no secret-management contract, and every
+  field it carries is checked against what the presenting request independently resolves rather
+  than trusted from the token. A token is refused, never approximated, when the request it is
+  presented with differs in start, either scope or effective limit, or when the record it names is
+  no longer at that position. There is still no `offset`, and the reason is unchanged: a count into
+  a rebuilt ordering silently repeats or drops records whenever the ordering has changed.
 - Discovery filters on two axes and nothing finer. `entity_types` restricts the destination class
   and `relationship_types` restricts the precedence class of the connection; both are closed sets,
   both refuse a blank, repeated, mis-cased or unknown member rather than repairing it, and neither
@@ -771,7 +839,8 @@ each run would be the one part of the surface where that stopped being true.
   is invisible to it as well.
 - Discovery is stateless and per-caller state does not exist. There is no reading history, no
   popularity, no click weighting and no personalisation; two callers asking about one record are
-  told the same thing.
+  told the same thing, and two callers presenting one continuation token are told the same thing as
+  each other and as the caller the token was issued to.
 
 ## Future work
 

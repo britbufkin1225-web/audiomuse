@@ -159,10 +159,22 @@ var (
 // Its members are the precedence classes of domain.RelatedPriorities, and the semantics follow
 // EntityTypes exactly - trimmed, exact, closed set, no blank member, no repetition, an empty
 // slice meaning every class - so the two lists on one route are one set of rules rather than two.
+//
+// ContinuationToken is the Phase 2D cursor and is the fourth and last thing a navigation request
+// says: not "where do I start" or "what am I interested in" but "I have already read this far".
+// It is opaque, and a caller that has none - which is every first request - leaves it empty and
+// receives the same bounded first page the route has always returned. It is deliberately not an
+// offset: see relatedcursor.go for why a count into a rebuilt ordering is not a position in it.
+//
+// A token binds the whole rest of this struct. A continuation request must resolve to the same
+// start, the same two scopes and the same effective limit the token was issued under, or it is
+// refused; the one field a caller may omit on a continuation is Limit, which then takes the value
+// the token carries rather than the default.
 type RelatedQuery struct {
 	Limit             int
 	EntityTypes       []string
 	RelationshipTypes []string
+	ContinuationToken string
 }
 
 // relatedScope is the resolved set of precedence classes one discovery may be explained by.
@@ -287,11 +299,13 @@ func (k *Knowledge) buildRelated() {
 // canonical record.
 //
 // The order of operations is fixed and each step is separable: validate the class, validate the
-// destination scope, validate the relationship scope, resolve the start, group the start's
-// eligible canonical context by destination, rank each group, order the groups, count, then cut
-// at the limit. Counting before cutting is what lets the response report an exact eligible total;
-// cutting before counting would make the total the size of the page, which the caller can already
-// see.
+// destination scope, validate the relationship scope, validate the continuation token and check
+// it against the request, resolve the start, group the start's eligible canonical context by
+// destination, rank each group, order the groups, count, locate the resume position, then cut
+// one window at the limit. Counting before cutting is what lets the response report an exact
+// eligible total, and it is unchanged by paging: the count is of the whole eligible ordering, not
+// of the page. Cutting before counting would make the total the size of the page, which the
+// caller can already see.
 //
 // Both filters are applied before the limit and neither is applied after it, which is the
 // difference between a filter and a post-filter over a page. A caller asking for one relationship
@@ -341,11 +355,39 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 		return domain.RelatedKnowledge{}, err
 	}
 	start := searchRef{entityType: domain.SearchEntityType(entityType), id: id}
+
+	// The Phase 2D continuation token is decoded and checked against this request before the
+	// start is looked up, following the rule the two filters already follow: the whole request is
+	// validated before the corpus is consulted, so a caller who presented a stale token against a
+	// mistyped identifier is told about the token they can see rather than about a record they
+	// cannot. Structural decoding runs first and the request comparison second, so a token that
+	// is both unreadable and for the wrong record is reported as unreadable on every run.
+	//
+	// The limit is resolved between the two halves because the token binds it. A continuation
+	// request that names no limit inherits the one the token carries, which is what makes a
+	// traversal expressible as "the same URL plus a token"; a request that names one must name
+	// the limit that was actually applied, after the default and the ceiling, and is refused
+	// otherwise rather than quietly re-windowing the rest of the ordering.
+	var cursor relatedCursor
+	paging := q.ContinuationToken != ""
+	limit := normaliseRelatedLimit(q.Limit)
+	if paging {
+		cursor, err = decodeRelatedCursor(q.ContinuationToken)
+		if err != nil {
+			return domain.RelatedKnowledge{}, err
+		}
+		if q.Limit == 0 {
+			limit = cursor.Limit
+		}
+		if err := cursor.compatible(start, scope, relationScope, limit); err != nil {
+			return domain.RelatedKnowledge{}, err
+		}
+	}
+
 	title, ok := k.searchLabels[start]
 	if !ok {
 		return domain.RelatedKnowledge{}, ErrNotFound
 	}
-	limit := normaliseRelatedLimit(q.Limit)
 
 	groups, scanned, scanCut := k.groupRelated(start, scope, relationScope, MaxRelatedRelationsScanned)
 	items := make([]domain.RelatedItem, 0, len(groups))
@@ -355,8 +397,38 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 	sort.SliceStable(items, func(i, j int) bool { return lessRelatedItem(items[i], items[j]) })
 
 	eligible := len(items)
+
+	// The window is cut out of the full ordering rather than the ordering being rebuilt around
+	// the cursor, and that is the whole determinism argument of the phase. Every page of one
+	// traversal is a slice of the identical list, so adjacent pages cannot overlap and cannot
+	// leave a gap: the resume index is one past a position that list actually contains, and the
+	// only way to reach it is to have found that exact record at the exact rank the token
+	// recorded. A cursor the rebuilt ordering no longer contains is refused here rather than
+	// approximated, because there is no position "near" a record that has moved.
+	from := 0
+	if paging {
+		from, err = cursor.resumeAfter(items)
+		if err != nil {
+			return domain.RelatedKnowledge{}, err
+		}
+	}
+	items = items[from:]
 	if len(items) > limit {
 		items = items[:limit]
+	}
+
+	// A page is followed by another exactly when the window it cut did not reach the end of the
+	// eligible ordering. The token is then issued for the last item of this page, so the next
+	// request resumes from a position this response actually returned - a token naming anything
+	// else would be a cursor into a page the caller never saw. No token is issued when nothing
+	// follows, so a client stops without a request that would have returned nothing.
+	hasMore := from+len(items) < eligible
+	var next string
+	if hasMore {
+		next, err = newRelatedCursor(start, scope, relationScope, limit, items[len(items)-1]).encode()
+		if err != nil {
+			return domain.RelatedKnowledge{}, err
+		}
 	}
 
 	// Each echo is present exactly when the caller supplied that filter, and carries the
@@ -382,9 +454,18 @@ func (k *Knowledge) RelatedKnowledgeFor(entityType, id string, q RelatedQuery) (
 			RelationsScanned:    scanned,
 			RelationsTruncated:  scanCut,
 		},
-		Counts:    domain.RelatedCounts{Eligible: eligible, Returned: len(items)},
-		Truncated: len(items) < eligible,
-		Items:     items,
+		Counts: domain.RelatedCounts{Eligible: eligible, Returned: len(items)},
+		// Truncated keeps the meaning it has always had - this response does not carry the whole
+		// eligible set - which is why it is computed from the returned count against the eligible
+		// total rather than from the window's position. On a paged traversal it is therefore true
+		// on every page including the last, and HasMore is the field that says whether anything
+		// follows. Reusing one flag for both would have made "something was cut" and "you can
+		// fetch more" the same claim, and they are not: the last page of a long result is both
+		// incomplete and final.
+		Truncated:             len(items) < eligible,
+		HasMore:               hasMore,
+		NextContinuationToken: next,
+		Items:                 items,
 	}, nil
 }
 

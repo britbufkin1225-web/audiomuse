@@ -20,9 +20,12 @@ import (
 // else, and refuses a parameter supplied twice, so a caller can never be handed a discovery list
 // that silently dropped a filter they believed was applied.
 //
-// There is no offset, no depth and no q. Each is absent because the operation does not have it,
-// not because the handler forgot: accepting and ignoring one would let a caller believe they had
-// asked for something the response does not reflect.
+// There is still no offset, no depth and no q. Each is absent because the operation does not have
+// it, not because the handler forgot: accepting and ignoring one would let a caller believe they
+// had asked for something the response does not reflect. continuation_token is the Phase 2D
+// addition and is not an offset in a different spelling - it is an opaque cursor the caller
+// received from a previous response of this same route and hands back unread, and the service
+// refuses one that was issued for any other request.
 //
 // relationship_types is the Phase 2B addition and is spelled to match entity_types exactly: a
 // plural name, one comma-separated value, supplied at most once. That is this API's only
@@ -32,7 +35,7 @@ import (
 // deliberately not accepted as an alias: /api/v1/search carries both spellings of its class
 // filter only because the singular predates the list, and a new filter has no such history to
 // preserve.
-var relatedParams = []string{"entity_types", "limit", "relationship_types"}
+var relatedParams = []string{"continuation_token", "entity_types", "limit", "relationship_types"}
 
 func (s *Server) handleRelatedKnowledge(w http.ResponseWriter, r *http.Request) {
 	if !rejectUnknownParams(w, r, s.logger, relatedParams...) {
@@ -92,11 +95,30 @@ func (s *Server) handleRelatedKnowledge(w http.ResponseWriter, r *http.Request) 
 	if !ok {
 		return
 	}
+	// continuation_token is the Phase 2D cursor and is passed through unread. It deliberately does
+	// not go through boundedText: that helper bounds a caller's search text at the query-character
+	// ceiling, and an opaque token is not text a person types - it is longer than that ceiling by
+	// construction and carries its own bound, MaxRelatedContinuationTokenChars, which the service
+	// applies before it decodes anything. Trimming and refusing an empty value here is the same
+	// division limit uses: the handler decides what "the parameter was supplied" means and the
+	// service decides what the value means.
+	//
+	// A present-but-empty token is refused rather than read as absent, following
+	// relationship_types: a caller who wrote a cursor parameter and supplied nothing to resume
+	// from is not asking for the first page, and answering with one would silently restart a
+	// traversal they believe they are part-way through.
+	continuationToken := strings.TrimSpace(query.Get("continuation_token"))
+	if _, present := query["continuation_token"]; present && continuationToken == "" {
+		writeError(w, r, s.logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token must not be empty.")
+		return
+	}
 
 	result, err := s.knowledge.RelatedKnowledgeFor(entityType, id, service.RelatedQuery{
 		Limit:             limit,
 		EntityTypes:       entityTypes,
 		RelationshipTypes: relationshipTypes,
+		ContinuationToken: continuationToken,
 	})
 	if err != nil {
 		s.writeRelatedError(w, r, err)
@@ -164,8 +186,56 @@ func (s *Server) writeRelatedError(w http.ResponseWriter, r *http.Request, err e
 		if writeRelationshipScopeError(w, r, s.logger, err) {
 			return
 		}
+		if writeRelatedContinuationError(w, r, s.logger, err) {
+			return
+		}
 		writeFilterError(w, r, s.logger, err)
 	}
+}
+
+// writeRelatedContinuationError renders the Phase 2D continuation refusals and reports whether it
+// handled one.
+//
+// Every case is 400 invalid_query, which is the status and code this route already gives every
+// malformed request, and the choice is deliberate rather than incidental. A stale or mismatched
+// cursor is a request the caller must rewrite, not a missing record and not a conflict between two
+// writers - this API has no writers - so a 404 would claim a record was absent and a 409 would
+// invent a taxonomy alongside the one every other refusal on this API uses.
+//
+// The messages name the parameter and state what is wrong with it in the caller's own terms - the
+// record it was issued for, the scope it was issued for, the limit it was issued for - and never
+// echo the token, quote the decoder, or describe the payload. The token is the one part of a
+// continuation request an attacker fully controls, and a message that reflected it, or that told a
+// caller which decoding step rejected it, would turn the error envelope into an oracle for
+// probing the encoding. A client that cannot resume has one remedy in every case, and it is the
+// same one: request the first page again.
+func writeRelatedContinuationError(w http.ResponseWriter, r *http.Request, logger *slog.Logger, err error) bool {
+	switch {
+	case errors.Is(err, service.ErrRelatedContinuationMalformed):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token is not a valid continuation token.")
+	case errors.Is(err, service.ErrRelatedContinuationVersion):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token was issued under a continuation contract this API does not support.")
+	case errors.Is(err, service.ErrRelatedContinuationStart):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token was issued for a different start record.")
+	case errors.Is(err, service.ErrRelatedContinuationEntityScope):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token was issued for a different entity_types scope.")
+	case errors.Is(err, service.ErrRelatedContinuationRelationshipScope):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token was issued for a different relationship_types scope.")
+	case errors.Is(err, service.ErrRelatedContinuationLimit):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token was issued for a different limit. Omit limit to continue with the limit it carries.")
+	case errors.Is(err, service.ErrRelatedContinuationCursor):
+		writeError(w, r, logger, http.StatusBadRequest, CodeInvalidQuery,
+			"Parameter continuation_token no longer names a position in this result set. Request the first page again.")
+	default:
+		return false
+	}
+	return true
 }
 
 // writeRelationshipScopeError renders the Phase 2B relationship-class errors and reports whether
